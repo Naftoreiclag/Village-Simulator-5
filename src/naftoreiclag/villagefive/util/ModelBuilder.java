@@ -7,12 +7,17 @@
 package naftoreiclag.villagefive.util;
 
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.VertexBuffer.Type;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import org.lwjgl.BufferUtils;
 
 public class ModelBuilder
 {
@@ -107,19 +112,26 @@ public class ModelBuilder
 		this.addTriangle(x1, y1, z1, normal1, texX1, texY1, x3, y3, z3, normal3, texX3, texY3, x4, y4, z4, normal4, texX4, texY4);
 	}
 	
-        /*
 	// Bakes the data into a usable model. Note: You can bake this more than once if you really want to.
-	public InterleavedModel bake()
+	public Mesh bake()
 	{
-		FloatBuffer v = BufferUtils.createFloatBuffer(vertices.size() * 8);
+		FloatBuffer v = BufferUtils.createFloatBuffer(vertices.size() * 3);
+		FloatBuffer n = BufferUtils.createFloatBuffer(vertices.size() * 3);
+		FloatBuffer t = BufferUtils.createFloatBuffer(vertices.size() * 2);
 		for(Vertex f : vertices)
 		{
-			v.put(f.x).put(f.y).put(f.z).put(f.normal.x).put(f.normal.y).put(f.normal.z).put(f.texX).put(f.texY);
+			v.put(f.x).put(f.y).put(f.z);
+			n.put(f.normal.x).put(f.normal.y).put(f.normal.z);
+			t.put(f.texX).put(f.texY);
+		}
+		for(Vertex f : vertices)
+		{
+			n.put(f.x).put(f.y).put(f.z).put(f.normal.x).put(f.normal.y).put(f.normal.z).put(f.texX).put(f.texY);
 		}
 		IntBuffer i = BufferUtils.createIntBuffer(triangles.size() * 3);
-		for(Triangle t : triangles)
+		for(Triangle tri : triangles)
 		{
-			i.put(t.a).put(t.b).put(t.c);
+			i.put(tri.a).put(tri.b).put(tri.c);
 		}
 		
 		System.out.println("Model Built!");
@@ -128,10 +140,19 @@ public class ModelBuilder
 		System.out.println("Output Verts: " + vertices.size());
 		
 		v.flip();
+		n.flip();
+		t.flip();
 		i.flip();
-		return new InterleavedModel(v, i, triangles.size() * 3);
+                
+                Mesh mesh = new Mesh();
+                
+                mesh.setBuffer(Type.Position, 3, v);
+                mesh.setBuffer(Type.Normal,   3, n);
+                mesh.setBuffer(Type.TexCoord, 2, t);
+                mesh.setBuffer(Type.Index,    3, i);
+                
+		return mesh;
 	}
-        */
 	
 	// Turn it into java
 	public void toJava(String filename)
