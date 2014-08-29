@@ -1,3 +1,9 @@
+/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+ *
+ * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
+ * See accompanying file LICENSE
+ */
+
 package naftoreiclag.villagefive;
 
 import com.jme3.app.SimpleApplication;
@@ -12,19 +18,21 @@ public class Main extends SimpleApplication
     // This is where the magic begins
     public static void main(String[] args)
     {
-        Main app = new Main();
-        app.start();
+        Main main = new Main();
+        main.start();
     }
 
     @Override
     public void simpleInitApp()
     {
         Box b = new Box(1, 1, 1);
+        
         Geometry geom = new Geometry("Box", b);
 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
         geom.setMaterial(mat);
+        geom.setLocalTranslation(5, 5, 5);
 
         rootNode.attachChild(geom);
     }
