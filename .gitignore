@@ -1,5 +1,6 @@
 nbproject/private/
 build/
 dist/
+donotinclude/
 lwjgl64.dll
 OpenAL64.dll
