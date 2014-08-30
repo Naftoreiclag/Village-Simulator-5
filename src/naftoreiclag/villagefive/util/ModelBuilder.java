@@ -9,10 +9,6 @@ package naftoreiclag.villagefive.util;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -118,20 +114,17 @@ public class ModelBuilder
 		FloatBuffer v = BufferUtils.createFloatBuffer(vertices.size() * 3);
 		FloatBuffer n = BufferUtils.createFloatBuffer(vertices.size() * 3);
 		FloatBuffer t = BufferUtils.createFloatBuffer(vertices.size() * 2);
-		for(Vertex f : vertices)
+		for(Vertex vert : vertices)
 		{
-			v.put(f.x).put(f.y).put(f.z);
-			n.put(f.normal.x).put(f.normal.y).put(f.normal.z);
-			t.put(f.texX).put(f.texY);
-		}
-		for(Vertex f : vertices)
-		{
-			n.put(f.x).put(f.y).put(f.z).put(f.normal.x).put(f.normal.y).put(f.normal.z).put(f.texX).put(f.texY);
+                    v.put(vert.x).put(vert.y).put(vert.z);
+                    n.put(vert.normal.x).put(vert.normal.y).put(vert.normal.z);
+                    t.put(vert.texX).put(vert.texY);
 		}
 		IntBuffer i = BufferUtils.createIntBuffer(triangles.size() * 3);
 		for(Triangle tri : triangles)
 		{
-			i.put(tri.a).put(tri.b).put(tri.c);
+                    // Note: I reversed the direction here to accommodate for JME.
+                    i.put(tri.a).put(tri.c).put(tri.b);
 		}
 		
 		System.out.println("Model Built!");
@@ -139,10 +132,12 @@ public class ModelBuilder
 		System.out.println("Vertices: " + (triangles.size() * 3));
 		System.out.println("Output Verts: " + vertices.size());
 		
+                /*
 		v.flip();
 		n.flip();
 		t.flip();
 		i.flip();
+                */
                 
                 Mesh mesh = new Mesh();
                 
@@ -151,68 +146,9 @@ public class ModelBuilder
                 mesh.setBuffer(Type.TexCoord, 2, t);
                 mesh.setBuffer(Type.Index,    3, i);
                 
+                mesh.updateBound();
+                
 		return mesh;
-	}
-	
-	// Turn it into java
-	public void toJava(String filename)
-	{
-		try
-		{
-			File file = new File(filename);
-			if(!file.exists())
-			{
-				file.createNewFile();
-			}
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			
-			bw.newLine();
-			
-			bw.write("FloatBuffer v = BufferUtils.createFloatBuffer(" + (vertices.size() * 8) + ");");
-			bw.newLine();
-			bw.write("v.put(new float[]{");
-
-			for(int i = 0; i < vertices.size(); ++ i)
-			{
-				Vertex v = vertices.get(i);
-				bw.write(v.x + "f, " + v.y + "f, " + v.z + "f, " + v.normal.x + "f, " + v.normal.y + "f, " + v.normal.z + "f, " + v.texX + "f, " + v.texY);
-				
-				if(i != vertices.size() - 1)
-				{
-					bw.write(", ");
-				}
-			}
-			
-			bw.write("});");
-			bw.newLine();
-			bw.write("v.flip();");
-			
-			bw.newLine();
-			
-			bw.write("IntBuffer i = BufferUtils.createIntBuffer(" + (triangles.size() * 3) + ");");
-			bw.newLine();
-			bw.write("i.put(new int[]{");
-
-			for(int i = 0; i < triangles.size(); ++ i)
-			{
-				Triangle t = triangles.get(i);
-				bw.write(t.a + ", " + t.b + ", " + t.c);
-				
-				if(i != triangles.size() - 1)
-				{
-					bw.write(", ");
-				}
-			}
-			
-			bw.write("});");
-			bw.newLine();
-			bw.write("i.flip();");
-			
-			bw.close();
-			fw.close();
-		}
-		catch (IOException e) { e.printStackTrace(); }
 	}
 	
 	// Class for storing a single vertex's data
