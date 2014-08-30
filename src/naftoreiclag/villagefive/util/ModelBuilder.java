@@ -71,8 +71,6 @@ public class ModelBuilder
             {
                 if(compare.samePos(a))
                 {
-                    System.out.println("smooth");
-                    
                     Vector3f combined = compare.normal.add(a.normal).normalizeLocal();
                     compare.normal = combined;
                     a.normal = combined;

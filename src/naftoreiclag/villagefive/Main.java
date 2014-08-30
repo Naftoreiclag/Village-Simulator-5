@@ -52,6 +52,7 @@ public class Main extends SimpleApplication
         rootNode.addLight(al);
         
         rootNode.addLight(sun);
+        viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
     }
 
     @Override

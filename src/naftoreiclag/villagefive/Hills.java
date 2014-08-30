@@ -21,7 +21,7 @@ public class Hills
     public static final int width = 25;
     public static final int height = 25;
     
-    public static final int numLevels = 5;
+    public static final int numLevels = 16;
     
     public int[][] heights;
     
@@ -48,7 +48,7 @@ public class Hills
         {
             for(int z = 0; z < height; ++ z)
             {
-                heights[x][z] = (img.getRGB(x, z) & 0x000000F0) >> 1;
+                heights[x][z] = (img.getRGB(x, z) & 0x000000F0) / 16;
             }
         }
     }
@@ -68,7 +68,33 @@ public class Hills
             {
                 for(int y = 0; y < height - 1; ++ y)
                 {
-                    addGeo(mb, mb2, x, target, y, heights[x][y] >= target, heights[x + 1][y] >= target, heights[x + 1][y + 1] >= target, heights[x][y + 1] >= target);
+                    int type = 0;
+
+                    if(heights[x][y] >= target)
+                    {
+                        type += 1;
+                    }
+                    if(heights[x + 1][y] >= target)
+                    {
+                        type += 2;
+                    }
+                    if(heights[x + 1][y + 1] >= target)
+                    {
+                        type += 4;
+                    }
+                    if(heights[x][y + 1] >= target)
+                    {
+                        type += 8;
+                    }
+                    
+                    boolean showgrass = false;
+                    
+                    if(heights[x][y] == target || heights[x + 1][y] == target || heights[x][y + 1] == target || heights[x + 1][y + 1] == target)
+                    {
+                        showgrass = true;
+                    }
+                    
+                    addGeo(mb, mb2, x, target, y, type, true);
                 }
             }
         }
@@ -77,7 +103,7 @@ public class Hills
         mess = mb2.bake();
     }
     
-    private void addGeo(ModelBuilder mb, ModelBuilder mb2, float offX, float offY, float offZ, boolean nw, boolean ne, boolean se, boolean sw)
+    private void addGeo(ModelBuilder mb, ModelBuilder mb2, float offX, float offY, float offZ, int type, boolean showgrass)
     {
         //int foo = 1;
         
@@ -85,25 +111,6 @@ public class Hills
         float foo = 1 - bar;
         
         float thickness = -0.5f;
-        
-        int type = 0;
-        
-        if(nw)
-        {
-            type += 1;
-        }
-        if(ne)
-        {
-            type += 2;
-        }
-        if(se)
-        {
-            type += 4;
-        }
-        if(sw)
-        {
-            type += 8;
-        }
         
         Vector3f NW = new Vector3f( 1, 0,  1).normalizeLocal();
         Vector3f NE = new Vector3f(-1, 0,  1).normalizeLocal();
@@ -132,10 +139,13 @@ public class Hills
                     bar, thickness, 0, NW, bar, 1,
                     0, thickness, bar, NW, 0, 1);
 
-            mb2.addTriangle(
-                    0, 0, 0, U, 0, 0, 
-                    bar, 0, 0, U, bar, 0, 
-                    0, 0, bar, U, 0, bar);
+            if(showgrass)
+            {
+                mb2.addTriangle(
+                        0, 0, 0, U, 0, 0, 
+                        bar, 0, 0, U, bar, 0, 
+                        0, 0, bar, U, 0, bar);
+            }
         }
         else if(type == 2)
         {
@@ -150,10 +160,13 @@ public class Hills
                     1, thickness, bar, NE, 1, 1,
                     foo, thickness, 0, NE, foo, 1);
 
-            mb2.addTriangle(
-                    foo, 0, 0, U, 0, 0, 
-                    1, 0, 0, U, bar, 0, 
-                    1, 0, bar, U, 0, bar);
+            if(showgrass)
+            {
+                mb2.addTriangle(
+                        foo, 0, 0, U, 0, 0, 
+                        1, 0, 0, U, bar, 0, 
+                        1, 0, bar, U, 0, bar);
+            }
 
 
         }
@@ -170,10 +183,13 @@ public class Hills
                     foo, thickness, 1, SE, 1, 1, 
                     1, thickness, foo, SE, foo, 1);
 
-            mb2.addTriangle(
-                    1, 0, 1, U, bar, 0, 
-                    foo, 0, 1, U, 0, 0, 
-                    1, 0, foo, U, 0, bar);
+            if(showgrass)
+            {
+                mb2.addTriangle(
+                        1, 0, 1, U, bar, 0, 
+                        foo, 0, 1, U, 0, 0, 
+                        1, 0, foo, U, 0, bar);
+            }
 
 
         }
@@ -190,10 +206,13 @@ public class Hills
                     0, thickness, foo, SW, bar, 1,
                     bar, thickness, 1, SW, 0, 1);
 
-            mb2.addTriangle(
-                    bar, 0, 1, U, 0, 0, 
-                    0, 0, 1, U, bar, 0, 
-                    0, 0, foo, U, 0, bar);
+            if(showgrass)
+            {
+                mb2.addTriangle(
+                        bar, 0, 1, U, 0, 0, 
+                        0, 0, 1, U, bar, 0, 
+                        0, 0, foo, U, 0, bar);
+            }
 
 
         }
@@ -210,11 +229,14 @@ public class Hills
                     1, thickness, bar, N, 1, 1, 
                     0, thickness, bar, N, 0, 1);
 
-            mb2.addQuad(
-                    0, 0, 0, U, 0, 0, 
-                    1, 0, 0, U, bar, 0, 
-                    1, 0, bar, U, 0, bar, 
-                    0, 0, bar, U, 0, bar);
+            if(showgrass)
+            {
+                mb2.addQuad(
+                        0, 0, 0, U, 0, 0, 
+                        1, 0, 0, U, bar, 0, 
+                        1, 0, bar, U, 0, bar, 
+                        0, 0, bar, U, 0, bar);
+            }
 
 
         }
@@ -231,11 +253,14 @@ public class Hills
                     foo, thickness, 1, E, 1, 1, 
                     foo, thickness, 0, E, 0, 1);
 
-            mb2.addQuad(
-                    foo, 0, 0, U, 0, 0, 
-                    1, 0, 0, U, bar, 0, 
-                    1, 0, 1, U, 0, bar, 
-                    foo, 0, 1, U, 0, bar);
+            if(showgrass)
+            {
+                mb2.addQuad(
+                        foo, 0, 0, U, 0, 0, 
+                        1, 0, 0, U, bar, 0, 
+                        1, 0, 1, U, 0, bar, 
+                        foo, 0, 1, U, 0, bar);
+            }
 
 
         }
@@ -252,11 +277,14 @@ public class Hills
                     0, thickness, foo, S, 1, 1, 
                     1, thickness, foo, S, 0, 1);
 
-            mb2.addQuad(
-                    1, 0, 1, U, bar, 0, 
-                    0, 0, 1, U, 0, 0, 
-                    0, 0, foo, U, 0, bar,
-                    1, 0, foo, U, 0, bar);
+            if(showgrass)
+            {
+                mb2.addQuad(
+                        1, 0, 1, U, bar, 0, 
+                        0, 0, 1, U, 0, 0, 
+                        0, 0, foo, U, 0, bar,
+                        1, 0, foo, U, 0, bar);
+            }
 
 
         }
@@ -273,87 +301,91 @@ public class Hills
                     bar, thickness, 0, W, 1, 1, 
                     bar, thickness, 1, W, 0, 1);
 
-            mb2.addQuad(
-                    0, 0, 0, U, bar, 0, 
-                    bar, 0, 0, U, 0, 0, 
-                    bar, 0, 1, U, 0, bar,
-                    0, 0, 1, U, 0, bar);
+            if(showgrass)
+            {
+                mb2.addQuad(
+                        0, 0, 0, U, bar, 0, 
+                        bar, 0, 0, U, 0, 0, 
+                        bar, 0, 1, U, 0, bar,
+                        0, 0, 1, U, 0, bar);
+            }
+        }
+        else if(showgrass)
+        {  
+            if(type == 11)
+            {
+                // x x
+                // x .
 
+                mb2.addPentagon(
+                        0, 0, 0, U, bar, 0, 
+                        1, 0, 0, U, 0, 0, 
+                        1, 0, bar, U, 0, bar,
+                        bar, 0, 1, U, 0, bar,
+                        0, 0, 1, U, 0, bar);
+            }
+            else if(type == 7)
+            {
+                // x x
+                // . x
 
-        }
-        else if(type == 11)
-        {
-            // x x
-            // x .
-            
-            mb2.addPentagon(
-                    0, 0, 0, U, bar, 0, 
-                    1, 0, 0, U, 0, 0, 
-                    1, 0, bar, U, 0, bar,
-                    bar, 0, 1, U, 0, bar,
-                    0, 0, 1, U, 0, bar);
-        }
-        else if(type == 7)
-        {
-            // x x
-            // . x
-            
-            mb2.addPentagon(
-                    1, 0, 1, U, 0, bar,
-                    foo, 0, 1, U, 0, bar,
-                    0, 0, bar, U, 0, bar, 
-                    0, 0, 0, U, 0, 0,
-                    1, 0, 0, U, bar, 0);
-        }
-        else if(type == 14)
-        {
-            // . x
-            // x x
-            
-            mb2.addPentagon(
-                    1, 0, 1, U, bar, 0, 
-                    0, 0, 1, U, 0, 0, 
-                    0, 0, foo, U, 0, bar,
-                    foo, 0, 0, U, 0, bar,
-                    1, 0, 0, U, 0, bar);
-        }
-        else if(type == 13)
-        {
-            // x .
-            // x x
-            
-            mb2.addPentagon(
-                    0, 0, 0, U, 0, bar,
-                    bar, 0, 0, U, 0, bar,
-                    1, 0, foo, U, 0, bar, 
-                    1, 0, 1, U, 0, 0,
-                    0, 0, 1, U, bar, 0);
-        }
-        else if(type == 10)
-        {
-            // . x
-            // x .
-            
-            mb2.addHexagon(
-                    foo, 0, 0, U, 0, bar,
-                    1, 0, 0, U, 0, bar,
-                    1, 0, bar, U, 0, bar, 
-                    bar, 0, 1, U, 0, 0,
-                    0, 0, 1, U, bar, 0,
-                    0, 0, foo, U, 0, 0);
-        }
-        else if(type == 5)
-        {
-            // x .
-            // . x
-            
-            mb2.addHexagon(
-                    1, 0, foo, U, 0, 0,
-                    1, 0, 1, U, bar, 0, 
-                    foo, 0, 1, U, 0, 0,
-                    0, 0, bar, U, 0, bar,
-                    0, 0, 0, U, 0, bar,
-                    bar, 0, 0, U, 0, bar);
+                mb2.addPentagon(
+                        1, 0, 1, U, 0, bar,
+                        foo, 0, 1, U, 0, bar,
+                        0, 0, bar, U, 0, bar, 
+                        0, 0, 0, U, 0, 0,
+                        1, 0, 0, U, bar, 0);
+            }
+            else if(type == 14)
+            {
+                // . x
+                // x x
+
+                mb2.addPentagon(
+                        1, 0, 1, U, bar, 0, 
+                        0, 0, 1, U, 0, 0, 
+                        0, 0, foo, U, 0, bar,
+                        foo, 0, 0, U, 0, bar,
+                        1, 0, 0, U, 0, bar);
+            }
+            else if(type == 13)
+            {
+                // x .
+                // x x
+
+                mb2.addPentagon(
+                        0, 0, 0, U, 0, bar,
+                        bar, 0, 0, U, 0, bar,
+                        1, 0, foo, U, 0, bar, 
+                        1, 0, 1, U, 0, 0,
+                        0, 0, 1, U, bar, 0);
+            }
+            else if(type == 10)
+            {
+                // . x
+                // x .
+
+                mb2.addHexagon(
+                        foo, 0, 0, U, 0, bar,
+                        1, 0, 0, U, 0, bar,
+                        1, 0, bar, U, 0, bar, 
+                        bar, 0, 1, U, 0, 0,
+                        0, 0, 1, U, bar, 0,
+                        0, 0, foo, U, 0, 0);
+            }
+            else if(type == 5)
+            {
+                // x .
+                // . x
+
+                mb2.addHexagon(
+                        1, 0, foo, U, 0, 0,
+                        1, 0, 1, U, bar, 0, 
+                        foo, 0, 1, U, 0, 0,
+                        0, 0, bar, U, 0, bar,
+                        0, 0, 0, U, 0, bar,
+                        bar, 0, 0, U, 0, bar);
+            }
         }
         
         if(type == 11 || type == 10)
