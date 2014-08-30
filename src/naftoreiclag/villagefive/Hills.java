@@ -85,222 +85,194 @@ public class Hills
         }
         
         mb.setAppendOrigin(offX, offY, offZ);
-        
-        switch(type)
+        if(type == 1)
         {
-            case 1:
-            {
-                // x .
-                // . .
-                
-                // NW corner
-                
-                mb.addQuad(
-                        0, 0, bar, Vector3f.ZERO, type, type, 
-                        bar, 0, 0, Vector3f.ZERO, type, type, 
-                        bar, 1, 0, Vector3f.ZERO, type, type, 
-                        0, 1, bar, Vector3f.ZERO, type, type);
-                
-                break;
-            }
-            case 2:
-            {
-                // . x
-                // . .
-                
-                // NE corner
-                
-                mb.addQuad(
-                        foo, 0, 0, Vector3f.ZERO, type, type, 
-                        1, 0, bar, Vector3f.ZERO, type, type, 
-                        1, 1, bar, Vector3f.ZERO, type, type, 
-                        foo, 1, 0, Vector3f.ZERO, type, type);
-                
-                break;
-            }
-            case 4:
-            {
-                // . .
-                // . x
-                
-                mb.addQuad(
-                        1, 0, foo, Vector3f.ZERO, type, type, 
-                        foo, 0, 1, Vector3f.ZERO, type, type, 
-                        foo, 1, 1, Vector3f.ZERO, type, type, 
-                        1, 1, foo, Vector3f.ZERO, type, type);
-                
-                // SE corner
-                
-                break;
-            }
-            case 8:
-            {
-                // . .
-                // x .
-                
-                mb.addQuad(
-                        bar, 0, 1, Vector3f.ZERO, type, type, 
-                        0, 0, foo, Vector3f.ZERO, type, type, 
-                        0, 1, foo, Vector3f.ZERO, type, type,
-                        bar, 1, 1, Vector3f.ZERO, type, type);
-                
-                // SW corner
-                
-                break;
-            }
-            case 3:
-            {
-                // x x
-                // . .
-                
-                // N slab
-                
-                mb.addQuad(
-                        0, 0, bar, Vector3f.ZERO, type, type, 
-                        1, 0, bar, Vector3f.ZERO, type, type, 
-                        1, 1, bar, Vector3f.ZERO, type, type, 
-                        0, 1, bar, Vector3f.ZERO, type, type);
-                
-                break;
-            }
-            case 6:
-            {
-                // . x
-                // . x
-                
-                mb.addQuad(
-                        foo, 0, 0, Vector3f.ZERO, type, type, 
-                        foo, 0, 1, Vector3f.ZERO, type, type, 
-                        foo, 1, 1, Vector3f.ZERO, type, type, 
-                        foo, 1, 0, Vector3f.ZERO, type, type);
-                
-                // E slab
-                
-                break;
-            }
-            case 12:
-            {
-                // . .
-                // x x
-                
-                mb.addQuad(
-                        1, 0, foo, Vector3f.ZERO, type, type, 
-                        0, 0, foo, Vector3f.ZERO, type, type, 
-                        0, 1, foo, Vector3f.ZERO, type, type, 
-                        1, 1, foo, Vector3f.ZERO, type, type);
-                
-                // S slab
-                
-                break;
-            }
-            case 9:
-            {
-                // x .
-                // x .
-                
-                mb.addQuad(
-                        bar, 0, 1, Vector3f.ZERO, type, type, 
-                        bar, 0, 0, Vector3f.ZERO, type, type, 
-                        bar, 1, 0, Vector3f.ZERO, type, type, 
-                        bar, 1, 1, Vector3f.ZERO, type, type);
-                
-                // W slab
-                
-                break;
-            }
-            case 11:
-            {
-                // x x
-                // x .
-                
-                // NW wedge
-                
-                mb.addQuad(
-                        bar, 0, 1, Vector3f.ZERO, type, type, 
-                        1, 0, bar, Vector3f.ZERO, type, type, 
-                        1, 1, bar, Vector3f.ZERO, type, type,
-                        bar, 1, 1, Vector3f.ZERO, type, type);
-                
-                break;
-            }
-            case 7:
-            {
-                // x x
-                // . x
-                
-                mb.addQuad(
-                        0, 0, bar, Vector3f.ZERO, type, type, 
-                        foo, 0, 1, Vector3f.ZERO, type, type, 
-                        foo, 1, 1, Vector3f.ZERO, type, type,
-                        0, 1, bar, Vector3f.ZERO, type, type);
-                
-                // NE slab
-                
-                break;
-            }
-            case 14:
-            {
-                // . x
-                // x x
-                
-                mb.addQuad(
-                        foo, 0, 0, Vector3f.ZERO, type, type, 
-                        0, 0, foo, Vector3f.ZERO, type, type, 
-                        0, 1, foo, Vector3f.ZERO, type, type,
-                        foo, 1, 0, Vector3f.ZERO, type, type);
-                
-                // SE wedge
-                
-                break;
-            }
-            case 13:
-            {
-                // x .
-                // x x
-                
-                mb.addQuad(
-                        1, 0, foo, Vector3f.ZERO, type, type, 
-                        bar, 0, 0, Vector3f.ZERO, type, type, 
-                        bar, 1, 0, Vector3f.ZERO, type, type,
-                        1, 1, foo, Vector3f.ZERO, type, type);
-                
-                // SW wedge
-                
-                break;
-            }
-            case 10:
-            {
-                // . x
-                // x .
-                
-                // NW wedge
-                // SE slab
-                
-                break;
-            }
-            case 5:
-            {
-                // x .
-                // . x
-                
-                // NE wedge
-                // SW wedge
-                
-                break;
-            }
-            case 15:
-            {
-                // x x
-                // x x
-                
-                // nothing?
-                
-                break;
-            }
-            default:
-            {
-                break;
-            }
+            // x .
+            // . .
+
+            // NW corner
+
+            mb.addQuad(
+                    0, 0, bar, Vector3f.ZERO, type, type, 
+                    bar, 0, 0, Vector3f.ZERO, type, type, 
+                    bar, 1, 0, Vector3f.ZERO, type, type, 
+                    0, 1, bar, Vector3f.ZERO, type, type);
+
+
+        }
+        else if(type == 2)
+        {
+            // . x
+            // . .
+
+            // NE corner
+
+            mb.addQuad(
+                    foo, 0, 0, Vector3f.ZERO, type, type, 
+                    1, 0, bar, Vector3f.ZERO, type, type, 
+                    1, 1, bar, Vector3f.ZERO, type, type, 
+                    foo, 1, 0, Vector3f.ZERO, type, type);
+
+
+        }
+        else if(type == 4)
+        {
+            // . .
+            // . x
+
+            mb.addQuad(
+                    1, 0, foo, Vector3f.ZERO, type, type, 
+                    foo, 0, 1, Vector3f.ZERO, type, type, 
+                    foo, 1, 1, Vector3f.ZERO, type, type, 
+                    1, 1, foo, Vector3f.ZERO, type, type);
+
+            // SE corner
+
+
+        }
+        else if(type == 8)
+        {
+            // . .
+            // x .
+
+            mb.addQuad(
+                    bar, 0, 1, Vector3f.ZERO, type, type, 
+                    0, 0, foo, Vector3f.ZERO, type, type, 
+                    0, 1, foo, Vector3f.ZERO, type, type,
+                    bar, 1, 1, Vector3f.ZERO, type, type);
+
+            // SW corner
+
+
+        }
+        else if(type == 3)
+        {
+            // x x
+            // . .
+
+            // N slab
+
+            mb.addQuad(
+                    0, 0, bar, Vector3f.ZERO, type, type, 
+                    1, 0, bar, Vector3f.ZERO, type, type, 
+                    1, 1, bar, Vector3f.ZERO, type, type, 
+                    0, 1, bar, Vector3f.ZERO, type, type);
+
+
+        }
+        else if(type == 6)
+        {
+            // . x
+            // . x
+
+            mb.addQuad(
+                    foo, 0, 0, Vector3f.ZERO, type, type, 
+                    foo, 0, 1, Vector3f.ZERO, type, type, 
+                    foo, 1, 1, Vector3f.ZERO, type, type, 
+                    foo, 1, 0, Vector3f.ZERO, type, type);
+
+            // E slab
+
+
+        }
+        else if(type == 12)
+        {
+            // . .
+            // x x
+
+            mb.addQuad(
+                    1, 0, foo, Vector3f.ZERO, type, type, 
+                    0, 0, foo, Vector3f.ZERO, type, type, 
+                    0, 1, foo, Vector3f.ZERO, type, type, 
+                    1, 1, foo, Vector3f.ZERO, type, type);
+
+            // S slab
+
+
+        }
+        else if(type == 9)
+        {
+            // x .
+            // x .
+
+            mb.addQuad(
+                    bar, 0, 1, Vector3f.ZERO, type, type, 
+                    bar, 0, 0, Vector3f.ZERO, type, type, 
+                    bar, 1, 0, Vector3f.ZERO, type, type, 
+                    bar, 1, 1, Vector3f.ZERO, type, type);
+
+            // W slab
+
+
+        }
+        if(type == 11 || type == 10)
+        {
+            // x x
+            // x .
+
+            // NW wedge
+
+            mb.addQuad(
+                    bar, 0, 1, Vector3f.ZERO, type, type, 
+                    1, 0, bar, Vector3f.ZERO, type, type, 
+                    1, 1, bar, Vector3f.ZERO, type, type,
+                    bar, 1, 1, Vector3f.ZERO, type, type);
+
+
+        }
+        if(type == 7 || type == 5)
+        {
+            // x x
+            // . x
+
+            mb.addQuad(
+                    0, 0, bar, Vector3f.ZERO, type, type, 
+                    foo, 0, 1, Vector3f.ZERO, type, type, 
+                    foo, 1, 1, Vector3f.ZERO, type, type,
+                    0, 1, bar, Vector3f.ZERO, type, type);
+
+            // NE slab
+
+
+        }
+        if(type == 14 || type == 10)
+        {
+            // . x
+            // x x
+
+            mb.addQuad(
+                    foo, 0, 0, Vector3f.ZERO, type, type, 
+                    0, 0, foo, Vector3f.ZERO, type, type, 
+                    0, 1, foo, Vector3f.ZERO, type, type,
+                    foo, 1, 0, Vector3f.ZERO, type, type);
+
+            // SE wedge
+
+
+        }
+        if(type == 13 || type == 5)
+        {
+            // x .
+            // x x
+
+            mb.addQuad(
+                    1, 0, foo, Vector3f.ZERO, type, type, 
+                    bar, 0, 0, Vector3f.ZERO, type, type, 
+                    bar, 1, 0, Vector3f.ZERO, type, type,
+                    1, 1, foo, Vector3f.ZERO, type, type);
+
+            // SW wedge
+
+
+        }
+        if(type == 15)
+        {
+            // x x
+            // x x
+
+            // nothing?
+
+
         }
         
         /*
