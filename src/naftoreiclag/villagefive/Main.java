@@ -21,18 +21,20 @@ public class Main extends SimpleApplication
         Main main = new Main();
         main.start();
     }
+    
+    Hills hills;
 
     @Override
     public void simpleInitApp()
     {
-        Box b = new Box(1, 1, 1);
+        hills = new Hills();
         
-        Geometry geom = new Geometry("Box", b);
+        Geometry geom = new Geometry("Box", hills.mesh);
 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
         geom.setMaterial(mat);
-        geom.setLocalTranslation(5, 5, 5);
+        //geom.setLocalTranslation(5, 5, 5);
 
         rootNode.attachChild(geom);
     }
