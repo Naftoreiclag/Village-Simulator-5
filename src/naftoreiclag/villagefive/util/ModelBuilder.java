@@ -37,7 +37,7 @@ public class ModelBuilder
     }
     
     //
-    private boolean combineNormals = true;
+    public boolean combineNormals = true;
     
     // Where the data is stored to be baked
     private List<Vertex> vertices = new ArrayList<Vertex>();
