@@ -18,11 +18,11 @@ import org.lwjgl.BufferUtils;
 public class ModelBuilder
 {
     //
-    private int appendX = 0;
-    private int appendY = 0;
-    private int appendZ = 0;
+    private float appendX = 0;
+    private float appendY = 0;
+    private float appendZ = 0;
     
-    public void setAppendOrigin(int x, int y, int z)
+    public void setAppendOrigin(float x, float y, float z)
     {
         this.appendX = x;
         this.appendY = y;

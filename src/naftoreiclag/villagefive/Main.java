@@ -42,7 +42,7 @@ public class Main extends SimpleApplication
 
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White.mult(0.5f));
-        sun.setDirection(new Vector3f(1, 0, -3).normalizeLocal());
+        sun.setDirection(new Vector3f(1, -2, -3).normalizeLocal());
         
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(3.0f));

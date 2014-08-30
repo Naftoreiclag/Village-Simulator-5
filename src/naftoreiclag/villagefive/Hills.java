@@ -8,7 +8,11 @@ package naftoreiclag.villagefive;
 
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
+import javax.imageio.ImageIO;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
 
@@ -26,27 +30,39 @@ public class Hills
     
     public Hills()
     {
+        loadDataFromFile();
         buildGeometry();
+    }
+    public void loadDataFromFile()
+    {
+        BufferedImage img = null;
+        try
+        {
+            img = ImageIO.read(new File("donotinclude/heightmap.png"));
+        } catch (IOException e)
+        {
+        }
+
+        heights = new int[width][height];
+        for(int x = 0; x < width; ++ x)
+        {
+            for(int z = 0; z < height; ++ z)
+            {
+                heights[x][z] = (img.getRGB(x, z) & 0x000000F0) >> 1;
+            }
+        }
     }
     
     public void buildGeometry()
     {
-        Random r = new Random(1337);
-        
-        heights = new int[width][height];
-        for(int x = 0; x < width; ++ x)
-        {
-            for(int y = 0; y < height; ++ y)
-            {
-                heights[x][y] = r.nextFloat() > 0.5f ? 1 : 0;
-            }
-        }
         
         ModelBuilder mb = new ModelBuilder();
         ModelBuilder mb2 = new ModelBuilder();
         
-        int target = 1;
-        //for(int i = 0; i < numLevels; ++ i)
+        mb2.combineNormals = false;
+        
+        //int target = 1;
+        for(int target = 0; target < numLevels; ++ target)
         {
             for(int x = 0; x < width - 1; ++ x)
             {
@@ -61,7 +77,7 @@ public class Hills
         mess = mb2.bake();
     }
     
-    private void addGeo(ModelBuilder mb, ModelBuilder mb2, int offX, int offY, int offZ, boolean nw, boolean ne, boolean se, boolean sw)
+    private void addGeo(ModelBuilder mb, ModelBuilder mb2, float offX, float offY, float offZ, boolean nw, boolean ne, boolean se, boolean sw)
     {
         //int foo = 1;
         
@@ -101,8 +117,8 @@ public class Hills
         
         Vector3f U = Vector3f.UNIT_Y;
         
-        mb.setAppendOrigin(offX, offY, offZ);
-        mb2.setAppendOrigin(offX, offY, offZ);
+        mb.setAppendOrigin(offX, offY * -thickness, offZ);
+        mb2.setAppendOrigin(offX, offY * -thickness, offZ);
         if(type == 1)
         {
             // x .
@@ -406,10 +422,10 @@ public class Hills
             // nothing?
 
             mb2.addQuad(
-                    0, 0, 0, NW, bar, 0, 
-                    1, 0, 0, NW, 1, 0, 
-                    1, 0, 1, NW, 1, 1,
-                    0, 0, 1, NW, bar, 1);
+                    0, 0, 0, U, bar, 0, 
+                    1, 0, 0, U, 1, 0, 
+                    1, 0, 1, U, 1, 1,
+                    0, 0, 1, U, bar, 1);
 
 
         }
