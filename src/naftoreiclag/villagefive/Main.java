@@ -12,6 +12,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.jme3.texture.Texture;
 
 public class Main extends SimpleApplication
 {
@@ -32,8 +33,11 @@ public class Main extends SimpleApplication
         Geometry geom = new Geometry("Box", hills.mesh);
 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Blue);
-        mat.getAdditionalRenderState().setWireframe(true);
+        //mat.setColor("Color", ColorRGBA.Blue);
+        //mat.getAdditionalRenderState().setWireframe(true);
+        
+        Texture texture = assetManager.loadTexture("Textures/debug.png");
+        mat.setTexture("ColorMap", texture);
         geom.setMaterial(mat);
         //geom.setLocalTranslation(5, 5, 5);
 
