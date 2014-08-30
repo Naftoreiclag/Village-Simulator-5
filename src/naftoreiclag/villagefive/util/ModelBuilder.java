@@ -37,7 +37,7 @@ public class ModelBuilder
     }
     
     //
-    private boolean combineNormals = false;
+    private boolean combineNormals = true;
     
     // Where the data is stored to be baked
     private List<Vertex> vertices = new ArrayList<Vertex>();
@@ -72,24 +72,22 @@ public class ModelBuilder
                 if(compare.samePos(a))
                 {
                     System.out.println("smooth");
-                    compare.normal.addLocal(a.normal).normalizeLocal();
-                    a.normal.x = compare.normal.x;
-                    a.normal.y = compare.normal.y;
-                    a.normal.z = compare.normal.z;
+                    
+                    Vector3f combined = compare.normal.add(a.normal).normalizeLocal();
+                    compare.normal = combined;
+                    a.normal = combined;
                 }
                 if(compare.samePos(b))
                 {
-                    compare.normal.addLocal(b.normal).normalizeLocal();
-                    b.normal.x = compare.normal.x;
-                    b.normal.y = compare.normal.y;
-                    b.normal.z = compare.normal.z;
+                    Vector3f combined = compare.normal.add(b.normal).normalizeLocal();
+                    compare.normal = combined;
+                    b.normal = combined;
                 }
                 if(compare.samePos(c))
                 {
-                    compare.normal.addLocal(c.normal).normalizeLocal();
-                    c.normal.x = compare.normal.x;
-                    c.normal.y = compare.normal.y;
-                    c.normal.z = compare.normal.z;
+                    Vector3f combined = compare.normal.add(c.normal).normalizeLocal();
+                    compare.normal = combined;
+                    c.normal = combined;
                 }
             }
             if(compare.same(a))
@@ -221,12 +219,12 @@ public class ModelBuilder
     // Class for storing a single vertex's data
     public static class Vertex
     {
-        public final float x;
-        public final float y;
-        public final float z;
-        public final Vector3f normal;
-        public final float texX;
-        public final float texY;
+        public float x;
+        public float y;
+        public float z;
+        public Vector3f normal;
+        public float texX;
+        public float texY;
         
         public Vertex(float x, float y, float z, Vector3f normal, float texX, float texY)
         {
