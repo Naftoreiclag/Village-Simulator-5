@@ -1,0 +1,15 @@
+Material My Material : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        DiffuseMap : Textures/debugBrick_diffuse.png
+        NormalMap : Textures/debugBrick_normal.png
+        Shininess : 128.0
+        VertexLighting : false
+        Minnaert : false
+        UseMaterialColors : false
+        HighQuality : false
+        LATC : false
+        UseAlpha : false
+     }
+    AdditionalRenderState {
+    }
+}

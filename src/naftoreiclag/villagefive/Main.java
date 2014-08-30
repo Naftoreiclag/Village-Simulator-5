@@ -7,8 +7,11 @@
 package naftoreiclag.villagefive;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
@@ -40,8 +43,24 @@ public class Main extends SimpleApplication
         mat.setTexture("ColorMap", texture);
         geom.setMaterial(mat);
         //geom.setLocalTranslation(5, 5, 5);
-
+        
+        
+        geom.setMaterial((Material) assetManager.loadMaterial("Materials/bumpDebug.j3m"));
+        
         rootNode.attachChild(geom);
+
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White.mult(0.5f));
+        sun.setDirection(new Vector3f(1, 0, -3).normalizeLocal());
+        
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.White.mult(3.0f));
+        
+        
+        
+        rootNode.addLight(al);
+        
+        rootNode.addLight(sun);
     }
 
     @Override

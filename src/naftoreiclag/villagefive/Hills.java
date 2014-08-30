@@ -133,10 +133,10 @@ public class Hills
             // SE corner
 
             mb.addQuad(
-                    1, 0, foo, SE, 1, 0, 
-                    foo, 0, 1, SE, foo, 0, 
-                    foo, 1, 1, SE, foo, 1, 
-                    1, 1, foo, SE, 1, 1);
+                    1, 0, foo, SE, foo, 0, 
+                    foo, 0, 1, SE, 1, 0, 
+                    foo, 1, 1, SE, 1, 1, 
+                    1, 1, foo, SE, foo, 1);
 
 
         }
@@ -148,10 +148,10 @@ public class Hills
             // SW corner
 
             mb.addQuad(
-                    bar, 0, 1, SW, bar, 0, 
-                    0, 0, foo, SW, 0, 0, 
-                    0, 1, foo, SW, 0, 1,
-                    bar, 1, 1, SW, bar, 1);
+                    bar, 0, 1, SW, 0, 0, 
+                    0, 0, foo, SW, bar, 0, 
+                    0, 1, foo, SW, bar, 1,
+                    bar, 1, 1, SW, 0, 1);
 
 
         }
@@ -179,8 +179,8 @@ public class Hills
 
             mb.addQuad(
                     foo, 0, 0, E, 0, 0, 
-                    foo, 0, 1, E, 0, 0, 
-                    foo, 1, 1, E, 0, 1, 
+                    foo, 0, 1, E, 1, 0, 
+                    foo, 1, 1, E, 1, 1, 
                     foo, 1, 0, E, 0, 1);
 
 
@@ -193,10 +193,10 @@ public class Hills
             // S slab
 
             mb.addQuad(
-                    1, 0, foo, S, 1, 0, 
-                    0, 0, foo, S, 0, 0, 
-                    0, 1, foo, S, 0, 1, 
-                    1, 1, foo, S, 1, 1);
+                    1, 0, foo, S, 0, 0, 
+                    0, 0, foo, S, 1, 0, 
+                    0, 1, foo, S, 1, 1, 
+                    1, 1, foo, S, 0, 1);
 
 
         }
@@ -209,8 +209,8 @@ public class Hills
             // W slab
             mb.addQuad(
                     bar, 0, 1, W, 0, 0, 
-                    bar, 0, 0, W, 0, 0, 
-                    bar, 1, 0, W, 0, 1, 
+                    bar, 0, 0, W, 1, 0, 
+                    bar, 1, 0, W, 1, 1, 
                     bar, 1, 1, W, 0, 1);
 
 
@@ -253,10 +253,10 @@ public class Hills
             // SE wedge
 
             mb.addQuad(
-                    foo, 0, 0, SE, foo, 0, 
-                    0, 0, foo, SE, 0, 0, 
-                    0, 1, foo, SE, 0, 1,
-                    foo, 1, 0, SE, foo, 1);
+                    foo, 0, 0, SE, 0, 0, 
+                    0, 0, foo, SE, foo, 0, 
+                    0, 1, foo, SE, foo, 1,
+                    foo, 1, 0, SE, 0, 1);
 
 
         }
@@ -266,10 +266,10 @@ public class Hills
             // x x
 
             mb.addQuad(
-                    1, 0, foo, SW, 1, 0, 
-                    bar, 0, 0, SW, bar, 0, 
-                    bar, 1, 0, SW, bar, 1,
-                    1, 1, foo, SW, 1, 1);
+                    1, 0, foo, SW, bar, 0, 
+                    bar, 0, 0, SW, 1, 0, 
+                    bar, 1, 0, SW, 1, 1,
+                    1, 1, foo, SW, bar, 1);
 
             // SW wedge
 

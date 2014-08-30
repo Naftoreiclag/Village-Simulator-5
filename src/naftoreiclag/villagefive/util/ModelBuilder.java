@@ -36,6 +36,9 @@ public class ModelBuilder
         this.appendZ = 0;
     }
     
+    //
+    private boolean combineNormals = false;
+    
     // Where the data is stored to be baked
     private List<Vertex> vertices = new ArrayList<Vertex>();
     private List<Triangle> triangles = new ArrayList<Triangle>();
@@ -62,15 +65,42 @@ public class ModelBuilder
         int ci = -1;
         for(int index = 0; index < vertices.size(); ++ index)
         {
-            if(vertices.get(index).same(a))
+            Vertex compare = vertices.get(index);
+            
+            if(combineNormals)
+            {
+                if(compare.samePos(a))
+                {
+                    System.out.println("smooth");
+                    compare.normal.addLocal(a.normal).normalizeLocal();
+                    a.normal.x = compare.normal.x;
+                    a.normal.y = compare.normal.y;
+                    a.normal.z = compare.normal.z;
+                }
+                if(compare.samePos(b))
+                {
+                    compare.normal.addLocal(b.normal).normalizeLocal();
+                    b.normal.x = compare.normal.x;
+                    b.normal.y = compare.normal.y;
+                    b.normal.z = compare.normal.z;
+                }
+                if(compare.samePos(c))
+                {
+                    compare.normal.addLocal(c.normal).normalizeLocal();
+                    c.normal.x = compare.normal.x;
+                    c.normal.y = compare.normal.y;
+                    c.normal.z = compare.normal.z;
+                }
+            }
+            if(compare.same(a))
             {
                 ai = index;
             }
-            if(vertices.get(index).same(b))
+            if(compare.same(b))
             {
                 bi = index;
             }
-            if(vertices.get(index).same(c))
+            if(compare.same(c))
             {
                 ci = index;
             }
@@ -221,6 +251,16 @@ public class ModelBuilder
             return a == b || (a.x == b.x && a.y == b.y && a.z == b.z);
         }
         
+        // Returns if this has the same position, no regards to tex or normals
+        public boolean samePos(Vertex other)
+        {
+            // In case this is literally the same object
+            if(this == other) { return true; }
+            // Functionally the same
+            return other.x == this.x && other.y == this.y && other.z == this.z;
+        }
+        
+        // Returns if this is exactly the same as another vertex
         public boolean same(Vertex other)
         {
             // In case this is literally the same object
