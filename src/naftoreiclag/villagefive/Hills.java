@@ -22,6 +22,7 @@ public class Hills
     public int[][] heights;
     
     public Mesh mesh;
+    public Mesh mess;
     
     public Hills()
     {
@@ -37,11 +38,12 @@ public class Hills
         {
             for(int y = 0; y < height; ++ y)
             {
-                heights[x][y] = r.nextFloat() > 0.8f ? 1 : 0;
+                heights[x][y] = r.nextFloat() > 0.5f ? 1 : 0;
             }
         }
         
         ModelBuilder mb = new ModelBuilder();
+        ModelBuilder mb2 = new ModelBuilder();
         
         int target = 1;
         //for(int i = 0; i < numLevels; ++ i)
@@ -50,20 +52,23 @@ public class Hills
             {
                 for(int y = 0; y < height - 1; ++ y)
                 {
-                    addGeo(mb, x, target, y, heights[x][y] >= target, heights[x + 1][y] >= target, heights[x + 1][y + 1] >= target, heights[x][y + 1] >= target);
+                    addGeo(mb, mb2, x, target, y, heights[x][y] >= target, heights[x + 1][y] >= target, heights[x + 1][y + 1] >= target, heights[x][y + 1] >= target);
                 }
             }
         }
         
         mesh = mb.bake();
+        mess = mb2.bake();
     }
     
-    private void addGeo(ModelBuilder mb, int offX, int offY, int offZ, boolean nw, boolean ne, boolean se, boolean sw)
+    private void addGeo(ModelBuilder mb, ModelBuilder mb2, int offX, int offY, int offZ, boolean nw, boolean ne, boolean se, boolean sw)
     {
         //int foo = 1;
         
         float bar = 0.25f;
         float foo = 1 - bar;
+        
+        float thickness = -0.5f;
         
         int type = 0;
         
@@ -94,7 +99,10 @@ public class Hills
         Vector3f S = new Vector3f( 0, 0, -1);
         Vector3f W = new Vector3f( 1, 0,  0);
         
+        Vector3f U = Vector3f.UNIT_Y;
+        
         mb.setAppendOrigin(offX, offY, offZ);
+        mb2.setAppendOrigin(offX, offY, offZ);
         if(type == 1)
         {
             // x .
@@ -105,10 +113,13 @@ public class Hills
             mb.addQuad(
                     0, 0, bar, NW, 0, 0, 
                     bar, 0, 0, NW, bar, 0, 
-                    bar, 1, 0, NW, bar, 1, 
-                    0, 1, bar, NW, 0, 1);
+                    bar, thickness, 0, NW, bar, 1,
+                    0, thickness, bar, NW, 0, 1);
 
-
+            mb2.addTriangle(
+                    0, 0, 0, U, 0, 0, 
+                    bar, 0, 0, U, bar, 0, 
+                    0, 0, bar, U, 0, bar);
         }
         else if(type == 2)
         {
@@ -120,8 +131,13 @@ public class Hills
             mb.addQuad(
                     foo, 0, 0, NE, foo, 0,
                     1, 0, bar, NE, 1, 0,
-                    1, 1, bar, NE, 1, 1,
-                    foo, 1, 0, NE, foo, 1);
+                    1, thickness, bar, NE, 1, 1,
+                    foo, thickness, 0, NE, foo, 1);
+
+            mb2.addTriangle(
+                    foo, 0, 0, U, 0, 0, 
+                    1, 0, 0, U, bar, 0, 
+                    1, 0, bar, U, 0, bar);
 
 
         }
@@ -135,8 +151,13 @@ public class Hills
             mb.addQuad(
                     1, 0, foo, SE, foo, 0, 
                     foo, 0, 1, SE, 1, 0, 
-                    foo, 1, 1, SE, 1, 1, 
-                    1, 1, foo, SE, foo, 1);
+                    foo, thickness, 1, SE, 1, 1, 
+                    1, thickness, foo, SE, foo, 1);
+
+            mb2.addTriangle(
+                    1, 0, 1, U, bar, 0, 
+                    foo, 0, 1, U, 0, 0, 
+                    1, 0, foo, U, 0, bar);
 
 
         }
@@ -150,8 +171,13 @@ public class Hills
             mb.addQuad(
                     bar, 0, 1, SW, 0, 0, 
                     0, 0, foo, SW, bar, 0, 
-                    0, 1, foo, SW, bar, 1,
-                    bar, 1, 1, SW, 0, 1);
+                    0, thickness, foo, SW, bar, 1,
+                    bar, thickness, 1, SW, 0, 1);
+
+            mb2.addTriangle(
+                    bar, 0, 1, U, 0, 0, 
+                    0, 0, 1, U, bar, 0, 
+                    0, 0, foo, U, 0, bar);
 
 
         }
@@ -165,8 +191,14 @@ public class Hills
             mb.addQuad(
                     0, 0, bar, N, 0, 0, 
                     1, 0, bar, N, 1, 0, 
-                    1, 1, bar, N, 1, 1, 
-                    0, 1, bar, N, 0, 1);
+                    1, thickness, bar, N, 1, 1, 
+                    0, thickness, bar, N, 0, 1);
+
+            mb2.addQuad(
+                    0, 0, 0, U, 0, 0, 
+                    1, 0, 0, U, bar, 0, 
+                    1, 0, bar, U, 0, bar, 
+                    0, 0, bar, U, 0, bar);
 
 
         }
@@ -180,8 +212,14 @@ public class Hills
             mb.addQuad(
                     foo, 0, 0, E, 0, 0, 
                     foo, 0, 1, E, 1, 0, 
-                    foo, 1, 1, E, 1, 1, 
-                    foo, 1, 0, E, 0, 1);
+                    foo, thickness, 1, E, 1, 1, 
+                    foo, thickness, 0, E, 0, 1);
+
+            mb2.addQuad(
+                    foo, 0, 0, U, 0, 0, 
+                    1, 0, 0, U, bar, 0, 
+                    1, 0, 1, U, 0, bar, 
+                    foo, 0, 1, U, 0, bar);
 
 
         }
@@ -195,8 +233,14 @@ public class Hills
             mb.addQuad(
                     1, 0, foo, S, 0, 0, 
                     0, 0, foo, S, 1, 0, 
-                    0, 1, foo, S, 1, 1, 
-                    1, 1, foo, S, 0, 1);
+                    0, thickness, foo, S, 1, 1, 
+                    1, thickness, foo, S, 0, 1);
+
+            mb2.addQuad(
+                    1, 0, 1, U, bar, 0, 
+                    0, 0, 1, U, 0, 0, 
+                    0, 0, foo, U, 0, bar,
+                    1, 0, foo, U, 0, bar);
 
 
         }
@@ -210,11 +254,92 @@ public class Hills
             mb.addQuad(
                     bar, 0, 1, W, 0, 0, 
                     bar, 0, 0, W, 1, 0, 
-                    bar, 1, 0, W, 1, 1, 
-                    bar, 1, 1, W, 0, 1);
+                    bar, thickness, 0, W, 1, 1, 
+                    bar, thickness, 1, W, 0, 1);
+
+            mb2.addQuad(
+                    0, 0, 0, U, bar, 0, 
+                    bar, 0, 0, U, 0, 0, 
+                    bar, 0, 1, U, 0, bar,
+                    0, 0, 1, U, 0, bar);
 
 
         }
+        else if(type == 11)
+        {
+            // x x
+            // x .
+            
+            mb2.addPentagon(
+                    0, 0, 0, U, bar, 0, 
+                    1, 0, 0, U, 0, 0, 
+                    1, 0, bar, U, 0, bar,
+                    bar, 0, 1, U, 0, bar,
+                    0, 0, 1, U, 0, bar);
+        }
+        else if(type == 7)
+        {
+            // x x
+            // . x
+            
+            mb2.addPentagon(
+                    1, 0, 1, U, 0, bar,
+                    foo, 0, 1, U, 0, bar,
+                    0, 0, bar, U, 0, bar, 
+                    0, 0, 0, U, 0, 0,
+                    1, 0, 0, U, bar, 0);
+        }
+        else if(type == 14)
+        {
+            // . x
+            // x x
+            
+            mb2.addPentagon(
+                    1, 0, 1, U, bar, 0, 
+                    0, 0, 1, U, 0, 0, 
+                    0, 0, foo, U, 0, bar,
+                    foo, 0, 0, U, 0, bar,
+                    1, 0, 0, U, 0, bar);
+        }
+        else if(type == 13)
+        {
+            // x .
+            // x x
+            
+            mb2.addPentagon(
+                    0, 0, 0, U, 0, bar,
+                    bar, 0, 0, U, 0, bar,
+                    1, 0, foo, U, 0, bar, 
+                    1, 0, 1, U, 0, 0,
+                    0, 0, 1, U, bar, 0);
+        }
+        else if(type == 10)
+        {
+            // . x
+            // x .
+            
+            mb2.addHexagon(
+                    foo, 0, 0, U, 0, bar,
+                    1, 0, 0, U, 0, bar,
+                    1, 0, bar, U, 0, bar, 
+                    bar, 0, 1, U, 0, 0,
+                    0, 0, 1, U, bar, 0,
+                    0, 0, foo, U, 0, 0);
+        }
+        else if(type == 5)
+        {
+            // x .
+            // . x
+            
+            mb2.addHexagon(
+                    1, 0, foo, U, 0, 0,
+                    1, 0, 1, U, bar, 0, 
+                    foo, 0, 1, U, 0, 0,
+                    0, 0, bar, U, 0, bar,
+                    0, 0, 0, U, 0, bar,
+                    bar, 0, 0, U, 0, bar);
+        }
+        
         if(type == 11 || type == 10)
         {
             // x x
@@ -225,10 +350,8 @@ public class Hills
             mb.addQuad(
                     bar, 0, 1, NW, bar, 0, 
                     1, 0, bar, NW, 1, 0, 
-                    1, 1, bar, NW, 1, 1,
-                    bar, 1, 1, NW, bar, 1);
-
-
+                    1, thickness, bar, NW, 1, 1,
+                    bar, thickness, 1, NW, bar, 1);
         }
         if(type == 7 || type == 5)
         {
@@ -240,8 +363,8 @@ public class Hills
             mb.addQuad(
                     0, 0, bar, NE, 0, 0, 
                     foo, 0, 1, NE, foo, 0, 
-                    foo, 1, 1, NE, foo, 1,
-                    0, 1, bar, NE, 0, 1);
+                    foo, thickness, 1, NE, foo, 1,
+                    0, thickness, bar, NE, 0, 1);
 
 
         }
@@ -255,8 +378,8 @@ public class Hills
             mb.addQuad(
                     foo, 0, 0, SE, 0, 0, 
                     0, 0, foo, SE, foo, 0, 
-                    0, 1, foo, SE, foo, 1,
-                    foo, 1, 0, SE, 0, 1);
+                    0, thickness, foo, SE, foo, 1,
+                    foo, thickness, 0, SE, 0, 1);
 
 
         }
@@ -268,8 +391,8 @@ public class Hills
             mb.addQuad(
                     1, 0, foo, SW, bar, 0, 
                     bar, 0, 0, SW, 1, 0, 
-                    bar, 1, 0, SW, 1, 1,
-                    1, 1, foo, SW, bar, 1);
+                    bar, thickness, 0, SW, 1, 1,
+                    1, thickness, foo, SW, bar, 1);
 
             // SW wedge
 
@@ -281,6 +404,12 @@ public class Hills
             // x x
 
             // nothing?
+
+            mb2.addQuad(
+                    0, 0, 0, NW, bar, 0, 
+                    1, 0, 0, NW, 1, 0, 
+                    1, 0, 1, NW, 1, 1,
+                    0, 0, 1, NW, bar, 1);
 
 
         }

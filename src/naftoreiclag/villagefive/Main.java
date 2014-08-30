@@ -33,21 +33,12 @@ public class Main extends SimpleApplication
     {
         hills = new Hills();
         
-        Geometry geom = new Geometry("Box", hills.mesh);
-
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        //mat.setColor("Color", ColorRGBA.Blue);
-        //mat.getAdditionalRenderState().setWireframe(true);
-        
-        Texture texture = assetManager.loadTexture("Textures/debug.png");
-        mat.setTexture("ColorMap", texture);
-        geom.setMaterial(mat);
-        //geom.setLocalTranslation(5, 5, 5);
-        
-        
+        Geometry geom = new Geometry("Rock", hills.mesh);
         geom.setMaterial((Material) assetManager.loadMaterial("Materials/bumpDebug.j3m"));
-        
         rootNode.attachChild(geom);
+        Geometry geom2 = new Geometry("Grass", hills.mess);
+        geom2.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
+        rootNode.attachChild(geom2);
 
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White.mult(0.5f));
