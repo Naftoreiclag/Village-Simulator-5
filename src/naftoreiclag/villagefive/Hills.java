@@ -84,6 +84,16 @@ public class Hills
             type += 8;
         }
         
+        Vector3f NW = new Vector3f( 1, 0,  1).normalizeLocal();
+        Vector3f NE = new Vector3f(-1, 0,  1).normalizeLocal();
+        Vector3f SE = new Vector3f(-1, 0, -1).normalizeLocal();
+        Vector3f SW = new Vector3f( 1, 0, -1).normalizeLocal();
+        
+        Vector3f N = new Vector3f( 0, 0,  1);
+        Vector3f E = new Vector3f(-1, 0,  0);
+        Vector3f S = new Vector3f( 0, 0, -1);
+        Vector3f W = new Vector3f( 1, 0,  0);
+        
         mb.setAppendOrigin(offX, offY, offZ);
         if(type == 1)
         {
@@ -93,10 +103,10 @@ public class Hills
             // NW corner
 
             mb.addQuad(
-                    0, 0, bar, Vector3f.ZERO, type, type, 
-                    bar, 0, 0, Vector3f.ZERO, type, type, 
-                    bar, 1, 0, Vector3f.ZERO, type, type, 
-                    0, 1, bar, Vector3f.ZERO, type, type);
+                    0, 0, bar, NW, 0, 0, 
+                    bar, 0, 0, NW, 0, 0, 
+                    bar, 1, 0, NW, 0, 1, 
+                    0, 1, bar, NW, 0, 1);
 
 
         }
@@ -108,10 +118,10 @@ public class Hills
             // NE corner
 
             mb.addQuad(
-                    foo, 0, 0, Vector3f.ZERO, type, type, 
-                    1, 0, bar, Vector3f.ZERO, type, type, 
-                    1, 1, bar, Vector3f.ZERO, type, type, 
-                    foo, 1, 0, Vector3f.ZERO, type, type);
+                    foo, 0, 0, NE, 0, 0,
+                    1, 0, bar, NE, 0, 0,
+                    1, 1, bar, NE, 0, 1,
+                    foo, 1, 0, NE, 0, 1);
 
 
         }
@@ -120,13 +130,13 @@ public class Hills
             // . .
             // . x
 
-            mb.addQuad(
-                    1, 0, foo, Vector3f.ZERO, type, type, 
-                    foo, 0, 1, Vector3f.ZERO, type, type, 
-                    foo, 1, 1, Vector3f.ZERO, type, type, 
-                    1, 1, foo, Vector3f.ZERO, type, type);
-
             // SE corner
+
+            mb.addQuad(
+                    1, 0, foo, SE, 0, 0, 
+                    foo, 0, 1, SE, 0, 0, 
+                    foo, 1, 1, SE, 0, 1, 
+                    1, 1, foo, SE, 0, 1);
 
 
         }
@@ -135,13 +145,13 @@ public class Hills
             // . .
             // x .
 
-            mb.addQuad(
-                    bar, 0, 1, Vector3f.ZERO, type, type, 
-                    0, 0, foo, Vector3f.ZERO, type, type, 
-                    0, 1, foo, Vector3f.ZERO, type, type,
-                    bar, 1, 1, Vector3f.ZERO, type, type);
-
             // SW corner
+
+            mb.addQuad(
+                    bar, 0, 1, SW, 0, 0, 
+                    0, 0, foo, SW, 0, 0, 
+                    0, 1, foo, SW, 0, 1,
+                    bar, 1, 1, SW, 0, 1);
 
 
         }
@@ -153,10 +163,10 @@ public class Hills
             // N slab
 
             mb.addQuad(
-                    0, 0, bar, Vector3f.ZERO, type, type, 
-                    1, 0, bar, Vector3f.ZERO, type, type, 
-                    1, 1, bar, Vector3f.ZERO, type, type, 
-                    0, 1, bar, Vector3f.ZERO, type, type);
+                    0, 0, bar, N, 0, 0, 
+                    1, 0, bar, N, 0, 0, 
+                    1, 1, bar, N, 0, 1, 
+                    0, 1, bar, N, 0, 1);
 
 
         }
@@ -165,13 +175,13 @@ public class Hills
             // . x
             // . x
 
-            mb.addQuad(
-                    foo, 0, 0, Vector3f.ZERO, type, type, 
-                    foo, 0, 1, Vector3f.ZERO, type, type, 
-                    foo, 1, 1, Vector3f.ZERO, type, type, 
-                    foo, 1, 0, Vector3f.ZERO, type, type);
-
             // E slab
+
+            mb.addQuad(
+                    foo, 0, 0, E, 0, 0, 
+                    foo, 0, 1, E, 0, 0, 
+                    foo, 1, 1, E, 0, 1, 
+                    foo, 1, 0, E, 0, 1);
 
 
         }
@@ -180,13 +190,13 @@ public class Hills
             // . .
             // x x
 
-            mb.addQuad(
-                    1, 0, foo, Vector3f.ZERO, type, type, 
-                    0, 0, foo, Vector3f.ZERO, type, type, 
-                    0, 1, foo, Vector3f.ZERO, type, type, 
-                    1, 1, foo, Vector3f.ZERO, type, type);
-
             // S slab
+
+            mb.addQuad(
+                    1, 0, foo, S, 0, 0, 
+                    0, 0, foo, S, 0, 0, 
+                    0, 1, foo, S, 0, 1, 
+                    1, 1, foo, S, 0, 1);
 
 
         }
@@ -195,13 +205,13 @@ public class Hills
             // x .
             // x .
 
-            mb.addQuad(
-                    bar, 0, 1, Vector3f.ZERO, type, type, 
-                    bar, 0, 0, Vector3f.ZERO, type, type, 
-                    bar, 1, 0, Vector3f.ZERO, type, type, 
-                    bar, 1, 1, Vector3f.ZERO, type, type);
 
             // W slab
+            mb.addQuad(
+                    bar, 0, 1, W, 0, 0, 
+                    bar, 0, 0, W, 0, 0, 
+                    bar, 1, 0, W, 0, 1, 
+                    bar, 1, 1, W, 0, 1);
 
 
         }
@@ -213,10 +223,10 @@ public class Hills
             // NW wedge
 
             mb.addQuad(
-                    bar, 0, 1, Vector3f.ZERO, type, type, 
-                    1, 0, bar, Vector3f.ZERO, type, type, 
-                    1, 1, bar, Vector3f.ZERO, type, type,
-                    bar, 1, 1, Vector3f.ZERO, type, type);
+                    bar, 0, 1, NW, 0, 0, 
+                    1, 0, bar, NW, 0, 0, 
+                    1, 1, bar, NW, 0, 1,
+                    bar, 1, 1, NW, 0, 1);
 
 
         }
@@ -225,13 +235,13 @@ public class Hills
             // x x
             // . x
 
-            mb.addQuad(
-                    0, 0, bar, Vector3f.ZERO, type, type, 
-                    foo, 0, 1, Vector3f.ZERO, type, type, 
-                    foo, 1, 1, Vector3f.ZERO, type, type,
-                    0, 1, bar, Vector3f.ZERO, type, type);
-
             // NE slab
+
+            mb.addQuad(
+                    0, 0, bar, NE, 0, 0, 
+                    foo, 0, 1, NE, 0, 0, 
+                    foo, 1, 1, NE, 0, 1,
+                    0, 1, bar, NE, 0, 1);
 
 
         }
@@ -240,13 +250,13 @@ public class Hills
             // . x
             // x x
 
-            mb.addQuad(
-                    foo, 0, 0, Vector3f.ZERO, type, type, 
-                    0, 0, foo, Vector3f.ZERO, type, type, 
-                    0, 1, foo, Vector3f.ZERO, type, type,
-                    foo, 1, 0, Vector3f.ZERO, type, type);
-
             // SE wedge
+
+            mb.addQuad(
+                    foo, 0, 0, SE, 0, 0, 
+                    0, 0, foo, SE, 0, 0, 
+                    0, 1, foo, SE, 0, 1,
+                    foo, 1, 0, SE, 0, 1);
 
 
         }
@@ -256,10 +266,10 @@ public class Hills
             // x x
 
             mb.addQuad(
-                    1, 0, foo, Vector3f.ZERO, type, type, 
-                    bar, 0, 0, Vector3f.ZERO, type, type, 
-                    bar, 1, 0, Vector3f.ZERO, type, type,
-                    1, 1, foo, Vector3f.ZERO, type, type);
+                    1, 0, foo, SW, 0, 0, 
+                    bar, 0, 0, SW, 0, 0, 
+                    bar, 1, 0, SW, 0, 1,
+                    1, 1, foo, SW, 0, 1);
 
             // SW wedge
 
