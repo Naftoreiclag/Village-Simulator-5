@@ -33,6 +33,7 @@ public class Main extends SimpleApplication
 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
+        mat.getAdditionalRenderState().setWireframe(true);
         geom.setMaterial(mat);
         //geom.setLocalTranslation(5, 5, 5);
 

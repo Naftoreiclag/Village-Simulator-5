@@ -143,12 +143,17 @@ public class ModelBuilder
     // Bakes the data into a usable model. Note: You can bake this more than once if you really want to.
     public Mesh bake()
     {
+        return bake(1.0f);
+    }
+    
+    public Mesh bake(float scale)
+    {
         FloatBuffer v = BufferUtils.createFloatBuffer(vertices.size() * 3);
         FloatBuffer n = BufferUtils.createFloatBuffer(vertices.size() * 3);
         FloatBuffer t = BufferUtils.createFloatBuffer(vertices.size() * 2);
         for(Vertex vert : vertices)
         {
-                    v.put(vert.x).put(vert.y).put(vert.z);
+                    v.put(vert.x * scale).put(vert.y * scale).put(vert.z * scale);
                     n.put(vert.normal.x).put(vert.normal.y).put(vert.normal.z);
                     t.put(vert.texX).put(vert.texY);
         }
@@ -156,7 +161,7 @@ public class ModelBuilder
         for(Triangle tri : triangles)
         {
                     // Note: I reversed the direction here to accommodate for JME.
-                    i.put(tri.a).put(tri.c).put(tri.b);
+                    i.put(tri.a).put(tri.b).put(tri.c);
         }
         
         System.out.println("Model Built!");
@@ -171,14 +176,14 @@ public class ModelBuilder
         i.flip();
                 */
                 
-                Mesh mesh = new Mesh();
-                
-                mesh.setBuffer(Type.Position, 3, v);
-                mesh.setBuffer(Type.Normal,   3, n);
-                mesh.setBuffer(Type.TexCoord, 2, t);
-                mesh.setBuffer(Type.Index,    3, i);
-                
-                mesh.updateBound();
+        Mesh mesh = new Mesh();
+
+        mesh.setBuffer(Type.Position, 3, v);
+        mesh.setBuffer(Type.Normal,   3, n);
+        mesh.setBuffer(Type.TexCoord, 2, t);
+        mesh.setBuffer(Type.Index,    3, i);
+
+        mesh.updateBound();
                 
         return mesh;
     }
