@@ -2,5 +2,8 @@ nbproject/private/
 build/
 dist/
 donotinclude/
+
+assets/Textures/
+
 lwjgl64.dll
 OpenAL64.dll
