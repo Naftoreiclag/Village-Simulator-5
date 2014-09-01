@@ -94,7 +94,7 @@ public class Hills
                         showgrass = true;
                     }
                     
-                    addGeo(mb, mb2, x, target, y, type, true);
+                    addGeo(mb, mb2, x, target, y, type, showgrass);
                 }
             }
         }
@@ -110,7 +110,10 @@ public class Hills
         float bar = 0.25f;
         float foo = 1 - bar;
         
-        float thickness = -0.5f;
+        float thickness = -0.25f;
+        
+        float texTop = (16 - offY) / 16f;
+        float texBot = texTop + (1f/16f);
         
         Vector3f NW = new Vector3f( 1, 0,  1).normalizeLocal();
         Vector3f NE = new Vector3f(-1, 0,  1).normalizeLocal();
@@ -134,10 +137,10 @@ public class Hills
             // NW corner
 
             mb.addQuad(
-                    0, 0, bar, NW, 0, 0, 
-                    bar, 0, 0, NW, bar, 0, 
-                    bar, thickness, 0, NW, bar, 1,
-                    0, thickness, bar, NW, 0, 1);
+                    0, 0, bar, NW, 0, texTop, 
+                    bar, 0, 0, NW, bar, texTop, 
+                    bar, thickness, 0, NW, bar, texBot,
+                    0, thickness, bar, NW, 0, texBot);
 
             if(showgrass)
             {
@@ -155,10 +158,10 @@ public class Hills
             // NE corner
 
             mb.addQuad(
-                    foo, 0, 0, NE, foo, 0,
-                    1, 0, bar, NE, 1, 0,
-                    1, thickness, bar, NE, 1, 1,
-                    foo, thickness, 0, NE, foo, 1);
+                    foo, 0, 0, NE, foo, texTop,
+                    1, 0, bar, NE, 1, texTop,
+                    1, thickness, bar, NE, 1, texBot,
+                    foo, thickness, 0, NE, foo, texBot);
 
             if(showgrass)
             {
@@ -178,10 +181,10 @@ public class Hills
             // SE corner
 
             mb.addQuad(
-                    1, 0, foo, SE, foo, 0, 
-                    foo, 0, 1, SE, 1, 0, 
-                    foo, thickness, 1, SE, 1, 1, 
-                    1, thickness, foo, SE, foo, 1);
+                    1, 0, foo, SE, foo, texTop, 
+                    foo, 0, 1, SE, 1, texTop, 
+                    foo, thickness, 1, SE, 1, texBot, 
+                    1, thickness, foo, SE, foo, texBot);
 
             if(showgrass)
             {
@@ -201,10 +204,10 @@ public class Hills
             // SW corner
 
             mb.addQuad(
-                    bar, 0, 1, SW, 0, 0, 
-                    0, 0, foo, SW, bar, 0, 
-                    0, thickness, foo, SW, bar, 1,
-                    bar, thickness, 1, SW, 0, 1);
+                    bar, 0, 1, SW, 0, texTop, 
+                    0, 0, foo, SW, bar, texTop, 
+                    0, thickness, foo, SW, bar, texBot,
+                    bar, thickness, 1, SW, 0, texBot);
 
             if(showgrass)
             {
@@ -224,10 +227,10 @@ public class Hills
             // N slab
 
             mb.addQuad(
-                    0, 0, bar, N, 0, 0, 
-                    1, 0, bar, N, 1, 0, 
-                    1, thickness, bar, N, 1, 1, 
-                    0, thickness, bar, N, 0, 1);
+                    0, 0, bar, N, 0, texTop, 
+                    1, 0, bar, N, 1, texTop, 
+                    1, thickness, bar, N, 1, texBot, 
+                    0, thickness, bar, N, 0, texBot);
 
             if(showgrass)
             {
@@ -248,10 +251,10 @@ public class Hills
             // E slab
 
             mb.addQuad(
-                    foo, 0, 0, E, 0, 0, 
-                    foo, 0, 1, E, 1, 0, 
-                    foo, thickness, 1, E, 1, 1, 
-                    foo, thickness, 0, E, 0, 1);
+                    foo, 0, 0, E, 0, texTop, 
+                    foo, 0, 1, E, 1, texTop, 
+                    foo, thickness, 1, E, 1, texBot, 
+                    foo, thickness, 0, E, 0, texBot);
 
             if(showgrass)
             {
@@ -272,10 +275,10 @@ public class Hills
             // S slab
 
             mb.addQuad(
-                    1, 0, foo, S, 0, 0, 
-                    0, 0, foo, S, 1, 0, 
-                    0, thickness, foo, S, 1, 1, 
-                    1, thickness, foo, S, 0, 1);
+                    1, 0, foo, S, 0, texTop, 
+                    0, 0, foo, S, 1, texTop, 
+                    0, thickness, foo, S, 1, texBot, 
+                    1, thickness, foo, S, 0, texBot);
 
             if(showgrass)
             {
@@ -296,10 +299,10 @@ public class Hills
 
             // W slab
             mb.addQuad(
-                    bar, 0, 1, W, 0, 0, 
-                    bar, 0, 0, W, 1, 0, 
-                    bar, thickness, 0, W, 1, 1, 
-                    bar, thickness, 1, W, 0, 1);
+                    bar, 0, 1, W, 0, texTop, 
+                    bar, 0, 0, W, 1, texTop, 
+                    bar, thickness, 0, W, 1, texBot, 
+                    bar, thickness, 1, W, 0, texBot);
 
             if(showgrass)
             {
@@ -386,6 +389,21 @@ public class Hills
                         0, 0, 0, U, 0, bar,
                         bar, 0, 0, U, 0, bar);
             }
+            else if(type == 15)
+            {
+                // x x
+                // x x
+
+                // nothing?
+
+                mb2.addQuad(
+                        0, 0, 0, U, bar, 0, 
+                        1, 0, 0, U, 1, 0, 
+                        1, 0, 1, U, 1, 1,
+                        0, 0, 1, U, bar, 1);
+
+
+            }
         }
         
         if(type == 11 || type == 10)
@@ -396,10 +414,10 @@ public class Hills
             // NW wedge
 
             mb.addQuad(
-                    bar, 0, 1, NW, bar, 0, 
-                    1, 0, bar, NW, 1, 0, 
-                    1, thickness, bar, NW, 1, 1,
-                    bar, thickness, 1, NW, bar, 1);
+                    bar, 0, 1, NW, bar, texTop, 
+                    1, 0, bar, NW, 1, texTop, 
+                    1, thickness, bar, NW, 1, texBot,
+                    bar, thickness, 1, NW, bar, texBot);
         }
         if(type == 7 || type == 5)
         {
@@ -409,10 +427,10 @@ public class Hills
             // NE slab
 
             mb.addQuad(
-                    0, 0, bar, NE, 0, 0, 
-                    foo, 0, 1, NE, foo, 0, 
-                    foo, thickness, 1, NE, foo, 1,
-                    0, thickness, bar, NE, 0, 1);
+                    0, 0, bar, NE, 0, texTop, 
+                    foo, 0, 1, NE, foo, texTop, 
+                    foo, thickness, 1, NE, foo, texBot,
+                    0, thickness, bar, NE, 0, texBot);
 
 
         }
@@ -424,10 +442,10 @@ public class Hills
             // SE wedge
 
             mb.addQuad(
-                    foo, 0, 0, SE, 0, 0, 
-                    0, 0, foo, SE, foo, 0, 
-                    0, thickness, foo, SE, foo, 1,
-                    foo, thickness, 0, SE, 0, 1);
+                    foo, 0, 0, SE, 0, texTop, 
+                    0, 0, foo, SE, foo, texTop, 
+                    0, thickness, foo, SE, foo, texBot,
+                    foo, thickness, 0, SE, 0, texBot);
 
 
         }
@@ -437,27 +455,12 @@ public class Hills
             // x x
 
             mb.addQuad(
-                    1, 0, foo, SW, bar, 0, 
-                    bar, 0, 0, SW, 1, 0, 
-                    bar, thickness, 0, SW, 1, 1,
-                    1, thickness, foo, SW, bar, 1);
+                    1, 0, foo, SW, bar, texTop, 
+                    bar, 0, 0, SW, 1, texTop, 
+                    bar, thickness, 0, SW, 1, texBot,
+                    1, thickness, foo, SW, bar, texBot);
 
             // SW wedge
-
-
-        }
-        if(type == 15)
-        {
-            // x x
-            // x x
-
-            // nothing?
-
-            mb2.addQuad(
-                    0, 0, 0, U, bar, 0, 
-                    1, 0, 0, U, 1, 0, 
-                    1, 0, 1, U, 1, 1,
-                    0, 0, 1, U, bar, 1);
 
 
         }
