@@ -25,21 +25,37 @@ public class Main extends SimpleApplication
         Main main = new Main();
         main.start();
     }
-    
-    Hills hills;
 
     @Override
     public void simpleInitApp()
     {
-        hills = new Hills();
         
+        
+        Hills hills = new Hills();
+        Geometry geom = new Geometry("Rock", hills.mesh);
+        geom.setMaterial((Material) assetManager.loadMaterial("Materials/bumpDebug.j3m"));
+        Geometry geom2 = new Geometry("Grass", hills.mess);
+        geom2.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
+        rootNode.attachChild(geom);
+        rootNode.attachChild(geom2);
+        
+
+        /*
+        NewHills hills = new NewHills();
         Geometry geom = new Geometry("Rock", hills.mesh);
         geom.setMaterial((Material) assetManager.loadMaterial("Materials/bumpDebug.j3m"));
         rootNode.attachChild(geom);
-        Geometry geom2 = new Geometry("Grass", hills.mess);
-        geom2.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
-        rootNode.attachChild(geom2);
-
+        */
+        
+        /*
+        Box box = new Box(Vector3f.ZERO, 1.0f, 1.0f, 1.0f);
+        
+        Geometry foo = new Geometry("TestBox", box);
+        foo.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
+        rootNode.attachChild(foo);
+        */
+        
+        
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White.mult(0.5f));
         sun.setDirection(new Vector3f(1, -2, -3).normalizeLocal());
@@ -53,6 +69,8 @@ public class Main extends SimpleApplication
         
         rootNode.addLight(sun);
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
+        
+        
     }
 
     @Override
