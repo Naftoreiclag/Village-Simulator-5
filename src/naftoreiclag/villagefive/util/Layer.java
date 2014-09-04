@@ -23,6 +23,11 @@ public class Layer
     private List<Texvex> texvex = new ArrayList<Texvex>();
     private List<Line> lines = new ArrayList<Line>();
     
+    public void addSeg(float x1, float z1, float x2, float z2)
+    {
+        this.addSeg(x1, z1, x2, z2, 1.0f, 0.0f);
+    }
+    
     public void addSeg(float x1, float z1, float x2, float z2, float tx1, float tx2)
     {
         /*     ^ normal
@@ -124,9 +129,9 @@ public class Layer
     {
         float thickness = 1.0f;
         
-        FloatBuffer v = BufferUtils.createFloatBuffer(texvex.size() * 3);
-        FloatBuffer n = BufferUtils.createFloatBuffer(texvex.size() * 3);
-        FloatBuffer t = BufferUtils.createFloatBuffer(texvex.size() * 2);
+        FloatBuffer v = BufferUtils.createFloatBuffer(texvex.size() * 6);
+        FloatBuffer n = BufferUtils.createFloatBuffer(texvex.size() * 6);
+        FloatBuffer t = BufferUtils.createFloatBuffer(texvex.size() * 4);
         for(Texvex texv : texvex)
         {
             Vertex vert = texv.linkedData;
@@ -144,7 +149,7 @@ public class Layer
             n.put(normalX).put(thickness).put(normalZ);
             t.put(texv.tx).put(thickness);
         }
-        IntBuffer i = BufferUtils.createIntBuffer(lines.size() * 3);
+        IntBuffer i = BufferUtils.createIntBuffer(lines.size() * 6);
         for(Line line : lines)
         {
             // Note: I reversed the direction here to accommodate for JME.

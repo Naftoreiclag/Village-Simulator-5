@@ -102,21 +102,24 @@ public class NewHills
             type += 8;
         }
         
+        mb.offX = x;
+        mb.offZ = z;
+        
         if(type == 12)
         {
-            
+            mb.addSeg(0.0f, 1.0f, 1.0f, 0.0f);
         }
         else if(type == 9)
         {
-            
+            mb.addSeg(0.0f, 0.0f, 1.0f, 1.0f);
         }
         else if(type == 3)
         {
-            
+            mb.addSeg(1.0f, 0.0f, 0.0f, 1.0f);
         }
         else if(type == 6)
         {
-            
+            mb.addSeg(1.0f, 1.0f, 0.0f, 0.0f);
         }
         else if(type == 14)
         {

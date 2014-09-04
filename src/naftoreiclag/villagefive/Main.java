@@ -10,6 +10,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -30,7 +31,7 @@ public class Main extends SimpleApplication
     public void simpleInitApp()
     {
         
-        
+        /*
         Hills hills = new Hills();
         Geometry geom = new Geometry("Rock", hills.mesh);
         geom.setMaterial((Material) assetManager.loadMaterial("Materials/bumpDebug.j3m"));
@@ -38,14 +39,17 @@ public class Main extends SimpleApplication
         geom2.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
         rootNode.attachChild(geom);
         rootNode.attachChild(geom2);
+        */
         
 
-        /*
+        
         NewHills hills = new NewHills();
         Geometry geom = new Geometry("Rock", hills.mesh);
-        geom.setMaterial((Material) assetManager.loadMaterial("Materials/bumpDebug.j3m"));
+        Material mat = (Material) assetManager.loadMaterial("Materials/bumpDebug.j3m");
+        mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+        geom.setMaterial(mat);
         rootNode.attachChild(geom);
-        */
+        
         
         /*
         Box box = new Box(Vector3f.ZERO, 1.0f, 1.0f, 1.0f);
