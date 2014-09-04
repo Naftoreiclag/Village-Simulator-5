@@ -124,15 +124,18 @@ public class Layer
         
         lines.add(new Line(indice1, indice2));
     }
-
+    
     public Mesh bake()
+    {
+        return bake(0.0f);
+    }
+
+    public Mesh bake(float thickness)
     {
         for(Vertex vert : vertices)
         {
             vert.normalize();
         }
-        
-        float thickness = 1.0f;
         
         FloatBuffer v = BufferUtils.createFloatBuffer(texvexes.size() * 6);
         FloatBuffer n = BufferUtils.createFloatBuffer(texvexes.size() * 6);
@@ -145,9 +148,9 @@ public class Layer
             n.put(vert.normalX).put(0.0f).put(vert.normalZ);
             t.put(texv.tx).put(0.0f);
             
-            v.put(vert.x).put(thickness).put(vert.z);
+            v.put(vert.x).put(-thickness).put(vert.z);
             n.put(vert.normalX).put(0.0f).put(vert.normalZ);
-            t.put(texv.tx).put(thickness);
+            t.put(texv.tx).put(-thickness);
         }
         IntBuffer i = BufferUtils.createIntBuffer(lines.size() * 6);
         for(Line line : lines)

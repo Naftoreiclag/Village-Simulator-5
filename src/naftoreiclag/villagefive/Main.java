@@ -15,6 +15,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
 
@@ -44,11 +45,17 @@ public class Main extends SimpleApplication
 
         
         NewHills hills = new NewHills();
-        Geometry geom = new Geometry("Rock", hills.mesh);
         Material mat = (Material) assetManager.loadMaterial("Materials/bumpDebug.j3m");
-        mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-        geom.setMaterial(mat);
-        rootNode.attachChild(geom);
+        //mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+        
+        for(int i = 0; i < NewHills.numLevels; ++ i)
+        {
+            Geometry geom = new Geometry("Rock " + i, hills.mesh[i]);
+            geom.setMaterial(mat);
+            geom.move(0, i * NewHills.thickness, 0);
+            
+            rootNode.attachChild(geom);
+        }
         
         
         /*

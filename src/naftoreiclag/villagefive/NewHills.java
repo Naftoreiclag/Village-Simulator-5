@@ -21,13 +21,15 @@ public class NewHills
     public static final int width = 25;
     public static final int height = 25;
     
+    public static final float thickness = 0.25f;
+    
     public static final int numLevels = 16;
     
     // Some kind of array to store floor decals
     
     public int[][] heights;
     
-    public Mesh mesh;
+    public Mesh[] mesh = new Mesh[numLevels];
     
     public NewHills()
     {
@@ -56,10 +58,10 @@ public class NewHills
 
     private void buildGeometry()
     {
-        Layer mb = new Layer();
         
         for(int y = 0; y < numLevels; ++ y)
         {
+            Layer mb = new Layer();
             for(int x = 0; x < width - 1; ++ x)
             {
                 for(int z = 0; z < height - 1; ++ z)
@@ -67,9 +69,9 @@ public class NewHills
                     addGeo(mb, x, y, z);
                 }
             }
+            mesh[y] = mb.bake(thickness);
         }
         
-        mesh = mb.bake();
     }
     
     public int access(int x, int z)
