@@ -42,16 +42,11 @@ public class Layer
             return;
         }
         
-        for(int i = 0; i < texvex.size(); ++ i)
-        {
-            break;
-        }
-        
         float normX = z2 - z1;
         float normZ = x1 - x2;
         
-        int indice1 = -1;
-        int indice2 = -1;
+        Vertex vertex1 = null;
+        Vertex vertex2 = null;
         
         for(int i = 0; i < vertices.size(); ++ i)
         {
@@ -62,13 +57,46 @@ public class Layer
                 comp.normX += normX;
                 comp.normZ += normZ;
                 
-                indice1 = i;
+                vertex1 = comp;
             }
             if(comp.x == x2 && comp.z == z2)
             {
                 comp.normX += normX;
                 comp.normZ += normZ;
                 
+                vertex2 = comp;
+            }
+            
+            if(vertex1 != null && vertex2 != null)
+            {
+                break;
+            }
+        }
+        
+        if(vertex1 == null)
+        {
+            vertex1 = new Vertex(x1, z1, normX, normZ);
+            vertices.add(vertex1);
+        }
+        if(vertex2 == null)
+        {
+            vertex2 = new Vertex(x2, z2, normX, normZ);
+            vertices.add(vertex2);
+        }
+        
+        int indice1 = -1;
+        int indice2 = -2;
+        
+        for(int i = 0; i < texvex.size(); ++ i)
+        {
+            Texvex comp = texvex.get(i);
+            
+            if(comp.linkedData == vertex1 && comp.tx == tx1)
+            {
+                indice1 = i;
+            }
+            if(comp.linkedData == vertex2 && comp.tx == tx2)
+            {
                 indice2 = i;
             }
             
@@ -80,13 +108,13 @@ public class Layer
         
         if(indice1 == -1)
         {
-            indice1 = vertices.size();
-            vertices.add(new Vertex(x1, z1, normX, normZ));
+            indice1 = texvex.size();
+            texvex.add(new Texvex(tx1, vertex1));
         }
         if(indice2 == -1)
         {
-            indice2 = vertices.size();
-            vertices.add(new Vertex(x2, z2, normX, normZ));
+            indice2 = texvex.size();
+            texvex.add(new Texvex(tx2, vertex2));
         }
         
         lines.add(new Line(indice1, indice2));
@@ -94,11 +122,15 @@ public class Layer
 
     public Mesh bake()
     {
-        FloatBuffer v = BufferUtils.createFloatBuffer(vertices.size() * 3);
-        FloatBuffer n = BufferUtils.createFloatBuffer(vertices.size() * 3);
-        FloatBuffer t = BufferUtils.createFloatBuffer(vertices.size() * 2);
-        for(Vertex vert : vertices)
+        float thickness = 1.0f;
+        
+        FloatBuffer v = BufferUtils.createFloatBuffer(texvex.size() * 3);
+        FloatBuffer n = BufferUtils.createFloatBuffer(texvex.size() * 3);
+        FloatBuffer t = BufferUtils.createFloatBuffer(texvex.size() * 2);
+        for(Texvex texv : texvex)
         {
+            Vertex vert = texv.linkedData;
+            
             double magnitude = Math.sqrt((vert.normX * vert.normX) + (vert.normZ * vert.normZ));
             
             float normalX = (float) (vert.normX / magnitude);
@@ -106,18 +138,23 @@ public class Layer
             
             v.put(vert.x).put(0.0f).put(vert.z);
             n.put(normalX).put(0.0f).put(normalZ);
-            t.put(vert.texX).put(vert.texY);
+            t.put(texv.tx).put(0.0f);
+            
+            v.put(vert.x).put(thickness).put(vert.z);
+            n.put(normalX).put(thickness).put(normalZ);
+            t.put(texv.tx).put(thickness);
         }
-        IntBuffer i = BufferUtils.createIntBuffer(triangles.size() * 3);
-        for(Line tri : line)
+        IntBuffer i = BufferUtils.createIntBuffer(lines.size() * 3);
+        for(Line line : lines)
         {
             // Note: I reversed the direction here to accommodate for JME.
-            i.put(tri.a).put(tri.c).put(tri.b);
+            i.put(line.indice1).put(line.indice2).put(line.indice2 + 1);
+            i.put(line.indice1).put(line.indice2 + 1).put(line.indice1 + 1);
         }
         
         System.out.println("Model Built!");
-        System.out.println("Polys: " + triangles.size());
-        System.out.println("Vertices: " + (triangles.size() * 3));
+        System.out.println("Polys: " + lines.size() * 2);
+        System.out.println("Vertices: " + (lines.size() * 4));
         System.out.println("Output Verts: " + vertices.size());
         
                 /*
@@ -147,8 +184,8 @@ public class Layer
         
         public Line(int indice1, int indice2)
         {
-            this.indice1 = indice1;
-            this.indice2 = indice2;
+            this.indice1 = indice1 * 2;
+            this.indice2 = indice2 * 2;
         }
     }
     
