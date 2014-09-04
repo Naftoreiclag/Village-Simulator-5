@@ -90,7 +90,7 @@ public class Layer
         }
         
         int indice1 = -1;
-        int indice2 = -2;
+        int indice2 = -1;
         
         for(int i = 0; i < texvex.size(); ++ i)
         {
