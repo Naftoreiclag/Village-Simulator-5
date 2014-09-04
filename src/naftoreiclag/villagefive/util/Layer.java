@@ -20,7 +20,7 @@ public class Layer
     public float offZ = 0;
     
     private List<Vertex> vertices = new ArrayList<Vertex>();
-    private List<Texvex> texvex = new ArrayList<Texvex>();
+    private List<Texvex> texvexes = new ArrayList<Texvex>();
     private List<Line> lines = new ArrayList<Line>();
     
     public void addSeg(float x1, float z1, float x2, float z2)
@@ -92,9 +92,9 @@ public class Layer
         int indice1 = -1;
         int indice2 = -1;
         
-        for(int i = 0; i < texvex.size(); ++ i)
+        for(int i = 0; i < texvexes.size(); ++ i)
         {
-            Texvex comp = texvex.get(i);
+            Texvex comp = texvexes.get(i);
             
             if(comp.linkedData == vertex1 && comp.tx == tx1)
             {
@@ -113,13 +113,13 @@ public class Layer
         
         if(indice1 == -1)
         {
-            indice1 = texvex.size();
-            texvex.add(new Texvex(tx1, vertex1));
+            indice1 = texvexes.size();
+            texvexes.add(new Texvex(tx1, vertex1));
         }
         if(indice2 == -1)
         {
-            indice2 = texvex.size();
-            texvex.add(new Texvex(tx2, vertex2));
+            indice2 = texvexes.size();
+            texvexes.add(new Texvex(tx2, vertex2));
         }
         
         lines.add(new Line(indice1, indice2));
@@ -127,26 +127,26 @@ public class Layer
 
     public Mesh bake()
     {
+        for(Vertex vert : vertices)
+        {
+            vert.normalize();
+        }
+        
         float thickness = 1.0f;
         
-        FloatBuffer v = BufferUtils.createFloatBuffer(texvex.size() * 6);
-        FloatBuffer n = BufferUtils.createFloatBuffer(texvex.size() * 6);
-        FloatBuffer t = BufferUtils.createFloatBuffer(texvex.size() * 4);
-        for(Texvex texv : texvex)
+        FloatBuffer v = BufferUtils.createFloatBuffer(texvexes.size() * 6);
+        FloatBuffer n = BufferUtils.createFloatBuffer(texvexes.size() * 6);
+        FloatBuffer t = BufferUtils.createFloatBuffer(texvexes.size() * 4);
+        for(Texvex texv : texvexes)
         {
             Vertex vert = texv.linkedData;
             
-            double magnitude = Math.sqrt((vert.normX * vert.normX) + (vert.normZ * vert.normZ));
-            
-            float normalX = (float) (vert.normX / magnitude);
-            float normalZ = (float) (vert.normZ / magnitude);
-            
             v.put(vert.x).put(0.0f).put(vert.z);
-            n.put(normalX).put(0.0f).put(normalZ);
+            n.put(vert.normalX).put(0.0f).put(vert.normalZ);
             t.put(texv.tx).put(0.0f);
             
             v.put(vert.x).put(thickness).put(vert.z);
-            n.put(normalX).put(thickness).put(normalZ);
+            n.put(vert.normalX).put(0.0f).put(vert.normalZ);
             t.put(texv.tx).put(thickness);
         }
         IntBuffer i = BufferUtils.createIntBuffer(lines.size() * 6);
@@ -161,13 +161,6 @@ public class Layer
         System.out.println("Polys: " + lines.size() * 2);
         System.out.println("Vertices: " + (lines.size() * 4));
         System.out.println("Output Verts: " + vertices.size());
-        
-                /*
-        v.flip();
-        n.flip();
-        t.flip();
-        i.flip();
-                */
                 
         Mesh mesh = new Mesh();
 
@@ -217,6 +210,18 @@ public class Layer
         // Unnormalized vector perpendicular to its direction
         public float normX;
         public float normZ;
+        
+        //
+        public float normalX;
+        public float normalZ;
+        
+        public void normalize()
+        {
+            double magnitude = Math.sqrt((normX * normX) + (normZ * normZ));
+            
+            normalX = (float) (normX / magnitude);
+            normalZ = (float) (normZ / magnitude);
+        }
         
         public Vertex(float x, float z, float normX, float normZ)
         {
