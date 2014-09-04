@@ -7,18 +7,23 @@
 package naftoreiclag.villagefive.util;
 
 import com.jme3.scene.Mesh;
+import com.jme3.scene.VertexBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import org.lwjgl.BufferUtils;
 
 public class Layer
 {
-    public double offX = 0;
-    public double offZ = 0;
+    public float offX = 0;
+    public float offZ = 0;
     
     private List<Vertex> vertices = new ArrayList<Vertex>();
+    private List<Texvex> texvex = new ArrayList<Texvex>();
     private List<Line> lines = new ArrayList<Line>();
     
-    public void addSeg(double x1, double z1, double x2, double z2)
+    public void addSeg(float x1, float z1, float x2, float z2, float tx1, float tx2)
     {
         /*     ^ normal
          *     |
@@ -37,8 +42,13 @@ public class Layer
             return;
         }
         
-        double normX = z2 - z1;
-        double normZ = x1 - x2;
+        for(int i = 0; i < texvex.size(); ++ i)
+        {
+            break;
+        }
+        
+        float normX = z2 - z1;
+        float normZ = x1 - x2;
         
         int indice1 = -1;
         int indice2 = -1;
@@ -84,7 +94,49 @@ public class Layer
 
     public Mesh bake()
     {
-        return null;
+        FloatBuffer v = BufferUtils.createFloatBuffer(vertices.size() * 3);
+        FloatBuffer n = BufferUtils.createFloatBuffer(vertices.size() * 3);
+        FloatBuffer t = BufferUtils.createFloatBuffer(vertices.size() * 2);
+        for(Vertex vert : vertices)
+        {
+            double magnitude = Math.sqrt((vert.normX * vert.normX) + (vert.normZ * vert.normZ));
+            
+            float normalX = (float) (vert.normX / magnitude);
+            float normalZ = (float) (vert.normZ / magnitude);
+            
+            v.put(vert.x).put(0.0f).put(vert.z);
+            n.put(normalX).put(0.0f).put(normalZ);
+            t.put(vert.texX).put(vert.texY);
+        }
+        IntBuffer i = BufferUtils.createIntBuffer(triangles.size() * 3);
+        for(Line tri : line)
+        {
+            // Note: I reversed the direction here to accommodate for JME.
+            i.put(tri.a).put(tri.c).put(tri.b);
+        }
+        
+        System.out.println("Model Built!");
+        System.out.println("Polys: " + triangles.size());
+        System.out.println("Vertices: " + (triangles.size() * 3));
+        System.out.println("Output Verts: " + vertices.size());
+        
+                /*
+        v.flip();
+        n.flip();
+        t.flip();
+        i.flip();
+                */
+                
+        Mesh mesh = new Mesh();
+
+        mesh.setBuffer(VertexBuffer.Type.Position, 3, v);
+        mesh.setBuffer(VertexBuffer.Type.Normal,   3, n);
+        mesh.setBuffer(VertexBuffer.Type.TexCoord, 2, t);
+        mesh.setBuffer(VertexBuffer.Type.Index,    3, i);
+
+        mesh.updateBound();
+                
+        return mesh;
     }
     
     // struct
@@ -101,16 +153,30 @@ public class Layer
     }
     
     // struct
+    public static class Texvex
+    {
+        public float tx;
+        
+        public Vertex linkedData;
+        
+        public Texvex(float tx, Vertex linkedData)
+        {
+            this.tx = tx;
+            this.linkedData = linkedData;
+        }
+    }
+    
+    // struct
     public static class Vertex
     {
-        public double x;
-        public double z;
+        public float x;
+        public float z;
         
         // Unnormalized vector perpendicular to its direction
-        public double normX;
-        public double normZ;
+        public float normX;
+        public float normZ;
         
-        public Vertex(double x, double z, double normX, double normZ)
+        public Vertex(float x, float z, float normX, float normZ)
         {
             this.x = x;
             this.z = z;
