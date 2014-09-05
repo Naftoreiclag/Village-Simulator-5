@@ -150,7 +150,7 @@ public class Layer
             
             v.put(vert.x).put(-thickness).put(vert.z);
             n.put(vert.normalX).put(0.0f).put(vert.normalZ);
-            t.put(texv.tx).put(-thickness);
+            t.put(texv.tx).put(thickness);
         }
         IntBuffer i = BufferUtils.createIntBuffer(lines.size() * 6);
         for(Line line : lines)

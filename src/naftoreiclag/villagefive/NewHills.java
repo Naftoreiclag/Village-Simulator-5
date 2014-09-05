@@ -86,6 +86,11 @@ public class NewHills
 
     private void addGeo(Layer mb, int x, int y, int z)
     {
+        if(access(x, z) >= y)
+        {
+            return;
+        }
+        
         int type = 0;
         if(access(x - 1, z) >= y)
         {
@@ -125,19 +130,43 @@ public class NewHills
         }
         else if(type == 14)
         {
-            
+            mb.addSeg(0.0f, 1.0f, 0.25f, 0.75f);
+            mb.addSeg(0.25f, 0.75f, 0.25f, 0.25f);
+            mb.addSeg(0.25f, 0.25f, 0.0f, 0.0f);
         }
         else if(type == 13)
         {
-            
+            mb.addSeg(1.0f, 0.0f, 0.75f, 0.25f);
+            mb.addSeg(0.75f, 0.25f, 0.25f, 0.25f);
+            mb.addSeg(0.25f, 0.25f, 0.0f, 0.0f);
         }
         else if(type == 11)
         {
-            
+            mb.addSeg(1.0f, 0.0f, 0.75f, 0.25f);
+            mb.addSeg(0.75f, 0.25f, 0.75f, 0.75f);
+            mb.addSeg(0.75f, 0.75f, 1.0f, 1.0f);
         }
         else if(type == 7)
         {
-            
+            mb.addSeg(1.0f, 1.0f, 0.75f, 0.75f);
+            mb.addSeg(0.75f, 0.75f, 0.25f, 0.75f);
+            mb.addSeg(0.25f, 0.75f, 0.0f, 1.0f);
+        }
+        if(type == 8 || type == 10)
+        {
+            mb.addSeg(0.0f, 1.0f, 1.0f, 1.0f);
+        }
+        if(type == 2 || type == 10)
+        {
+            mb.addSeg(1.0f, 0.0f, 0.0f, 0.0f);
+        }
+        if(type == 1 || type == 5)
+        {
+            mb.addSeg(0.0f, 0.0f, 0.0f, 1.0f);
+        }
+        if(type == 4 || type == 5)
+        {
+            mb.addSeg(1.0f, 1.0f, 1.0f, 0.0f);
         }
     }
 }
