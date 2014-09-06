@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.lwjgl.BufferUtils;
 
-public class ModelBuilder
+public class SpecializedModelBuilder
 {
     //
     private float appendX = 0;
@@ -230,17 +230,17 @@ public class ModelBuilder
     // Bakes the data into a usable model. Note: You can bake this more than once if you really want to.
     public Mesh bake()
     {
-        return bake(1.0f, 1.0f, 1.0f);
+        return bake(1.0f);
     }
     
-    public Mesh bake(float xscale, float yscale, float zscale)
+    public Mesh bake(float scale)
     {
         FloatBuffer v = BufferUtils.createFloatBuffer(vertices.size() * 3);
         FloatBuffer n = BufferUtils.createFloatBuffer(vertices.size() * 3);
         FloatBuffer t = BufferUtils.createFloatBuffer(vertices.size() * 2);
         for(Vertex vert : vertices)
         {
-                    v.put(vert.x * xscale).put(vert.y * yscale).put(vert.z * zscale);
+                    v.put(vert.x * scale).put(vert.y * scale).put(vert.z * scale);
                     n.put(vert.normal.x).put(vert.normal.y).put(vert.normal.z);
                     t.put(vert.texX).put(vert.texY);
         }

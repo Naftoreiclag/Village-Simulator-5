@@ -43,11 +43,12 @@ public class Main extends SimpleApplication
         */
         
 
-        
+        /*
         NewHills hills = new NewHills();
         Material mat = (Material) assetManager.loadMaterial("Materials/bumpDebug.j3m");
         //mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
         
+        /*
         for(int i = 0; i < NewHills.numLevels; ++ i)
         {
             Geometry geom = new Geometry("Rock " + i, hills.mesh[i]);
@@ -56,6 +57,26 @@ public class Main extends SimpleApplication
             
             rootNode.attachChild(geom);
         }
+        
+        Geometry geom = new Geometry("Rock", hills.mesh2);
+        geom.setMaterial(mat);
+
+        rootNode.attachChild(geom);
+        */
+        
+        HexHills hills = new HexHills();
+        Material mat = (Material) assetManager.loadMaterial("Materials/bumpDebug.j3m");
+        //mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+        
+        for(int i = 0; i < HexHills.numLevels; ++ i)
+        {
+            Geometry geom = new Geometry("Rock " + i, hills.mesh[i]);
+            geom.setMaterial(mat);
+            geom.move(0, i * NewHills.thickness, 0);
+            
+            rootNode.attachChild(geom);
+        }
+        
         
         
         /*

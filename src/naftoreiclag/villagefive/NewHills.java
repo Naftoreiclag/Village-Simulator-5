@@ -15,6 +15,7 @@ import static naftoreiclag.villagefive.Hills.height;
 import static naftoreiclag.villagefive.Hills.width;
 import naftoreiclag.villagefive.util.Layer;
 import naftoreiclag.villagefive.util.ModelBuilder;
+import naftoreiclag.villagefive.util.SpecializedModelBuilder;
 
 public class NewHills
 {
@@ -31,10 +32,12 @@ public class NewHills
     
     public Mesh[] mesh = new Mesh[numLevels];
     
+    public Mesh mesh2;
+    
     public NewHills()
     {
         loadDataFromFile();
-        buildGeometry();
+        buildGeometry2();
     }
     public void loadDataFromFile()
     {
@@ -54,6 +57,107 @@ public class NewHills
                 heights[x][z] = (img.getRGB(x, z) & 0x000000F0) / 16;
             }
         }
+    }
+    
+    private void buildGeometry2()
+    {
+        ModelBuilder mb = new ModelBuilder();
+        for(int x = 0; x < width - 1; ++ x)
+        {
+            for(int z = 0; z < height - 1; ++ z)
+            {
+                int groundLevel = this.access(x, z);
+                
+                int wedgeLevel = -1;
+                int wedgeType = 0;
+                
+                int west = access(x - 1, z);
+                int north = access(x, z - 1);
+                int east = access(x + 1, z);
+                int south = access(x, z + 1);
+                
+                if(west > groundLevel)
+                {
+                    wedgeLevel = west;
+                    wedgeType += 1;
+                }
+                if(north > groundLevel)
+                {
+                    if(wedgeLevel == -1 || north < wedgeLevel)
+                    {
+                        wedgeLevel = north;
+                    }
+                    
+                    wedgeType += 2;
+                }
+                if(east > groundLevel)
+                {
+                    if(wedgeLevel == -1 || east < wedgeLevel)
+                    {
+                        wedgeLevel = east;
+                    }
+                    
+                    wedgeType += 4;
+                }
+                if(south > groundLevel)
+                {
+                    if(wedgeLevel == -1 || south < wedgeLevel)
+                    {
+                        wedgeLevel = south;
+                    }
+                    
+                    wedgeType += 8;
+                }
+                
+                int wedgeThickness = wedgeLevel - groundLevel;
+                
+                if(wedgeType != 15 && wedgeType != 0)
+                {
+                    if(wedgeType == 12)
+                    {
+                        
+                    }
+                    else if(wedgeType == 9)
+                    {
+                        
+                    }
+                    else if(wedgeType == 3)
+                    {
+                        
+                    }
+                    else if(wedgeType == 6)
+                    {
+                        
+                    }
+                    else if(wedgeType == 14)
+                    {
+                        
+                    }
+                    else if(wedgeType == 13)
+                    {
+                        
+                    }
+                    else if(wedgeType == 11)
+                    {
+                        
+                    }
+                    else if(wedgeType == 7)
+                    {
+                        
+                    }
+                    
+                    groundLevel = wedgeLevel;
+                }
+                else
+                {
+                    
+                }
+                
+                
+            }
+        }
+        
+        mesh2 = mb.bake();
     }
 
     private void buildGeometry()
