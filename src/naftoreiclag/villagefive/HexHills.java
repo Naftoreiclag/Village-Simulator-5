@@ -35,8 +35,8 @@ public class HexHills
     public int[][] heights;
     
     public Mesh[] mesh = new Mesh[numLevels];
+    public Mesh[] mesh2 = new Mesh[numLevels];
     
-    public Mesh mesh2;
     
     public HexHills()
     {
@@ -67,7 +67,8 @@ public class HexHills
     {
         for(int y = 0; y < numLevels; ++ y)
         {
-            ModelBuilder mb = new ModelBuilder();
+            Layer layer = new Layer();
+            ModelBuilder mb2 = new ModelBuilder();
             for(int x = 0; x < width; ++ x)
             {
                 for(int z = 0; z < height; ++ z)
@@ -77,11 +78,13 @@ public class HexHills
                         continue;
                     }
                     
-                    mb.setAppendOrigin(x * woodif * 3, 0, (((x & 1) == 0) ? 0 : heetah) + (z * heetah * 2));
+                    layer.offX = x * woodif * 3;
+                    layer.offZ = (((x & 1) == 0) ? 0 : heetah) + (z * heetah * 2);
+                    mb2.setAppendOrigin(x * woodif * 3, 0, (((x & 1) == 0) ? 0 : heetah) + (z * heetah * 2));
                     
                     if(access(x, z) == y)
                     {
-                        mb.addHexagon(
+                        mb2.addHexagon(
                                 xoffs[0], 0.0f, zoffs[0], Vector3f.UNIT_Y, 0.0f, 0.0f,
                                 xoffs[1], 0.0f, zoffs[1], Vector3f.UNIT_Y, 0.0f, 0.0f,
                                 xoffs[2], 0.0f, zoffs[2], Vector3f.UNIT_Y, 0.0f, 0.0f,
@@ -134,14 +137,18 @@ public class HexHills
                         {
                             if(neighbor[ip])
                             {
-                                mb.addQuad(
+                                layer.addSeg(xoffs[i], zoffs[i], xoffs[ipp], zoffs[ipp]);
+                                
+                                /*
+                                mb2.addQuad(
                                         xoffs[i], thickness, zoffs[i], Vector3f.ZERO, 0.0f, 0.0f, 
                                         xoffs[ipp], thickness, zoffs[ipp], Vector3f.ZERO, 1.0f, 0.0f, 
                                         xoffs[ipp], 0.0f, zoffs[ipp], Vector3f.ZERO, 1.0f, 1.0f, 
                                         xoffs[i], 0.0f, zoffs[i], Vector3f.ZERO, 0.0f, 1.0f);
+                                */
                                 
                                 
-                                mb.addTriangle(
+                                mb2.addTriangle(
                                         xoffs[i], thickness, zoffs[i], Vector3f.UNIT_Y, 0.0f, 0.0f,
                                         xoffs[ip], thickness, zoffs[ip], Vector3f.UNIT_Y, 0.0f, 0.0f,
                                         xoffs[ipp], thickness, zoffs[ipp], Vector3f.UNIT_Y, 0.0f, 0.0f
@@ -152,11 +159,14 @@ public class HexHills
                             {
                                 if(!neighbor[im])
                                 {
-                                    mb.addQuad(
+                                    layer.addSeg(xoffs[i], zoffs[i], xoffs[ip], zoffs[ip]);
+                                    /*
+                                    mb2.addQuad(
                                             xoffs[i], thickness, zoffs[i], Vector3f.ZERO, 0.0f, 0.0f, 
                                             xoffs[ip], thickness, zoffs[ip], Vector3f.ZERO, 1.0f, 0.0f, 
                                             xoffs[ip], 0.0f, zoffs[ip], Vector3f.ZERO, 1.0f, 1.0f, 
                                             xoffs[i], 0.0f, zoffs[i], Vector3f.ZERO, 0.0f, 1.0f);
+                                    */
                                 }
                             }
                         }
@@ -164,7 +174,8 @@ public class HexHills
                 }
             }
             
-            mesh[y] = mb.bake(0.02f, 1.0f, 0.02f);
+            mesh[y] = layer.bake(0.02f, thickness, 0.02f);
+            mesh2[y] = mb2.bake(0.02f, 1.0f, 0.02f);
         }
     }
     

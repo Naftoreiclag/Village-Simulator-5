@@ -30,9 +30,11 @@ public class Layer
     
     public void addSeg(float x1, float z1, float x2, float z2, float tx1, float tx2)
     {
-        /*     ^ normal
-         *     |
+        /*
          * 1 ----- 2
+         *     |
+         *     v normal
+         * 
          */
         
         x1 += offX;
@@ -127,10 +129,10 @@ public class Layer
     
     public Mesh bake()
     {
-        return bake(0.0f);
+        return bake(0.0f, 0.0f, 0.0f);
     }
 
-    public Mesh bake(float thickness)
+    public Mesh bake(float xscale, float thickness, float zscale)
     {
         for(Vertex vert : vertices)
         {
@@ -144,11 +146,11 @@ public class Layer
         {
             Vertex vert = texv.linkedData;
             
-            v.put(vert.x).put(0.0f).put(vert.z);
+            v.put(vert.x * xscale).put(thickness).put(vert.z * zscale);
             n.put(vert.normalX).put(0.0f).put(vert.normalZ);
             t.put(texv.tx).put(0.0f);
             
-            v.put(vert.x).put(-thickness).put(vert.z);
+            v.put(vert.x * xscale).put(0.0f).put(vert.z * zscale);
             n.put(vert.normalX).put(0.0f).put(vert.normalZ);
             t.put(texv.tx).put(thickness);
         }
@@ -156,8 +158,8 @@ public class Layer
         for(Line line : lines)
         {
             // Note: I reversed the direction here to accommodate for JME.
-            i.put(line.indice1).put(line.indice2).put(line.indice2 + 1);
-            i.put(line.indice1).put(line.indice2 + 1).put(line.indice1 + 1);
+            i.put(line.indice1).put(line.indice2 + 1).put(line.indice2);
+            i.put(line.indice1).put(line.indice1 + 1).put(line.indice2 + 1);
         }
         
         System.out.println("Model Built!");

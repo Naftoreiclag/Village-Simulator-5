@@ -75,6 +75,11 @@ public class Main extends SimpleApplication
             geom.move(0, i * NewHills.thickness, 0);
             
             rootNode.attachChild(geom);
+            Geometry geom2 = new Geometry("Grass " + i, hills.mesh2[i]);
+            geom2.setMaterial(mat);
+            geom2.move(0, i * NewHills.thickness, 0);
+            
+            rootNode.attachChild(geom2);
         }
         
         
