@@ -28,6 +28,12 @@ public class HexHills
     public static final float[] xoffs = {0.0f, woodif, woodif * 3.0f, woodif * 4.0f, woodif * 3.0f, woodif, 0.0f};
     public static final float[] zoffs = {heetah, 0.0f, 0.0f, heetah, heetah * 2.0f, heetah * 2.0f};
     
+    public static final float fwoodif = woodif * 4;
+    public static final float fheetah = heetah * 2;
+    
+    public static final float[] xoffs2 = {xoffs[0] / fwoodif, xoffs[1] / fwoodif, xoffs[2] / fwoodif, xoffs[3] / fwoodif, xoffs[4] / fwoodif, xoffs[5] / fwoodif};
+    public static final float[] zoffs2 = {zoffs[0] / fheetah, zoffs[1] / fheetah, zoffs[2] / fheetah, zoffs[3] / fheetah, zoffs[4] / fheetah, zoffs[5] / fheetah};
+    
     public static final int numLevels = 16;
     
     // Some kind of array to store floor decals
@@ -85,12 +91,12 @@ public class HexHills
                     if(access(x, z) == y)
                     {
                         mb2.addHexagon(
-                                xoffs[0], 0.0f, zoffs[0], Vector3f.UNIT_Y, 0.0f, 0.0f,
-                                xoffs[1], 0.0f, zoffs[1], Vector3f.UNIT_Y, 0.0f, 0.0f,
-                                xoffs[2], 0.0f, zoffs[2], Vector3f.UNIT_Y, 0.0f, 0.0f,
-                                xoffs[3], 0.0f, zoffs[3], Vector3f.UNIT_Y, 0.0f, 0.0f,
-                                xoffs[4], 0.0f, zoffs[4], Vector3f.UNIT_Y, 0.0f, 0.0f,
-                                xoffs[5], 0.0f, zoffs[5], Vector3f.UNIT_Y, 0.0f, 0.0f
+                                xoffs[0], 0.0f, zoffs[0], Vector3f.UNIT_Y, xoffs2[0], zoffs2[0],
+                                xoffs[1], 0.0f, zoffs[1], Vector3f.UNIT_Y, xoffs2[1], zoffs2[1],
+                                xoffs[2], 0.0f, zoffs[2], Vector3f.UNIT_Y, xoffs2[2], zoffs2[2],
+                                xoffs[3], 0.0f, zoffs[3], Vector3f.UNIT_Y, xoffs2[3], zoffs2[3],
+                                xoffs[4], 0.0f, zoffs[4], Vector3f.UNIT_Y, xoffs2[4], zoffs2[4],
+                                xoffs[5], 0.0f, zoffs[5], Vector3f.UNIT_Y, xoffs2[5], zoffs2[5]
                                 
                                 );
                     }
@@ -139,20 +145,10 @@ public class HexHills
                             {
                                 layer.addSeg(xoffs[i], zoffs[i], xoffs[ipp], zoffs[ipp]);
                                 
-                                /*
-                                mb2.addQuad(
-                                        xoffs[i], thickness, zoffs[i], Vector3f.ZERO, 0.0f, 0.0f, 
-                                        xoffs[ipp], thickness, zoffs[ipp], Vector3f.ZERO, 1.0f, 0.0f, 
-                                        xoffs[ipp], 0.0f, zoffs[ipp], Vector3f.ZERO, 1.0f, 1.0f, 
-                                        xoffs[i], 0.0f, zoffs[i], Vector3f.ZERO, 0.0f, 1.0f);
-                                */
-                                
-                                
                                 mb2.addTriangle(
                                         xoffs[i], thickness, zoffs[i], Vector3f.UNIT_Y, 0.0f, 0.0f,
                                         xoffs[ip], thickness, zoffs[ip], Vector3f.UNIT_Y, 0.0f, 0.0f,
                                         xoffs[ipp], thickness, zoffs[ipp], Vector3f.UNIT_Y, 0.0f, 0.0f
-
                                         );
                             }
                             else
@@ -160,13 +156,6 @@ public class HexHills
                                 if(!neighbor[im])
                                 {
                                     layer.addSeg(xoffs[i], zoffs[i], xoffs[ip], zoffs[ip]);
-                                    /*
-                                    mb2.addQuad(
-                                            xoffs[i], thickness, zoffs[i], Vector3f.ZERO, 0.0f, 0.0f, 
-                                            xoffs[ip], thickness, zoffs[ip], Vector3f.ZERO, 1.0f, 0.0f, 
-                                            xoffs[ip], 0.0f, zoffs[ip], Vector3f.ZERO, 1.0f, 1.0f, 
-                                            xoffs[i], 0.0f, zoffs[i], Vector3f.ZERO, 0.0f, 1.0f);
-                                    */
                                 }
                             }
                         }
@@ -187,91 +176,5 @@ public class HexHills
         }
         
         return heights[x][z];
-    }
-
-    private void addGeo(Layer mb, int x, int y, int z)
-    {
-        if(access(x, z) >= y)
-        {
-            return;
-        }
-        
-        int type = 0;
-        if(access(x - 1, z) >= y)
-        {
-            type += 1;
-        }
-        if(access(x, z - 1) >= y)
-        {
-            type += 2;
-        }
-        if(access(x + 1, z) >= y)
-        {
-            type += 4;
-        }
-        if(access(x, z + 1) >= y)
-        {
-            type += 8;
-        }
-        
-        mb.offX = x;
-        mb.offZ = z;
-        
-        if(type == 12)
-        {
-            mb.addSeg(0.0f, 1.0f, 1.0f, 0.0f);
-        }
-        else if(type == 9)
-        {
-            mb.addSeg(0.0f, 0.0f, 1.0f, 1.0f);
-        }
-        else if(type == 3)
-        {
-            mb.addSeg(1.0f, 0.0f, 0.0f, 1.0f);
-        }
-        else if(type == 6)
-        {
-            mb.addSeg(1.0f, 1.0f, 0.0f, 0.0f);
-        }
-        else if(type == 14)
-        {
-            mb.addSeg(0.0f, 1.0f, 0.25f, 0.75f);
-            mb.addSeg(0.25f, 0.75f, 0.25f, 0.25f);
-            mb.addSeg(0.25f, 0.25f, 0.0f, 0.0f);
-        }
-        else if(type == 13)
-        {
-            mb.addSeg(1.0f, 0.0f, 0.75f, 0.25f);
-            mb.addSeg(0.75f, 0.25f, 0.25f, 0.25f);
-            mb.addSeg(0.25f, 0.25f, 0.0f, 0.0f);
-        }
-        else if(type == 11)
-        {
-            mb.addSeg(1.0f, 0.0f, 0.75f, 0.25f);
-            mb.addSeg(0.75f, 0.25f, 0.75f, 0.75f);
-            mb.addSeg(0.75f, 0.75f, 1.0f, 1.0f);
-        }
-        else if(type == 7)
-        {
-            mb.addSeg(1.0f, 1.0f, 0.75f, 0.75f);
-            mb.addSeg(0.75f, 0.75f, 0.25f, 0.75f);
-            mb.addSeg(0.25f, 0.75f, 0.0f, 1.0f);
-        }
-        if(type == 8 || type == 10)
-        {
-            mb.addSeg(0.0f, 1.0f, 1.0f, 1.0f);
-        }
-        if(type == 2 || type == 10)
-        {
-            mb.addSeg(1.0f, 0.0f, 0.0f, 0.0f);
-        }
-        if(type == 1 || type == 5)
-        {
-            mb.addSeg(0.0f, 0.0f, 0.0f, 1.0f);
-        }
-        if(type == 4 || type == 5)
-        {
-            mb.addSeg(1.0f, 1.0f, 1.0f, 0.0f);
-        }
     }
 }

@@ -1,6 +1,6 @@
 Material My Material : Common/MatDefs/Light/Lighting.j3md {
      MaterialParameters {
-        DiffuseMap : Flip Textures/camograss.png
+        DiffuseMap : Flip Textures/rok.png
         NormalMap : Flip Textures/dirt_normals.png
         Shininess : 128.0
         VertexLighting : false

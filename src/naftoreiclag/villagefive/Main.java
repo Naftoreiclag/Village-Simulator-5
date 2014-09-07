@@ -64,8 +64,10 @@ public class Main extends SimpleApplication
         rootNode.attachChild(geom);
         */
         
-        HexHills hills = new HexHills();
         Material mat = (Material) assetManager.loadMaterial("Materials/bumpDebug.j3m");
+        
+        HexHills hills = new HexHills();
+        Material mat2 = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
         //mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
         
         for(int i = 0; i < HexHills.numLevels; ++ i)
@@ -76,7 +78,7 @@ public class Main extends SimpleApplication
             
             rootNode.attachChild(geom);
             Geometry geom2 = new Geometry("Grass " + i, hills.mesh2[i]);
-            geom2.setMaterial(mat);
+            geom2.setMaterial(mat2);
             geom2.move(0, i * NewHills.thickness, 0);
             
             rootNode.attachChild(geom2);
