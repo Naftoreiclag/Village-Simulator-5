@@ -90,19 +90,17 @@ public class Main extends SimpleApplication
         UnoptimizedHills hills = new UnoptimizedHills();
         Geometry geom2 = new Geometry("Grass ", hills.mesh);
         geom2.setMaterial(mat2);
-        mat2.getAdditionalRenderState().setWireframe(true);
+        //mat2.getAdditionalRenderState().setWireframe(true);
         mat2.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 
         rootNode.attachChild(geom2);
         
-        
-        
         /*
-        Box box = new Box(Vector3f.ZERO, 1.0f, 1.0f, 1.0f);
-        
-        Geometry foo = new Geometry("TestBox", box);
-        foo.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
-        rootNode.attachChild(foo);
+        Box box = new Box(2f / 2, 3.75f / 2, 2f / 2);
+        Geometry bounds = new Geometry("box", box);
+        bounds.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
+        bounds.move(0f, 3.75f / 2, 0f);
+        rootNode.attachChild(bounds);
         */
         
         

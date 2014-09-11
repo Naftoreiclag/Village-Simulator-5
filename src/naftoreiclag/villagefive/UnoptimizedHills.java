@@ -67,7 +67,7 @@ public class UnoptimizedHills
     }
     
     float vertu = 1.0f;
-    float horzu = 0.25f;
+    float horzu = 0.125f;
     public void updateVertex(int x, int z)
     {
     }
@@ -82,6 +82,9 @@ public class UnoptimizedHills
             }
         }
         ModelBuilder mb = new ModelBuilder();
+        
+        float limit = 2;
+        
         for(int x = 0; x < width - 1; ++ x)
         {
             for(int z = 0; z < height - 1; ++ z)
@@ -104,28 +107,37 @@ public class UnoptimizedHills
                 h3 -= smallest;
                 h4 -= smallest;
                 
-                if(h1 > 1)
-                {
-                    h1 = 1;
-                }
-                if(h2 > 1)
-                {
-                    h2 = 1;
-                }
-                if(h3 > 1)
-                {
-                    h3 = 1;
-                }
-                if(h4 > 1)
-                {
-                    h4 = 1;
-                }
+                float mh1 = h1 > limit ? limit : h1;
+                float mh2 = h2 > limit ? limit : h2;
+                float mh3 = h3 > limit ? limit : h3;
+                float mh4 = h4 > limit ? limit : h4;
                 
                 mb.addQuad(
-                        0, h1, 0, Vector3f.ZERO, vertu, vertu, 
-                        1, h2, 0, Vector3f.ZERO, vertu, vertu, 
-                        1, h3, 1, Vector3f.ZERO, vertu, vertu, 
-                        0, h4, 1, Vector3f.ZERO, vertu, vertu);
+                        0, mh1, 0, Vector3f.ZERO, 0, 0, 
+                        1, mh2, 0, Vector3f.ZERO, 1, 0, 
+                        1, mh3, 1, Vector3f.ZERO, 1, 1, 
+                        0, mh4, 1, Vector3f.ZERO, 0, 1);
+                
+                mb.addQuad(
+                        0, h1, 0, Vector3f.ZERO, 0, 0, 
+                        1, h2, 0, Vector3f.ZERO, 1, 0, 
+                        1, mh2, 0, Vector3f.ZERO, 1, 1, 
+                        0, mh1, 0, Vector3f.ZERO, 0, 1);
+                mb.addQuad(
+                        1, h2, 0, Vector3f.ZERO, 0, 0, 
+                        1, h3, 1, Vector3f.ZERO, 1, 0, 
+                        1, mh3, 1, Vector3f.ZERO, 1, 1, 
+                        1, mh2, 0, Vector3f.ZERO, 0, 1);
+                mb.addQuad(
+                        1, h3, 1, Vector3f.ZERO, 0, 0, 
+                        0, h4, 1, Vector3f.ZERO, 1, 0, 
+                        0, mh4, 1, Vector3f.ZERO, 1, 1, 
+                        1, mh3, 1, Vector3f.ZERO, 0, 1);
+                mb.addQuad(
+                        0, h4, 1, Vector3f.ZERO, 0, 0, 
+                        0, h1, 0, Vector3f.ZERO, 1, 0, 
+                        0, mh1, 0, Vector3f.ZERO, 1, 1, 
+                        0, mh4, 1, Vector3f.ZERO, 0, 1);
             }
         }
         

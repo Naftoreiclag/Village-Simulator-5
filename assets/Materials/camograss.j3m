@@ -1,6 +1,6 @@
 Material My Material : Common/MatDefs/Light/Lighting.j3md {
      MaterialParameters {
-        DiffuseMap : Textures/curvegrass.png
+        DiffuseMap : Textures/debug.png
      }
     AdditionalRenderState {
     }
