@@ -256,12 +256,6 @@ public class ModelBuilder
         System.out.println("Vertices: " + (triangles.size() * 3));
         System.out.println("Output Verts: " + vertices.size());
         
-                /*
-        v.flip();
-        n.flip();
-        t.flip();
-        i.flip();
-                */
                 
         Mesh mesh = new Mesh();
 

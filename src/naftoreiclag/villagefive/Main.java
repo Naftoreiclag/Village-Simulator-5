@@ -64,6 +64,7 @@ public class Main extends SimpleApplication
         rootNode.attachChild(geom);
         */
         
+        /*
         Material mat = (Material) assetManager.loadMaterial("Materials/bumpDebug.j3m");
         
         HexHills hills = new HexHills();
@@ -83,6 +84,15 @@ public class Main extends SimpleApplication
             
             rootNode.attachChild(geom2);
         }
+        */
+        Material mat2 = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
+        
+        TraditionalHills hills = new TraditionalHills();
+        Geometry geom2 = new Geometry("Grass ", hills.mesh);
+        geom2.setMaterial(mat2);
+        mat2.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
+
+        rootNode.attachChild(geom2);
         
         
         
