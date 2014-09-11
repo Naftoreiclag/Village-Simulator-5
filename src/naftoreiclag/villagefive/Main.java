@@ -87,9 +87,10 @@ public class Main extends SimpleApplication
         */
         Material mat2 = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
         
-        TraditionalHills hills = new TraditionalHills();
+        UnoptimizedHills hills = new UnoptimizedHills();
         Geometry geom2 = new Geometry("Grass ", hills.mesh);
         geom2.setMaterial(mat2);
+        mat2.getAdditionalRenderState().setWireframe(true);
         mat2.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
 
         rootNode.attachChild(geom2);
