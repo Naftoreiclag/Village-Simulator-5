@@ -10,115 +10,57 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
-import com.jme3.material.RenderState.FaceCullMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
-import com.jme3.texture.Texture;
+import com.jme3.system.AppSettings;
 
 public class Main extends SimpleApplication
 {
     // This is where the magic begins
     public static void main(String[] args)
     {
+        AppSettings settings = new AppSettings(true);
+        settings.setSettingsDialogImage("interface/splash.png");
+        
         Main main = new Main();
+        main.setSettings(settings);
         main.start();
     }
 
     @Override
     public void simpleInitApp()
     {
+        Material mat = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
+        Material mat2 = (Material) assetManager.loadMaterial("Materials/rock.j3m");
         
-        /*
-        Hills hills = new Hills();
-        Geometry geom = new Geometry("Rock", hills.mesh);
-        geom.setMaterial((Material) assetManager.loadMaterial("Materials/bumpDebug.j3m"));
-        Geometry geom2 = new Geometry("Grass", hills.mess);
-        geom2.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
-        rootNode.attachChild(geom);
-        rootNode.attachChild(geom2);
-        */
-        
-
-        /*
-        NewHills hills = new NewHills();
-        Material mat = (Material) assetManager.loadMaterial("Materials/bumpDebug.j3m");
-        //mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-        
-        /*
-        for(int i = 0; i < NewHills.numLevels; ++ i)
-        {
-            Geometry geom = new Geometry("Rock " + i, hills.mesh[i]);
-            geom.setMaterial(mat);
-            geom.move(0, i * NewHills.thickness, 0);
-            
-            rootNode.attachChild(geom);
-        }
-        
-        Geometry geom = new Geometry("Rock", hills.mesh2);
+        TraditionalHills hills = new TraditionalHills();
+        Geometry geom = new Geometry("Grass ", hills.mesh);
         geom.setMaterial(mat);
-
         rootNode.attachChild(geom);
-        */
-        
-        /*
-        Material mat = (Material) assetManager.loadMaterial("Materials/bumpDebug.j3m");
-        
-        HexHills hills = new HexHills();
-        Material mat2 = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
-        //mat.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-        
-        for(int i = 0; i < HexHills.numLevels; ++ i)
-        {
-            Geometry geom = new Geometry("Rock " + i, hills.mesh[i]);
-            geom.setMaterial(mat);
-            geom.move(0, i * NewHills.thickness, 0);
-            
-            rootNode.attachChild(geom);
-            Geometry geom2 = new Geometry("Grass " + i, hills.mesh2[i]);
-            geom2.setMaterial(mat2);
-            geom2.move(0, i * NewHills.thickness, 0);
-            
-            rootNode.attachChild(geom2);
-        }
-        */
-        Material mat2 = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
-        
-        UnoptimizedHills hills = new UnoptimizedHills();
-        Geometry geom2 = new Geometry("Grass ", hills.mesh);
+        Geometry geom2 = new Geometry("Rock ", hills.mesh2);
         geom2.setMaterial(mat2);
-        //mat2.getAdditionalRenderState().setWireframe(true);
-        mat2.getAdditionalRenderState().setFaceCullMode(FaceCullMode.Off);
-
         rootNode.attachChild(geom2);
         
-        /*
-        Box box = new Box(2f / 2, 3.75f / 2, 2f / 2);
+        Box box = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
         Geometry bounds = new Geometry("box", box);
         bounds.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
-        bounds.move(0f, 3.75f / 2, 0f);
+        bounds.move(16f, 3.75f / 2f, 16f);
         rootNode.attachChild(bounds);
-        */
         
         
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White.mult(0.5f));
         sun.setDirection(new Vector3f(1, -2, -3).normalizeLocal());
+        rootNode.addLight(sun);
         
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(3.0f));
-        
-        
-        
         rootNode.addLight(al);
         
-        rootNode.addLight(sun);
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
-        
-        
     }
 
     @Override
