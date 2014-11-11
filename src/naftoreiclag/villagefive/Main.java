@@ -24,6 +24,8 @@ public class Main extends SimpleApplication
     {
         AppSettings settings = new AppSettings(true);
         settings.setSettingsDialogImage("interface/splash.png");
+        settings.setResolution(1280, 720);
+        settings.setSamples(4);
         
         Main main = new Main();
         main.setSettings(settings);
@@ -80,9 +82,9 @@ public class Main extends SimpleApplication
     private void addGrid()
     {
         Material lightColor = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        lightColor.setColor("Color", ColorRGBA.White);
+        lightColor.setColor("Color", new ColorRGBA(0.31764705882352941176470588235294f, 0.63921568627450980392156862745098f, 0.02745098039215686274509803921569f, 1.0f));
         Material darkColor = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        darkColor.setColor("Color", ColorRGBA.LightGray);
+        darkColor.setColor("Color", new ColorRGBA(0.23921568627450980392156862745098f, 0.46666666666666666666666666666667f, 0.01960784313725490196078431372549f, 1.0f));
         
         DebugGrid gridMeshThing = new DebugGrid();
         gridMeshThing.buildGeometry();
