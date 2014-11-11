@@ -33,6 +33,8 @@ public class Main extends SimpleApplication
     @Override
     public void simpleInitApp()
     {
+        cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
+        
         Material mat = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
         Material mat2 = (Material) assetManager.loadMaterial("Materials/rock.j3m");
         
