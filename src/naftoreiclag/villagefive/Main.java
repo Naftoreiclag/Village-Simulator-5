@@ -46,6 +46,8 @@ public class Main extends SimpleApplication
         geom2.setMaterial(mat2);
         rootNode.attachChild(geom2);
         
+        addGrid();
+        
         Box box = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
         Geometry bounds = new Geometry("box", box);
         bounds.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
@@ -73,5 +75,22 @@ public class Main extends SimpleApplication
     @Override
     public void simpleRender(RenderManager rm)
     {
+    }
+
+    private void addGrid()
+    {
+        Material lightColor = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        lightColor.setColor("Color", ColorRGBA.White);
+        Material darkColor = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        darkColor.setColor("Color", ColorRGBA.LightGray);
+        
+        DebugGrid gridMeshThing = new DebugGrid();
+        gridMeshThing.buildGeometry();
+        Geometry even = new Geometry("Grass ", gridMeshThing.evenCells);
+        even.setMaterial(lightColor);
+        rootNode.attachChild(even);
+        Geometry odd = new Geometry("Rock ", gridMeshThing.oddCells);
+        odd.setMaterial(darkColor);
+        rootNode.attachChild(odd);
     }
 }

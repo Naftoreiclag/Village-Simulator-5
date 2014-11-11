@@ -17,18 +17,16 @@ import org.lwjgl.BufferUtils;
 
 public class ModelBuilder
 {
-    //
+    // Optionally offset where vertexes are added
     private float appendX = 0;
     private float appendY = 0;
     private float appendZ = 0;
-    
     public void setAppendOrigin(float x, float y, float z)
     {
         this.appendX = x;
         this.appendY = y;
         this.appendZ = z;
     }
-    
     public void resetAppendOrigin()
     {
         this.appendX = 0;
@@ -36,7 +34,7 @@ public class ModelBuilder
         this.appendZ = 0;
     }
     
-    //
+    // Whether or not to "smooth" normals
     public boolean combineNormals = false;
     
     // Where the data is stored to be baked
