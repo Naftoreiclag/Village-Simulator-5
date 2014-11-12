@@ -11,6 +11,7 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 
 public class Player implements ActionListener
 {
@@ -20,7 +21,8 @@ public class Player implements ActionListener
     public float x;
     public float z;
     
-    public Geometry geo;
+    
+    public Node node = new Node();
     
     public float lookDir;
     
@@ -50,8 +52,8 @@ public class Player implements ActionListener
             lookDir -= turnSpd * tpf;
         }
         
-        geo.setLocalTranslation(x, 0, z);
-        geo.getLocalRotation().fromAngleAxis(lookDir, Vector3f.UNIT_Y);
+        node.setLocalTranslation(x, 0, z);
+        node.getLocalRotation().fromAngleAxis(lookDir, Vector3f.UNIT_Y);
     }
     
     public void onAction(String key, boolean isPressed, float tpf)

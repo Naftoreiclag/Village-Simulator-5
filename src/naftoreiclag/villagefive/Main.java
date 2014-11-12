@@ -17,6 +17,8 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 
@@ -41,7 +43,6 @@ public class Main extends SimpleApplication
     @Override
     public void simpleInitApp()
     {
-        keySutff();
         
 
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
@@ -50,20 +51,25 @@ public class Main extends SimpleApplication
         
         addGrid();
         
+        player = new Player();
+        rootNode.attachChild(player.node);
+        
         Box playerM = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
         Geometry playerG = new Geometry("box", playerM);
         playerG.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
-        playerG.move(16f, 3.75f / 2f, 16f);
-        rootNode.attachChild(playerG);
+        player.node.attachChild(playerG);
+        
+        Node chasePnt = new Node();
+        player.node.attachChild(chasePnt);
         
         flyCam.setEnabled(false);
-        chaseCam = new ChaseCamera(cam, playerG, inputManager);
+        chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
         
-        player.geo = playerG;
         
         addLight();
         
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
+        keySutff();
     }
 
     @Override
