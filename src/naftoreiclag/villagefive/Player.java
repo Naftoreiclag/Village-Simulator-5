@@ -8,14 +8,19 @@ package naftoreiclag.villagefive;
 
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.FastMath;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 
 public class Player implements ActionListener
 {
-    public static final float moveSpd = 1.0f;
+    public static final float moveSpd = 5.0f;
     public static final float turnSpd = 1.0f;
     
     public float x;
     public float z;
+    
+    public Geometry geo;
     
     public float lookDir;
     
@@ -28,26 +33,31 @@ public class Player implements ActionListener
     {
         if(movingFwd)
         {
-            x += FastMath.cos(lookDir) * tpf * moveSpd;
-            z += FastMath.sin(lookDir) * tpf * moveSpd;
+            x += FastMath.cos(-lookDir) * tpf * moveSpd;
+            z += FastMath.sin(-lookDir) * tpf * moveSpd;
         }
         if(movingBwd)
         {
-            x -= FastMath.cos(lookDir) * tpf * moveSpd;
-            z -= FastMath.sin(lookDir) * tpf * moveSpd;
-        }
-        if(turningRight)
-        {
-            lookDir += turnSpd * tpf;
+            x -= FastMath.cos(-lookDir) * tpf * moveSpd;
+            z -= FastMath.sin(-lookDir) * tpf * moveSpd;
         }
         if(turningLeft)
         {
+            lookDir += turnSpd * tpf;
+        }
+        if(turningRight)
+        {
             lookDir -= turnSpd * tpf;
         }
+        
+        geo.setLocalTranslation(x, 0, z);
+        geo.getLocalRotation().fromAngleAxis(lookDir, Vector3f.UNIT_Y);
     }
     
     public void onAction(String key, boolean isPressed, float tpf)
     {
+        System.out.println("key " + key + " = " + isPressed + ";");
+        
         if(key.equals("Walk Forward"))
         {
             movingFwd = isPressed;

@@ -58,11 +58,12 @@ public class Main extends SimpleApplication
         
         addGrid();
         
-        Box player = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
-        Geometry bounds = new Geometry("box", player);
-        bounds.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
-        bounds.move(16f, 3.75f / 2f, 16f);
-        rootNode.attachChild(bounds);
+        Box playerM = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
+        Geometry playerG = new Geometry("box", playerM);
+        playerG.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
+        playerG.move(16f, 3.75f / 2f, 16f);
+        rootNode.attachChild(playerG);
+        player.geo = playerG;
         
         
         DirectionalLight sun = new DirectionalLight();
@@ -80,6 +81,7 @@ public class Main extends SimpleApplication
     @Override
     public void simpleUpdate(float tpf)
     {
+        player.tick(tpf);
     }
 
     @Override
