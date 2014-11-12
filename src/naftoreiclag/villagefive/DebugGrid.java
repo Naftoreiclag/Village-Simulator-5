@@ -16,34 +16,24 @@ public class DebugGrid
     public static final int height = 64;
     
     public Mesh evenCells;
-    public Mesh oddCells;
     
     public void buildGeometry()
     {
         ModelBuilder mb = new ModelBuilder();
-        ModelBuilder mb2 = new ModelBuilder();
         
         for(int x = 0; x < width; ++ x)
         {
             for(int z = 0; z < height; ++ z)
             {
-                ModelBuilder aa = mb;
+                mb.setAppendOrigin(x, 0.0f, z);
                 
-                if(((x + z) & 1) == 1)
-                {
-                    aa = mb2;
-                }
-                
-                aa.setAppendOrigin(x, 0.0f, z);
-                
-                aa.addQuad(0, 0, 0, Vector3f.UNIT_Y, x, x, 
-                           1, 0, 0, Vector3f.UNIT_Y, x, x, 
-                           1, 0, 1, Vector3f.UNIT_Y, x, x, 
-                           0, 0, 1, Vector3f.UNIT_Y, x, x);
+                mb.addQuad(0, 0, 0, Vector3f.UNIT_Y, 0, 0, 
+                           1, 0, 0, Vector3f.UNIT_Y, 1, 0, 
+                           1, 0, 1, Vector3f.UNIT_Y, 1, 1, 
+                           0, 0, 1, Vector3f.UNIT_Y, 0, 1);
             }
         }
         
         evenCells = mb.bake();
-        oddCells = mb2.bake();
     }
 }

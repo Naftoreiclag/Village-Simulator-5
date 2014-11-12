@@ -14,7 +14,7 @@ import com.jme3.scene.Geometry;
 
 public class Player implements ActionListener
 {
-    public static final float moveSpd = 5.0f;
+    public static final float moveSpd = 2.5f;
     public static final float turnSpd = 1.0f;
     
     public float x;

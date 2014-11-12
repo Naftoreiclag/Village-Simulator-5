@@ -8,8 +8,6 @@ package naftoreiclag.villagefive;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.InputListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -45,16 +43,7 @@ public class Main extends SimpleApplication
         
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
         
-        Material mat = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
-        Material mat2 = (Material) assetManager.loadMaterial("Materials/rock.j3m");
-        
-        TraditionalHills hills = new TraditionalHills();
-        Geometry geom = new Geometry("Grass ", hills.mesh);
-        geom.setMaterial(mat);
-        rootNode.attachChild(geom);
-        Geometry geom2 = new Geometry("Rock ", hills.mesh2);
-        geom2.setMaterial(mat2);
-        rootNode.attachChild(geom2);
+        //addTerrain();
         
         addGrid();
         
@@ -65,15 +54,7 @@ public class Main extends SimpleApplication
         rootNode.attachChild(playerG);
         player.geo = playerG;
         
-        
-        DirectionalLight sun = new DirectionalLight();
-        sun.setColor(ColorRGBA.White.mult(0.5f));
-        sun.setDirection(new Vector3f(1, -2, -3).normalizeLocal());
-        rootNode.addLight(sun);
-        
-        AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White.mult(3.0f));
-        rootNode.addLight(al);
+        addLight();
         
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
     }
@@ -91,19 +72,11 @@ public class Main extends SimpleApplication
 
     private void addGrid()
     {
-        Material lightColor = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        lightColor.setColor("Color", new ColorRGBA(0.87f, 0.87f, 0.87f, 1.0f));
-        Material darkColor = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        darkColor.setColor("Color", new ColorRGBA(0.69f, 0.69f, 0.69f, 1.0f));
-        
         DebugGrid gridMeshThing = new DebugGrid();
         gridMeshThing.buildGeometry();
-        Geometry even = new Geometry("Grass ", gridMeshThing.evenCells);
-        even.setMaterial(lightColor);
+        Geometry even = new Geometry("84903401239015290", gridMeshThing.evenCells);
+        even.setMaterial((Material) assetManager.loadMaterial("Materials/40cm.j3m"));
         rootNode.attachChild(even);
-        Geometry odd = new Geometry("Rock ", gridMeshThing.oddCells);
-        odd.setMaterial(darkColor);
-        rootNode.attachChild(odd);
     }
 
     private void keySutff()
@@ -114,5 +87,31 @@ public class Main extends SimpleApplication
         inputManager.addMapping("Walk Backward", new KeyTrigger(KeyInput.KEY_J));
         inputManager.addListener(player, "Rotate Left", "Rotate Right");
         inputManager.addListener(player, "Walk Forward", "Walk Backward");
+    }
+
+    private void addTerrain()
+    {
+        Material mat = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
+        Material mat2 = (Material) assetManager.loadMaterial("Materials/rock.j3m");
+        
+        TraditionalHills hills = new TraditionalHills();
+        Geometry geom = new Geometry("Grass ", hills.mesh);
+        geom.setMaterial(mat);
+        rootNode.attachChild(geom);
+        Geometry geom2 = new Geometry("Rock ", hills.mesh2);
+        geom2.setMaterial(mat2);
+        rootNode.attachChild(geom2);
+    }
+
+    private void addLight()
+    {
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White.mult(0.5f));
+        sun.setDirection(new Vector3f(1, -2, -3).normalizeLocal());
+        rootNode.addLight(sun);
+        
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.White.mult(3.0f));
+        rootNode.addLight(al);
     }
 }
