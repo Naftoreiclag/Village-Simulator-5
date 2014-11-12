@@ -7,6 +7,10 @@
 package naftoreiclag.villagefive;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.InputListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -22,19 +26,23 @@ public class Main extends SimpleApplication
     // This is where the magic begins
     public static void main(String[] args)
     {
-        AppSettings settings = new AppSettings(true);
-        settings.setSettingsDialogImage("interface/splash.png");
-        settings.setResolution(1280, 720);
-        settings.setSamples(4);
+        AppSettings displ = new AppSettings(true);
+        displ.setSettingsDialogImage("interface/splash.png");
+        displ.setResolution(1280, 720);
+        displ.setSamples(4);
         
         Main main = new Main();
-        main.setSettings(settings);
+        main.setSettings(displ);
         main.start();
     }
+    
+    Player player = new Player();
 
     @Override
     public void simpleInitApp()
     {
+        keySutff();
+        
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
         
         Material mat = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
@@ -50,8 +58,8 @@ public class Main extends SimpleApplication
         
         addGrid();
         
-        Box box = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
-        Geometry bounds = new Geometry("box", box);
+        Box player = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
+        Geometry bounds = new Geometry("box", player);
         bounds.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
         bounds.move(16f, 3.75f / 2f, 16f);
         rootNode.attachChild(bounds);
@@ -94,5 +102,15 @@ public class Main extends SimpleApplication
         Geometry odd = new Geometry("Rock ", gridMeshThing.oddCells);
         odd.setMaterial(darkColor);
         rootNode.attachChild(odd);
+    }
+
+    private void keySutff()
+    {
+        inputManager.addMapping("Rotate Left", new KeyTrigger(KeyInput.KEY_H));
+        inputManager.addMapping("Rotate Right", new KeyTrigger(KeyInput.KEY_K));
+        inputManager.addMapping("Walk Forward", new KeyTrigger(KeyInput.KEY_U));
+        inputManager.addMapping("Walk Backward", new KeyTrigger(KeyInput.KEY_J));
+        inputManager.addListener(player, "Rotate Left", "Rotate Right");
+        inputManager.addListener(player, "Walk Forward", "Walk Backward");
     }
 }
