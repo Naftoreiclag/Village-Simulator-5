@@ -7,6 +7,7 @@
 package naftoreiclag.villagefive;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
@@ -35,12 +36,14 @@ public class Main extends SimpleApplication
     }
     
     Player player = new Player();
+    ChaseCamera chaseCam;
 
     @Override
     public void simpleInitApp()
     {
         keySutff();
         
+
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
         
         //addTerrain();
@@ -52,6 +55,10 @@ public class Main extends SimpleApplication
         playerG.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
         playerG.move(16f, 3.75f / 2f, 16f);
         rootNode.attachChild(playerG);
+        
+        flyCam.setEnabled(false);
+        chaseCam = new ChaseCamera(cam, playerG, inputManager);
+        
         player.geo = playerG;
         
         addLight();
