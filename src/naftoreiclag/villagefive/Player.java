@@ -8,9 +8,7 @@ package naftoreiclag.villagefive;
 
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 
 public class Player implements ActionListener
@@ -20,7 +18,6 @@ public class Player implements ActionListener
     
     public float x;
     public float z;
-    
     
     public Node node = new Node();
     
@@ -56,6 +53,7 @@ public class Player implements ActionListener
         node.getLocalRotation().fromAngleAxis(lookDir, Vector3f.UNIT_Y);
     }
     
+    @Override
     public void onAction(String key, boolean isPressed, float tpf)
     {
         System.out.println("key " + key + " = " + isPressed + ";");

@@ -31,7 +31,6 @@ import com.jme3.scene.shape.Box;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
-import com.jme3.util.SkyFactory;
 
 public class Main extends SimpleApplication implements AnimEventListener, ActionListener
 {
@@ -53,63 +52,15 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
     private AnimChannel channel;
     private AnimControl control;
     Node oto;
+    
     @Override
     public void simpleInitApp()
     {
-
-        cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
-        
-        //addTerrain();
-        
-        addGrid();
-        
-        player = new Player();
-        rootNode.attachChild(player.node);
-        
-        Box playerM = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
-        Geometry playerG = new Geometry("box", playerM);
-        playerG.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
-        playerG.setLocalTranslation(0, 3.75f / 2f, 0);
-        playerG.move(5, 0, 5);
-        playerG.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        rootNode.attachChild(playerG);
-        foobar();
-        barfoo("Flex", 20);
-        barfoo("Wave", 30);
-        doublefoo(25);
-        
-        pfoo(false, false, 15, 15);
-        pfoo(true, false,  20, 15);
-        pfoo(true, true,   25, 15);
-        pfoo(false, true,  30, 15);
-        
-        
-        oto = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
-        oto.setLocalScale(0.5f);
-        oto.getLocalRotation().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y);
-        oto.setLocalTranslation(0, 5.0f / 2f, 0);
-        oto.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        control = oto.getControl(AnimControl.class);
-        control.addListener(this);
-        channel = control.createChannel();
-        channel.setAnim("stand", 0.5f);
-        player.node.attachChild(oto);
-        
-        //player.node.attachChild(playerG);
-        
-        Node chasePnt = new Node();
-        chasePnt.setLocalTranslation(0, 2.0f, 0);
-        player.node.attachChild(chasePnt);
-        
-        flyCam.setEnabled(false);
-        chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
-        
-        
+        attachDebugFloor();
+        attachBarfOo();
+        setupAndAttachPlayer();
+        setupCamera();
         addLight();
-        
-        viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
-        keySutff();
-        
     }
 
     @Override
@@ -123,7 +74,7 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
     {
     }
 
-    private void addGrid()
+    private void attachDebugFloor()
     {
         DebugGrid gridMeshThing = new DebugGrid();
         gridMeshThing.buildGeometry();
@@ -321,5 +272,53 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         wiggle.attachChild(debugSkele(ctrl));
         chnl.setAnim("my_animation", 0.5f);
         chnl.setLoopMode(LoopMode.Loop);
+    }
+
+    private void attachBarfOo()
+    {
+        Box playerM = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
+        Geometry playerG = new Geometry("box", playerM);
+        playerG.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
+        playerG.setLocalTranslation(0, 3.75f / 2f, 0);
+        playerG.move(5, 0, 5);
+        playerG.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        rootNode.attachChild(playerG);
+        foobar();
+        barfoo("Flex", 20);
+        barfoo("Wave", 30);
+        doublefoo(25);
+        pfoo(false, false, 15, 15);
+        pfoo(true, false,  20, 15);
+        pfoo(true, true,   25, 15);
+        pfoo(false, true,  30, 15);
+    }
+
+    private void setupAndAttachPlayer()
+    {
+        player = new Player();
+        rootNode.attachChild(player.node);
+        
+        oto = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
+        oto.setLocalScale(0.5f);
+        oto.getLocalRotation().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y);
+        oto.setLocalTranslation(0, 5.0f / 2f, 0);
+        oto.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        control = oto.getControl(AnimControl.class);
+        control.addListener(this);
+        channel = control.createChannel();
+        channel.setAnim("stand", 0.5f);
+        player.node.attachChild(oto);
+        keySutff();
+    }
+
+    private void setupCamera()
+    {
+        flyCam.setEnabled(false);
+        Node chasePnt = new Node();
+        chasePnt.setLocalTranslation(0, 2.0f, 0);
+        player.node.attachChild(chasePnt);
+        chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
+        viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
+        cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
     }
 }
