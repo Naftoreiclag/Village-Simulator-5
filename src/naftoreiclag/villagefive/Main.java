@@ -257,7 +257,7 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         wiggle.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
         wiggle.move(x, 0, z);
         wiggle.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        
+        //
         AnimControl ctrl = wiggle.getControl(AnimControl.class);
         wiggle.attachChild(debugSkele(ctrl));
         
