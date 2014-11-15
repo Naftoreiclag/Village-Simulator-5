@@ -4,7 +4,11 @@ dist/
 donotinclude/
 dni_*
 FourHills.java
-
+Oto.*
+*.blend*
+*.mesh.xml
+*.skeleton.xml
+*.material
 assets/Textures/
 
 lwjgl64.dll
