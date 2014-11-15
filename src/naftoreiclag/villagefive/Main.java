@@ -76,6 +76,12 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         foobar();
         barfoo("Flex", 20);
         barfoo("Wave", 30);
+        doublefoo(25);
+        
+        pfoo(false, false, 15, 15);
+        pfoo(true, false,  20, 15);
+        pfoo(true, true,   25, 15);
+        pfoo(false, true,  30, 15);
         
         
         oto = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
@@ -222,6 +228,57 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         wiggle.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         
         wiggleify(wiggle);
+        
+        rootNode.attachChild(wiggle);
+    }
+    
+    private void doublefoo(int par)
+    {
+        Node wiggle = (Node) assetManager.loadModel("Models/worm/Cylinder.mesh.xml");
+        wiggle.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
+        wiggle.move(par, 0, 10);
+        wiggle.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        
+        AnimControl ctrl = wiggle.getControl(AnimControl.class);
+        wiggle.attachChild(debugSkele(ctrl));
+        AnimChannel chnl = ctrl.createChannel();
+        chnl.setAnim("Flex", 0.5f);
+        chnl.setLoopMode(LoopMode.Loop);
+        AnimChannel chnl2 = ctrl.createChannel();
+        chnl2.setAnim("Wave", 0.5f);
+        chnl2.setLoopMode(LoopMode.Loop);
+        
+        rootNode.attachChild(wiggle);
+    }
+    
+    private void pfoo(boolean a, boolean b, int x, int z)
+    {
+        Node wiggle = (Node) assetManager.loadModel("Models/perry/Cube.mesh.xml");
+        wiggle.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
+        wiggle.move(x, 0, z);
+        wiggle.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        
+        AnimControl ctrl = wiggle.getControl(AnimControl.class);
+        wiggle.attachChild(debugSkele(ctrl));
+        
+        if(a)
+        {
+        AnimChannel chnl = ctrl.createChannel();
+        chnl.addBone("Bone.006");
+        chnl.setAnim("Happy", 0.5f);
+        chnl.setLoopMode(LoopMode.Loop);
+        }
+        
+        if(b)
+        {
+        AnimChannel chnl2 = ctrl.createChannel();
+        chnl2.addBone("Bone.001");
+        chnl2.addBone("Bone.002");
+        chnl2.addBone("Bone.003");
+        chnl2.addBone("Bone.004");
+        chnl2.setAnim("Shuffle", 0.5f);
+        chnl2.setLoopMode(LoopMode.Loop);
+        }
         
         rootNode.attachChild(wiggle);
     }
