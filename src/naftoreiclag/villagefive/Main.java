@@ -50,31 +50,33 @@ public class Main extends SimpleApplication implements ActionListener
     
     Space space;
     
-    Guy guy;
+    Player player;
     
     ChaseCamera chaseCam;
     
     @Override
     public void simpleInitApp()
     {
+        setupInput();
         attachDebugFloor();
-        keySutff();
         
         Node body = (Node) assetManager.loadModel("Models/perry/Cube.mesh.xml");
         body.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
         body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        guy = new Guy(body);
-        rootNode.attachChild(guy.node);
+        player = new Player(body);
+        
+        rootNode.attachChild(player.node);
         
         //setupAndAttachPlayer();
         setupCamera();
-        addLight();
+        setupLight();
     }
 
     @Override
     public void simpleUpdate(float tpf)
     {
         updateCharacterPhysics(tpf);
+        //space.update(tpf);
     }
 
     @Override
@@ -92,37 +94,22 @@ public class Main extends SimpleApplication implements ActionListener
         rootNode.attachChild(even);
     }
 
-    private void keySutff()
+    public static final String key_fwd = "lolfwd";
+    public static final String key_bwd = "lolbwd";
+    public static final String key_left = "lolleft";
+    public static final String key_right = "lolright";
+    
+    private void setupInput()
     {
-        inputManager.addMapping("Rotate Left", new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping("Rotate Right", new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping("Walk Forward", new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping("Walk Backward", new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addListener(this, "Rotate Left", "Rotate Right");
-        inputManager.addListener(this, "Walk Forward", "Walk Backward");
+        inputManager.addMapping(key_left, new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping(key_right, new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping(key_fwd, new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping(key_bwd, new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addListener(this, key_left, key_right, key_fwd, key_bwd);
     }
 
-    private void addTerrain()
+    private void setupLight()
     {
-        Material mat = (Material) assetManager.loadMaterial("Materials/camograss.j3m");
-        Material mat2 = (Material) assetManager.loadMaterial("Materials/rock.j3m");
-        
-        TraditionalHills hills = new TraditionalHills();
-        Geometry geom = new Geometry("Grass ", hills.mesh);
-        geom.setMaterial(mat);
-        geom.setLocalTranslation(0, 0.1f, 0);
-        geom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        rootNode.attachChild(geom);
-        Geometry geom2 = new Geometry("Rock ", hills.mesh2);
-        geom2.setMaterial(mat2);
-        geom2.setLocalTranslation(0, 0.1f, 0);
-        geom2.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        rootNode.attachChild(geom2);
-    }
-
-    private void addLight()
-    {
-        
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(3.0f));
         rootNode.addLight(al);
@@ -149,19 +136,19 @@ public class Main extends SimpleApplication implements ActionListener
     {
         System.out.println("key " + key + " = " + isPressed + ";");
         
-        if(key.equals("Walk Forward"))
+        if(key.equals(key_fwd))
         {
             movingFwd = isPressed;
         }
-        if(key.equals("Walk Backward"))
+        if(key.equals(key_bwd))
         {
             movingBwd = isPressed;
         }
-        if(key.equals("Rotate Left"))
+        if(key.equals(key_left))
         {
             turningLeft = isPressed;
         }
-        if(key.equals("Rotate Right"))
+        if(key.equals(key_right))
         {
             turningRight = isPressed;
         }
@@ -183,7 +170,7 @@ public class Main extends SimpleApplication implements ActionListener
         flyCam.setEnabled(false);
         Node chasePnt = new Node();
         chasePnt.setLocalTranslation(0, 2.0f, 0);
-        guy.node.attachChild(chasePnt);
+        player.node.attachChild(chasePnt);
         chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
@@ -213,7 +200,7 @@ public class Main extends SimpleApplication implements ActionListener
         
         if(!mv)
         {
-            guy.stopMoving();
+            player.stopMoving();
             return;
         }
         
@@ -234,6 +221,6 @@ public class Main extends SimpleApplication implements ActionListener
         }
         
         System.out.println(vec.a + ", " + vec.b);
-        guy.move(vec, tpf);
+        player.move(vec, tpf);
     }
 }

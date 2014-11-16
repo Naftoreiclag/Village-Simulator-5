@@ -6,78 +6,60 @@
 
 package naftoreiclag.villagefive;
 
+import com.jme3.animation.AnimChannel;
+import com.jme3.animation.AnimControl;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.FastMath;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import naftoreiclag.villagefive.util.Vector2f;
 
-public class Player implements ActionListener
+public class Player
 {
-    public static final float moveSpd = 2.5f;
-    public static final float turnSpd = 1.0f;
+    public static final String walk = "Shuffle";
+    public static final String stand = "Stand";
     
-    public float x;
-    public float z;
+    public final Node node = new Node();
+    AnimControl animControl;
+    AnimChannel legs;
     
-    private Node node = new Node();
-    
-    public float lookDir;
-    
-    boolean turningLeft = false;
-    boolean turningRight = false;
-    boolean movingFwd = false;
-    boolean movingBwd = false;
-
-    public void tick(float tpf)
+    public Player(Node body)
     {
-        if(movingFwd)
-        {
-            x += FastMath.cos(-lookDir) * tpf * moveSpd;
-            z += FastMath.sin(-lookDir) * tpf * moveSpd;
-        }
-        if(movingBwd)
-        {
-            x -= FastMath.cos(-lookDir) * tpf * moveSpd;
-            z -= FastMath.sin(-lookDir) * tpf * moveSpd;
-        }
-        if(turningLeft)
-        {
-            lookDir += turnSpd * tpf;
-        }
-        if(turningRight)
-        {
-            lookDir -= turnSpd * tpf;
-        }
-        
-        getNode().setLocalTranslation(x, 0, z);
-        getNode().getLocalRotation().fromAngleAxis(lookDir, Vector3f.UNIT_Y);
+        node.attachChild(body);
+        animControl = body.getControl(AnimControl.class);
+        legs = animControl.createChannel();
+        legs.addBone("Bone.001");
+        legs.addBone("Bone.002");
+        legs.addBone("Bone.003");
+        legs.addBone("Bone.004");
     }
     
-    @Override
-    public void onAction(String key, boolean isPressed, float tpf)
+    private float speed = 5.0f;
+    private float blend = 1.0f;
+    
+    public void move(float direction, float tpf)
     {
-        System.out.println("key " + key + " = " + isPressed + ";");
-        
-        if(key.equals("Walk Forward"))
+        node.move(FastMath.cos(direction) * speed * tpf, 0, FastMath.sin(direction) * speed * tpf);
+        if(!walk.equals(legs.getAnimationName()))
         {
-            movingFwd = isPressed;
+            legs.setAnim(walk, blend);
+            legs.setSpeed(2.0f);
         }
-        if(key.equals("Walk Backward"))
+    }
+    public void move(Vector2f d, float tpf)
+    {
+        node.move(d.a * speed * tpf, 0, d.b * speed * tpf);
+        if(!walk.equals(legs.getAnimationName()))
         {
-            movingBwd = isPressed;
-        }
-        if(key.equals("Rotate Left"))
-        {
-            turningLeft = isPressed;
-        }
-        if(key.equals("Rotate Right"))
-        {
-            turningRight = isPressed;
+            legs.setAnim(walk, blend);
+            legs.setSpeed(2.0f);
         }
     }
 
-    public Node getNode()
+    public void stopMoving()
     {
-        return node;
+        if(!stand.equals(legs.getAnimationName()))
+        {
+            legs.setAnim(stand, blend);
+        }
     }
 }
