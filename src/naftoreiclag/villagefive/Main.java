@@ -33,7 +33,7 @@ import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
 import naftoreiclag.villagefive.util.Vector2f;
 
-public class Main extends SimpleApplication implements AnimEventListener, ActionListener
+public class Main extends SimpleApplication implements ActionListener
 {
     // This is where the magic begins
     public static void main(String[] args)
@@ -48,19 +48,16 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         main.start();
     }
     
+    Space space;
+    
     Guy guy;
     
-    Player player = new Player();
     ChaseCamera chaseCam;
-    private AnimChannel channel;
-    private AnimControl control;
-    Node oto;
     
     @Override
     public void simpleInitApp()
     {
         attachDebugFloor();
-        attachBarfOo();
         keySutff();
         
         Node body = (Node) assetManager.loadModel("Models/perry/Cube.mesh.xml");
@@ -77,8 +74,7 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
     @Override
     public void simpleUpdate(float tpf)
     {
-        impressive(tpf);
-        player.tick(tpf);
+        updateCharacterPhysics(tpf);
     }
 
     @Override
@@ -144,48 +140,13 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         viewPort.addProcessor(dlsr);
     }
 
-    @Override
-    public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName)
-    {
-        if(!isForwardPressed)
-        {
-            if(animName.equals("Walk"))
-            {
-                channel.setAnim("stand", 0.50f);
-                channel.setLoopMode(LoopMode.DontLoop);
-                channel.setSpeed(1f);
-            }
-        }
-    }
-
-    @Override
-    public void onAnimChange(AnimControl control, AnimChannel channel, String animName)
-    {
-    }
-
     boolean turningLeft = false;
     boolean turningRight = false;
     boolean movingFwd = false;
     boolean movingBwd = false;
-    boolean isForwardPressed;
     @Override
     public void onAction(String key, boolean isPressed, float tpf)
     {
-        /*
-        if(key.equals("Walk Forward"))
-        {
-            isForwardPressed = isPressed;
-            if(isPressed)
-            {
-                if(!channel.getAnimationName().equals("Walk"))
-                {
-                    channel.setAnim("Walk", 0.50f);
-                    channel.setLoopMode(LoopMode.Loop);
-                }
-            }
-        }
-        */
-        
         System.out.println("key " + key + " = " + isPressed + ";");
         
         if(key.equals("Walk Forward"))
@@ -207,86 +168,6 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         
     }
 
-    private void foobar()
-    {
-        //Node wiggle = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
-        Node wiggle = (Node) assetManager.loadModel("Models/wig/Cube.mesh.j3o");
-        wiggle.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
-        wiggle.move(10, 0, 10);
-        wiggle.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        
-        wiggleify(wiggle);
-        
-        rootNode.attachChild(wiggle);
-    }
-    
-    private void doublefoo(int par)
-    {
-        Node wiggle = (Node) assetManager.loadModel("Models/worm/Cylinder.mesh.xml");
-        wiggle.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
-        wiggle.move(par, 0, 10);
-        wiggle.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        
-        AnimControl ctrl = wiggle.getControl(AnimControl.class);
-        wiggle.attachChild(debugSkele(ctrl));
-        AnimChannel chnl = ctrl.createChannel();
-        chnl.setAnim("Flex", 0.5f);
-        chnl.setLoopMode(LoopMode.Loop);
-        AnimChannel chnl2 = ctrl.createChannel();
-        chnl2.setAnim("Wave", 0.5f);
-        chnl2.setLoopMode(LoopMode.Loop);
-        
-        rootNode.attachChild(wiggle);
-    }
-    
-    private void pfoo(boolean a, boolean b, int x, int z)
-    {
-        Node wiggle = (Node) assetManager.loadModel("Models/perry/Cube.mesh.xml");
-        wiggle.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
-        wiggle.move(x, 0, z);
-        wiggle.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        //
-        AnimControl ctrl = wiggle.getControl(AnimControl.class);
-        wiggle.attachChild(debugSkele(ctrl));
-        
-        if(a)
-        {
-        AnimChannel chnl = ctrl.createChannel();
-        chnl.addBone("Bone.006");
-        chnl.setAnim("Happy", 0.5f);
-        chnl.setLoopMode(LoopMode.Loop);
-        }
-        
-        if(b)
-        {
-        AnimChannel chnl2 = ctrl.createChannel();
-        chnl2.addBone("Bone.001");
-        chnl2.addBone("Bone.002");
-        chnl2.addBone("Bone.003");
-        chnl2.addBone("Bone.004");
-        chnl2.setAnim("Shuffle", 0.5f);
-        chnl2.setLoopMode(LoopMode.Loop);
-        }
-        
-        rootNode.attachChild(wiggle);
-    }
-    
-    private void barfoo(String flex, int par)
-    {
-        Node wiggle = (Node) assetManager.loadModel("Models/worm/Cylinder.mesh.xml");
-        wiggle.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
-        wiggle.move(par, 0, 10);
-        wiggle.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        
-        AnimControl ctrl = wiggle.getControl(AnimControl.class);
-        wiggle.attachChild(debugSkele(ctrl));
-        AnimChannel chnl = ctrl.createChannel();
-        chnl.setAnim(flex, 0.5f);
-        chnl.setLoopMode(LoopMode.Loop);
-        
-        rootNode.attachChild(wiggle);
-    }
-
     private Spatial debugSkele(AnimControl control)
     {
         SkeletonDebugger skeletonDebug = new SkeletonDebugger("skeleton", control.getSkeleton());
@@ -295,59 +176,6 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         mat.getAdditionalRenderState().setDepthTest(false);
         skeletonDebug.setMaterial(mat);
         return skeletonDebug;
-    }
-
-    private void wiggleify(Node wiggle)
-    {
-        AnimControl ctrl = wiggle.getControl(AnimControl.class);
-        if(ctrl == null)
-        {
-            System.out.println("aaaa");
-        }
-        
-        AnimChannel chnl = ctrl.createChannel();
-        wiggle.attachChild(debugSkele(ctrl));
-        chnl.setAnim("my_animation", 0.5f);
-        chnl.setLoopMode(LoopMode.Loop);
-    }
-
-    private void attachBarfOo()
-    {
-        Box playerM = new Box(2f / 2f, 3.75f / 2f, 2f / 2f);
-        Geometry playerG = new Geometry("box", playerM);
-        playerG.setMaterial((Material) assetManager.loadMaterial("Materials/testBump.j3m"));
-        playerG.setLocalTranslation(0, 3.75f / 2f, 0);
-        playerG.move(5, 0, 5);
-        playerG.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        rootNode.attachChild(playerG);
-        foobar();
-        barfoo("Flex", 20);
-        barfoo("Wave", 30);
-        doublefoo(25);
-        pfoo(false, false, 15, 15);
-        pfoo(true, false,  20, 15);
-        pfoo(true, true,   25, 15);
-        pfoo(false, true,  30, 15);
-    }
-
-    private void setupAndAttachPlayer()
-    {
-        player = new Player();
-        rootNode.attachChild(player.getNode());
-        
-        oto = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
-        oto.setLocalScale(0.5f);
-        oto.getLocalRotation().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_Y);
-        oto.setLocalTranslation(0, 5.0f / 2f, 0);
-        oto.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        control = oto.getControl(AnimControl.class);
-        control.addListener(this);
-        channel = control.createChannel();
-        channel.setAnim("stand", 0.5f);
-        player.getNode().attachChild(oto);
-        
-        inputManager.addListener(player, "Rotate Left", "Rotate Right");
-        inputManager.addListener(player, "Walk Forward", "Walk Backward");
     }
 
     private void setupCamera()
@@ -361,7 +189,7 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
     }
 
-    private void impressive(float tpf)
+    private void updateCharacterPhysics(float tpf)
     {
         
         boolean mv = false;
