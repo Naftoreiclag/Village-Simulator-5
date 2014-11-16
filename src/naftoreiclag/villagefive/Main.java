@@ -31,6 +31,7 @@ import com.jme3.scene.shape.Box;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
+import naftoreiclag.villagefive.util.Vector2f;
 
 public class Main extends SimpleApplication implements AnimEventListener, ActionListener
 {
@@ -47,6 +48,8 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         main.start();
     }
     
+    Guy guy;
+    
     Player player = new Player();
     ChaseCamera chaseCam;
     private AnimChannel channel;
@@ -58,7 +61,15 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
     {
         attachDebugFloor();
         attachBarfOo();
-        setupAndAttachPlayer();
+        keySutff();
+        
+        Node body = (Node) assetManager.loadModel("Models/perry/Cube.mesh.xml");
+        body.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
+        body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        guy = new Guy(body);
+        rootNode.attachChild(guy.node);
+        
+        //setupAndAttachPlayer();
         setupCamera();
         addLight();
     }
@@ -66,6 +77,7 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
     @Override
     public void simpleUpdate(float tpf)
     {
+        impressive(tpf);
         player.tick(tpf);
     }
 
@@ -90,9 +102,8 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         inputManager.addMapping("Rotate Right", new KeyTrigger(KeyInput.KEY_D));
         inputManager.addMapping("Walk Forward", new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping("Walk Backward", new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addListener(this, "Walk Forward");
-        inputManager.addListener(player, "Rotate Left", "Rotate Right");
-        inputManager.addListener(player, "Walk Forward", "Walk Backward");
+        inputManager.addListener(this, "Rotate Left", "Rotate Right");
+        inputManager.addListener(this, "Walk Forward", "Walk Backward");
     }
 
     private void addTerrain()
@@ -152,10 +163,15 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
     {
     }
 
+    boolean turningLeft = false;
+    boolean turningRight = false;
+    boolean movingFwd = false;
+    boolean movingBwd = false;
     boolean isForwardPressed;
     @Override
     public void onAction(String key, boolean isPressed, float tpf)
     {
+        /*
         if(key.equals("Walk Forward"))
         {
             isForwardPressed = isPressed;
@@ -168,6 +184,27 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
                 }
             }
         }
+        */
+        
+        System.out.println("key " + key + " = " + isPressed + ";");
+        
+        if(key.equals("Walk Forward"))
+        {
+            movingFwd = isPressed;
+        }
+        if(key.equals("Walk Backward"))
+        {
+            movingBwd = isPressed;
+        }
+        if(key.equals("Rotate Left"))
+        {
+            turningLeft = isPressed;
+        }
+        if(key.equals("Rotate Right"))
+        {
+            turningRight = isPressed;
+        }
+        
     }
 
     private void foobar()
@@ -296,7 +333,7 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
     private void setupAndAttachPlayer()
     {
         player = new Player();
-        rootNode.attachChild(player.node);
+        rootNode.attachChild(player.getNode());
         
         oto = (Node) assetManager.loadModel("Models/Oto/Oto.mesh.xml");
         oto.setLocalScale(0.5f);
@@ -307,8 +344,10 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         control.addListener(this);
         channel = control.createChannel();
         channel.setAnim("stand", 0.5f);
-        player.node.attachChild(oto);
-        keySutff();
+        player.getNode().attachChild(oto);
+        
+        inputManager.addListener(player, "Rotate Left", "Rotate Right");
+        inputManager.addListener(player, "Walk Forward", "Walk Backward");
     }
 
     private void setupCamera()
@@ -316,9 +355,57 @@ public class Main extends SimpleApplication implements AnimEventListener, Action
         flyCam.setEnabled(false);
         Node chasePnt = new Node();
         chasePnt.setLocalTranslation(0, 2.0f, 0);
-        player.node.attachChild(chasePnt);
+        guy.node.attachChild(chasePnt);
         chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
+    }
+
+    private void impressive(float tpf)
+    {
+        
+        boolean mv = false;
+        
+        if(movingFwd)
+        {
+            mv = true;
+        }
+        if(movingBwd)
+        {
+            mv = true;
+        }
+        if(turningLeft)
+        {
+            mv = true;
+        }
+        if(turningRight)
+        {
+            mv = true;
+        }
+        
+        if(!mv)
+        {
+            guy.stopMoving();
+            return;
+        }
+        
+        Vector3f g = cam.getDirection();
+        Vector2f vec = new Vector2f(g.x, g.z);
+        
+        if(movingBwd)
+        {
+            vec.inverseLocal();
+        }
+        if(turningLeft)
+        {
+            vec.perpendicularLocal();
+        }
+        if(turningRight)
+        {
+            vec.perpendicularLocal().inverseLocal();
+        }
+        
+        System.out.println(vec.a + ", " + vec.b);
+        guy.move(vec, tpf);
     }
 }

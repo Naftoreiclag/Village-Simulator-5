@@ -19,7 +19,7 @@ public class Player implements ActionListener
     public float x;
     public float z;
     
-    public Node node = new Node();
+    private Node node = new Node();
     
     public float lookDir;
     
@@ -49,8 +49,8 @@ public class Player implements ActionListener
             lookDir -= turnSpd * tpf;
         }
         
-        node.setLocalTranslation(x, 0, z);
-        node.getLocalRotation().fromAngleAxis(lookDir, Vector3f.UNIT_Y);
+        getNode().setLocalTranslation(x, 0, z);
+        getNode().getLocalRotation().fromAngleAxis(lookDir, Vector3f.UNIT_Y);
     }
     
     @Override
@@ -74,5 +74,10 @@ public class Player implements ActionListener
         {
             turningRight = isPressed;
         }
+    }
+
+    public Node getNode()
+    {
+        return node;
     }
 }
