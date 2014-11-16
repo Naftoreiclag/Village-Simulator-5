@@ -6,16 +6,18 @@
 
 package naftoreiclag.villagefive;
 
+import com.jme3.math.Vector2f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
 
 public class PlayahControl extends AbstractControl
 {
+    Vector2f vec;
+    
     @Override
     protected void controlUpdate(float tpf)
     {
-        spatial.ro
     }
 
     @Override
