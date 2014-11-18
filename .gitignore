@@ -4,6 +4,7 @@ dist/
 donotinclude/
 dni_*
 FourHills.java
+Main_*
 Oto.*
 *.blend*
 *.mesh.xml
