@@ -38,9 +38,13 @@ public class Main extends SimpleApplication
         main.start();
     }
     
-    public SafeEntityHandler controller = new SafeEntityHandler(rootNode);
+    public Space space = new Space();
+    
+    public SafeEntityHandler trainingWheels = new SafeEntityHandler(rootNode, space);
     
     public Entity player;
+    
+    public World world;
     
     @Override
     public void simpleInitApp()
@@ -53,12 +57,15 @@ public class Main extends SimpleApplication
         
         player = new PlayerEntity(body);
         
-        controller.attachEntity(player);
+        trainingWheels.attachEntity(player);
+        trainingWheels.detachEntity(player);
     }
 
     @Override
     public void simpleUpdate(float tpf)
     {
+        trainingWheels.update(tpf);
+        space.update(tpf);
     }
 
     @Override

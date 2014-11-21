@@ -6,6 +6,24 @@
 
 package naftoreiclag.villagefive;
 
-public class CircleBody {
+import com.jme3.math.Vector2f;
+import com.jme3.scene.Spatial;
 
+public class CircleBody
+{
+    public final Vector2f loc = new Vector2f();
+    public final Vector2f mot = new Vector2f();
+
+    private Spatial link;
+    
+    public void setLink(Spatial spatial)
+    {
+        this.link = spatial;
+    }
+    
+    public void onLocationChange()
+    {
+        System.out.println(loc);
+        link.setLocalTranslation(loc.x, 0, loc.y);
+    }
 }

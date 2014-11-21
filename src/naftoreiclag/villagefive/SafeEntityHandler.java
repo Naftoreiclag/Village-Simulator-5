@@ -9,20 +9,35 @@ import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.List;
 
-class SafeEntityHandler
+public class SafeEntityHandler
 {
     List<Entity> entities = new ArrayList<Entity>();
-    
     Node rootNode;
-    
-    SafeEntityHandler(Node rootNode)
+    Space space;
+
+    SafeEntityHandler(Node rootNode, Space space)
     {
         this.rootNode = rootNode;
+        this.space = space;
     }
 
     void attachEntity(Entity entity)
     {
         entities.add(entity);
         entity.bindSceneGraph(rootNode);
+        entity.bindPhysics(space);
+    }
+
+    void detachEntity(Entity player)
+    {
+    }
+
+    void update(float tpf)
+    {
+        for(Entity e : entities)
+        {
+            e.update(tpf);
+        }
+        
     }
 }
