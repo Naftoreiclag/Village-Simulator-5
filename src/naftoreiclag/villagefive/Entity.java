@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive;
 
+import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 
 /*
@@ -33,6 +34,11 @@ public abstract class Entity
     public void assertNode(Node node)
     {
         this.node = node;
+    }
+    
+    public void teleport(Vector2f pos)
+    {
+        this.node.setLocalTranslation(pos.x, 0f, pos.y);
     }
     
     public abstract String getModelName();

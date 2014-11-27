@@ -9,6 +9,7 @@ Oto.*
 *.blend*
 *.mesh.xml
 *.skeleton.xml
+*.j30data
 *.material
 assets/Textures/
 

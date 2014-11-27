@@ -46,6 +46,7 @@ public class World
         
         e.assertWorld(this);
         e.assertNode(loadNode(e.getModelName()));
+        e.teleport(vector2f);
         
         return e;
     }
