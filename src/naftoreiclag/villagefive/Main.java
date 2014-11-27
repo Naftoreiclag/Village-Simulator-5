@@ -8,7 +8,6 @@ package naftoreiclag.villagefive;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.ChaseCamera;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -17,10 +16,12 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
+import naftoreiclag.villagefive.util.ModelBuilder;
 
 public class Main extends SimpleApplication
 {
@@ -36,35 +37,17 @@ public class Main extends SimpleApplication
         main.start();
     }
     
-    public Space space = new Space();
-    
-    // Thingy that manages entities for me
-    public SafeEntityHandler trainingWheels = new SafeEntityHandler(rootNode, space);
-    
-    public Entity player;
-    
-    public World world;
     Node chasePnt;
+    
     @Override
     public void simpleInitApp()
     {
-        foobar();
-        
-        Node body = (Node) assetManager.loadModel("Models/perry/Cube.mesh.xml");
-        body.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
-        body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        body.attachChild(chasePnt);
-        
-        player = new PlayerEntity(body);
-        
-        trainingWheels.attachEntity(player);
+        setupUselessAestetics();
     }
 
     @Override
     public void simpleUpdate(float tpf)
     {
-        trainingWheels.update(tpf);
-        space.update(tpf);
     }
 
     @Override
@@ -72,7 +55,7 @@ public class Main extends SimpleApplication
     {
     }
     
-    private void foobar()
+    private void setupUselessAestetics()
     {
         flyCam.setEnabled(false);
         chasePnt = new Node();
@@ -106,5 +89,32 @@ public class Main extends SimpleApplication
         even.setMaterial((Material) assetManager.loadMaterial("Materials/40cm.j3m"));
         even.setShadowMode(RenderQueue.ShadowMode.Receive);
         rootNode.attachChild(even);
+    }
+
+    class DebugGrid
+    {
+        public static final int width = 64;
+        public static final int height = 64;
+        public Mesh evenCells;
+
+        public void buildGeometry()
+        {
+            ModelBuilder mb = new ModelBuilder();
+
+            for(int x = 0; x < width; ++x)
+            {
+                for(int z = 0; z < height; ++z)
+                {
+                    mb.setAppendOrigin(x, 0.0f, z);
+
+                    mb.addQuad(0, 0, 0, Vector3f.UNIT_Y, 0, 0,
+                               1, 0, 0, Vector3f.UNIT_Y, 1, 0,
+                               1, 0, 1, Vector3f.UNIT_Y, 1, 1,
+                               0, 0, 1, Vector3f.UNIT_Y, 0, 1);
+                }
+            }
+
+            evenCells = mb.bake();
+        }
     }
 }
