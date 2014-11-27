@@ -21,7 +21,6 @@ import com.jme3.scene.Node;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
-import org.yaml.snakeyaml.Yaml;
 
 public class Main extends SimpleApplication
 {
@@ -39,12 +38,13 @@ public class Main extends SimpleApplication
     
     public Space space = new Space();
     
+    // Thingy that manages entities for me
     public SafeEntityHandler trainingWheels = new SafeEntityHandler(rootNode, space);
     
     public Entity player;
     
     public World world;
-    
+    Node chasePnt;
     @Override
     public void simpleInitApp()
     {
@@ -53,11 +53,11 @@ public class Main extends SimpleApplication
         Node body = (Node) assetManager.loadModel("Models/perry/Cube.mesh.xml");
         body.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
         body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        body.attachChild(chasePnt);
         
         player = new PlayerEntity(body);
         
         trainingWheels.attachEntity(player);
-        trainingWheels.detachEntity(player);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class Main extends SimpleApplication
     private void foobar()
     {
         flyCam.setEnabled(false);
-        Node chasePnt = new Node();
+        chasePnt = new Node();
         chasePnt.setLocalTranslation(0, 2.0f, 0);
         rootNode.attachChild(chasePnt);
         ChaseCamera chaseCam = new ChaseCamera(cam, chasePnt, inputManager);

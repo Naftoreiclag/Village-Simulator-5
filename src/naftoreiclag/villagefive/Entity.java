@@ -6,12 +6,28 @@
 package naftoreiclag.villagefive;
 
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 
 public abstract class Entity
 {
-    public abstract void bindSceneGraph(Node rootNode);
+    public Spatial aeBody;
+    public CircleBody fisBody = new CircleBody();
 
-    public abstract void bindPhysics(Space space);
+    protected Entity(Spatial bod)
+    {
+        this.aeBody = bod;
+        this.fisBody.linkToSpatial(bod);
+    }
+
+    public void bindSceneGraph(Node rootNode)
+    {
+        rootNode.attachChild(aeBody);
+    }
+    
+    public void bindPhysics(Space space)
+    {
+        space.attachBody(fisBody);
+    }
 
     public abstract void update(float tpf);
 }

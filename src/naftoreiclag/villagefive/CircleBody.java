@@ -16,7 +16,7 @@ public class CircleBody
 
     private Spatial link;
     
-    public void setLink(Spatial spatial)
+    public void linkToSpatial(Spatial spatial)
     {
         this.link = spatial;
     }

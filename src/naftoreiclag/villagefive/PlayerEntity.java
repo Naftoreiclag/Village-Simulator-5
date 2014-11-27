@@ -6,36 +6,19 @@
 
 package naftoreiclag.villagefive;
 
-import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 
 class PlayerEntity extends Entity
 {
-    public Node bod;
-    public CircleBody body = new CircleBody();
-
-    public PlayerEntity(Node bod)
+    public PlayerEntity(Spatial bod)
     {
-        this.bod = bod;
-        
-        this.body.setLink(bod);
-    }
-
-    @Override
-    public void bindSceneGraph(Node rootNode)
-    {
-        rootNode.attachChild(bod);
-    }
-
-    @Override
-    public void bindPhysics(Space space)
-    {
-        space.attachBody(body);
+        super(bod);
     }
 
     @Override
     public void update(float tpf)
     {
-        body.mot.set(1, 1);
+        fisBody.mot.set(1, 1);
     }
 
 }

@@ -28,10 +28,6 @@ public class SafeEntityHandler
         entity.bindPhysics(space);
     }
 
-    void detachEntity(Entity player)
-    {
-    }
-
     void update(float tpf)
     {
         for(Entity e : entities)
