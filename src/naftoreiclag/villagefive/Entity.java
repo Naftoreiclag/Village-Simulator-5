@@ -6,6 +6,8 @@
 
 package naftoreiclag.villagefive;
 
+import com.jme3.scene.Node;
+
 /*
  * An easy-to-use interface for synchronizing all the different bodies involved.
  * 
@@ -15,7 +17,7 @@ package naftoreiclag.villagefive;
 public abstract class Entity
 {
     protected World world;
-    protected Model model;
+    protected Node node;
     
     public abstract void meow();
     
@@ -23,9 +25,9 @@ public abstract class Entity
     {
         this.world = world;
     }
-    public void assertModel(Model model)
+    public void assertNode(Node node)
     {
-        this.model = model;
+        this.node = node;
     }
     
     public abstract String getModelName();

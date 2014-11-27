@@ -45,9 +45,30 @@ public class World
         }
         
         e.assertWorld(this);
-        e.assertModel(loadModel(e.getModelName()));
+        e.assertNode(loadNode(e.getModelName()));
         
         return e;
+    }
+    public Node loadNode(String modelName)
+    {
+        System.out.println(modelName);
+        System.out.println("Models/perry/Cube.mesh.xml");
+        
+        Object test = assetManager.loadModel(modelName);
+        System.out.println(test.getClass().getName());
+        
+        Node body = (Node) test;
+        body.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
+        body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        body.getControl(AnimControl.class);
+        
+        
+        body.getNumControls();
+        
+        rootNode.attachChild(body);
+        
+        return body;
+        
     }
     
     public Model loadModel(String modelName)
@@ -81,6 +102,8 @@ public class World
         {
             controls[i] = model.getControl(i);
         }
+        
+        return controls;
     }
 
 }
