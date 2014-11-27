@@ -17,6 +17,6 @@ public class MailboxEntity extends Entity
     @Override
     public String getModelName()
     {
-        return "Models/perry/Cube.mesh.xml";
+        return "Models/mail/GhettoMailbox.mesh.j3o";
     }
 }

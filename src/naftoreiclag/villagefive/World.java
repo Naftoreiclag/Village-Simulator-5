@@ -58,38 +58,14 @@ public class World
         System.out.println(test.getClass().getName());
         
         Node body = (Node) test;
-        body.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
         body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         body.getControl(AnimControl.class);
-        
         
         body.getNumControls();
         
         rootNode.attachChild(body);
         
         return body;
-        
-    }
-    
-    public Model loadModel(String modelName)
-    {
-        System.out.println(modelName);
-        System.out.println("Models/perry/Cube.mesh.xml");
-        
-        Object test = assetManager.loadModel(modelName);
-        System.out.println(test.getClass().getName());
-        
-        Node body = (Node) test;
-        body.setMaterial((Material) assetManager.loadMaterial("Materials/perry.j3m"));
-        body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        body.getControl(AnimControl.class);
-        
-        
-        body.getNumControls();
-        
-        rootNode.attachChild(body);
-        
-        return new Model(modelName, body);
         
     }
     
@@ -104,6 +80,11 @@ public class World
         }
         
         return controls;
+    }
+
+    void destroyEntity(Entity aThis)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

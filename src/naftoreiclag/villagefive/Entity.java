@@ -21,6 +21,11 @@ public abstract class Entity
     
     public abstract void meow();
     
+    public void destroy()
+    {
+        this.world.destroyEntity(this);
+    }
+    
     public void assertWorld(World world)
     {
         this.world = world;
