@@ -52,6 +52,8 @@ public class Main extends SimpleApplication
         ent.meow();
         
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
+        world.spawnEntity(MorganEntity.class, new Vector2f(0f, 0f));
+        world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
     }
 
     @Override
@@ -76,7 +78,7 @@ public class Main extends SimpleApplication
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
         
         AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White.mult(3.0f));
+        al.setColor(ColorRGBA.White);
         rootNode.addLight(al);
         
         DirectionalLight sun = new DirectionalLight();
@@ -86,9 +88,9 @@ public class Main extends SimpleApplication
         
         DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
         dlsr.setLight(sun);
-        dlsr.setShadowIntensity(0.6f);
+        dlsr.setShadowIntensity(0.2f);
         dlsr.setLambda(0.55f);
-        dlsr.setEdgeFilteringMode(EdgeFilteringMode.Bilinear);
+        dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
         viewPort.addProcessor(dlsr);
         
         DebugGrid gridMeshThing = new DebugGrid();
@@ -116,10 +118,10 @@ public class Main extends SimpleApplication
                 {
                     mb.setAppendOrigin(x, 0.0f, z);
 
-                    mb.addQuad(0, 0, 0, Vector3f.UNIT_Y, 0, 0,
-                               1, 0, 0, Vector3f.UNIT_Y, 1, 0,
-                               1, 0, 1, Vector3f.UNIT_Y, 1, 1,
-                               0, 0, 1, Vector3f.UNIT_Y, 0, 1);
+                    mb.addQuad(0, 0, 0, new Vector3f(0, 1, 0), 0, 0,
+                               1, 0, 0, new Vector3f(0, 1, 0), 1, 0,
+                               1, 0, 1, new Vector3f(0, 1, 0), 1, 1,
+                               0, 0, 1, new Vector3f(0, 1, 0), 0, 1);
                 }
             }
 

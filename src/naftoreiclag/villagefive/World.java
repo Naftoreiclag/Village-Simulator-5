@@ -60,9 +60,11 @@ public class World
         
         Node body = (Node) test;
         body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        body.getControl(AnimControl.class);
         
-        body.getNumControls();
+        if(modelName.contains("Morgan"))
+        {
+            body.setLocalScale(0.5f, 0.5f, 0.5f);
+        }
         
         rootNode.attachChild(body);
         
