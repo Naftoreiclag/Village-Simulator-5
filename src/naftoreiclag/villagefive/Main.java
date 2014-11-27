@@ -21,8 +21,7 @@ import com.jme3.scene.Node;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
-import java.util.ArrayList;
-import java.util.List;
+import org.yaml.snakeyaml.Yaml;
 
 public class Main extends SimpleApplication
 {
