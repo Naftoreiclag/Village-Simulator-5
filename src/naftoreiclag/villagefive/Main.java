@@ -12,6 +12,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue;
@@ -37,12 +38,18 @@ public class Main extends SimpleApplication
         main.start();
     }
     
+    World world;
     Node chasePnt;
     
     @Override
     public void simpleInitApp()
     {
         setupUselessAestetics();
+        
+        world = new World(rootNode, assetManager);
+        
+        MailboxEntity ent = world.spawnEntity(MailboxEntity.class, new Vector2f(5f, 5f));
+        ent.meow();
     }
 
     @Override
