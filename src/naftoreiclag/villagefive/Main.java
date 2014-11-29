@@ -8,6 +8,8 @@ package naftoreiclag.villagefive;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.ChaseCamera;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -41,6 +43,10 @@ public class Main extends SimpleApplication
     World world;
     Node chasePnt;
     
+    MorganEntity morgan;
+    
+    PlayerController playCont;
+    
     @Override
     public void simpleInitApp()
     {
@@ -48,17 +54,31 @@ public class Main extends SimpleApplication
         
         world = new World(rootNode, assetManager);
         
+        playCont = new PlayerController();
+        
+        inputManager.addMapping("Rotate Left", new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("Rotate Right", new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("Walk Forward", new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping("Walk Backward", new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addListener(playCont, "Rotate Left", "Rotate Right", "Walk Forward", "Walk Backward");
+        
+        morgan = world.spawnEntity(MorganEntity.class, new Vector2f(0f, 0f));
+        
+        playCont.setEntity(morgan);
+        
+        
+        
         MailboxEntity ent = world.spawnEntity(MailboxEntity.class, new Vector2f(5f, 5f));
         ent.meow();
         
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
-        world.spawnEntity(MorganEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
     }
 
     @Override
     public void simpleUpdate(float tpf)
     {
+        playCont.tick(tpf);
     }
 
     @Override

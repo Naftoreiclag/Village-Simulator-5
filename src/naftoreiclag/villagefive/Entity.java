@@ -42,4 +42,9 @@ public abstract class Entity
     }
     
     public abstract String getModelName();
+
+    void move(Vector2f dir)
+    {
+        this.node.move(dir.x, 0f, dir.y);
+    }
 }
