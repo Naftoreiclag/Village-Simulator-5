@@ -8,6 +8,7 @@ package naftoreiclag.villagefive;
 
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Vector2f;
+import com.jme3.renderer.Camera;
 
 public class PlayerController extends EntityController implements ActionListener
 {
@@ -18,7 +19,9 @@ public class PlayerController extends EntityController implements ActionListener
         this.puppet = entity;
     }
     
-    float speed = 1f;
+    float speed = 5f;
+    
+    Camera cam;
     
     boolean turningLeft = false;
     boolean turningRight = false;
@@ -32,27 +35,29 @@ public class PlayerController extends EntityController implements ActionListener
             return;
         }
         
+        Vector2f fwd = new Vector2f(cam.getDirection().x, cam.getDirection().z);
+        
         Vector2f dir = new Vector2f();
         
         if(movingFwd)
         {
-            dir.x += 1;
+            dir.addLocal(fwd);
         }
         if(movingBwd)
         {
-            dir.x -= 1;
+            dir.subtractLocal(fwd);
         }
         if(turningLeft)
         {
-            dir.y -= 1;
+            dir.addLocal(fwd.y, -fwd.x);
         }
         if(turningRight)
         {
-            dir.y += 1;
+            dir.addLocal(-fwd.y, fwd.x);
         }
         
         dir.normalizeLocal();
-        dir.mult(tpf * speed);
+        dir.multLocal(tpf * speed);
         
         puppet.move(dir);
     }
@@ -76,6 +81,11 @@ public class PlayerController extends EntityController implements ActionListener
         {
             turningRight = isPressed;
         }
+    }
+
+    void setCamera(Camera cam)
+    {
+        this.cam = cam;
     }
 
 }

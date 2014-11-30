@@ -8,6 +8,7 @@ package naftoreiclag.villagefive;
 
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 
 /*
  * An easy-to-use interface for synchronizing all the different bodies involved.
@@ -34,6 +35,11 @@ public abstract class Entity
     public void assertNode(Node node)
     {
         this.node = node;
+    }
+    
+    public void attachSpatial(Spatial spatial)
+    {
+        this.node.attachChild(spatial);
     }
     
     public void teleport(Vector2f pos)

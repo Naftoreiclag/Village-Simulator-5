@@ -46,6 +46,7 @@ public class Main extends SimpleApplication
     MorganEntity morgan;
     
     PlayerController playCont;
+    ChaseCamera chaseCam;
     
     @Override
     public void simpleInitApp()
@@ -63,8 +64,10 @@ public class Main extends SimpleApplication
         inputManager.addListener(playCont, "Rotate Left", "Rotate Right", "Walk Forward", "Walk Backward");
         
         morgan = world.spawnEntity(MorganEntity.class, new Vector2f(0f, 0f));
+        morgan.attachSpatial(chasePnt);
         
         playCont.setEntity(morgan);
+        playCont.setCamera(cam);
         
         
         
@@ -90,9 +93,9 @@ public class Main extends SimpleApplication
     {
         flyCam.setEnabled(false);
         chasePnt = new Node();
-        chasePnt.setLocalTranslation(0, 2.0f, 0);
+        chasePnt.setLocalTranslation(0, 3.0f, 0);
         rootNode.attachChild(chasePnt);
-        ChaseCamera chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
+        chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
         
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
