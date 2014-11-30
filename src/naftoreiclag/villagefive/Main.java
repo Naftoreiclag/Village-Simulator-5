@@ -97,6 +97,7 @@ public class Main extends SimpleApplication
         rootNode.attachChild(chasePnt);
         chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
         
+        
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
         
