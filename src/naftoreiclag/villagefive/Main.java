@@ -74,6 +74,8 @@ public class Main extends SimpleApplication
         MailboxEntity ent = world.spawnEntity(MailboxEntity.class, new Vector2f(5f, 5f));
         ent.meow();
         
+        world.spawnEntity(KatHeadEntity.class, new Vector2f(3f, -3f));
+        
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
     }
