@@ -6,6 +6,11 @@
 
 package naftoreiclag.villagefive;
 
+import com.jme3.animation.AnimChannel;
+import com.jme3.animation.AnimControl;
+import com.jme3.animation.Bone;
+import com.jme3.animation.LoopMode;
+import com.jme3.animation.SkeletonControl;
 import com.jme3.scene.Node;
 
 public class KatCompleteEntity extends Entity
@@ -17,15 +22,24 @@ public class KatCompleteEntity extends Entity
     }
     
     Node other;
+    AnimControl cntrl;
+    AnimChannel cnl;
+    
+    SkeletonControl skele;
     
     @Override
     public void assertNode(Node node)
     {
         super.assertNode(node);
         
+        cntrl = node.getControl(AnimControl.class);
+        cnl = cntrl.createChannel();
+        cnl.setAnim("Stand");
+        cnl.setLoopMode(LoopMode.Loop);
+        skele = node.getControl(SkeletonControl.class);
+        
         other = world.loadNode("Models/katty/Katty.mesh.j3o");
-        other.setLocalTranslation(0, 2.44571f, 0);
-        this.node.attachChild(other);
+        skele.getAttachmentsNode("Head").attachChild(other);
     }
 
     @Override
