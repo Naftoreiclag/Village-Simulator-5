@@ -53,20 +53,9 @@ public class World
     public Node loadNode(String modelName)
     {
         System.out.println(modelName);
-        System.out.println("Models/perry/Cube.mesh.xml");
         
-        Object test = assetManager.loadModel(modelName);
-        System.out.println(test.getClass().getName());
-        
-        Node body = (Node) test;
+        Node body = (Node) assetManager.loadModel(modelName);
         body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        
-        /*
-        if(modelName.contains("Morgan"))
-        {
-            body.setLocalScale(0.5f, 0.5f, 0.5f);
-        }
-        */
         
         rootNode.attachChild(body);
         

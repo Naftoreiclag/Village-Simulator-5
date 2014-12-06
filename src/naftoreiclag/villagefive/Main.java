@@ -77,6 +77,7 @@ public class Main extends SimpleApplication
         world.spawnEntity(KatHeadEntity.class, new Vector2f(3f, 3f));
         world.spawnEntity(KatHeadEntity.class, new Vector2f(-3f, 3f));
         world.spawnEntity(KatHatEntity.class, new Vector2f(-3f, 3f));
+        world.spawnEntity(KatCompleteEntity.class, new Vector2f(-6f, 6f));
         
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
@@ -106,7 +107,7 @@ public class Main extends SimpleApplication
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
         
         AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White);
+        al.setColor(ColorRGBA.White.mult(0.5f));
         rootNode.addLight(al);
         
         DirectionalLight sun = new DirectionalLight();

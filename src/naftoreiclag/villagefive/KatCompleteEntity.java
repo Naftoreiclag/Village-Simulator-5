@@ -8,17 +8,29 @@ package naftoreiclag.villagefive;
 
 import com.jme3.scene.Node;
 
-public class KatHeadEntity extends Entity
+public class KatCompleteEntity extends Entity
 {
     @Override
     public void meow()
     {
         System.out.println("MEOW");
     }
+    
+    Node other;
+    
+    @Override
+    public void assertNode(Node node)
+    {
+        super.assertNode(node);
+        
+        other = world.loadNode("Models/katty/Katty.mesh.j3o");
+        other.setLocalTranslation(0, 2.44571f, 0);
+        this.node.attachChild(other);
+    }
 
     @Override
     public String getModelName()
     {
-        return "Models/katty/Katty.mesh.j3o";
+        return "Models/katty/KattyBody.mesh.j3o";
     }
 }
