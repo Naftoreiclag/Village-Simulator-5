@@ -12,14 +12,16 @@ import com.jme3.renderer.Camera;
 
 public class PlayerController extends EntityController implements ActionListener
 {
-    public Entity puppet;
+    public KatCompleteEntity puppet;
     
-    public void setEntity(Entity entity)
+    public void setEntity(KatCompleteEntity entity)
     {
         this.puppet = entity;
+        
+        puppet.bodyAnimChannel.setSpeed(2.0f);
     }
     
-    float speed = 5f;
+    float speed = 3.5f;
     
     Camera cam;
     
@@ -32,6 +34,11 @@ public class PlayerController extends EntityController implements ActionListener
     {
         if(!movingFwd && !movingBwd && !turningLeft && !turningRight)
         {
+            if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
+            {
+                puppet.bodyAnimChannel.setAnim("Stand");
+            }
+            
             return;
         }
         
@@ -59,7 +66,13 @@ public class PlayerController extends EntityController implements ActionListener
         dir.normalizeLocal();
         dir.multLocal(tpf * speed);
         
+        puppet.node.rotate(dir.x, 0, dir.y);
         puppet.move(dir);
+        
+        if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
+        {
+            puppet.bodyAnimChannel.setAnim("Walk");
+        }
     }
 
     public void onAction(String key, boolean isPressed, float tpf)

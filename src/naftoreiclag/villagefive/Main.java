@@ -43,7 +43,7 @@ public class Main extends SimpleApplication
     World world;
     Node chasePnt;
     
-    MorganEntity morgan;
+    KatCompleteEntity morgan;
     
     PlayerController playCont;
     ChaseCamera chaseCam;
@@ -63,7 +63,7 @@ public class Main extends SimpleApplication
         inputManager.addMapping("Walk Backward", new KeyTrigger(KeyInput.KEY_S));
         inputManager.addListener(playCont, "Rotate Left", "Rotate Right", "Walk Forward", "Walk Backward");
         
-        morgan = world.spawnEntity(MorganEntity.class, new Vector2f(0f, 0f));
+        morgan = world.spawnEntity(KatCompleteEntity.class, new Vector2f(0f, 0f));
         morgan.attachSpatial(chasePnt);
         
         playCont.setEntity(morgan);

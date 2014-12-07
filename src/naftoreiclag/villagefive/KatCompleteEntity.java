@@ -42,7 +42,8 @@ public class KatCompleteEntity extends Entity
         
         bodyAnimControl = node.getControl(AnimControl.class);
         bodyAnimChannel = bodyAnimControl.createChannel();
-        bodyAnimChannel.setAnim("Stand");
+        bodyAnimChannel.setAnim("Walk");
+        bodyAnimChannel.setTime(3.0f);
         bodyAnimChannel.setLoopMode(LoopMode.Loop);
         
         skele = node.getControl(SkeletonControl.class);
