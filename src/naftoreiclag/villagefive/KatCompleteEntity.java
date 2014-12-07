@@ -22,30 +22,44 @@ public class KatCompleteEntity extends Entity
     }
     
     Node head;
+    Node tail;
+    Node ears;
     Node footL;
     Node footR;
     Node handL;
     Node handR;
-    AnimControl cntrl;
-    AnimChannel cnl;
+    AnimControl bodyAnimControl;
+    AnimChannel bodyAnimChannel;
+    AnimControl tailAnimControl;
+    AnimChannel tailAnimChannel;
     
     SkeletonControl skele;
     
     @Override
-    public void assertNode(Node node)
+    public void assertNode(Node newNode)
     {
-        super.assertNode(node);
+        super.assertNode(newNode);
         
-        cntrl = node.getControl(AnimControl.class);
-        cnl = cntrl.createChannel();
-        cnl.setAnim("Stand");
-        cnl.setLoopMode(LoopMode.Loop);
+        bodyAnimControl = node.getControl(AnimControl.class);
+        bodyAnimChannel = bodyAnimControl.createChannel();
+        bodyAnimChannel.setAnim("Stand");
+        bodyAnimChannel.setLoopMode(LoopMode.Loop);
         
         skele = node.getControl(SkeletonControl.class);
         
         head = world.loadNode("Models/katty/Katty.mesh.j3o");
         skele.getAttachmentsNode("Head").attachChild(head);
         
+        ears = world.loadNode("Models/katty/KattyEars.mesh.j3o");
+        head.attachChild(ears);
+        
+        tail = world.loadNode("Models/katty/KattyTail.mesh.j3o");
+        skele.getAttachmentsNode("Tail").attachChild(tail);
+        
+        tailAnimControl = tail.getControl(AnimControl.class);
+        tailAnimChannel = tailAnimControl.createChannel();
+        tailAnimChannel.setAnim("Happy");
+        tailAnimChannel.setLoopMode(LoopMode.Loop);
         
         footL = world.loadNode("Models/katty/KattyFoot.mesh.j3o");
         skele.getAttachmentsNode("Foot.L").attachChild(footL);
@@ -56,6 +70,8 @@ public class KatCompleteEntity extends Entity
         skele.getAttachmentsNode("Hand.L").attachChild(handL);
         handR = world.loadNode("Models/katty/KattyHand.mesh.j3o");
         skele.getAttachmentsNode("Hand.R").attachChild(handR);
+        
+        
     }
 
     @Override
