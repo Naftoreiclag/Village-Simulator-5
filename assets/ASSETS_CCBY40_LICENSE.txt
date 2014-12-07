@@ -1,0 +1,3 @@
+Unless where otherwise noted, the following license applies to all files located within /assets/ or any subdirectory of /assets/
+
+This work by Naftoreiclag is licensed under a Creative Commons Attribution 4.0 International License.
