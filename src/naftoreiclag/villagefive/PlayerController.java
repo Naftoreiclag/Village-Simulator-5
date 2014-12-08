@@ -20,8 +20,6 @@ public class PlayerController extends EntityController implements ActionListener
     public void setEntity(KatCompleteEntity entity)
     {
         this.puppet = entity;
-        
-        puppet.bodyAnimChannel.setSpeed(2.0f);
     }
     
     float speed = 3.5f;
@@ -83,6 +81,7 @@ public class PlayerController extends EntityController implements ActionListener
         if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
         {
             puppet.bodyAnimChannel.setAnim("Walk");
+            puppet.bodyAnimChannel.setSpeed(2.0f);
         }
     }
 
