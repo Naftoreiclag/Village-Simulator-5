@@ -8,17 +8,19 @@ package naftoreiclag.villagefive;
 
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
-import com.jme3.animation.Bone;
 import com.jme3.animation.LoopMode;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.texture.Texture;
 import com.jme3.util.BufferUtils;
 
 public class KatCompleteEntity extends Entity
@@ -84,12 +86,12 @@ public class KatCompleteEntity extends Entity
         handR = world.loadNode("Models/katty/KattyHand.mesh.j3o");
         skele.getAttachmentsNode("Hand.R").attachChild(handR);
         
-        
+        eyeTex = world.assetManager.loadTexture("Textures/eye.png");
         
         face = head.getControl(SkeletonControl.class);
-        eyeL = makeEye();//world.loadNode("Models/katty/KattyFoot.mesh.j3o");
+        eyeL = makeEye(false);//world.loadNode("Models/katty/KattyFoot.mesh.j3o");
         face.getAttachmentsNode("Eye.L").attachChild(eyeL);
-        eyeR = makeEye();//world.loadNode("Models/katty/KattyFoot.mesh.j3o");
+        eyeR = makeEye(true);//world.loadNode("Models/katty/KattyFoot.mesh.j3o");
         face.getAttachmentsNode("Eye.R").attachChild(eyeR);
         
         
@@ -101,7 +103,7 @@ public class KatCompleteEntity extends Entity
         return "Models/katty/KattyBody.mesh.j3o";
     }
 
-    private Mesh getEyeMesh()
+    private Mesh getEyeMesh(boolean right)
     {
         Mesh mesh = new Mesh();
         Vector3f[] vertices = new Vector3f[4];
@@ -117,17 +119,27 @@ public class KatCompleteEntity extends Entity
         normals[3] = new Vector3f(0, 1, 0);
 
         Vector2f[] texCoord = new Vector2f[4];
-        texCoord[0] = new Vector2f(0, 0);
-        texCoord[1] = new Vector2f(1, 0);
-        texCoord[3] = new Vector2f(1, 1);
-        texCoord[2] = new Vector2f(0, 1);
+        if(right)
+        {
+            texCoord[0] = new Vector2f(1, 1);
+            texCoord[1] = new Vector2f(0, 1);
+            texCoord[2] = new Vector2f(0, 0);
+            texCoord[3] = new Vector2f(1, 0);
+        }
+        else
+        {
+            texCoord[0] = new Vector2f(0, 1);
+            texCoord[1] = new Vector2f(1, 1);
+            texCoord[2] = new Vector2f(1, 0);
+            texCoord[3] = new Vector2f(0, 0);
+        }
 
         int[] indexes = {0, 3, 2, 0, 2, 1};
         
 
         float[] colorArray =
         {
-            1, 0, 0, 1f,
+            1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
             1, 1, 1, 0
@@ -143,13 +155,19 @@ public class KatCompleteEntity extends Entity
         return mesh;
     }
 
-    private Geometry makeEye()
+    Texture eyeTex;
+    private Geometry makeEye(boolean right)
     {
-        Geometry geo = new Geometry("Eyemesh", getEyeMesh());
+        Geometry geo = new Geometry("Eyemesh", getEyeMesh(right));
         Material matVC = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matVC.setBoolean("VertexColor", true);
+        //matVC.setBoolean("VertexColor", true);
+        matVC.setTexture("ColorMap", eyeTex);
+        matVC.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        geo.setQueueBucket(Bucket.Transparent);
         geo.setMaterial(matVC);
+        geo.setShadowMode(RenderQueue.ShadowMode.Receive);
         geo.setLocalScale(0.3f);
         return geo;
     }
+
 }
