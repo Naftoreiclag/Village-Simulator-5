@@ -42,6 +42,7 @@ public class KatCompleteEntity extends Entity
     Node footR;
     Node handL;
     Node handR;
+    Node mask;
     AnimControl bodyAnimControl;
     AnimChannel bodyAnimChannel;
     AnimControl tailAnimControl;
@@ -86,6 +87,22 @@ public class KatCompleteEntity extends Entity
         handR = world.loadNode("Models/katty/KattyHand.mesh.j3o");
         skele.getAttachmentsNode("Hand.R").attachChild(handR);
         
+        
+        eyeTex = world.assetManager.loadTexture("Textures/debugFace.png");
+        mask = world.loadNode("Models/katty/Face.mesh.j3o");
+        //Geometry geo = (Geometry) mask.getChild("Katty");
+        Material matVC = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        matVC.setTexture("ColorMap", eyeTex);
+        matVC.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        mask.setQueueBucket(Bucket.Transparent);
+        mask.setMaterial(matVC);
+        mask.setShadowMode(RenderQueue.ShadowMode.Receive);
+        //mask.setLocalScale(0.3f);
+        
+        
+        head.attachChild(mask);
+        
+        /*
         eyeTex = world.assetManager.loadTexture("Textures/eye.png");
         
         face = head.getControl(SkeletonControl.class);
@@ -93,8 +110,7 @@ public class KatCompleteEntity extends Entity
         face.getAttachmentsNode("Eye.L").attachChild(eyeL);
         eyeR = makeEye(true);//world.loadNode("Models/katty/KattyFoot.mesh.j3o");
         face.getAttachmentsNode("Eye.R").attachChild(eyeR);
-        
-        
+        */
     }
 
     @Override
