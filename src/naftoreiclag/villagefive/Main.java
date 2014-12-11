@@ -24,6 +24,8 @@ import com.jme3.scene.Node;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
+import com.jme3.texture.Texture;
+import com.jme3.util.SkyFactory;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
 public class Main extends SimpleApplication
@@ -73,6 +75,8 @@ public class Main extends SimpleApplication
         
         MailboxEntity ent = world.spawnEntity(MailboxEntity.class, new Vector2f(5f, 5f));
         ent.meow();
+        
+        
         
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
@@ -125,6 +129,17 @@ public class Main extends SimpleApplication
         even.setMaterial((Material) assetManager.loadMaterial("Materials/40cm.j3m"));
         even.setShadowMode(RenderQueue.ShadowMode.Receive);
         rootNode.attachChild(even);
+        
+        
+        
+        
+        Texture west = assetManager.loadTexture("Textures/clouds1/clouds1_west.bmp");
+        Texture east = assetManager.loadTexture("Textures/clouds1/clouds1_east.bmp");
+        Texture north = assetManager.loadTexture("Textures/clouds1/clouds1_north.bmp");
+        Texture south = assetManager.loadTexture("Textures/clouds1/clouds1_south.bmp");
+        Texture up = assetManager.loadTexture("Textures/clouds1/clouds1_up.bmp");
+        Texture down = assetManager.loadTexture("Textures/clouds1/clouds1_down.bmp");
+        rootNode.attachChild(SkyFactory.createSky(assetManager, west, east, north, south, up, down));
     }
 
     class DebugGrid
