@@ -11,6 +11,7 @@ Oto.*
 *.skeleton.xml
 *.j30data
 *.material
+*_dni*
 
 lwjgl64.dll
 OpenAL64.dll
