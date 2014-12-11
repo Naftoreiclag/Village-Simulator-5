@@ -12,6 +12,7 @@ import com.jme3.animation.LoopMode;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
@@ -91,11 +92,22 @@ public class KatCompleteEntity extends Entity
         eyeTex = world.assetManager.loadTexture("Textures/debugFace.png");
         mask = world.loadNode("Models/katty/Face.mesh.j3o");
         //Geometry geo = (Geometry) mask.getChild("Katty");
-        Material matVC = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        matVC.setTexture("ColorMap", eyeTex);
-        matVC.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        
+        /*
+        
+        Material mat = new Material(world.assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        mat.setBoolean("UseMaterialColors", false);
+        mat.setColor("Diffuse", ColorRGBA.White);
+        mat.setTexture("DiffuseMap", eyeTex);
+        
+        */
+        
+        Material mat = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setTexture("ColorMap", eyeTex);
+        
+        mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         mask.setQueueBucket(Bucket.Transparent);
-        mask.setMaterial(matVC);
+        mask.setMaterial(mat);
         mask.setShadowMode(RenderQueue.ShadowMode.Receive);
         //mask.setLocalScale(0.3f);
         

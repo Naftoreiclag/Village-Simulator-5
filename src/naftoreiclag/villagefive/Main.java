@@ -77,11 +77,6 @@ public class Main extends SimpleApplication
         
         world.spawnEntity(MorganEntity.class, new Vector2f(7f, -7f));
         
-        world.spawnEntity(KatHeadEntity.class, new Vector2f(3f, 3f));
-        world.spawnEntity(KatHeadEntity.class, new Vector2f(-3f, 3f));
-        world.spawnEntity(KatHatEntity.class, new Vector2f(-3f, 3f));
-        world.spawnEntity(KatCompleteEntity.class, new Vector2f(-6f, 6f));
-        
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
     }
