@@ -21,8 +21,13 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
+import com.jme3.texture.Texture2D;
+import com.jme3.texture.image.ImageRaster;
 import com.jme3.util.BufferUtils;
+import java.util.Random;
+import naftoreiclag.villagefive.util.GR;
 
 public class KatCompleteEntity extends Entity
 {
@@ -30,6 +35,11 @@ public class KatCompleteEntity extends Entity
     public void meow()
     {
         System.out.println("MEOW mew meeow");
+    }
+    
+    public KatCompleteEntity()
+    {
+        random = new Random();
     }
     
     Node head;
@@ -51,6 +61,12 @@ public class KatCompleteEntity extends Entity
     
     SkeletonControl skele;
     SkeletonControl face;
+    
+    Texture debugFaceTex;
+    
+    Texture eyeOpenTex;
+    Texture eyeCloseTex;
+    Material faceMat;
     
     @Override
     public void assertNode(Node newNode)
@@ -89,7 +105,7 @@ public class KatCompleteEntity extends Entity
         skele.getAttachmentsNode("Hand.R").attachChild(handR);
         
         
-        eyeTex = world.assetManager.loadTexture("Textures/debugFace.png");
+        debugFaceTex = world.assetManager.loadTexture("Textures/debugFace.png");
         mask = world.loadNode("Models/katty/Face.mesh.j3o");
         //Geometry geo = (Geometry) mask.getChild("Katty");
         
@@ -102,12 +118,15 @@ public class KatCompleteEntity extends Entity
         
         */
         
-        Material mat = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setTexture("ColorMap", eyeTex);
+        eyeOpenTex = Stuff_dni.bbb();
+        eyeCloseTex = Stuff_dni.bbbl();
+
+        faceMat = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        faceMat.setTexture("ColorMap", eyeOpenTex);
         
-        mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        faceMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         mask.setQueueBucket(Bucket.Transparent);
-        mask.setMaterial(mat);
+        mask.setMaterial(faceMat);
         mask.setShadowMode(RenderQueue.ShadowMode.Receive);
         //mask.setLocalScale(0.3f);
         
@@ -124,6 +143,8 @@ public class KatCompleteEntity extends Entity
         face.getAttachmentsNode("Eye.R").attachChild(eyeR);
         */
     }
+    
+    
 
     @Override
     public String getModelName()
@@ -183,19 +204,53 @@ public class KatCompleteEntity extends Entity
         return mesh;
     }
 
-    Texture eyeTex;
     private Geometry makeEye(boolean right)
     {
         Geometry geo = new Geometry("Eyemesh", getEyeMesh(right));
         Material matVC = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         //matVC.setBoolean("VertexColor", true);
-        matVC.setTexture("ColorMap", eyeTex);
+        matVC.setTexture("ColorMap", debugFaceTex);
         matVC.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         geo.setQueueBucket(Bucket.Transparent);
         geo.setMaterial(matVC);
         geo.setShadowMode(RenderQueue.ShadowMode.Receive);
         geo.setLocalScale(0.3f);
         return geo;
+    }
+
+    float blinkLength;
+    Random random;
+    
+    @Override
+    public void tick(float tpf)
+    {
+        //System.out.println(tpf);
+        
+        if(GR.chanceHertz(tpf, 0.1f))
+        {
+            blink();
+        }
+        
+        if(blinkLength > 0)
+        {
+
+            blinkLength -= tpf;
+            if(blinkLength < 0)
+            {
+                faceMat.setTexture("ColorMap", eyeOpenTex);
+
+            }
+        }
+
+    }
+    
+    public void blink()
+    {
+        System.out.println("ello");
+        
+        faceMat.setTexture("ColorMap", eyeCloseTex);
+        
+        blinkLength = 0.1f;
     }
 
 }

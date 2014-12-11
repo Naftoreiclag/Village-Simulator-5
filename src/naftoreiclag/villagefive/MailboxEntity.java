@@ -19,4 +19,9 @@ public class MailboxEntity extends Entity
     {
         return "Models/mail/GhettoMailbox.mesh.j3o";
     }
+
+    @Override
+    public void tick(float tpf)
+    {
+    }
 }

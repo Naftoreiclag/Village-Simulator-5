@@ -74,9 +74,6 @@ public class Main extends SimpleApplication
         MailboxEntity ent = world.spawnEntity(MailboxEntity.class, new Vector2f(5f, 5f));
         ent.meow();
         
-        
-        world.spawnEntity(MorganEntity.class, new Vector2f(7f, -7f));
-        
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
     }
@@ -85,6 +82,7 @@ public class Main extends SimpleApplication
     public void simpleUpdate(float tpf)
     {
         playCont.tick(tpf);
+        world.tick(tpf);
     }
 
     @Override

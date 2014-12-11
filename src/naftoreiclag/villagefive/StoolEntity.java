@@ -19,4 +19,9 @@ public class StoolEntity extends Entity
     {
         return "Models/stool/Stool.j3o";
     }
+
+    @Override
+    public void tick(float tpf)
+    {
+    }
 }

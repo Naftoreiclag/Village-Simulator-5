@@ -19,4 +19,9 @@ public class MorganEntity extends Entity
     {
         return "Models/morgan/Morgan.j3o";
     }
+
+    @Override
+    public void tick(float tpf)
+    {
+    }
 }

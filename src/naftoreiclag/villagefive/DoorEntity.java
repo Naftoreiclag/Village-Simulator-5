@@ -19,4 +19,8 @@ public class DoorEntity extends Entity
     {
         return "Models/door/Door.mesh.j3o";
     }
+
+    @Override
+    public void tick(float tpf)
+    {}
 }

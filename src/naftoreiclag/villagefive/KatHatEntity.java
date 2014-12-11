@@ -19,4 +19,9 @@ public class KatHatEntity extends Entity
     {
         return "Models/coolHat/CoolHat.mesh.j3o";
     }
+
+    @Override
+    public void tick(float tpf)
+    {
+    }
 }

@@ -37,6 +37,8 @@ public abstract class Entity
         this.node = node;
     }
     
+    public abstract void tick(float tpf);
+    
     public void attachSpatial(Spatial spatial)
     {
         this.node.attachChild(spatial);

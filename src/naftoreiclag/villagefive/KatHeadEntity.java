@@ -21,4 +21,9 @@ public class KatHeadEntity extends Entity
     {
         return "Models/katty/Katty.mesh.j3o";
     }
+
+    @Override
+    public void tick(float tpf)
+    {
+    }
 }

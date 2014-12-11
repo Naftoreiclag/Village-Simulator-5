@@ -14,6 +14,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.Control;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,8 @@ public class World
 {
     Node rootNode;
     AssetManager assetManager;
+    
+    List<Entity> entities = new ArrayList<Entity>();
     
     World(Node rootNode, AssetManager assetManager)
     {
@@ -47,6 +50,8 @@ public class World
         e.assertWorld(this);
         e.assertNode(loadNode(e.getModelName()));
         e.teleport(vector2f);
+        
+        entities.add(e);
         
         return e;
     }
@@ -79,6 +84,14 @@ public class World
     void destroyEntity(Entity aThis)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void tick(float tpf)
+    {
+        for(Entity entity : entities)
+        {
+            entity.tick(tpf);
+        }
     }
 
 }
