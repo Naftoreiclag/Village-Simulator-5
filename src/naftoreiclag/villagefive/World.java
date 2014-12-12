@@ -57,7 +57,17 @@ public class World
     }
     public Node loadNode(String modelName)
     {
+        
         System.out.println(modelName);
+        
+        if(modelName == null)
+        {
+            Node body = new Node();
+            body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+            rootNode.attachChild(body);
+
+            return body;
+        }
         
         Node body = (Node) assetManager.loadModel(modelName);
         body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
