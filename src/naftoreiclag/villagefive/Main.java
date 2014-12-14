@@ -94,6 +94,7 @@ public class Main extends SimpleApplication
         
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         Nifty nifty = niftyDisplay.getNifty();
+        nifty.registerScreenController(new TestController());
         nifty.fromXml("Interface/test.xml", "start");
         guiViewPort.addProcessor(niftyDisplay);
         inputManager.setCursorVisible(true);

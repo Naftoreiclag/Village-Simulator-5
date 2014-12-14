@@ -3,14 +3,16 @@
     <useStyles filename="nifty-default-styles.xml" />
     <useControls filename="nifty-default-controls.xml" />
 
-    <screen id="start">
+    <screen id="start" controller="naftoreiclag.villagefive.TestController">
         <layer childLayout="center">
             <image filename="Interface/skin.png" imageMode="resize:10,108,10,10,10,108,10,108,10,108,10,10" width="50%" height="50%" align="center" valign="center" childLayout="vertical" backgroundColor="#ffff" padding="10">
                 <image filename="Interface/skin2.png" imageMode="resize:10,108,10,10,10,108,10,108,10,108,10,10" height="*" width="*" padding="10">
                 </image>
                 <panel height="10px" />
                 <panel height="20px" childLayout="horizontal">
-                    <control id="button_ok" name="button" label="Alright" />
+                    <control id="button_ok" name="button" label="Alright">
+                        <interact onClick="hello()" />
+                    </control>
                     <panel width="*" />
                     <control id="button_cancel" name="button" label="Cancel" />
                 </panel>

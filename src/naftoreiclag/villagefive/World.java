@@ -58,7 +58,7 @@ public class World
     public Node loadNode(String modelName)
     {
         
-        System.out.println(modelName);
+        //System.out.println(modelName);
         
         if(modelName == null)
         {
