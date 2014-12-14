@@ -42,6 +42,7 @@ public class Main extends SimpleApplication
         
         Main main = new Main();
         main.setSettings(displ);
+        main.showSettings = false;
         main.start();
     }
     
@@ -104,6 +105,8 @@ public class Main extends SimpleApplication
     {
         playCont.tick(tpf);
         world.tick(tpf);
+        
+        //System.out.println(cam.getLocation().subtract(chasePnt.getLocalTranslation()));
     }
 
     @Override

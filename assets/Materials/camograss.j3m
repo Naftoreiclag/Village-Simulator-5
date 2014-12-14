@@ -1,6 +1,6 @@
 Material My Material : Common/MatDefs/Light/Lighting.j3md {
      MaterialParameters {
-        DiffuseMap : Repeat Textures/stone.jpg
+        DiffuseMap : Repeat Textures/grass4.jpg
         UseMaterialColors : true
         Ambient : 1.0 1.0 1.0 1.0
         Diffuse : 1.0 1.0 1.0 1.0
