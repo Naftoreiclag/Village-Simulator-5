@@ -5,18 +5,32 @@
 
     <screen id="start" controller="naftoreiclag.villagefive.TestController">
         <layer childLayout="center">
-            <image filename="Interface/skin.png" imageMode="resize:10,108,10,10,10,108,10,108,10,108,10,10" width="50%" height="50%" align="center" valign="center" childLayout="vertical" backgroundColor="#ffff" padding="10">
-                <image filename="Interface/skin2.png" imageMode="resize:10,108,10,10,10,108,10,108,10,108,10,10" height="*" width="*" padding="10">
-                </image>
-                <panel height="10px" />
-                <panel height="20px" childLayout="horizontal">
-                    <control id="button_ok" name="button" label="Alright">
-                        <interact onClick="hello" />
-                    </control>
-                    <panel width="*" />
-                    <control id="button_cancel" name="button" label="Cancel" />
+            <panel width="800px" height="800px" childLayout="vertical">
+                <panel width="*" height="30%"/>
+                
+                <panel width="*" height="60%" childLayout="horizontal">
+                    <panel width="5%" height="*" />
+                    <panel width="25%" height="*" childLayout="horizontal">
+                        <panel width="80%" height="*" backgroundColor="#f00f">
+                            <!-- extra slots -->
+                        </panel>
+                        <panel width="20%" height="*" backgroundColor="#0f0f">
+                            <!-- scrollbar -->
+                        </panel>
+                    </panel>
+                    <panel width="40%" height="*" childLayout="vertical">
+                        <panel width="*" height="66.67%">
+                            <!-- character space -->
+                        </panel>
+                        <panel width="*" backgroundColor="#00ff" childLayout="center" >
+                            <image filename="Interface/pockets.png" width="100%" height="100%" />
+                            <!-- pockets -->
+                        </panel>
+                    </panel>
+                    <panel width="30%" height="*" />
                 </panel>
-            </image>
+                <panel width="*" height="10%" />
+            </panel>
         </layer>
     </screen>
 </nifty>
