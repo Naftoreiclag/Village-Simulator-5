@@ -11,7 +11,7 @@
                 <panel height="10px" />
                 <panel height="20px" childLayout="horizontal">
                     <control id="button_ok" name="button" label="Alright">
-                        <interact onClick="hello()" />
+                        <interact onClick="hello" />
                     </control>
                     <panel width="*" />
                     <control id="button_cancel" name="button" label="Cancel" />
