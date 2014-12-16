@@ -27,10 +27,13 @@ import com.jme3.texture.Texture2D;
 import com.jme3.texture.image.ImageRaster;
 import com.jme3.util.BufferUtils;
 import java.util.Random;
+import naftoreiclag.villagefive.util.Anglef;
 import naftoreiclag.villagefive.util.GR;
 
 public class KatCompleteEntity extends Entity
 {
+    
+    
     @Override
     public void meow()
     {

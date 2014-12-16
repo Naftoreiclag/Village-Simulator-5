@@ -12,6 +12,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import naftoreiclag.villagefive.util.Anglef;
 
 public class PlayerController extends EntityController implements ActionListener
 {
@@ -22,10 +23,10 @@ public class PlayerController extends EntityController implements ActionListener
         this.puppet = entity;
     }
     
-    float speed = 3.5f;
+    Anglef lookDir = new Anglef();
+    float turnSpd = 0.1f;
     
-    float actDir = 0;
-    float targDir = 0;
+    float speed = 3.5f;
     
     Camera cam;
     
@@ -36,7 +37,7 @@ public class PlayerController extends EntityController implements ActionListener
 
     public void tick(float tpf)
     {
-        puppet.node.getLocalRotation().fromAngleAxis(actDir, Vector3f.UNIT_Y);
+        puppet.node.getLocalRotation().fromAngleAxis(lookDir.a, Vector3f.UNIT_Y);
         
         if(!movingFwd && !movingBwd && !turningLeft && !turningRight)
         {
@@ -72,9 +73,12 @@ public class PlayerController extends EntityController implements ActionListener
         dir.normalizeLocal();
         dir.multLocal(tpf * speed);
         
-        targDir = FastMath.HALF_PI - dir.getAngle();
         
-        actDir = tween(actDir, targDir);
+        //float targDir = FastMath.HALF_PI - dir.getAngle();
+        lookDir.tweenLocal(FastMath.HALF_PI - dir.getAngle(), turnSpd);
+        
+        //System.out.println(lookDir.a);
+        //System.out.println(FastMath.HALF_PI - dir.getAngle());
         
         puppet.move(dir);
         
@@ -111,9 +115,5 @@ public class PlayerController extends EntityController implements ActionListener
         this.cam = cam;
     }
 
-    private float tween(float actDir1, float targDir1)
-    {
-        return (actDir1 + targDir1) / 2f;
-    }
 
 }

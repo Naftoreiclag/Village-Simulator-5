@@ -95,7 +95,7 @@ public class Main extends SimpleApplication
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         Nifty nifty = niftyDisplay.getNifty();
         nifty.registerScreenController(new TestController());
-        nifty.fromXml("Interface/test.xml", "start");
+        //nifty.fromXml("Interface/test.xml", "start");
         guiViewPort.addProcessor(niftyDisplay);
         inputManager.setCursorVisible(true);
 
@@ -119,7 +119,7 @@ public class Main extends SimpleApplication
     {
         flyCam.setEnabled(false);
         chasePnt = new Node();
-        chasePnt.setLocalTranslation(0, 3.0f, 0);
+        chasePnt.setLocalTranslation(0, 3.5f, 0);
         rootNode.attachChild(chasePnt);
         chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
         
