@@ -37,7 +37,7 @@ public class PlayerController extends EntityController implements ActionListener
 
     public void tick(float tpf)
     {
-        puppet.node.getLocalRotation().fromAngleAxis(lookDir.a, Vector3f.UNIT_Y);
+        puppet.node.getLocalRotation().fromAngleAxis(lookDir.x, Vector3f.UNIT_Y);
         
         if(!movingFwd && !movingBwd && !turningLeft && !turningRight)
         {
@@ -50,29 +50,9 @@ public class PlayerController extends EntityController implements ActionListener
         }
         
         
-        Vector2f fwd = new Vector2f(cam.getDirection().x, cam.getDirection().z);
-        Vector2f dir = new Vector2f();
-        if(movingFwd)
-        {
-            dir.addLocal(fwd);
-        }
-        if(movingBwd)
-        {
-            dir.subtractLocal(fwd);
-        }
-        if(turningLeft)
-        {
-            dir.addLocal(fwd.y, -fwd.x);
-        }
-        if(turningRight)
-        {
-            dir.addLocal(-fwd.y, fwd.x);
-        }
-        
-        
-        float targAngle = FastMath.HALF_PI - dir.getAngle();
+        float targAngle = whereDoesThePlayerWantToGo();
         lookDir.tweenLocal(targAngle, tpf * turnSpd);
-        puppet.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.a), FastMath.sin(FastMath.HALF_PI - lookDir.a)).multLocal(tpf * speed));
+        puppet.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
         
         
         
@@ -108,6 +88,30 @@ public class PlayerController extends EntityController implements ActionListener
     void setCamera(Camera cam)
     {
         this.cam = cam;
+    }
+
+    private float whereDoesThePlayerWantToGo()
+    {
+        Vector2f fwd = new Vector2f(cam.getDirection().x, cam.getDirection().z);
+        Vector2f dir = new Vector2f();
+        if(movingFwd)
+        {
+            dir.addLocal(fwd);
+        }
+        if(movingBwd)
+        {
+            dir.subtractLocal(fwd);
+        }
+        if(turningLeft)
+        {
+            dir.addLocal(fwd.y, -fwd.x);
+        }
+        if(turningRight)
+        {
+            dir.addLocal(-fwd.y, fwd.x);
+        }
+        float targAngle = FastMath.HALF_PI - dir.getAngle();
+        return targAngle;
     }
 
 

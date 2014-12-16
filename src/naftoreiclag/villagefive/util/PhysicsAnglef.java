@@ -7,24 +7,56 @@
 package naftoreiclag.villagefive.util;
 
 import com.jme3.math.FastMath;
+import static naftoreiclag.villagefive.util.Anglef.normalize;
 
-public class Anglef
+// T
+public class PhysicsAnglef
 {
+    // Displacement from origin
 	public float x;
+    
+    // Velocity
+    public float v = 0;
+    
+    // Acceleration
+    public float a = 0;
+    
+    // Maximum acceleration
+    public float maxA = 0.1f;
+    
+    // Maximum velocity
+    public float maxV = 1.0f;
+    
+    // Target displacement
+    public float tarX;
 	
-	public Anglef(float x)
+	public PhysicsAnglef(float x)
 	{
 		this.x = x;
 	}
     
-	public Anglef() {}
+	public PhysicsAnglef() {}
     
-    // Tween between two values linearly
-	public Anglef tweenLocal(float other, float amount)
-	{
-        other = normalize(other);
+    public void update(float tpf)
+    {
+        v += a * tpf;
+        if(v > maxV)
+        {
+            v = maxV;
+        }
+        else if(v < -maxV)
+        {
+            v = -maxV;
+        }
+        x += v * tpf;
         
-		float displacement = other - this.x;
+        
+    }
+    
+    // The direction of the force needed to get to a target X
+	public float direction()
+	{
+		float displacement = this.tarX - this.x;
 		float dirSign = Math.signum(displacement);
         
         // If the distance with the given direction is obtuse
@@ -34,19 +66,7 @@ public class Anglef
             dirSign = -dirSign;
         }
 		
-        // If we are already within range
-		if(displacement * dirSign < amount)
-		{
-            // Then just be there already
-			this.x = other;
-		}
-		else
-		{
-            // Try move linearly
-			this.x = normalize(this.x + (amount * dirSign));
-		}
-		
-		return this;
+		return dirSign;
 	}
     
     // Makes sure that this float is between 0 to tau
