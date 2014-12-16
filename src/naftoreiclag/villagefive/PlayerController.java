@@ -13,6 +13,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import naftoreiclag.villagefive.util.Anglef;
+import naftoreiclag.villagefive.util.PhysicsAnglef;
 
 public class PlayerController extends EntityController implements ActionListener
 {
@@ -23,7 +24,7 @@ public class PlayerController extends EntityController implements ActionListener
         this.puppet = entity;
     }
     
-    Anglef lookDir = new Anglef();
+    PhysicsAnglef lookDir = new PhysicsAnglef();
     float turnSpd = 3f;
     
     float speed = 3.5f;
@@ -51,7 +52,9 @@ public class PlayerController extends EntityController implements ActionListener
         
         
         float targAngle = whereDoesThePlayerWantToGo();
-        lookDir.tweenLocal(targAngle, tpf * turnSpd);
+        //lookDir.tweenLocal(targAngle, tpf * turnSpd);
+        lookDir.tarX = targAngle;
+        lookDir.tick(tpf);
         puppet.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
         
         

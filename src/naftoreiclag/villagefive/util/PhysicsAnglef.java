@@ -37,7 +37,7 @@ public class PhysicsAnglef
     
 	public PhysicsAnglef() {}
     
-    public void update(float tpf)
+    public void tick(float tpf)
     {
         v += a * tpf;
         if(v > maxV)
@@ -50,7 +50,10 @@ public class PhysicsAnglef
         }
         x += v * tpf;
         
+        float dist = distance();
+        float dir = direction();
         
+        a = (maxA * dir);
     }
     
     // The direction of the force needed to get to a target X
@@ -67,6 +70,20 @@ public class PhysicsAnglef
         }
 		
 		return dirSign;
+	}
+    
+    // The shortest distance to targetX
+    public float distance()
+	{
+		float displacement = FastMath.abs(this.tarX - this.x);
+        
+        // If the distance with the given direction is obtuse
+        if(displacement > FastMath.PI)
+        {
+            return FastMath.TWO_PI - displacement;
+        }
+        
+        return displacement;
 	}
     
     // Makes sure that this float is between 0 to tau
