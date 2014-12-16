@@ -24,7 +24,7 @@ public class PlayerController extends EntityController implements ActionListener
     }
     
     Anglef lookDir = new Anglef();
-    float turnSpd = 0.1f;
+    float turnSpd = 3f;
     
     float speed = 3.5f;
     
@@ -49,10 +49,9 @@ public class PlayerController extends EntityController implements ActionListener
             return;
         }
         
+        
         Vector2f fwd = new Vector2f(cam.getDirection().x, cam.getDirection().z);
-        
         Vector2f dir = new Vector2f();
-        
         if(movingFwd)
         {
             dir.addLocal(fwd);
@@ -70,17 +69,13 @@ public class PlayerController extends EntityController implements ActionListener
             dir.addLocal(-fwd.y, fwd.x);
         }
         
-        dir.normalizeLocal();
-        dir.multLocal(tpf * speed);
+        
+        float targAngle = FastMath.HALF_PI - dir.getAngle();
+        lookDir.tweenLocal(targAngle, tpf * turnSpd);
+        puppet.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.a), FastMath.sin(FastMath.HALF_PI - lookDir.a)).multLocal(tpf * speed));
         
         
-        //float targDir = FastMath.HALF_PI - dir.getAngle();
-        lookDir.tweenLocal(FastMath.HALF_PI - dir.getAngle(), turnSpd);
         
-        //System.out.println(lookDir.a);
-        //System.out.println(FastMath.HALF_PI - dir.getAngle());
-        
-        puppet.move(dir);
         
         if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
         {
