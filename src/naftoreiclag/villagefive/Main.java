@@ -121,7 +121,8 @@ public class Main extends SimpleApplication
         chasePnt = new Node();
         chasePnt.setLocalTranslation(0, 3.5f, 0);
         rootNode.attachChild(chasePnt);
-        chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
+        
+        //chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
         
         
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
@@ -133,7 +134,7 @@ public class Main extends SimpleApplication
         
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White.mult(0.6f));
-        sun.setDirection(new Vector3f(1.69f, -2.69f, -3.69f).normalizeLocal());
+        sun.setDirection(new Vector3f(0.96f, -2.69f, -0.69f).normalizeLocal());
         rootNode.addLight(sun);
         
         DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);

@@ -19,38 +19,59 @@ public class Anglef
     
 	public Anglef() {}
     
-    // Tween between two values linearly
-	public Anglef tweenLocal(float other, float amount)
+    // Interpolate between two values linearly
+	public void lerp(float other, float amount)
 	{
-        other = normalize(other);
+        // If we are already within range
+		if(difference(other) < amount)
+		{
+            // Then just be there already
+			this.x = wrap(other);
+		}
+		else
+		{
+            // Try move linearly
+			this.x = wrap(this.x + (amount * direction(other)));
+		}
+	}
+    
+    // The direction (clockwise or counter-clockwise) to get to another angle
+	public float direction(float other)
+	{
+        other = wrap(other);
         
 		float displacement = other - this.x;
 		float dirSign = Math.signum(displacement);
         
-        // If the distance with the given direction is obtuse
+        // If the distance with the given direction is reflex (ie > 180 degrees)
         if(displacement * dirSign > FastMath.PI)
         {
             // Then flip the direction around, since the other way is obviously faster (acute)
             dirSign = -dirSign;
         }
 		
-        // If we are already within range
-		if(displacement * dirSign < amount)
-		{
-            // Then just be there already
-			this.x = other;
-		}
-		else
-		{
-            // Try move linearly
-			this.x = normalize(this.x + (amount * dirSign));
-		}
-		
-		return this;
+		return dirSign;
+	}
+    
+    // The measure of the angle formed with this and another angle (unsigned)
+    public float difference(float other)
+	{
+        other = wrap(other);
+        
+		float diff = Math.abs(other - this.x);
+        
+        // If the angle with the given direction is reflex (ie > 180 degrees)
+        if(diff > FastMath.PI)
+        {
+            // Then it can't be the shortest. It must be the other way around.
+            return FastMath.TWO_PI - diff;
+        }
+        
+        return diff;
 	}
     
     // Makes sure that this float is between 0 to tau
-    public static float normalize(float a)
+    public static float wrap(float a)
     {
         return ((a % FastMath.TWO_PI) + FastMath.TWO_PI) % FastMath.TWO_PI;
     }

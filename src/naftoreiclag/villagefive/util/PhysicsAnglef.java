@@ -7,7 +7,7 @@
 package naftoreiclag.villagefive.util;
 
 import com.jme3.math.FastMath;
-import static naftoreiclag.villagefive.util.Anglef.normalize;
+import static naftoreiclag.villagefive.util.Anglef.wrap;
 
 // T
 public class PhysicsAnglef
@@ -22,7 +22,7 @@ public class PhysicsAnglef
     public float a = 0;
     
     // Maximum acceleration
-    public float maxA = 0.1f;
+    public float maxA = 0.5f;
     
     // Maximum velocity
     public float maxV = 1.0f;
@@ -49,6 +49,7 @@ public class PhysicsAnglef
             v = -maxV;
         }
         x += v * tpf;
+        x = normalize(x);
         
         float dist = distance();
         float dir = direction();

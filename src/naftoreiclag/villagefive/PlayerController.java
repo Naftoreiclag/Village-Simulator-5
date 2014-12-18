@@ -14,6 +14,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import naftoreiclag.villagefive.util.Anglef;
 import naftoreiclag.villagefive.util.PhysicsAnglef;
+import naftoreiclag.villagefive.util.SmoothAnglef;
 
 public class PlayerController extends EntityController implements ActionListener
 {
@@ -24,7 +25,7 @@ public class PlayerController extends EntityController implements ActionListener
         this.puppet = entity;
     }
     
-    PhysicsAnglef lookDir = new PhysicsAnglef();
+    SmoothAnglef lookDir = new SmoothAnglef();
     float turnSpd = 3f;
     
     float speed = 3.5f;
@@ -38,7 +39,6 @@ public class PlayerController extends EntityController implements ActionListener
 
     public void tick(float tpf)
     {
-        puppet.node.getLocalRotation().fromAngleAxis(lookDir.x, Vector3f.UNIT_Y);
         
         if(!movingFwd && !movingBwd && !turningLeft && !turningRight)
         {
@@ -49,12 +49,14 @@ public class PlayerController extends EntityController implements ActionListener
             
             return;
         }
-        
-        
-        float targAngle = whereDoesThePlayerWantToGo();
-        //lookDir.tweenLocal(targAngle, tpf * turnSpd);
-        lookDir.tarX = targAngle;
+        puppet.node.getLocalRotation().fromAngleAxis(lookDir.x, Vector3f.UNIT_Y);
+        lookDir.setTarg(whereDoesThePlayerWantToGo());
         lookDir.tick(tpf);
+        
+        cam.setLocation((new Vector3f(FastMath.cos(FastMath.HALF_PI + FastMath.PI - lookDir.x) * 15.0f, 7.0f, FastMath.sin(FastMath.HALF_PI + FastMath.PI - lookDir.x) * 15.0f)).addLocal(puppet.node.getLocalTranslation()));
+        cam.lookAt(puppet.node.getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)), Vector3f.UNIT_Y);
+        
+        
         puppet.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
         
         
