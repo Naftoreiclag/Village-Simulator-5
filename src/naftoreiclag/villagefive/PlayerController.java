@@ -5,7 +5,6 @@
  */
 package naftoreiclag.villagefive;
 
-import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
@@ -16,8 +15,6 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Spatial;
-import naftoreiclag.villagefive.util.Anglef;
-import naftoreiclag.villagefive.util.PhysicsAnglef;
 import naftoreiclag.villagefive.util.SmoothAnglef;
 
 public class PlayerController extends EntityController implements ActionListener
