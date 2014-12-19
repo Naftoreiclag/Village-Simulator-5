@@ -3,7 +3,6 @@
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
  */
-
 package naftoreiclag.villagefive;
 
 import com.jme3.collision.CollisionResult;
@@ -24,48 +23,39 @@ import naftoreiclag.villagefive.util.SmoothAnglef;
 public class PlayerController extends EntityController implements ActionListener
 {
     public KatCompleteEntity puppet;
-    
+
     public void setEntity(KatCompleteEntity entity)
     {
         this.puppet = entity;
     }
-    
     SmoothAnglef lookDir = new SmoothAnglef();
     float turnSpd = 3f;
-    
     float speed = 3.5f;
-    
     SmoothAnglef camDir = new SmoothAnglef();
-    
+
     public PlayerController()
     {
-        
+
         camDir.smoothFactor /= 2f;
         camDir.maxSpd /= 2f;
     }
-    
     Camera cam;
-    
     Spatial ground;
-    
     boolean turningLeft = false;
     boolean turningRight = false;
     boolean movingFwd = false;
     boolean movingBwd = false;
-    
     boolean leftClick = false;
-    
     boolean rotCamLeft = false;
     boolean rotCamRight = false;
-    
     InputManager inputManager;
-    
+
     public void setManager(InputManager inputManager)
     {
         this.inputManager = inputManager;
     }
-    
-    public Vector3f foobar()
+
+    public Vector3f whereClickingOnGround()
     {
         Vector3f origin = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.0f);
         Vector3f direction = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.3f);
@@ -73,7 +63,7 @@ public class PlayerController extends EntityController implements ActionListener
 
         Ray ray = new Ray(origin, direction);
         CollisionResults results = new CollisionResults();
-        
+
         ground.collideWith(ray, results);
         if(results.size() > 0)
         {
@@ -87,9 +77,9 @@ public class PlayerController extends EntityController implements ActionListener
 
     public void tick(float tpf)
     {
-        
+
         lookDir.tick(tpf);
-        
+
         if(rotCamLeft)
         {
             camDir.tx -= 2f * tpf;
@@ -99,18 +89,18 @@ public class PlayerController extends EntityController implements ActionListener
             camDir.tx += 2f * tpf;
         }
         camDir.tick(tpf);
-        
+
 
         puppet.node.setLocalRotation((new Quaternion()).fromAngleAxis(lookDir.x, Vector3f.UNIT_Y));
 
 
-        Vector3f moss = null;
+        Vector3f groundGoto = null;
         if(leftClick)
         {
-            moss = foobar();
+            groundGoto = whereClickingOnGround();
         }
-        
-        if(!movingFwd && !movingBwd && !turningLeft && !turningRight && moss == null)
+
+        if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null)
         {
             if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
@@ -121,16 +111,16 @@ public class PlayerController extends EntityController implements ActionListener
         }
         else
         {
-            if(moss != null)
+            if(groundGoto != null)
             {
-                moss.subtractLocal(puppet.node.getLocalTranslation());
-                lookDir.setTarg(FastMath.atan2(moss.x, moss.z));
+                groundGoto.subtractLocal(puppet.node.getLocalTranslation());
+                lookDir.setTarg(FastMath.atan2(groundGoto.x, groundGoto.z));
             }
             else
             {
                 lookDir.setTarg(whereDoesThePlayerWantToGo());
             }
-            
+
 
             puppet.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
 
@@ -215,6 +205,4 @@ public class PlayerController extends EntityController implements ActionListener
     {
         this.ground = ground;
     }
-
-
 }
