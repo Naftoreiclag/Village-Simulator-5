@@ -6,12 +6,17 @@
 
 package naftoreiclag.villagefive;
 
+import com.jme3.collision.CollisionResult;
+import com.jme3.collision.CollisionResults;
+import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.Anglef;
 import naftoreiclag.villagefive.util.PhysicsAnglef;
 import naftoreiclag.villagefive.util.SmoothAnglef;
@@ -30,43 +35,118 @@ public class PlayerController extends EntityController implements ActionListener
     
     float speed = 3.5f;
     
+    SmoothAnglef camDir = new SmoothAnglef();
+    
+    public PlayerController()
+    {
+        
+        camDir.smoothFactor /= 2f;
+        camDir.maxSpd /= 2f;
+    }
+    
     Camera cam;
+    
+    Spatial ground;
     
     boolean turningLeft = false;
     boolean turningRight = false;
     boolean movingFwd = false;
     boolean movingBwd = false;
+    
+    boolean leftClick = false;
+    
+    boolean rotCamLeft = false;
+    boolean rotCamRight = false;
+    
+    InputManager inputManager;
+    
+    public void setManager(InputManager inputManager)
+    {
+        this.inputManager = inputManager;
+    }
+    
+    public Vector3f foobar()
+    {
+        Vector3f origin = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.0f);
+        Vector3f direction = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.3f);
+        direction.subtractLocal(origin).normalizeLocal();
+
+        Ray ray = new Ray(origin, direction);
+        CollisionResults results = new CollisionResults();
+        
+        ground.collideWith(ray, results);
+        if(results.size() > 0)
+        {
+            return results.getClosestCollision().getContactPoint();
+        }
+        else
+        {
+            return null;
+        }
+    }
 
     public void tick(float tpf)
     {
         
-        if(!movingFwd && !movingBwd && !turningLeft && !turningRight)
+        lookDir.tick(tpf);
+        
+        if(rotCamLeft)
+        {
+            camDir.tx -= 2f * tpf;
+        }
+        if(rotCamRight)
+        {
+            camDir.tx += 2f * tpf;
+        }
+        camDir.tick(tpf);
+        
+
+        puppet.node.setLocalRotation((new Quaternion()).fromAngleAxis(lookDir.x, Vector3f.UNIT_Y));
+
+
+        Vector3f moss = null;
+        if(leftClick)
+        {
+            moss = foobar();
+        }
+        
+        if(!movingFwd && !movingBwd && !turningLeft && !turningRight && moss == null)
         {
             if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
                 puppet.bodyAnimChannel.setAnim("Stand");
+                lookDir.setTarg(lookDir.x);
+            }
+
+        }
+        else
+        {
+            if(moss != null)
+            {
+                moss.subtractLocal(puppet.node.getLocalTranslation());
+                lookDir.setTarg(FastMath.atan2(moss.x, moss.z));
+            }
+            else
+            {
+                lookDir.setTarg(whereDoesThePlayerWantToGo());
             }
             
-            return;
+
+            puppet.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
+
+
+
+
+            if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
+            {
+                puppet.bodyAnimChannel.setAnim("Walk");
+                puppet.bodyAnimChannel.setSpeed(2.0f);
+            }
         }
-        puppet.node.getLocalRotation().fromAngleAxis(lookDir.x, Vector3f.UNIT_Y);
-        lookDir.setTarg(whereDoesThePlayerWantToGo());
-        lookDir.tick(tpf);
-        
-        cam.setLocation((new Vector3f(FastMath.cos(FastMath.HALF_PI + FastMath.PI - lookDir.x) * 15.0f, 7.0f, FastMath.sin(FastMath.HALF_PI + FastMath.PI - lookDir.x) * 15.0f)).addLocal(puppet.node.getLocalTranslation()));
+
+
+        cam.setLocation((new Vector3f(FastMath.cos(FastMath.HALF_PI - camDir.x) * 15.0f, 7.0f, FastMath.sin(FastMath.HALF_PI - camDir.x) * 15.0f)).addLocal(puppet.node.getLocalTranslation()));
         cam.lookAt(puppet.node.getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)), Vector3f.UNIT_Y);
-        
-        
-        puppet.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
-        
-        
-        
-        
-        if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
-        {
-            puppet.bodyAnimChannel.setAnim("Walk");
-            puppet.bodyAnimChannel.setSpeed(2.0f);
-        }
     }
 
     public void onAction(String key, boolean isPressed, float tpf)
@@ -87,6 +167,18 @@ public class PlayerController extends EntityController implements ActionListener
         if(key.equals("Rotate Right"))
         {
             turningRight = isPressed;
+        }
+        if(key.equals("Rotate Cam Left"))
+        {
+            rotCamLeft = isPressed;
+        }
+        if(key.equals("Rotate Cam Right"))
+        {
+            rotCamRight = isPressed;
+        }
+        if(key.equals("Left Click"))
+        {
+            leftClick = isPressed;
         }
     }
 
@@ -117,6 +209,11 @@ public class PlayerController extends EntityController implements ActionListener
         }
         float targAngle = FastMath.HALF_PI - dir.getAngle();
         return targAngle;
+    }
+
+    void setGround(Spatial ground)
+    {
+        this.ground = ground;
     }
 
 

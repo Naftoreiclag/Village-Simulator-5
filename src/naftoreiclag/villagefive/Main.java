@@ -9,7 +9,9 @@ package naftoreiclag.villagefive;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -23,6 +25,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
@@ -67,14 +70,20 @@ public class Main extends SimpleApplication
         inputManager.addMapping("Rotate Right", new KeyTrigger(KeyInput.KEY_D));
         inputManager.addMapping("Walk Forward", new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping("Walk Backward", new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addListener(playCont, "Rotate Left", "Rotate Right", "Walk Forward", "Walk Backward");
+        inputManager.addMapping("Rotate Cam Left", new KeyTrigger(KeyInput.KEY_Q));
+        inputManager.addMapping("Rotate Cam Right", new KeyTrigger(KeyInput.KEY_E));
+        inputManager.addMapping("Left Click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addListener(playCont, "Rotate Left", "Rotate Right", "Walk Forward", "Walk Backward", 
+                                 "Rotate Cam Left", "Rotate Cam Right", 
+                                 "Left Click");
         
         morgan = world.spawnEntity(KatCompleteEntity.class, new Vector2f(0f, 0f));
         morgan.attachSpatial(chasePnt);
         
         playCont.setEntity(morgan);
         playCont.setCamera(cam);
-        
+        playCont.setGround(ground);
+        playCont.setManager(inputManager);
         
         
         MailboxEntity ent = world.spawnEntity(MailboxEntity.class, new Vector2f(5f, 5f));
@@ -114,6 +123,7 @@ public class Main extends SimpleApplication
     public void simpleRender(RenderManager rm)
     {
     }
+    Spatial ground;
     
     private void setupUselessAestetics()
     {
@@ -146,11 +156,11 @@ public class Main extends SimpleApplication
         
         DebugGrid gridMeshThing = new DebugGrid();
         gridMeshThing.buildGeometry();
-        Geometry even = new Geometry("84903401239015290", gridMeshThing.evenCells);
-        even.move(-DebugGrid.width / 2, 0, -DebugGrid.height / 2);
-        even.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
-        even.setShadowMode(RenderQueue.ShadowMode.Receive);
-        rootNode.attachChild(even);
+        ground = new Geometry("84903401239015290", gridMeshThing.evenCells);
+        ground.move(-DebugGrid.width / 2, 0, -DebugGrid.height / 2);
+        ground.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
+        ground.setShadowMode(RenderQueue.ShadowMode.Receive);
+        rootNode.attachChild(ground);
         
         
         
