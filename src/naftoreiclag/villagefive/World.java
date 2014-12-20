@@ -6,18 +6,21 @@
 
 package naftoreiclag.villagefive;
 
-import com.jme3.animation.AnimControl;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.control.Control;
-import java.lang.reflect.InvocationTargetException;
+import com.jme3.util.BufferUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static naftoreiclag.villagefive.Main.DebugGrid.width;
+import naftoreiclag.villagefive.util.ModelBuilder;
 
 public class World
 {
@@ -26,10 +29,19 @@ public class World
     
     List<Entity> entities = new ArrayList<Entity>();
     
+    List<Plot> plots = new ArrayList<Plot>();
+    
     World(Node rootNode, AssetManager assetManager)
     {
         this.rootNode = rootNode;
         this.assetManager = assetManager;
+    }
+    
+    public void addPlot(Plot p)
+    {
+        plots.add(p);
+        
+        drawPlot(p);
     }
     
     public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType, Vector2f vector2f)
@@ -102,6 +114,53 @@ public class World
         {
             entity.tick(tpf);
         }
+    }
+
+    private void drawPlot2(Plot p)
+    {
+        ModelBuilder mb = new ModelBuilder();
+        
+        float w = (float) (p.getWidth()) / 2f;
+        float h = (float) (p.getWidth()) / 2f;
+        
+        mb.addQuad(-w, 0, -h, Vector3f.UNIT_Y, 0, 0, 
+                   -w, 0, h, Vector3f.UNIT_Y, 0, 0, 
+                   w, 0, h, Vector3f.UNIT_Y, 0, 0, 
+                   w, 0, -h, Vector3f.UNIT_Y, 0, 0);
+        
+        Mesh m = mb.bake();
+        
+        Geometry geo = new Geometry("aaaa", m);
+        geo.setLocalTranslation((float) p.getX(), 0.5f, (float) p.getZ());
+        geo.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
+        geo.setShadowMode(RenderQueue.ShadowMode.Receive);
+        
+        System.out.println(geo.getLocalTranslation());
+        
+        
+        rootNode.attachChild(geo);
+    }
+    
+    private void drawPlot(Plot p)
+    {
+        ModelBuilder mb = new ModelBuilder();
+
+        mb.addQuad(0, 0, 0, new Vector3f(0, 2, 0), 0, 0,
+                    1, 0, 0, new Vector3f(0, 2, 0), 0, 0,
+                    1, 0, 1, new Vector3f(0, 2, 0), 0, 0,
+                    0, 0, 1, new Vector3f(0, 2, 0), 0, 0);
+
+        Mesh m = mb.bake(p.getWidth(), 0, p.getHeight());
+        
+        Geometry geo = new Geometry("aaaa", m);
+        geo.setLocalTranslation((float) p.getX(), 0.1f, (float) p.getZ());
+        geo.setMaterial((Material) assetManager.loadMaterial("Materials/wiremesh.j3m"));
+        geo.setShadowMode(RenderQueue.ShadowMode.Receive);
+        
+        System.out.println(geo.getLocalTranslation());
+        
+        
+        rootNode.attachChild(geo);
     }
 
 }

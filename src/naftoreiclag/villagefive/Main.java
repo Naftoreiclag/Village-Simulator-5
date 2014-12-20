@@ -30,7 +30,6 @@ import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
-import com.jme3.util.SkyFactory;
 import de.lessvoid.nifty.Nifty;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
@@ -95,6 +94,16 @@ public class Main extends SimpleApplication
         }
         
         
+        Plot testp = new Plot();
+        testp.setHeight(10);
+        testp.setWidth(10);
+        testp.setX(10);
+        testp.setZ(10);
+        
+        world.addPlot(testp);
+        world.spawnEntity(JMEBoxEntity.class, new Vector2f(10f, 10f));
+       
+        
         world.spawnEntity(JMEBoxEntity.class, new Vector2f(7f, 0f));
         world.spawnEntity(BlendBoxEntity.class, new Vector2f(3f, 0f));
         
@@ -116,8 +125,6 @@ public class Main extends SimpleApplication
     {
         playCont.tick(tpf);
         world.tick(tpf);
-        
-        //System.out.println(cam.getLocation().subtract(chasePnt.getLocalTranslation()));
     }
 
     @Override
@@ -162,8 +169,6 @@ public class Main extends SimpleApplication
         ground.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
         ground.setShadowMode(RenderQueue.ShadowMode.Receive);
         rootNode.attachChild(ground);
-        
-        
         
         
         Texture west = assetManager.loadTexture("Textures/clouds/clouds1_west.bmp");
