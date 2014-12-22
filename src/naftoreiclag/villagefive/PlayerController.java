@@ -74,6 +74,10 @@ public class PlayerController extends EntityController implements ActionListener
 
     public void tick(float tpf)
     {
+        if(!enabled)
+        {
+            return;
+        }
 
         lookDir.tick(tpf);
 
@@ -138,6 +142,10 @@ public class PlayerController extends EntityController implements ActionListener
 
     public void onAction(String key, boolean isPressed, float tpf)
     {
+        if(!enabled)
+        {
+            return;
+        }
         System.out.println("key " + key + " = " + isPressed + ";");
         if(key.equals("Walk Forward"))
         {
@@ -201,5 +209,16 @@ public class PlayerController extends EntityController implements ActionListener
     void setGround(Spatial ground)
     {
         this.ground = ground;
+    }
+    
+    private boolean enabled = true;
+    
+    void disableInput()
+    {
+        this.enabled = false;
+    }
+    void enable()
+    {
+        this.enabled = true;
     }
 }

@@ -8,7 +8,10 @@ package naftoreiclag.villagefive;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.math.FastMath;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -17,12 +20,17 @@ import naftoreiclag.villagefive.util.ModelBuilder;
 
 public class HouseEditor
 {
+    Vector2f lookLoc = Vector2f.ZERO.clone();
+    
     final Node trueRootNode;
     final Node rootNode;
     AssetManager assetManager;
     final Plot plot;
+    final Camera cam;
     
-    public HouseEditor(Node rootNode, AssetManager assetManager, Plot plot)
+    float camDir;
+    
+    public HouseEditor(Node rootNode, AssetManager assetManager, Plot plot, Camera cam)
     {
         this.rootNode = new Node();
         this.trueRootNode = rootNode;
@@ -31,6 +39,20 @@ public class HouseEditor
         
         this.plot = plot;
         attachPlotGeo();
+        
+        this.cam = cam;
+    }
+    
+    public void tick(float tpf)
+    {
+        
+        if(!enabled)
+        {
+            return;
+        }
+        
+        cam.setLocation((new Vector3f(FastMath.cos(FastMath.HALF_PI - camDir) * 15.0f, 7.0f, FastMath.sin(FastMath.HALF_PI - camDir) * 15.0f)));
+        cam.lookAt(new Vector3f(lookLoc.x, 0, lookLoc.y), Vector3f.UNIT_Y);
     }
     
     public void disableRender()
@@ -66,5 +88,15 @@ public class HouseEditor
     void cleanup()
     {
         
+    }
+    private boolean enabled = true;
+    
+    void disableInput()
+    {
+        this.enabled = false;
+    }
+    void enableInput()
+    {
+        this.enabled = true;
     }
 }

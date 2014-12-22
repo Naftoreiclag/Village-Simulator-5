@@ -125,6 +125,11 @@ public class Main extends SimpleApplication implements ActionListener
     {
         playCont.tick(tpf);
         world.tick(tpf);
+        
+        if(mhe != null)
+        {
+            mhe.tick(tpf);
+        }
     }
 
     @Override
@@ -200,16 +205,19 @@ public class Main extends SimpleApplication implements ActionListener
 
     private void onDebugKeypress()
     {
-        mhe = new HouseEditor(rootNode, assetManager, testp);
+        mhe = new HouseEditor(rootNode, assetManager, testp, cam);
+        playCont.disableInput();
         world.disableRender();
         mhe.enableRender();
+        mhe.enableInput();
     }
 
     private void onDebugKeyrelease()
     {
+        playCont.enable();
         mhe.disableRender();
+        mhe.disableInput();
         world.enableRender();
-        mhe.cleanup();
     }
 
     class DebugGrid
