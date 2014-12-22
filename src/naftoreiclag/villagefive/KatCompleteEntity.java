@@ -25,8 +25,13 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
 import com.jme3.texture.image.ImageRaster;
+import com.jme3.texture.plugins.AWTLoader;
 import com.jme3.util.BufferUtils;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Random;
+import javax.imageio.ImageIO;
 import naftoreiclag.villagefive.util.Anglef;
 import naftoreiclag.villagefive.util.GR;
 
@@ -121,8 +126,8 @@ public class KatCompleteEntity extends Entity
         
         */
         
-        eyeOpenTex = Stuff_dni.bbb();
-        eyeCloseTex = Stuff_dni.bbbl();
+        eyeOpenTex = generateEyeOpenTexture();
+        eyeCloseTex = generateEyeClosedTexture();
 
         faceMat = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         faceMat.setTexture("ColorMap", eyeOpenTex);
@@ -256,4 +261,59 @@ public class KatCompleteEntity extends Entity
         blinkLength = 0.1f;
     }
 
+    
+    public static Texture2D generateEyeOpenTexture()
+    {
+        try
+        {
+            BufferedImage bi = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D gg = bi.createGraphics();
+
+            BufferedImage eye = ImageIO.read(new File("assets/Textures/eye2.png"));
+            BufferedImage m = ImageIO.read(new File("assets/Textures/debugChin.png"));
+
+            gg.drawImage(eye, 145, 70, null);
+            gg.drawImage(m, 29, 140, null);
+            gg.drawImage(eye, 110, 70, -eye.getWidth(), eye.getHeight(), null);
+            
+            Image image = new AWTLoader().load(bi, false);
+            Texture2D tex = new Texture2D(image);
+            tex.setMinFilter(Texture.MinFilter.BilinearNearestMipMap);
+            tex.setMagFilter(Texture.MagFilter.Bilinear);
+
+            return tex;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static Texture2D generateEyeClosedTexture()
+    {
+        try
+        {
+            BufferedImage bi = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D gg = bi.createGraphics();
+
+            BufferedImage eye = ImageIO.read(new File("assets/Textures/eye3.png"));
+            BufferedImage m = ImageIO.read(new File("assets/Textures/debugChin.png"));
+
+            gg.drawImage(eye, 145, 70, null);
+            gg.drawImage(m, 29, 140, null);
+            gg.drawImage(eye, 110, 70, -eye.getWidth(), eye.getHeight(), null);
+            
+            Image image = new AWTLoader().load(bi, false);
+            Texture2D tex = new Texture2D(image);
+            tex.setMinFilter(Texture.MinFilter.BilinearNearestMipMap);
+            tex.setMagFilter(Texture.MagFilter.Bilinear);
+
+            return tex;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

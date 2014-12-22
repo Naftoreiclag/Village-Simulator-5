@@ -33,6 +33,7 @@ public class PinguinEntity extends Entity
         
         
         Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
+        //Material mat = world.assetManager.loadMaterial("Materials/fur.j3m");
         
         
         node.setMaterial(mat);
