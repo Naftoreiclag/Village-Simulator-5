@@ -10,6 +10,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
@@ -33,7 +34,7 @@ import com.jme3.texture.Texture;
 import de.lessvoid.nifty.Nifty;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
-public class Main extends SimpleApplication
+public class Main extends SimpleApplication implements ActionListener
 {
     public static void main(String[] args)
     {
@@ -56,12 +57,15 @@ public class Main extends SimpleApplication
     PlayerController playCont;
     ChaseCamera chaseCam;
     
+    Plot testp;
+    
     @Override
     public void simpleInitApp()
     {
         setupUselessAestetics();
         
         world = new World(rootNode, assetManager);
+        world.enableRender();
         
         playCont = new PlayerController();
         
@@ -71,8 +75,10 @@ public class Main extends SimpleApplication
         inputManager.addMapping("Walk Backward", new KeyTrigger(KeyInput.KEY_S));
         inputManager.addMapping("Rotate Cam Left", new KeyTrigger(KeyInput.KEY_Q));
         inputManager.addMapping("Rotate Cam Right", new KeyTrigger(KeyInput.KEY_E));
+        inputManager.addMapping("Debugkey", new KeyTrigger(KeyInput.KEY_M));
         inputManager.addMapping("Left Click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addListener(playCont, "Rotate Left", "Rotate Right", "Walk Forward", "Walk Backward", "Rotate Cam Left", "Rotate Cam Right", "Left Click");
+        inputManager.addListener(this, "Debugkey");
         
         morgan = world.spawnEntity(KatCompleteEntity.class, new Vector2f(0f, 0f));
         morgan.attachSpatial(chasePnt);
@@ -92,18 +98,14 @@ public class Main extends SimpleApplication
         }
         
         
-        Plot testp = new Plot();
+        testp = new Plot();
         testp.setHeight(10);
         testp.setWidth(10);
         testp.setX(10);
         testp.setZ(10);
         
         world.addPlot(testp);
-        world.spawnEntity(JMEBoxEntity.class, new Vector2f(10f, 10f));
-       
         
-        world.spawnEntity(JMEBoxEntity.class, new Vector2f(7f, 0f));
-        world.spawnEntity(BlendBoxEntity.class, new Vector2f(3f, 0f));
         
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
@@ -138,9 +140,6 @@ public class Main extends SimpleApplication
         chasePnt.setLocalTranslation(0, 3.5f, 0);
         rootNode.attachChild(chasePnt);
         
-        //chaseCam = new ChaseCamera(cam, chasePnt, inputManager);
-        
-        
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
         
@@ -168,7 +167,6 @@ public class Main extends SimpleApplication
         ground.setShadowMode(RenderQueue.ShadowMode.Receive);
         rootNode.attachChild(ground);
         
-        
         Texture west = assetManager.loadTexture("Textures/clouds/clouds1_west.bmp");
         Texture east = assetManager.loadTexture("Textures/clouds/clouds1_east.bmp");
         Texture north = assetManager.loadTexture("Textures/clouds/clouds1_north.bmp");
@@ -176,6 +174,42 @@ public class Main extends SimpleApplication
         Texture up = assetManager.loadTexture("Textures/clouds/clouds1_up.bmp");
         Texture down = assetManager.loadTexture("Textures/clouds/clouds1_down.bmp");
         //rootNode.attachChild(SkyFactory.createSky(assetManager, west, east, north, south, up, down));
+    }
+
+    boolean debugKey = false;
+    
+    public void onAction(String key, boolean isPressed, float tpf)
+    {
+        if(key.equals("Debugkey"))
+        {
+            debugKey = isPressed;
+            
+            if(debugKey)
+            {
+            onDebugKeypress();
+                
+            }
+            else
+            {
+                onDebugKeyrelease();
+            }
+        }
+    }
+    
+    HouseEditor mhe;
+
+    private void onDebugKeypress()
+    {
+        mhe = new HouseEditor(rootNode, assetManager, testp);
+        world.disableRender();
+        mhe.enableRender();
+    }
+
+    private void onDebugKeyrelease()
+    {
+        mhe.disableRender();
+        world.enableRender();
+        mhe.cleanup();
     }
 
     class DebugGrid

@@ -1,0 +1,70 @@
+/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+ *
+ * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
+ * See accompanying file LICENSE
+ */
+
+package naftoreiclag.villagefive;
+
+import com.jme3.asset.AssetManager;
+import com.jme3.material.Material;
+import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
+import naftoreiclag.villagefive.util.ModelBuilder;
+
+public class HouseEditor
+{
+    final Node trueRootNode;
+    final Node rootNode;
+    AssetManager assetManager;
+    final Plot plot;
+    
+    public HouseEditor(Node rootNode, AssetManager assetManager, Plot plot)
+    {
+        this.rootNode = new Node();
+        this.trueRootNode = rootNode;
+        this.assetManager = assetManager;
+        
+        
+        this.plot = plot;
+        attachPlotGeo();
+    }
+    
+    public void disableRender()
+    {
+        this.trueRootNode.detachChild(rootNode);
+    }
+    public void enableRender()
+    {
+        this.trueRootNode.attachChild(rootNode);
+    }
+    
+    private void attachPlotGeo()
+    {
+        ModelBuilder mb = new ModelBuilder();
+
+        mb.addQuad(0, 0, 0, new Vector3f(0, 2, 0), 0, 0,
+                    1, 0, 0, new Vector3f(0, 2, 0), 0, 0,
+                    1, 0, 1, new Vector3f(0, 2, 0), 0, 0,
+                    0, 0, 1, new Vector3f(0, 2, 0), 0, 0);
+
+        Mesh m = mb.bake(plot.getWidth(), 0, plot.getHeight());
+        
+        Geometry geo = new Geometry("aaaa", m);
+        geo.setLocalTranslation((float) plot.getX(), 0.1f, (float) plot.getZ());
+        geo.setMaterial((Material) assetManager.loadMaterial("Materials/wiremesh.j3m"));
+        geo.setShadowMode(RenderQueue.ShadowMode.Receive);
+        
+        System.out.println(geo.getLocalTranslation());
+        
+        rootNode.attachChild(geo);
+    }
+
+    void cleanup()
+    {
+        
+    }
+}

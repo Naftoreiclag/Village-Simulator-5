@@ -14,16 +14,14 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
-import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.scene.control.Control;
-import com.jme3.util.BufferUtils;
 import java.util.ArrayList;
 import java.util.List;
-import static naftoreiclag.villagefive.Main.DebugGrid.width;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
 public class World
 {
+    Node trueRootNode;
     Node rootNode;
     AssetManager assetManager;
     
@@ -33,8 +31,18 @@ public class World
     
     World(Node rootNode, AssetManager assetManager)
     {
-        this.rootNode = rootNode;
+        this.rootNode = new Node();
+        this.trueRootNode = rootNode;
         this.assetManager = assetManager;
+    }
+    
+    public void disableRender()
+    {
+        this.trueRootNode.detachChild(rootNode);
+    }
+    public void enableRender()
+    {
+        this.trueRootNode.attachChild(rootNode);
     }
     
     public void addPlot(Plot p)
@@ -114,31 +122,6 @@ public class World
         {
             entity.tick(tpf);
         }
-    }
-
-    private void drawPlot2(Plot p)
-    {
-        ModelBuilder mb = new ModelBuilder();
-        
-        float w = (float) (p.getWidth()) / 2f;
-        float h = (float) (p.getWidth()) / 2f;
-        
-        mb.addQuad(-w, 0, -h, Vector3f.UNIT_Y, 0, 0, 
-                   -w, 0, h, Vector3f.UNIT_Y, 0, 0, 
-                   w, 0, h, Vector3f.UNIT_Y, 0, 0, 
-                   w, 0, -h, Vector3f.UNIT_Y, 0, 0);
-        
-        Mesh m = mb.bake();
-        
-        Geometry geo = new Geometry("aaaa", m);
-        geo.setLocalTranslation((float) p.getX(), 0.5f, (float) p.getZ());
-        geo.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
-        geo.setShadowMode(RenderQueue.ShadowMode.Receive);
-        
-        System.out.println(geo.getLocalTranslation());
-        
-        
-        rootNode.attachChild(geo);
     }
     
     private void drawPlot(Plot p)
