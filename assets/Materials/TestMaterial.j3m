@@ -1,0 +1,7 @@
+Material My Material : ShaderBlow/MatDefs/MatCap/MatCap.j3md {
+     MaterialParameters {
+        DiffuseMap : Textures/Gold.jpg
+     }
+    AdditionalRenderState {
+    }
+}

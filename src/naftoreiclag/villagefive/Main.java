@@ -72,9 +72,7 @@ public class Main extends SimpleApplication
         inputManager.addMapping("Rotate Cam Left", new KeyTrigger(KeyInput.KEY_Q));
         inputManager.addMapping("Rotate Cam Right", new KeyTrigger(KeyInput.KEY_E));
         inputManager.addMapping("Left Click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addListener(playCont, "Rotate Left", "Rotate Right", "Walk Forward", "Walk Backward", 
-                                 "Rotate Cam Left", "Rotate Cam Right", 
-                                 "Left Click");
+        inputManager.addListener(playCont, "Rotate Left", "Rotate Right", "Walk Forward", "Walk Backward", "Rotate Cam Left", "Rotate Cam Right", "Left Click");
         
         morgan = world.spawnEntity(KatCompleteEntity.class, new Vector2f(0f, 0f));
         morgan.attachSpatial(chasePnt);
@@ -109,7 +107,7 @@ public class Main extends SimpleApplication
         
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
-        world.spawnEntity(PinguinEntity.class, new Vector2f(-3f, 2f));
+        world.spawnEntity(PinguinEntity.class, new Vector2f(-4f, 4f));
         
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         Nifty nifty = niftyDisplay.getNifty();

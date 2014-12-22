@@ -19,7 +19,7 @@ public class PinguinEntity extends Entity
     @Override
     public String getModelName()
     {
-        return "Models/pinguin/Pinguin.mesh.j3o";
+        return "Models/Knight.mesh.j3o";
     }
     @Override
     public void tick(float tpf)
@@ -32,7 +32,7 @@ public class PinguinEntity extends Entity
         super.assertNode(newNode);
         
         
-        Material mat = new Material(world.assetManager, "MatDefs/newMatDef.j3md");
+        Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
         
         
         node.setMaterial(mat);
