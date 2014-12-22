@@ -100,6 +100,7 @@ public class Main extends SimpleApplication
         
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
+        world.spawnEntity(PinguinEntity.class, new Vector2f(-3f, 2f));
         
         NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         Nifty nifty = niftyDisplay.getNifty();
@@ -149,7 +150,7 @@ public class Main extends SimpleApplication
         
         DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
         dlsr.setLight(sun);
-        dlsr.setShadowIntensity(0.2f);
+        dlsr.setShadowIntensity(0.5f);
         dlsr.setLambda(0.55f);
         dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
         viewPort.addProcessor(dlsr);

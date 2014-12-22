@@ -1,0 +1,15 @@
+MaterialDef Simple {
+    MaterialParameters {
+        Color Color
+    }
+    Technique {
+
+        VertexShader GLSL100: Shaders/newVertexShader.vert
+        FragmentShader GLSL100: Shaders/newFragmentShader.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+        }
+        
+    }
+}
