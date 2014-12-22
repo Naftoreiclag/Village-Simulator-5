@@ -261,7 +261,7 @@ public class KatCompleteEntity extends Entity
         blinkLength = 0.1f;
     }
 
-    
+    //
     public static Texture2D generateEyeOpenTexture()
     {
         try
