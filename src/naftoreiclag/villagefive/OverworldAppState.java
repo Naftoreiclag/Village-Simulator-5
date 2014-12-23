@@ -85,8 +85,8 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         
         playCont = new PlayerController();
         
-        inputManager.addListener(playCont, KeyKeys.bwd, KeyKeys.fwd, KeyKeys.lef, KeyKeys.rit, KeyKeys.rcl, KeyKeys.rcr, KeyKeys.lmb);
-        inputManager.addListener(this, KeyKeys.dbg);
+        inputManager.addListener(playCont, KeyKeys.move_backward, KeyKeys.move_forward, KeyKeys.move_left, KeyKeys.move_right, KeyKeys.rotate_camera_left, KeyKeys.rotate_camera_right, KeyKeys.mouse_left);
+        inputManager.addListener(this, KeyKeys.debug);
         
         morgan = world.spawnEntity(KatCompleteEntity.class, new Vector2f(0f, 0f));
         morgan.attachSpatial(chasePnt);
@@ -193,7 +193,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     
     public void onAction(String key, boolean isPressed, float tpf)
     {
-        if(key.equals(KeyKeys.dbg))
+        if(key.equals(KeyKeys.debug))
         {
             debugKey = isPressed;
             
