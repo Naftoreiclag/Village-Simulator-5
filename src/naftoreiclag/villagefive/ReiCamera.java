@@ -65,11 +65,10 @@ public class ReiCamera
         
         // interpolate dummies linearly
         float dummyLocDist = dummyLoc.distance(targetLoc);
-        float matchedSpd = dummyLocDist / (maxSpd * tpf);
         if(dummyLocDist > maxSpd * tpf)
         {
             dummyLoc.addLocal(targetLoc.subtract(dummyLoc).normalizeLocal().multLocal(maxSpd * tpf));
-            dummyView.addLocal(targetView.subtract(dummyView).divideLocal(matchedSpd));
+            dummyView.addLocal(targetView.subtract(dummyView).divideLocal(dummyLocDist / (maxSpd * tpf)));
         }
         else
         {

@@ -6,6 +6,8 @@
 
 package naftoreiclag.villagefive.util;
 
+import static naftoreiclag.villagefive.util.Anglef.wrap;
+
 public class SmoothAnglef extends Anglef
 {
     // Target angle
@@ -37,15 +39,35 @@ public class SmoothAnglef extends Anglef
     //
     public void tick(float tpf)
     {
+        if(smoothEn)
+        {
+
+            dummy.lerp(tx, maxSpd * tpf);
+
+            x = wrap(x + (direction(dummy.x) * (difference(dummy.x) / smoothFactor)));
+        }
+        else
+        {
+            x = this.tx;
+        }
+
         //
-        dummy.lerp(tx, maxSpd * tpf);
-        
-        x = wrap(x + (direction(dummy.x) * (difference(dummy.x) / smoothFactor)));
     }
 
     public void setTarg(float tx)
     {
         this.tx = wrap(tx);
+    }
+
+    boolean smoothEn;
+    public void disable()
+    {
+        smoothEn = false;
+    }
+    
+    public void enable()
+    {
+        smoothEn = true;
     }
     
 }

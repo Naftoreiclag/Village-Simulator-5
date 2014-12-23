@@ -68,7 +68,7 @@ public class Main extends SimpleApplication implements ActionListener
         setupUselessAestetics();
         
         rcam = new ReiCamera(cam);
-        rcam.mode = SmoothMode.linear;
+        rcam.mode = SmoothMode.cubic;
         
         world = new World(rootNode, assetManager);
         world.enableRender();
