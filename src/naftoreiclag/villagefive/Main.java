@@ -140,6 +140,8 @@ public class Main extends SimpleApplication implements ActionListener
     
     private void setupUselessAestetics()
     {
+        
+        
         flyCam.setEnabled(false);
         chasePnt = new Node();
         chasePnt.setLocalTranslation(0, 3.5f, 0);

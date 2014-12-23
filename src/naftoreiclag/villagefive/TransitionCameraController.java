@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive;
 
-public class TransitionCameraController {
+public class TransitionCameraController
+{
 
 }
