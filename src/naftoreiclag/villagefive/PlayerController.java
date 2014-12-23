@@ -149,31 +149,31 @@ public class PlayerController extends EntityController implements ActionListener
             return;
         }
         System.out.println("key " + key + " = " + isPressed + ";");
-        if(key.equals("Walk Forward"))
+        if(key.equals(KeyKeys.fwd))
         {
             movingFwd = isPressed;
         }
-        if(key.equals("Walk Backward"))
+        if(key.equals(KeyKeys.bwd))
         {
             movingBwd = isPressed;
         }
-        if(key.equals("Rotate Left"))
+        if(key.equals(KeyKeys.lef))
         {
             turningLeft = isPressed;
         }
-        if(key.equals("Rotate Right"))
+        if(key.equals(KeyKeys.rit))
         {
             turningRight = isPressed;
         }
-        if(key.equals("Rotate Cam Left"))
+        if(key.equals(KeyKeys.rcl))
         {
             rotCamLeft = isPressed;
         }
-        if(key.equals("Rotate Cam Right"))
+        if(key.equals(KeyKeys.rcr))
         {
             rotCamRight = isPressed;
         }
-        if(key.equals("Left Click"))
+        if(key.equals(KeyKeys.lmb))
         {
             leftClick = isPressed;
         }

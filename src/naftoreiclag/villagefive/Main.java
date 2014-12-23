@@ -7,6 +7,10 @@
 package naftoreiclag.villagefive;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
+import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 
@@ -31,6 +35,16 @@ public class Main extends SimpleApplication
     @Override
     public void simpleInitApp()
     {
+        
+        inputManager.addMapping(KeyKeys.lef, new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping(KeyKeys.rit, new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping(KeyKeys.fwd, new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping(KeyKeys.bwd, new KeyTrigger(KeyInput.KEY_S));
+        inputManager.addMapping(KeyKeys.rcl, new KeyTrigger(KeyInput.KEY_Q));
+        inputManager.addMapping(KeyKeys.rcr, new KeyTrigger(KeyInput.KEY_E));
+        inputManager.addMapping(KeyKeys.dbg, new KeyTrigger(KeyInput.KEY_M));
+        inputManager.addMapping(KeyKeys.lmb, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        
         flyCam.setEnabled(false);
         
         tas = new OverworldAppState();

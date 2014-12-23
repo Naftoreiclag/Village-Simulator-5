@@ -85,16 +85,8 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         
         playCont = new PlayerController();
         
-        inputManager.addMapping("Rotate Left", new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping("Rotate Right", new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping("Walk Forward", new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping("Walk Backward", new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addMapping("Rotate Cam Left", new KeyTrigger(KeyInput.KEY_Q));
-        inputManager.addMapping("Rotate Cam Right", new KeyTrigger(KeyInput.KEY_E));
-        inputManager.addMapping("Debugkey", new KeyTrigger(KeyInput.KEY_M));
-        inputManager.addMapping("Left Click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-        inputManager.addListener(playCont, "Rotate Left", "Rotate Right", "Walk Forward", "Walk Backward", "Rotate Cam Left", "Rotate Cam Right", "Left Click");
-        inputManager.addListener(this, "Debugkey");
+        inputManager.addListener(playCont, KeyKeys.bwd, KeyKeys.fwd, KeyKeys.lef, KeyKeys.rit, KeyKeys.rcl, KeyKeys.rcr, KeyKeys.lmb);
+        inputManager.addListener(this, KeyKeys.dbg);
         
         morgan = world.spawnEntity(KatCompleteEntity.class, new Vector2f(0f, 0f));
         morgan.attachSpatial(chasePnt);
@@ -201,7 +193,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     
     public void onAction(String key, boolean isPressed, float tpf)
     {
-        if(key.equals("Debugkey"))
+        if(key.equals(KeyKeys.dbg))
         {
             debugKey = isPressed;
             
