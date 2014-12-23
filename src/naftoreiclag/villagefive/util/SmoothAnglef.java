@@ -59,7 +59,7 @@ public class SmoothAnglef extends Anglef
         this.tx = wrap(tx);
     }
 
-    boolean smoothEn;
+    boolean smoothEn = true;
     public void disable()
     {
         smoothEn = false;

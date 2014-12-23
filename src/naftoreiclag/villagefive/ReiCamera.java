@@ -23,7 +23,7 @@ public class ReiCamera
     public final Vector3f cubicView;
     
     public float maxSpd = 5.0f;
-    public float exp = 20f;
+    public float exp = 5f;
     
     public ReiCamera(Camera cam)
     {
@@ -85,8 +85,8 @@ public class ReiCamera
         }
         else if(mode == SmoothMode.cubic)
         {
-            cubicLoc.addLocal(targetLoc.subtract(cubicLoc).divideLocal(exp));
-            cubicView.addLocal(targetView.subtract(cubicView).divideLocal(exp));
+            cubicLoc.addLocal(targetLoc.subtract(cubicLoc).multLocal(tpf * exp));
+            cubicView.addLocal(targetView.subtract(cubicView).multLocal(tpf * exp));
             
             c.setLocation(cubicLoc);
             c.lookAt(cubicView, Vector3f.UNIT_Y);
