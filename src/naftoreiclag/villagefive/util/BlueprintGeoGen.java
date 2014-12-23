@@ -28,7 +28,7 @@ public class BlueprintGeoGen
         lines.add(new Line(ax, ay, bx, by));
     }
     
-    public Mesh bake(float thickness, float xscale, float yscale)
+    public Mesh bake(float thickness, float texStretch, float xscale, float yscale)
     {
         FloatBuffer v = BufferUtils.createFloatBuffer(lines.size() * 12);
         FloatBuffer t = BufferUtils.createFloatBuffer(lines.size() * 8);
@@ -45,10 +45,11 @@ public class BlueprintGeoGen
             
             Vector2f A = l.a.add(p).addLocal(w);
             Vector2f B = l.a.subtract(p).addLocal(w);
-            Vector2f C = l.a.subtract(p).subtractLocal(w);
-            Vector2f D = l.a.add(p).subtractLocal(w);
+            Vector2f C = l.b.subtract(p).subtractLocal(w);
+            Vector2f D = l.b.add(p).subtractLocal(w);
             
             float leng = A.distance(D) / thickness;
+            leng /= texStretch;
             
             v.put(A.x * xscale).put(0f).put(A.y * yscale);
             t.put(0.0f).put(0.0f);
@@ -60,10 +61,14 @@ public class BlueprintGeoGen
             t.put(leng).put(0.0f);
         }
         IntBuffer i = BufferUtils.createIntBuffer(lines.size() * 6);
+        int ioff = 0;
         for(Line l : lines)
         {
-            i.put(0).put(1).put(2);
-            i.put(0).put(2).put(3);
+            // Clockwise???
+            i.put(ioff).put(ioff + 2).put(ioff + 1);
+            i.put(ioff).put(ioff + 3).put(ioff + 2);
+            
+            ioff += 4;
         }
         
         System.out.println("Model Built 2!");

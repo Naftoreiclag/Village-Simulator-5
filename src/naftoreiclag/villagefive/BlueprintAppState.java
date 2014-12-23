@@ -12,10 +12,13 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
+import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -38,11 +41,11 @@ public class BlueprintAppState extends AbstractAppState
     
     public BlueprintAppState()
     {
-        plot.setWidth(10);
-        plot.setHeight(10);
+        plot.setWidth(7);
+        plot.setHeight(5);
     }
     
-    float frustumSize = 1.0f;
+    float frustumSize = 10.0f;
 
     @Override
     public void initialize(AppStateManager stateManager, Application app)
@@ -72,10 +75,14 @@ public class BlueprintAppState extends AbstractAppState
     
         
         cam.setLocation(Vector3f.UNIT_Y);
-        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z);
+        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z.mult(-1.0f));
     
         Geometry geo = gimmie();
-        geo.setMaterial(assetManager.loadMaterial("Materials/wiremesh.j3m"));
+        Material mat = assetManager.loadMaterial("Materials/Stroke.j3m");
+        mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        
+        geo.setMaterial(mat);
+        geo.setQueueBucket(RenderQueue.Bucket.Transparent);
         rootNode.attachChild(geo);
         
     }
@@ -91,9 +98,17 @@ public class BlueprintAppState extends AbstractAppState
     {
         BlueprintGeoGen bgg = new BlueprintGeoGen();
         
-        bgg.addLine(0, 0, 1, 1);
+        for(int x = 0; x <= plot.getWidth(); ++ x)
+        {
+            bgg.addLine(x, 0, x, plot.getHeight());
+        }
+        for(int y = 0; y <= plot.getHeight(); ++ y)
+        {
+            bgg.addLine(0, y, plot.getWidth(), y);
+        }
         
-        Mesh m = bgg.bake(0.1f, 1.0f, 1.0f);
+        
+        Mesh m = bgg.bake(0.1f, 5.0f, 1.0f, 1.0f);
         
         Geometry geo = new Geometry("", m);
         
