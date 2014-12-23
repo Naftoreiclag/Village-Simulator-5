@@ -26,11 +26,11 @@ public class HouseEditor
     final Node rootNode;
     AssetManager assetManager;
     final Plot plot;
-    final Camera cam;
+    final ReiCamera cam;
     
     float camDir;
     
-    public HouseEditor(Node rootNode, AssetManager assetManager, Plot plot, Camera cam)
+    public HouseEditor(Node rootNode, AssetManager assetManager, Plot plot, ReiCamera cam)
     {
         this.rootNode = new Node();
         this.trueRootNode = rootNode;
@@ -52,7 +52,7 @@ public class HouseEditor
         }
         
         cam.setLocation((new Vector3f(FastMath.cos(FastMath.HALF_PI - camDir) * 15.0f, 7.0f, FastMath.sin(FastMath.HALF_PI - camDir) * 15.0f)));
-        cam.lookAt(new Vector3f(lookLoc.x, 0, lookLoc.y), Vector3f.UNIT_Y);
+        cam.lookAt(lookLoc.x, 0, lookLoc.y);
     }
     
     public void disableRender()

@@ -32,6 +32,7 @@ import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import de.lessvoid.nifty.Nifty;
+import naftoreiclag.villagefive.ReiCamera.SmoothMode;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
 public class Main extends SimpleApplication implements ActionListener
@@ -57,12 +58,17 @@ public class Main extends SimpleApplication implements ActionListener
     PlayerController playCont;
     ChaseCamera chaseCam;
     
+    ReiCamera rcam;
+    
     Plot testp;
     
     @Override
     public void simpleInitApp()
     {
         setupUselessAestetics();
+        
+        rcam = new ReiCamera(cam);
+        rcam.mode = SmoothMode.linear;
         
         world = new World(rootNode, assetManager);
         world.enableRender();
@@ -84,7 +90,7 @@ public class Main extends SimpleApplication implements ActionListener
         morgan.attachSpatial(chasePnt);
         
         playCont.setEntity(morgan);
-        playCont.setCamera(cam);
+        playCont.setCamera(rcam);
         playCont.setGround(ground);
         playCont.setManager(inputManager);
         
@@ -130,6 +136,8 @@ public class Main extends SimpleApplication implements ActionListener
         {
             mhe.tick(tpf);
         }
+        
+        rcam.tick(tpf);
     }
 
     @Override
@@ -207,7 +215,7 @@ public class Main extends SimpleApplication implements ActionListener
 
     private void onDebugKeypress()
     {
-        mhe = new HouseEditor(rootNode, assetManager, testp, cam);
+        mhe = new HouseEditor(rootNode, assetManager, testp, rcam);
         playCont.disableInput();
         world.disableRender();
         mhe.enableRender();

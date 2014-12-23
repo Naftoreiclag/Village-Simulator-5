@@ -12,22 +12,29 @@ import com.jme3.renderer.Camera;
 // Build a better mousetrap
 public class ReiCamera
 {
-    public final Camera cam;
+    public final Camera c;
     
-    public final Vector3f targetLoc = new Vector3f();
-    public final Vector3f dummyLoc = new Vector3f();
-    public final Vector3f cubicLoc = new Vector3f();
+    public final Vector3f targetLoc;
+    public final Vector3f dummyLoc;
+    public final Vector3f cubicLoc;
     
-    public final Vector3f targetView = new Vector3f();
-    public final Vector3f dummyView = new Vector3f();
-    public final Vector3f cubicView = new Vector3f();
+    public final Vector3f targetView;
+    public final Vector3f dummyView;
+    public final Vector3f cubicView;
     
     public float maxSpd = 5.0f;
     public float exp = 20f;
     
     public ReiCamera(Camera cam)
     {
-        this.cam = cam;
+        this.c = cam;
+        
+        this.targetLoc = c.getLocation().clone();
+        this.dummyLoc = this.targetLoc.clone();
+        this.cubicLoc = this.targetLoc.clone();
+        this.targetView = targetLoc.add(c.getDirection());
+        this.dummyView = this.targetView.clone();
+        this.cubicView = this.targetView.clone();
     }
     
     public SmoothMode mode = SmoothMode.cubic;
@@ -44,6 +51,10 @@ public class ReiCamera
     {
         targetView.set(where);
     }
+    void lookAt(float x, float y, float z)
+    {
+        targetView.set(x, y, z);
+    }
     
     public void tick(float tpf)
     {
@@ -53,38 +64,36 @@ public class ReiCamera
         }
         
         // interpolate dummies linearly
-        if(dummyLoc.distanceSquared(targetLoc) > maxSpd * maxSpd)
+        float dummyLocDist = dummyLoc.distance(targetLoc);
+        float matchedSpd = dummyLocDist / (maxSpd * tpf);
+        if(dummyLocDist > maxSpd * tpf)
         {
-            dummyLoc.addLocal(targetLoc.subtract(dummyLoc).normalizeLocal().multLocal(maxSpd));
+            dummyLoc.addLocal(targetLoc.subtract(dummyLoc).normalizeLocal().multLocal(maxSpd * tpf));
+            dummyView.addLocal(targetView.subtract(dummyView).divideLocal(matchedSpd));
         }
         else
         {
             dummyLoc.set(targetLoc);
-        }
-        if(dummyView.distanceSquared(targetView) > maxSpd * maxSpd)
-        {
-            dummyView.addLocal(targetView.subtract(dummyView).normalizeLocal().multLocal(maxSpd));
-        }
-        else
-        {
             dummyView.set(targetView);
+            
         }
         
         // aaaa
         if(mode == SmoothMode.linear)
         {
-            cam.setLocation(dummyLoc);
-            cam.lookAt(dummyView, Vector3f.UNIT_Y);
+            c.setLocation(dummyLoc);
+            c.lookAt(dummyView, Vector3f.UNIT_Y);
         }
         else if(mode == SmoothMode.cubic)
         {
-            cubicLoc.addLocal(cubicLoc.subtract(targetLoc).divideLocal(exp));
-            cubicView.addLocal(cubicView.subtract(targetLoc).divideLocal(exp));
+            cubicLoc.addLocal(targetLoc.subtract(cubicLoc).divideLocal(exp));
+            cubicView.addLocal(targetView.subtract(cubicView).divideLocal(exp));
             
-            cam.setLocation(cubicLoc);
-            cam.lookAt(cubicView, Vector3f.UNIT_Y);
+            c.setLocation(cubicLoc);
+            c.lookAt(cubicView, Vector3f.UNIT_Y);
         }
     }
+
     
     
     public static enum SmoothMode

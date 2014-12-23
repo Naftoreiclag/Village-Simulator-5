@@ -36,7 +36,7 @@ public class PlayerController extends EntityController implements ActionListener
         camDir.smoothFactor /= 2f;
         camDir.maxSpd /= 2f;
     }
-    Camera cam;
+    ReiCamera cam;
     Spatial ground;
     boolean turningLeft = false;
     boolean turningRight = false;
@@ -54,8 +54,8 @@ public class PlayerController extends EntityController implements ActionListener
 
     public Vector3f whereClickingOnGround()
     {
-        Vector3f origin = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.0f);
-        Vector3f direction = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.3f);
+        Vector3f origin = cam.c.getWorldCoordinates(inputManager.getCursorPosition(), 0.0f);
+        Vector3f direction = cam.c.getWorldCoordinates(inputManager.getCursorPosition(), 0.3f);
         direction.subtractLocal(origin).normalizeLocal();
 
         Ray ray = new Ray(origin, direction);
@@ -137,7 +137,7 @@ public class PlayerController extends EntityController implements ActionListener
 
 
         cam.setLocation((new Vector3f(FastMath.cos(FastMath.HALF_PI - camDir.x) * 15.0f, 7.0f, FastMath.sin(FastMath.HALF_PI - camDir.x) * 15.0f)).addLocal(puppet.node.getLocalTranslation()));
-        cam.lookAt(puppet.node.getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)), Vector3f.UNIT_Y);
+        cam.lookAt(puppet.node.getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
     }
 
     public void onAction(String key, boolean isPressed, float tpf)
@@ -177,14 +177,14 @@ public class PlayerController extends EntityController implements ActionListener
         }
     }
 
-    void setCamera(Camera cam)
+    void setCamera(ReiCamera cam)
     {
         this.cam = cam;
     }
 
     private float whereDoesThePlayerWantToGo()
     {
-        Vector2f fwd = new Vector2f(cam.getDirection().x, cam.getDirection().z);
+        Vector2f fwd = new Vector2f(cam.c.getDirection().x, cam.c.getDirection().z);
         Vector2f dir = new Vector2f();
         if(movingFwd)
         {
