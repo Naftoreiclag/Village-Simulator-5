@@ -38,7 +38,7 @@ import com.jme3.texture.Texture;
 import de.lessvoid.nifty.Nifty;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
-public class TestAppState extends AbstractAppState implements ActionListener
+public class OverworldAppState extends AbstractAppState implements ActionListener
 {
     private Main app;
     private Node rootNode;

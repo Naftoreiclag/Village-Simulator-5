@@ -25,14 +25,14 @@ public class Main extends SimpleApplication
         main.start();
     }
     
-    TestAppState tas;
+    OverworldAppState tas;
     
     @Override
     public void simpleInitApp()
     {
         flyCam.setEnabled(false);
         
-        tas = new TestAppState();
+        tas = new OverworldAppState();
         stateManager.attach(tas);
     }
 
