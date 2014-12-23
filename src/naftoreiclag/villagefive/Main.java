@@ -26,6 +26,7 @@ public class Main extends SimpleApplication
     }
     
     OverworldAppState tas;
+    BlueprintAppState bas;
     
     @Override
     public void simpleInitApp()
@@ -33,7 +34,8 @@ public class Main extends SimpleApplication
         flyCam.setEnabled(false);
         
         tas = new OverworldAppState();
-        stateManager.attach(tas);
+        bas = new BlueprintAppState();
+        stateManager.attach(bas);
     }
 
     @Override
