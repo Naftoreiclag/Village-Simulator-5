@@ -70,6 +70,8 @@ public class Main extends SimpleApplication implements ActionListener
         rcam = new ReiCamera(cam);
         rcam.mode = SmoothMode.cubic;
         
+        // lol
+        
         world = new World(rootNode, assetManager);
         world.enableRender();
         
