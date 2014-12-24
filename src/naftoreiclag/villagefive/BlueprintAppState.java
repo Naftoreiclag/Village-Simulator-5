@@ -16,6 +16,7 @@ import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -33,6 +34,8 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.shadow.DirectionalLightShadowRenderer;
+import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.jme3.ui.Picture;
@@ -69,6 +72,25 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private List<Flag> flags = new ArrayList<Flag>();
     
     private Tool tool;
+
+    private void setupAesteticsMispelled()
+    {
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.White.mult(0.4f));
+        trueRootNode.addLight(al);
+        
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White.mult(0.6f));
+        sun.setDirection(new Vector3f(-0.96f, -2.69f, 0.69f).normalizeLocal());
+        trueRootNode.addLight(sun);
+        
+        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
+        dlsr.setLight(sun);
+        dlsr.setShadowIntensity(0.5f);
+        dlsr.setLambda(0.55f);
+        dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
+        viewPort.addProcessor(dlsr);
+    }
     public static enum Tool
     {
         drag,
@@ -80,6 +102,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     private Node rootNode;
     
+    private Spatial flag;
 	private Spatial helperGrid;
 	private Spatial aePaper;
     
@@ -99,20 +122,33 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 	    super.initialize(stateManager, app);
 	    setupVariableWrappings(app);
         
+        setupModels();
+        
 	    setupInput();
 	    setupCamera();
         
 	    setupWallpaper();
-	    
+        
 	    rootNode = new Node();
 	    trueRootNode.attachChild(rootNode);
+        
+        setupAesteticsMispelled();
+        
+        rootNode.attachChild(flag.clone());
 	    
 	    aePaper = generatePaper();
 	    aePaper.move(0, -0.01f, 0);
+        aePaper.setShadowMode(RenderQueue.ShadowMode.Receive);
 	    rootNode.attachChild(aePaper);
 	    Node grid = makeGrid();
+        grid.setShadowMode(RenderQueue.ShadowMode.Receive);
 	    rootNode.attachChild(grid);
 	}
+    
+    public void placeFlag(Vector2f pos)
+    {
+        
+    }
 
 	@Override
 	public void update(float tpf)
@@ -200,6 +236,12 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             mousePos = null;
         }
+    }
+
+    private void setupModels()
+    {
+        flag = (Spatial) assetManager.loadModel("Models/BlueFlag.mesh.j3o");
+        flag.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
     }
 
     private Geometry generatePaper()
