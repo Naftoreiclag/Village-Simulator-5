@@ -54,11 +54,6 @@ public class SmoothAnglef extends Anglef
         //
     }
 
-    public void setTarg(float tx)
-    {
-        this.tx = wrap(tx);
-    }
-
     boolean smoothEn = true;
     public void disable()
     {

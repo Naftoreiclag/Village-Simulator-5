@@ -5,6 +5,7 @@
  */
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
@@ -108,7 +109,7 @@ public class PlayerController extends EntityController implements ActionListener
             if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
                 puppet.bodyAnimChannel.setAnim("Stand");
-                lookDir.setTarg(lookDir.x);
+                lookDir.tx = lookDir.x;
             }
 
         }
@@ -117,11 +118,11 @@ public class PlayerController extends EntityController implements ActionListener
             if(groundGoto != null)
             {
                 groundGoto.subtractLocal(puppet.node.getLocalTranslation());
-                lookDir.setTarg(FastMath.atan2(groundGoto.x, groundGoto.z));
+                lookDir.tx = FastMath.atan2(groundGoto.x, groundGoto.z);
             }
             else
             {
-                lookDir.setTarg(whereDoesThePlayerWantToGo());
+                lookDir.tx = whereDoesThePlayerWantToGo();
             }
 
 

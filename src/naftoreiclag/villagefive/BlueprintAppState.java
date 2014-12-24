@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -29,6 +30,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.texture.Texture;
@@ -42,6 +44,7 @@ import java.util.List;
 
 
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
+import naftoreiclag.villagefive.util.SmoothScalarf;
 
 import org.lwjgl.BufferUtils;
 
@@ -67,11 +70,10 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     private Node rootNode;
     
-	private Geometry grid;
-	private Geometry paper;
+	private Spatial helperGrid;
+	private Spatial aePaper;
     
-    private float frustumSize = 10.0f;
-	private float frustumVel = 0.0f;
+    private SmoothScalarf frustumSize = new SmoothScalarf();
     
     private float scrollSpd = 25.0f;
     private boolean leftClick;
@@ -85,43 +87,28 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 	public void initialize(AppStateManager stateManager, Application app)
 	{
 	    super.initialize(stateManager, app);
+	    setupVariableWrappings(app);
         
+	    setupInput();
+	    setupCamera();
         
-	    initVariableWrappings(app);
-	    initInput();
-	    initWallpaper();
+	    setupWallpaper();
 	    
 	    rootNode = new Node();
 	    trueRootNode.attachChild(rootNode);
 	    
-	    paper = generatePaper();
-	    paper.move(0, -0.01f, 0);
-	    rootNode.attachChild(paper);
+	    aePaper = generatePaper();
+	    aePaper.move(0, -0.01f, 0);
+	    rootNode.attachChild(aePaper);
 	    Node grid = makeGrid();
 	    rootNode.attachChild(grid);
-	    initCamera();
-	
-	    
-	    
 	}
 
 	@Override
 	public void update(float tpf)
 	{
 	    super.update(tpf);
-	    
-	    if(FastMath.abs(frustumVel) > 0.01f)
-	    {
-	        frustumSize += frustumVel;
-	
-	        frustumSize = FastMath.clamp(frustumSize, 1, 10);
-	
-	        frustumVel /= 2;
-	
-	        updateFrustum();
-	    }
-	    
-	    
+        tickFrustum(tpf);
 	}
 
 	public void onAction(String key, boolean isPressed, float tpf)
@@ -145,18 +132,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     {
         if(key.equals(KeyKeys.mouse_scroll_up))
         {
-            System.out.println(value);
-            
-            frustumVel = -value * tpf * scrollSpd;
-            updateFrustum();
-            
+            frustumSize.tx -= value * tpf * scrollSpd;
         }
         if(key.equals(KeyKeys.mouse_scroll_down))
         {
-            System.out.println(value);
-            
-            frustumVel = value * tpf * scrollSpd;
-            updateFrustum();
+            frustumSize.tx += value * tpf * scrollSpd;
         }
 
         if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
@@ -200,7 +180,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         Ray ray = new Ray(origin, direction);
         CollisionResults results = new CollisionResults();
 
-        paper.collideWith(ray, results);
+        aePaper.collideWith(ray, results);
         if(results.size() > 0)
         {
             Vector3f res = results.getClosestCollision().getContactPoint();
@@ -259,10 +239,10 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private void updateFrustum()
     {
         float aspect = (float) cam.getWidth() / cam.getHeight();
-        cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
+        cam.setFrustum(-1000, 1000, -aspect * frustumSize.x, aspect * frustumSize.x, frustumSize.x, -frustumSize.x);
     }
 
-    private void initInput()
+    private void setupInput()
     {
         inputManager.addListener(this, KeyKeys.mouse_left);
         inputManager.addListener(this, KeyKeys.mouse_scroll_up);
@@ -273,7 +253,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         inputManager.addListener(this, KeyKeys.mouse_move_right);
     }
 
-    private void initWallpaper()
+    private void setupWallpaper()
     {
         Picture wallpaper = new Picture("background");
         Material background = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -298,7 +278,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 	    viewPort.setClearFlags(false, true, true);
     }
 
-    private void initVariableWrappings(Application app)
+    private void setupVariableWrappings(Application app)
     {
         this.app = (Main) app;
         this.trueRootNode = this.app.getRootNode();
@@ -310,7 +290,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         this.renderManager = this.app.getRenderManager();
     }
 
-    private void initCamera()
+    private void setupCamera()
     {
         /*
         AmbientLight al = new AmbientLight();
@@ -327,6 +307,12 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         // iso
         cam.setLocation(Vector3f.UNIT_XYZ);
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+    }
+
+    private void tickFrustum(float tpf)
+    {
+        frustumSize.tick(tpf);
+        updateFrustum();
     }
     
     public static class Flag

@@ -6,11 +6,8 @@
 
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.app.SimpleApplication;
-import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
-import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 
