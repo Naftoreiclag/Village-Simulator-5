@@ -35,17 +35,27 @@ import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.jme3.ui.Picture;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.vecmath.Vector2d;
+
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
+
 import org.lwjgl.BufferUtils;
 
 public class BlueprintAppState extends AbstractAppState implements ActionListener, AnalogListener
 {
-    private Main app;
+    public BlueprintAppState()
+	{
+	    plot.setWidth(7);
+	    plot.setHeight(5);
+	}
+
+	private Main app;
     private Node rootNode;
     private AssetManager assetManager;
     private AppStateManager stateManager;
@@ -56,16 +66,131 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     
     private Node view;
-    Geometry grid;
+    Plot plot = new Plot();
+	Geometry grid;
     
-    Geometry paper;
+    float frustumSize = 10.0f;
+	float frustumVel = 0.0f;
+	Geometry paper;
     
     List<Flag> flags = new ArrayList<Flag>();
     
     boolean leftClick;
-    private RenderManager renderManager;
+    float scrollSpd = 25.0f;
+	public boolean isDragging;
+	public Vector3f originalPosition;
+	private RenderManager renderManager;
 
-    public void onAction(String key, boolean isPressed, float tpf)
+    public boolean mousePosAlreadyUpdated = false;
+
+	private Vector2f mousePos;
+	private Vector2f lastMousePos;
+	private Vector2f mouseDrag;
+
+	@Override
+	public void initialize(AppStateManager stateManager, Application app)
+	{
+	    super.initialize(stateManager, app);
+	    
+	    
+	    this.app = (Main) app;
+	    this.rootNode = this.app.getRootNode();
+	    this.assetManager = this.app.getAssetManager();
+	    this.stateManager = this.app.getStateManager();
+	    this.inputManager = this.app.getInputManager();
+	    this.cam = this.app.getCamera();
+	    this.viewPort = this.app.getViewPort();
+	    this.renderManager = this.app.getRenderManager();
+	    
+	    Picture wallpaper = new Picture("background");
+	    Material background = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+	    Texture texture = assetManager.loadTexture("Textures/blueprintCrumple.jpg");
+	    texture.setWrap(WrapMode.Repeat);
+	    background.setTexture("ColorMap", texture);
+	    wallpaper.setMaterial(background);
+	    wallpaper.setWidth(Main.width);
+	    wallpaper.setHeight(Main.height);
+	    wallpaper.setPosition(0, 0);
+	    wallpaper.getMesh().setBuffer(Type.TexCoord, 2, new float[]
+	    {
+	        0, 0,
+	        Main.width / 512f, 0,
+	        Main.width / 512f, Main.height / 512f,
+	        0, Main.height / 512f
+	    });
+	
+	    ViewPort preview = renderManager.createPreView("background", cam);
+	    preview.setClearFlags(true, true, true);
+	    preview.attachScene(wallpaper);
+	    wallpaper.updateGeometricState();
+	    
+	    view = new Node();
+	    rootNode.attachChild(view);
+	    
+	    paper = generatePaper();
+	    paper.move(0, -0.01f, 0);
+	    view.attachChild(paper);
+	    
+	    
+	    inputManager.addListener(this, KeyKeys.mouse_left);
+	    inputManager.addListener(this, KeyKeys.mouse_scroll_up);
+	    inputManager.addListener(this, KeyKeys.mouse_scroll_down);
+	    inputManager.addListener(this, KeyKeys.mouse_move_up);
+	    inputManager.addListener(this, KeyKeys.mouse_move_down);
+	    inputManager.addListener(this, KeyKeys.mouse_move_left);
+	    inputManager.addListener(this, KeyKeys.mouse_move_right);
+	    
+	    Node knight = (Node) assetManager.loadModel("Models/Knight.mesh.j3o");
+	    //rootNode.attachChild(knight);
+	
+	    
+	    viewPort.setClearFlags(false, true, true);
+	    
+	    AmbientLight al = new AmbientLight();
+	    al.setColor(ColorRGBA.White.mult(1.0f));
+	    rootNode.addLight(al);
+	
+	    viewPort.setBackgroundColor(new ColorRGBA(20f / 255f, 51f / 255f, 101f / 255f, 1.0f));
+	    
+	    cam.setParallelProjection(true);
+	    setFrustum();
+	
+	    
+	    cam.setLocation(Vector3f.UNIT_Y);
+	    
+	    // top-dwon
+	    cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z.mult(-1.0f));
+	    // iso
+	    cam.setLocation(Vector3f.UNIT_XYZ);
+	    cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+	
+	    Node grid = makeGrid();
+	    view.attachChild(grid);
+	    
+	    
+	}
+
+	@Override
+	public void update(float tpf)
+	{
+	    super.update(tpf);
+	    
+	    if(FastMath.abs(frustumVel) > 0.01f)
+	    {
+	        frustumSize += frustumVel;
+	
+	        frustumSize = FastMath.clamp(frustumSize, 1, 10);
+	
+	        frustumVel /= 2;
+	
+	        setFrustum();
+	    }
+	    
+	    
+	    mousePosAlreadyUpdated = false;
+	}
+
+	public void onAction(String key, boolean isPressed, float tpf)
     {
         if(key.equals(KeyKeys.mouse_left))
         {
@@ -81,12 +206,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             }
         }
     }
-    
-    float scrollSpd = 25.0f;
-
-    public boolean isDragging;
-    
-    public Vector3f originalPosition;
     
     public void onAnalog(String key, float value, float tpf)
     {
@@ -133,11 +252,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
     }
     
-    
-    public boolean mousePosAlreadyUpdated = false;
-    private Vector2f mousePos;
-    private Vector2f lastMousePos;
-    private Vector2f mouseDrag;
     
     public void updateMousePos()
     {
@@ -232,119 +346,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             loc = new Vector2f(x, y);
         }
-    }
-    
-    Plot plot = new Plot();
-    
-    public BlueprintAppState()
-    {
-        plot.setWidth(7);
-        plot.setHeight(5);
-    }
-    
-    float frustumSize = 10.0f;
-    float frustumVel = 0.0f;
-
-    @Override
-    public void initialize(AppStateManager stateManager, Application app)
-    {
-        super.initialize(stateManager, app);
-        
-        
-        this.app = (Main) app;
-        this.rootNode = this.app.getRootNode();
-        this.assetManager = this.app.getAssetManager();
-        this.stateManager = this.app.getStateManager();
-        this.inputManager = this.app.getInputManager();
-        this.cam = this.app.getCamera();
-        this.viewPort = this.app.getViewPort();
-        this.renderManager = this.app.getRenderManager();
-        
-        Picture wallpaper = new Picture("background");
-        Material background = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture texture = assetManager.loadTexture("Textures/blueprintCrumple.jpg");
-        texture.setWrap(WrapMode.Repeat);
-        background.setTexture("ColorMap", texture);
-        wallpaper.setMaterial(background);
-        wallpaper.setWidth(Main.width);
-        wallpaper.setHeight(Main.height);
-        wallpaper.setPosition(0, 0);
-        wallpaper.getMesh().setBuffer(Type.TexCoord, 2, new float[]
-        {
-            0, 0,
-            Main.width / 512f, 0,
-            Main.width / 512f, Main.height / 512f,
-            0, Main.height / 512f
-        });
-
-        ViewPort preview = renderManager.createPreView("background", cam);
-        preview.setClearFlags(true, true, true);
-        preview.attachScene(wallpaper);
-        wallpaper.updateGeometricState();
-        
-        view = new Node();
-        rootNode.attachChild(view);
-        
-        paper = generatePaper();
-        paper.move(0, -0.01f, 0);
-        view.attachChild(paper);
-        
-        
-        inputManager.addListener(this, KeyKeys.mouse_left);
-        inputManager.addListener(this, KeyKeys.mouse_scroll_up);
-        inputManager.addListener(this, KeyKeys.mouse_scroll_down);
-        inputManager.addListener(this, KeyKeys.mouse_move_up);
-        inputManager.addListener(this, KeyKeys.mouse_move_down);
-        inputManager.addListener(this, KeyKeys.mouse_move_left);
-        inputManager.addListener(this, KeyKeys.mouse_move_right);
-        
-        Node knight = (Node) assetManager.loadModel("Models/Knight.mesh.j3o");
-        //rootNode.attachChild(knight);
-
-        
-        viewPort.setClearFlags(false, true, true);
-        
-        AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White.mult(1.0f));
-        rootNode.addLight(al);
-
-        viewPort.setBackgroundColor(new ColorRGBA(20f / 255f, 51f / 255f, 101f / 255f, 1.0f));
-        
-        cam.setParallelProjection(true);
-        setFrustum();
-    
-        
-        cam.setLocation(Vector3f.UNIT_Y);
-        
-        // top-dwon
-        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z.mult(-1.0f));
-        // iso
-        cam.setLocation(Vector3f.UNIT_XYZ);
-        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-    
-        Node grid = makeGrid();
-        view.attachChild(grid);
-        
-        
-    }
-    @Override
-    public void update(float tpf)
-    {
-        super.update(tpf);
-        
-        if(FastMath.abs(frustumVel) > 0.01f)
-        {
-            frustumSize += frustumVel;
-
-            frustumSize = FastMath.clamp(frustumSize, 1, 10);
-
-            frustumVel /= 2;
-
-            setFrustum();
-        }
-        
-        
-        mousePosAlreadyUpdated = false;
     }
     
     public Node makeGrid()
