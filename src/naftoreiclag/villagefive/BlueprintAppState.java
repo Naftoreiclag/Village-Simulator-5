@@ -29,7 +29,6 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
 import com.jme3.texture.Texture;
@@ -41,7 +40,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.vecmath.Vector2d;
 
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
 
@@ -51,121 +49,58 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 {
     public BlueprintAppState()
 	{
-	    plot.setWidth(7);
-	    plot.setHeight(5);
+	    plotData.setWidth(7);
+	    plotData.setHeight(5);
 	}
 
 	private Main app;
-    private Node rootNode;
+    private Node trueRootNode;
     private AssetManager assetManager;
     private AppStateManager stateManager;
     private InputManager inputManager;
     private Camera cam;
     private ViewPort viewPort;
-    
-    
-    
-    private Node view;
-    Plot plot = new Plot();
-	Geometry grid;
-    
-    float frustumSize = 10.0f;
-	float frustumVel = 0.0f;
-	Geometry paper;
-    
-    List<Flag> flags = new ArrayList<Flag>();
-    
-    boolean leftClick;
-    float scrollSpd = 25.0f;
-	public boolean isDragging;
-	public Vector3f originalPosition;
 	private RenderManager renderManager;
-
-    public boolean mousePosAlreadyUpdated = false;
-
-	private Vector2f mousePos;
-	private Vector2f lastMousePos;
+    
+    Plot plotData = new Plot();
+    private List<Flag> flags = new ArrayList<Flag>();
+    
+    private Node rootNode;
+    
+	private Geometry grid;
+	private Geometry paper;
+    
+    private float frustumSize = 10.0f;
+	private float frustumVel = 0.0f;
+    
+    private float scrollSpd = 25.0f;
+    private boolean leftClick;
+	public boolean isDragging;
+    
+	public Vector3f originalPosition;
 	private Vector2f mouseDrag;
+	private Vector2f mousePos;
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app)
 	{
 	    super.initialize(stateManager, app);
+        
+        
+	    initVariableWrappings(app);
+	    initInput();
+	    initWallpaper();
 	    
-	    
-	    this.app = (Main) app;
-	    this.rootNode = this.app.getRootNode();
-	    this.assetManager = this.app.getAssetManager();
-	    this.stateManager = this.app.getStateManager();
-	    this.inputManager = this.app.getInputManager();
-	    this.cam = this.app.getCamera();
-	    this.viewPort = this.app.getViewPort();
-	    this.renderManager = this.app.getRenderManager();
-	    
-	    Picture wallpaper = new Picture("background");
-	    Material background = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	    Texture texture = assetManager.loadTexture("Textures/blueprintCrumple.jpg");
-	    texture.setWrap(WrapMode.Repeat);
-	    background.setTexture("ColorMap", texture);
-	    wallpaper.setMaterial(background);
-	    wallpaper.setWidth(Main.width);
-	    wallpaper.setHeight(Main.height);
-	    wallpaper.setPosition(0, 0);
-	    wallpaper.getMesh().setBuffer(Type.TexCoord, 2, new float[]
-	    {
-	        0, 0,
-	        Main.width / 512f, 0,
-	        Main.width / 512f, Main.height / 512f,
-	        0, Main.height / 512f
-	    });
-	
-	    ViewPort preview = renderManager.createPreView("background", cam);
-	    preview.setClearFlags(true, true, true);
-	    preview.attachScene(wallpaper);
-	    wallpaper.updateGeometricState();
-	    
-	    view = new Node();
-	    rootNode.attachChild(view);
+	    rootNode = new Node();
+	    trueRootNode.attachChild(rootNode);
 	    
 	    paper = generatePaper();
 	    paper.move(0, -0.01f, 0);
-	    view.attachChild(paper);
-	    
-	    
-	    inputManager.addListener(this, KeyKeys.mouse_left);
-	    inputManager.addListener(this, KeyKeys.mouse_scroll_up);
-	    inputManager.addListener(this, KeyKeys.mouse_scroll_down);
-	    inputManager.addListener(this, KeyKeys.mouse_move_up);
-	    inputManager.addListener(this, KeyKeys.mouse_move_down);
-	    inputManager.addListener(this, KeyKeys.mouse_move_left);
-	    inputManager.addListener(this, KeyKeys.mouse_move_right);
-	    
-	    Node knight = (Node) assetManager.loadModel("Models/Knight.mesh.j3o");
-	    //rootNode.attachChild(knight);
-	
-	    
-	    viewPort.setClearFlags(false, true, true);
-	    
-	    AmbientLight al = new AmbientLight();
-	    al.setColor(ColorRGBA.White.mult(1.0f));
-	    rootNode.addLight(al);
-	
-	    viewPort.setBackgroundColor(new ColorRGBA(20f / 255f, 51f / 255f, 101f / 255f, 1.0f));
-	    
-	    cam.setParallelProjection(true);
-	    setFrustum();
-	
-	    
-	    cam.setLocation(Vector3f.UNIT_Y);
-	    
-	    // top-dwon
-	    cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z.mult(-1.0f));
-	    // iso
-	    cam.setLocation(Vector3f.UNIT_XYZ);
-	    cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-	
+	    rootNode.attachChild(paper);
 	    Node grid = makeGrid();
-	    view.attachChild(grid);
+	    rootNode.attachChild(grid);
+	    initCamera();
+	
 	    
 	    
 	}
@@ -183,11 +118,10 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 	
 	        frustumVel /= 2;
 	
-	        setFrustum();
+	        updateFrustum();
 	    }
 	    
 	    
-	    mousePosAlreadyUpdated = false;
 	}
 
 	public void onAction(String key, boolean isPressed, float tpf)
@@ -214,7 +148,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             System.out.println(value);
             
             frustumVel = -value * tpf * scrollSpd;
-            setFrustum();
+            updateFrustum();
             
         }
         if(key.equals(KeyKeys.mouse_scroll_down))
@@ -222,9 +156,14 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             System.out.println(value);
             
             frustumVel = value * tpf * scrollSpd;
-            setFrustum();
+            updateFrustum();
         }
-        
+
+        if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
+        {
+            updateMousePos();
+        }
+
         if(leftClick)
         {
             if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
@@ -232,7 +171,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 updateMousePos();
                 if(mousePos != null && mouseDrag != null)
                 {
-                    view.setLocalTranslation(new Vector3f(-mouseDrag.x + mousePos.x, -0.1f, -mouseDrag.y + mousePos.y).addLocal(originalPosition));
+                    rootNode.setLocalTranslation(new Vector3f(-mouseDrag.x + mousePos.x, -0.1f, -mouseDrag.y + mousePos.y).addLocal(originalPosition));
                     
                     //paper.setLotpfcalTranslation(, tpf, tpf);
                 }
@@ -242,9 +181,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 
     private void onLeftPress(float tpf)
     {
-        updateMousePos();
         mouseDrag = mousePos;
-        originalPosition = view.getLocalTranslation().clone();
+        originalPosition = rootNode.getLocalTranslation().clone();
     }
 
     private void onLeftRelease(float tpf)
@@ -255,13 +193,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     public void updateMousePos()
     {
-        if(mousePosAlreadyUpdated)
-        {
-            return;
-        }
-        
-        lastMousePos = mousePos;
-        
         Vector3f origin = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.0f);
         Vector3f direction = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.3f);
         direction.subtractLocal(origin).normalizeLocal();
@@ -279,8 +210,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             mousePos = null;
         }
-        
-        mousePosAlreadyUpdated = true;
     }
 
     private Geometry generatePaper()
@@ -290,8 +219,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         IntBuffer i = BufferUtils.createIntBuffer(6);
         
         float b = 2;
-        float w = plot.getWidth() + b;
-        float h = plot.getHeight() + b;
+        float w = plotData.getWidth() + b;
+        float h = plotData.getHeight() + b;
         
         float tw = w + (2 * b);
         float th = h + (2 * b);
@@ -327,10 +256,77 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         return geo;
     }
 
-    private void setFrustum()
+    private void updateFrustum()
     {
         float aspect = (float) cam.getWidth() / cam.getHeight();
         cam.setFrustum(-1000, 1000, -aspect * frustumSize, aspect * frustumSize, frustumSize, -frustumSize);
+    }
+
+    private void initInput()
+    {
+        inputManager.addListener(this, KeyKeys.mouse_left);
+        inputManager.addListener(this, KeyKeys.mouse_scroll_up);
+        inputManager.addListener(this, KeyKeys.mouse_scroll_down);
+        inputManager.addListener(this, KeyKeys.mouse_move_up);
+        inputManager.addListener(this, KeyKeys.mouse_move_down);
+        inputManager.addListener(this, KeyKeys.mouse_move_left);
+        inputManager.addListener(this, KeyKeys.mouse_move_right);
+    }
+
+    private void initWallpaper()
+    {
+        Picture wallpaper = new Picture("background");
+        Material background = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        Texture texture = assetManager.loadTexture("Textures/blueprintCrumple.jpg");
+        texture.setWrap(WrapMode.Repeat);
+        background.setTexture("ColorMap", texture);
+        wallpaper.setMaterial(background);
+        wallpaper.setWidth(Main.width);
+        wallpaper.setHeight(Main.height);
+        wallpaper.setPosition(0, 0);
+        wallpaper.getMesh().setBuffer(Type.TexCoord, 2, new float[]
+        {
+            0, 0,
+            Main.width / 512f, 0,
+            Main.width / 512f, Main.height / 512f,
+            0, Main.height / 512f
+        });
+        ViewPort preview = renderManager.createPreView("background", cam);
+        preview.setClearFlags(true, true, true);
+        preview.attachScene(wallpaper);
+        wallpaper.updateGeometricState();
+	    viewPort.setClearFlags(false, true, true);
+    }
+
+    private void initVariableWrappings(Application app)
+    {
+        this.app = (Main) app;
+        this.trueRootNode = this.app.getRootNode();
+        this.assetManager = this.app.getAssetManager();
+        this.stateManager = this.app.getStateManager();
+        this.inputManager = this.app.getInputManager();
+        this.cam = this.app.getCamera();
+        this.viewPort = this.app.getViewPort();
+        this.renderManager = this.app.getRenderManager();
+    }
+
+    private void initCamera()
+    {
+        /*
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.White.mult(1.0f));
+        trueRootNode.addLight(al);
+        */
+        
+        cam.setParallelProjection(true);
+        updateFrustum();
+        
+        // top-dwon
+        cam.setLocation(Vector3f.UNIT_Y);
+        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z.mult(-1.0f));
+        // iso
+        cam.setLocation(Vector3f.UNIT_XYZ);
+        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
     }
     
     public static class Flag
@@ -358,13 +354,13 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         halfMat.setColor("Color", new ColorRGBA(1.0f, 1.0f, 1.0f, 0.2f));
         
         BlueprintGeoGen wholeLines = new BlueprintGeoGen();
-        for(float x = 0; x <= plot.getWidth(); ++ x)
+        for(float x = 0; x <= plotData.getWidth(); ++ x)
         {
-            wholeLines.addLine(x, 0, x, plot.getHeight());
+            wholeLines.addLine(x, 0, x, plotData.getHeight());
         }
-        for(float y = 0; y <= plot.getHeight(); ++ y)
+        for(float y = 0; y <= plotData.getHeight(); ++ y)
         {
-            wholeLines.addLine(0, y, plot.getWidth(), y);
+            wholeLines.addLine(0, y, plotData.getWidth(), y);
         }
         Mesh wholeMesh = wholeLines.bake(0.02f, 20.0f, 1.0f, 1.0f);
         
@@ -373,13 +369,13 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         wholeGeo.setQueueBucket(RenderQueue.Bucket.Transparent);
         
         BlueprintGeoGen halfLines = new BlueprintGeoGen();
-        for(float x = 0; x < plot.getWidth(); ++ x)
+        for(float x = 0; x < plotData.getWidth(); ++ x)
         {
-            halfLines.addLine(x + 0.5f, 0, x + 0.5f, plot.getHeight());
+            halfLines.addLine(x + 0.5f, 0, x + 0.5f, plotData.getHeight());
         }
-        for(float y = 0; y < plot.getHeight(); ++ y)
+        for(float y = 0; y < plotData.getHeight(); ++ y)
         {
-            halfLines.addLine(0, y + 0.5f, plot.getWidth(), y + 0.5f);
+            halfLines.addLine(0, y + 0.5f, plotData.getWidth(), y + 0.5f);
         }
         Mesh halfMesh = halfLines.bake(0.02f, 20.0f, 1.0f, 1.0f);
         
