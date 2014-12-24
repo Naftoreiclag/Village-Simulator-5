@@ -18,6 +18,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -54,6 +55,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     
     
+    private Node view;
     Geometry grid;
     
     Geometry paper;
@@ -92,7 +94,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             System.out.println(value);
             
-            frustumSize -= value * tpf * scrollSpd;
+            frustumVel = -value * tpf * scrollSpd;
             setFrustum();
             
         }
@@ -100,7 +102,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             System.out.println(value);
             
-            frustumSize += value * tpf * scrollSpd;
+            frustumVel = value * tpf * scrollSpd;
             setFrustum();
         }
         
@@ -111,7 +113,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 updateMousePos();
                 if(mousePos != null && mouseDrag != null)
                 {
-                    paper.setLocalTranslation(new Vector3f(-mouseDrag.x + mousePos.x, -0.1f, -mouseDrag.y + mousePos.y).addLocal(originalPosition));
+                    view.setLocalTranslation(new Vector3f(-mouseDrag.x + mousePos.x, -0.1f, -mouseDrag.y + mousePos.y).addLocal(originalPosition));
                     
                     //paper.setLotpfcalTranslation(, tpf, tpf);
                 }
@@ -123,7 +125,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     {
         updateMousePos();
         mouseDrag = mousePos;
-        originalPosition = paper.getLocalTranslation().clone();
+        originalPosition = view.getLocalTranslation().clone();
     }
 
     private void onLeftRelease(float tpf)
@@ -131,10 +133,12 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
     }
     
+    
     public boolean mousePosAlreadyUpdated = false;
     private Vector2f mousePos;
     private Vector2f lastMousePos;
     private Vector2f mouseDrag;
+    
     public void updateMousePos()
     {
         if(mousePosAlreadyUpdated)
@@ -239,6 +243,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     }
     
     float frustumSize = 10.0f;
+    float frustumVel = 0.0f;
 
     @Override
     public void initialize(AppStateManager stateManager, Application app)
@@ -277,9 +282,12 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         preview.attachScene(wallpaper);
         wallpaper.updateGeometricState();
         
+        view = new Node();
+        rootNode.attachChild(view);
+        
         paper = generatePaper();
         paper.move(0, -0.01f, 0);
-        rootNode.attachChild(paper);
+        view.attachChild(paper);
         
         
         inputManager.addListener(this, KeyKeys.mouse_left);
@@ -315,7 +323,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
     
         Node grid = makeGrid();
-        rootNode.attachChild(grid);
+        view.attachChild(grid);
         
         
     }
@@ -323,6 +331,18 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     public void update(float tpf)
     {
         super.update(tpf);
+        
+        if(FastMath.abs(frustumVel) > 0.01f)
+        {
+            frustumSize += frustumVel;
+
+            frustumSize = FastMath.clamp(frustumSize, 1, 10);
+
+            frustumVel /= 2;
+
+            setFrustum();
+        }
+        
         
         mousePosAlreadyUpdated = false;
     }
