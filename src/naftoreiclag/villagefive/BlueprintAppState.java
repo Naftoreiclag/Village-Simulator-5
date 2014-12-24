@@ -47,6 +47,7 @@ import java.util.List;
 
 
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
+import naftoreiclag.villagefive.util.SmoothAnglef;
 import naftoreiclag.villagefive.util.SmoothScalarf;
 
 import org.lwjgl.BufferUtils;
@@ -65,6 +66,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private AppStateManager stateManager;
     private InputManager inputManager;
     private Camera cam;
+    private SmoothAnglef camAng;
     private ViewPort viewPort;
 	private RenderManager renderManager;
     
