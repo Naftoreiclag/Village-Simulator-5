@@ -36,7 +36,7 @@ public class SmoothScalarf extends Scalarf
     {
         this.min = min;
         this.max = max;
-        this.clamp = true;
+        enableClamp();
     }
     public void enableClamp()
     {
@@ -64,6 +64,11 @@ public class SmoothScalarf extends Scalarf
     //
     public void tick(float tpf)
     {
+        if(clamp)
+        {
+            tx = FastMath.clamp(tx, min, max);
+        }
+        
         if(smooth)
         {
             dummy.lerp(tx, maxSpd * tpf);
@@ -75,9 +80,10 @@ public class SmoothScalarf extends Scalarf
             x = this.tx;
         }
         
+        
         if(clamp)
         {
-            x = FastMath.clamp(x, min, max);
+            dummy.x = FastMath.clamp(dummy.x, min, max);
         }
 
         //

@@ -68,6 +68,16 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     Plot plotData = new Plot();
     private List<Flag> flags = new ArrayList<Flag>();
     
+    private Tool tool;
+    public static enum Tool
+    {
+        drag,
+        placeFlag,
+        illuminati,
+        protractor,
+        ruler
+    }
+    
     private Node rootNode;
     
 	private Spatial helperGrid;
@@ -299,6 +309,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         */
         
         cam.setParallelProjection(true);
+        frustumSize.enableClamp(1, 10);
         updateFrustum();
         
         // top-dwon

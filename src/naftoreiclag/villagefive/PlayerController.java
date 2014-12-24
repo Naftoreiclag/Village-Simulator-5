@@ -37,7 +37,7 @@ public class PlayerController extends EntityController implements ActionListener
         camDir.smoothFactor /= 2f;
         camDir.maxSpd /= 2f;
         
-        camDir.disable();
+        camDir.disableSmoothing();
     }
     ReiCamera cam;
     Spatial ground;

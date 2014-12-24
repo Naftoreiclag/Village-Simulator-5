@@ -55,12 +55,12 @@ public class SmoothAnglef extends Anglef
     }
 
     boolean smoothEn = true;
-    public void disable()
+    public void disableSmoothing()
     {
         smoothEn = false;
     }
     
-    public void enable()
+    public void enableSmoothing()
     {
         smoothEn = true;
     }
