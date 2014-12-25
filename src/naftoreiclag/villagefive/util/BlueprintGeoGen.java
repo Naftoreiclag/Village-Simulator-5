@@ -13,6 +13,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import javax.vecmath.Vector2d;
 import org.lwjgl.BufferUtils;
 
 public class BlueprintGeoGen
@@ -23,9 +24,22 @@ public class BlueprintGeoGen
     {
         lines.add(new Line(a, b));
     }
+    public void addLine(Vector2d a, Vector2d b)
+    {
+        lines.add(new Line((float) a.x, (float) a.y, (float) b.x, (float) b.y));
+    }
     public void addLine(float ax, float ay, float bx, float by)
     {
         lines.add(new Line(ax, ay, bx, by));
+    }
+
+    // Axis-aligned rectangles
+    public void addRect(float x1, float y1, float x2, float y2)
+    {
+        this.addLine(x1, y1, x1, y2);
+        this.addLine(x1, y2, x2, y2);
+        this.addLine(x2, y2, x2, y1);
+        this.addLine(x2, y1, x1, y1);
     }
     
     public Mesh bake(float thickness, float texStretch, float xscale, float yscale)
@@ -70,8 +84,6 @@ public class BlueprintGeoGen
             
             ioff += 4;
         }
-        
-        System.out.println("Model Built 2!");
         
                 
         Mesh mesh = new Mesh();

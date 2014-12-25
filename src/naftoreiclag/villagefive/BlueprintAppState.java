@@ -45,6 +45,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import javax.vecmath.Vector2d;
 
 
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
@@ -73,6 +74,9 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     Plot plotData = new Plot();
     private List<Flag> flags = new ArrayList<Flag>();
+    private List<Wall> walls = new ArrayList<Wall>();
+
+    Material strokeMat;
     
     
     public abstract class Tool
@@ -199,13 +203,149 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     };
     public Flagger flagger = new Flagger();
     
+    public class Ruler extends Tool
+    {
+        Flag firstFlag;
+        Flag closestFlag;
+        
+        Geometry previewLine;
+        
+        @Override
+        void onSelect(float tpf)
+        {
+            // reset selections
+            firstFlag = null;
+            closestFlag = null;
+        }
+
+        @Override
+        void onDeselect(float tpf)
+        {
+        }
+
+        @Override
+        void onClick(float tpf)
+        {
+            // If they click on nothing, then deselect everything
+            if(closestFlag == null)
+            {
+                firstFlag = null;
+                
+                return;
+            }
+            
+            // If they click on a flag, but have had nothing else selected
+            if(firstFlag == null)
+            {
+                firstFlag = closestFlag;
+                
+                return;
+            }
+            
+            // If they click on a flag, and have a first flag selected
+            
+            spawnWall(firstFlag, closestFlag);
+            firstFlag = closestFlag;
+        }
+
+        @Override
+        void whileMouseMove(float tpf)
+        {
+            if(mouseLoc != null && firstFlag != null)
+            {
+                if(previewLine != null)
+                {
+                    previewLine.removeFromParent();
+                }
+                previewLine = makePreviewLine();
+                
+                rootNode.attachChild(previewLine);
+            }
+            
+            if(mouseLoc == null && previewLine != null)
+            {
+                previewLine.removeFromParent();
+                previewLine = null;
+            }
+            
+            closestFlag = findClosestFlagNotMine(selectionRadius);
+        }
+
+        @Override
+        void onClickRelease(float tpf)
+        {
+        }
+        
+        double selectionRadius = 0.5d;
+        
+        private Flag findClosestFlagNotMine()
+        {
+            return findClosestFlagNotMine(Double.MAX_VALUE);
+        }
+
+        private Flag findClosestFlagNotMine(double maxDist)
+        {
+            if(mouseLoc == null)
+            {
+                return null;
+            }
+            
+            double bestDist = maxDist;
+            Flag bestFlag = null;
+            
+            for(Flag flag : flags)
+            {
+                if(flag == firstFlag)
+                {
+                    continue;
+                }
+                
+                // no need to sqrt
+                double dist = ((mouseLoc.x - flag.loc.x) * (mouseLoc.x - flag.loc.x)) + ((mouseLoc.y - flag.loc.y) * (mouseLoc.y - flag.loc.y));
+                
+                if(dist < bestDist)
+                {
+                    bestFlag = flag;
+                }
+            }
+            
+            return bestFlag;
+        }
+        
+        private Geometry makePreviewLine()
+        {
+            BlueprintGeoGen maker = new BlueprintGeoGen();
+            if(closestFlag == null)
+            {
+                maker.addLine((float) firstFlag.loc.x, (float) firstFlag.loc.y, mouseLoc.x, mouseLoc.y);
+            }
+            else
+            {
+                maker.addLine(firstFlag.loc, closestFlag.loc);
+            }
+            Mesh mesh = maker.bake(0.04f, 10.0f, 1.0f, 1.0f);
+
+            Geometry geo = new Geometry("Wall Line", mesh);
+            geo.setMaterial(strokeMat);
+            geo.setQueueBucket(RenderQueue.Bucket.Transparent);
+            geo.setShadowMode(RenderQueue.ShadowMode.Receive);
+
+            return geo;
+        }
+        
+    }
+    private Ruler ruler = new Ruler();
+    
     private Tool tool = dragger;
     
     private Node rootNode;
     
     private Node b_flag;
-    private Spatial grid;
-	private Spatial paper;
+    private Node gridDetailed;
+    private Geometry gridFreeform;
+	private Geometry paper;
+    
+    private boolean showingGrid = true;
     
     private SmoothScalarf frustumSize = new SmoothScalarf();
     
@@ -221,25 +361,22 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 	    super.initialize(stateManager, app);
 	    setupVariableWrappings(app);
         
+        setupMaterials();
         setupModels();
         
-	    setupInput();
+	    bindKeys();
 	    setupCamera();
         
 	    setupWallpaper();
         
 	    rootNode = new Node();
+        rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
 	    trueRootNode.attachChild(rootNode);
         
         setupAesteticsMispelled();
 	    
-	    paper = generatePaper();
-	    paper.move(0, -0.01f, 0);
-        paper.setShadowMode(RenderQueue.ShadowMode.Receive);
-	    rootNode.attachChild(paper);
-	    grid = makeGrid();
-        grid.setShadowMode(RenderQueue.ShadowMode.Receive);
-	    rootNode.attachChild(grid);
+        rootNode.attachChild(paper);
+        rootNode.attachChild(this.gridDetailed);
 	}
     
     private void setupAesteticsMispelled()
@@ -266,11 +403,21 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         Flag flag = new Flag(pos);
         
         Spatial flagSpt = b_flag.clone();
-        flagSpt.setLocalTranslation(flag.loc.x, 0, flag.loc.y);
+        flagSpt.setLocalTranslation(pos.x, 0, pos.y);
         flag.setSpatial(flagSpt);
         rootNode.attachChild(flagSpt);
         
         flags.add(flag);
+    }
+    
+    private void spawnWall(Flag a, Flag b)
+    {
+        Wall wall = new Wall(a, b);
+        
+        Spatial wallSpt = makeWallSpt(wall);
+        wall.setSpatial(wallSpt);
+        rootNode.attachChild(wallSpt);
+        walls.add(wall);
     }
 
 	@Override
@@ -296,15 +443,53 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             }
         }
         
-        if(key.equals(KeyKeys.num_0))
-        {
-            switchTool(dragger, tpf);
-            System.out.println("drag");
-        }
         if(key.equals(KeyKeys.num_1))
         {
-            switchTool(flagger, tpf);
-            System.out.println("placeFlag");
+            if(isPressed)
+            {
+                switchTool(dragger, tpf);
+                System.out.println("drag");
+            }
+        }
+        if(key.equals(KeyKeys.num_2))
+        {
+            if(isPressed)
+            {
+                switchTool(flagger, tpf);
+                System.out.println("placeFlag");
+            }
+        }
+        if(key.equals(KeyKeys.num_3))
+        {
+            if(isPressed)
+            {
+                toggleGridView();
+            }
+        }
+        if(key.equals(KeyKeys.num_4))
+        {
+            if(isPressed)
+            {
+                switchTool(this.ruler, tpf);
+                System.out.println("rulr");
+            }
+        }
+    }
+    
+    private void toggleGridView()
+    {
+        if(this.showingGrid)
+        {
+            this.gridDetailed.removeFromParent();
+            rootNode.attachChild(this.gridFreeform);
+            this.showingGrid = false;
+        }
+        else
+        {
+            this.gridFreeform.removeFromParent();
+            rootNode.attachChild(this.gridDetailed);
+            
+            this.showingGrid = true;
         }
     }
     
@@ -365,53 +550,16 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private void setupModels()
     {
         b_flag = (Node) assetManager.loadModel("Models/BlueFlag.mesh.j3o");
-        b_flag.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        b_flag.scale(0.3f);
         flagger.setFlagModel();
+        
+        
+	    paper = makePaperGeo();
+        paper.move(0, -0.01f, 0);
+	    gridDetailed = makeDetailedGridNode();
+	    gridFreeform = makeFreeformGridNode();
     }
 
-    private Geometry generatePaper()
-    {
-        FloatBuffer v = BufferUtils.createFloatBuffer(12);
-        FloatBuffer t = BufferUtils.createFloatBuffer(8);
-        IntBuffer i = BufferUtils.createIntBuffer(6);
-        
-        float b = 2;
-        float w = plotData.getWidth() + b;
-        float h = plotData.getHeight() + b;
-        
-        float tw = w + (2 * b);
-        float th = h + (2 * b);
-        
-        tw /= 5;
-        th /= 5;
-        
-        v.put(-b).put(0).put(-b);
-        v.put(-b).put(0).put(h);
-        v.put(w).put(0).put(h);
-        v.put(w).put(0).put(-b);
-        
-        t.put(0).put(0);
-        t.put(0).put(th);
-        t.put(tw).put(th);
-        t.put(tw).put(0);
-
-        i.put(0).put(1).put(2);
-        i.put(0).put(2).put(3);
-        
-        Mesh mesh = new Mesh();
-
-        mesh.setBuffer(VertexBuffer.Type.Position, 3, v);
-        mesh.setBuffer(VertexBuffer.Type.TexCoord, 2, t);
-        mesh.setBuffer(VertexBuffer.Type.Index,    3, i);
-
-        mesh.updateBound();
-        
-        Geometry geo = new Geometry("", mesh);
-        
-        geo.setMaterial(assetManager.loadMaterial("Materials/blueprint.j3m"));
-        
-        return geo;
-    }
 
     private void updateFrustum()
     {
@@ -419,7 +567,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         cam.setFrustum(-1000, 1000, -aspect * frustumSize.x, aspect * frustumSize.x, frustumSize.x, -frustumSize.x);
     }
 
-    private void setupInput()
+    private void bindKeys()
     {
         inputManager.addListener(this, KeyKeys.mouse_left);
         inputManager.addListener(this, KeyKeys.mouse_scroll_up);
@@ -428,7 +576,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         inputManager.addListener(this, KeyKeys.mouse_move_down);
         inputManager.addListener(this, KeyKeys.mouse_move_left);
         inputManager.addListener(this, KeyKeys.mouse_move_right);
-        inputManager.addListener(this, KeyKeys.num_0, KeyKeys.num_1, KeyKeys.num_2, KeyKeys.num_3);
+        inputManager.addListener(this, KeyKeys.num_0, KeyKeys.num_1, KeyKeys.num_2, KeyKeys.num_3, KeyKeys.num_4, KeyKeys.num_5, KeyKeys.num_6, KeyKeys.num_7, KeyKeys.num_8, KeyKeys.num_9);
     }
 
     private void setupWallpaper()
@@ -490,22 +638,22 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     public static class Flag
     {
-        public final Vector2f loc;
+        public Vector2d loc;
         public Spatial spatial;
         
         public Flag()
         {
-            loc = new Vector2f();
+            loc = new Vector2d();
         }
         
         public Flag(Vector2f loc)
         {
-            this.loc = loc;
+            this.loc = new Vector2d(loc.x, loc.y);
         }
         
         public Flag(float x, float y)
         {
-            loc = new Vector2f(x, y);
+            this.loc = new Vector2d(x, y);
         }
 
         private void setSpatial(Spatial spatial)
@@ -519,10 +667,52 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
     }
     
-    public Node makeGrid()
+    public static class Wall
     {
-        Material wholeMat = assetManager.loadMaterial("Materials/Stroke.j3m");
-        wholeMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        public Flag first;
+        public Flag second;
+        public Spatial spatial;
+
+        private Wall(Flag a, Flag b)
+        {
+            this.first = a;
+            this.second = b;
+        }
+        
+        // Is this totally useless?
+        @Override
+        public boolean equals(Object obj)
+        {
+            if(obj instanceof Wall)
+            {
+                return this.equals((Wall) obj);
+            }
+            else
+            {
+                return super.equals(obj);
+            }
+        }
+        
+        // TODO: fix dis
+        public boolean equals(Wall other)
+        {
+            return false;
+        }
+
+        private void setSpatial(Spatial spatial)
+        {
+            this.spatial = spatial;
+        }
+        
+        private void removeSpatial()
+        {
+            this.spatial.removeFromParent();
+        }
+    }
+    
+    public Node makeDetailedGridNode()
+    {
+        Material wholeMat = this.strokeMat.clone();
         wholeMat.setColor("Color", new ColorRGBA(1.0f, 1.0f, 1.0f, 0.8f));
         
         Material halfMat = wholeMat.clone();
@@ -555,7 +745,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         Mesh halfMesh = halfLines.bake(0.02f, 20.0f, 1.0f, 1.0f);
         
         
-        Geometry halfGeo = new Geometry("", halfMesh);
+        Geometry halfGeo = new Geometry("Filled Grid", halfMesh);
         halfGeo.setMaterial(halfMat);
         halfGeo.setQueueBucket(RenderQueue.Bucket.Transparent);
         
@@ -564,5 +754,80 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         ret.attachChild(halfGeo);
         
         return ret;
+    }
+    private Geometry makeFreeformGridNode()
+    {
+        BlueprintGeoGen maker = new BlueprintGeoGen();
+        maker.addRect(0, 0, plotData.getWidth(), plotData.getHeight());
+        Mesh mesh = maker.bake(0.02f, 20.0f, 1.0f, 1.0f);
+        
+        Geometry geo = new Geometry("Empty Grid", mesh);
+        geo.setMaterial(this.strokeMat);
+        geo.setQueueBucket(RenderQueue.Bucket.Transparent);
+        
+        return geo;
+    }
+    private Geometry makePaperGeo()
+    {
+        FloatBuffer v = BufferUtils.createFloatBuffer(12);
+        FloatBuffer t = BufferUtils.createFloatBuffer(8);
+        IntBuffer i = BufferUtils.createIntBuffer(6);
+        
+        float b = 2;
+        float w = plotData.getWidth() + b;
+        float h = plotData.getHeight() + b;
+        
+        float tw = w + (2 * b);
+        float th = h + (2 * b);
+        
+        tw /= 5;
+        th /= 5;
+        
+        v.put(-b).put(0).put(-b);
+        v.put(-b).put(0).put(h);
+        v.put(w).put(0).put(h);
+        v.put(w).put(0).put(-b);
+        
+        t.put(0).put(0);
+        t.put(0).put(th);
+        t.put(tw).put(th);
+        t.put(tw).put(0);
+
+        i.put(0).put(1).put(2);
+        i.put(0).put(2).put(3);
+        
+        Mesh mesh = new Mesh();
+
+        mesh.setBuffer(VertexBuffer.Type.Position, 3, v);
+        mesh.setBuffer(VertexBuffer.Type.TexCoord, 2, t);
+        mesh.setBuffer(VertexBuffer.Type.Index,    3, i);
+
+        mesh.updateBound();
+        
+        Geometry geo = new Geometry("", mesh);
+        
+        geo.setMaterial(assetManager.loadMaterial("Materials/blueprint.j3m"));
+        
+        return geo;
+    }
+    private Spatial makeWallSpt(Wall wall)
+    {
+        BlueprintGeoGen maker = new BlueprintGeoGen();
+        maker.addLine(wall.first.loc, wall.second.loc);
+        Mesh mesh = maker.bake(0.04f, 10.0f, 1.0f, 1.0f);
+        
+        Geometry geo = new Geometry("Wall Line", mesh);
+        geo.setMaterial(this.strokeMat);
+        geo.setQueueBucket(RenderQueue.Bucket.Transparent);
+        geo.setShadowMode(RenderQueue.ShadowMode.Receive);
+        
+        
+        return geo;
+    }
+    
+    private void setupMaterials()
+    {
+        this.strokeMat = assetManager.loadMaterial("Materials/Stroke.j3m");
+        strokeMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
     }
 }
