@@ -86,6 +86,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         abstract void onClick(float tpf);
         abstract void whileMouseMove(float tpf);
         abstract void onClickRelease(float tpf);
+        abstract void tick(float tpf);
     }
     
     public class Dragger extends Tool
@@ -124,6 +125,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 
         @Override
         void onClickRelease(float tpf)
+        {
+        }
+
+        @Override
+        void tick(float tpf)
         {
         }
     };
@@ -200,6 +206,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             
         }
+
+        @Override
+        void tick(float tpf)
+        {
+        }
     };
     public Flagger flagger = new Flagger();
     
@@ -209,10 +220,17 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         Flag closestFlag;
         
         Geometry previewLine;
+        Material previewLineMat;
+        float alphaTime = 0.0f;
         
         @Override
         void onSelect(float tpf)
         {
+            if(previewLineMat == null)
+            {
+                previewLineMat = strokeMat.clone();
+            }
+            
             // reset selections
             firstFlag = null;
             closestFlag = null;
@@ -221,6 +239,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         @Override
         void onDeselect(float tpf)
         {
+            if(previewLine != null)
+            {
+                previewLine.removeFromParent();
+                previewLine = null;
+            }
         }
 
         @Override
@@ -246,6 +269,12 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             
             spawnWall(firstFlag, closestFlag);
             firstFlag = closestFlag;
+            
+            if(previewLine != null)
+            {
+                previewLine.removeFromParent();
+                previewLine = null;
+            }
         }
 
         @Override
@@ -326,11 +355,19 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             Mesh mesh = maker.bake(0.04f, 10.0f, 1.0f, 1.0f);
 
             Geometry geo = new Geometry("Wall Line", mesh);
-            geo.setMaterial(strokeMat);
+            geo.setMaterial(previewLineMat);
             geo.setQueueBucket(RenderQueue.Bucket.Transparent);
             geo.setShadowMode(RenderQueue.ShadowMode.Receive);
 
             return geo;
+        }
+
+        @Override
+        void tick(float tpf)
+        {
+            this.alphaTime += tpf;
+            
+            this.previewLineMat.setColor("Color", new ColorRGBA(1.0f, 1.0f, 1.0f, 0.7f + (FastMath.cos(alphaTime * 5f) * 0.3f)));
         }
         
     }
@@ -378,6 +415,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         rootNode.attachChild(paper);
         rootNode.attachChild(this.gridDetailed);
 	}
+
     
     private void setupAesteticsMispelled()
     {
@@ -423,7 +461,12 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 	@Override
 	public void update(float tpf)
 	{
-	    super.update(tpf);
+        super.update(tpf);
+        
+        if(tool != null)
+        {
+            tool.tick(tpf);
+        }
         tickFrustum(tpf);
 	}
 
