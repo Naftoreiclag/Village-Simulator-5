@@ -41,7 +41,7 @@ public class Main extends SimpleApplication implements ActionListener
     {
         KeyKeys.hookInputs(inputManager);
         
-        inputManager.addListener(this, KeyKeys.num_9);
+        inputManager.addListener(this, KeyKeys.num_9, KeyKeys.num_8);
         
         flyCam.setEnabled(false);
         
@@ -66,6 +66,11 @@ public class Main extends SimpleApplication implements ActionListener
         {
             stateManager.detach(bas);
             stateManager.attach(tas);
+        }
+        if(name.equals(KeyKeys.num_8))
+        {
+            stateManager.detach(tas);
+            stateManager.attach(bas);
         }
     }
 

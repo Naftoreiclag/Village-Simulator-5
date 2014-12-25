@@ -36,7 +36,7 @@ import naftoreiclag.villagefive.util.ModelBuilder;
 public class OverworldAppState extends AbstractAppState implements ActionListener
 {
     private Main app;
-    private Node rootNode;
+    private Node trueRootNode;
     private AssetManager assetManager;
     private AppStateManager stateManager;
     private InputManager inputManager;
@@ -47,6 +47,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     Node chasePnt;
     
     KatCompleteEntity morgan;
+    private Node stateRootNode;
     
     PlayerController playCont;
     ChaseCamera chaseCam;
@@ -61,19 +62,22 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         super.initialize(stateManager, app);
         
         this.app = (Main) app;
-        this.rootNode = this.app.getRootNode();
+        this.trueRootNode = this.app.getRootNode();
         this.assetManager = this.app.getAssetManager();
         this.stateManager = this.app.getStateManager();
         this.inputManager = this.app.getInputManager();
         this.cam = this.app.getCamera();
         this.viewPort = this.app.getViewPort();
         
+        this.stateRootNode = new Node();
+        trueRootNode.attachChild(stateRootNode);
+        
         setupUselessAestetics();
         
         rcam = new ReiCamera(cam);
         rcam.mode = ReiCamera.SmoothMode.cubic;
         
-        world = new World(rootNode, assetManager);
+        world = new World(stateRootNode, assetManager);
         world.enableRender();
         
         playCont = new PlayerController();
@@ -115,6 +119,14 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         inputManager.setCursorVisible(true);
 
     }
+    
+    @Override
+    public void cleanup()
+    {
+        stateRootNode.removeFromParent();
+        viewPort.removeProcessor(dlsr);
+        
+    }
 
     @Override
     public void update(float tpf)
@@ -138,13 +150,14 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     }
     Spatial ground;
     
+    DirectionalLightShadowRenderer dlsr;
     private void setupUselessAestetics()
     {
         
         
         chasePnt = new Node();
         chasePnt.setLocalTranslation(0, 3.5f, 0);
-        rootNode.attachChild(chasePnt);
+        stateRootNode.attachChild(chasePnt);
         
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
 	    viewPort.setClearFlags(true, true, true);
@@ -153,14 +166,14 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(0.4f));
-        rootNode.addLight(al);
+        stateRootNode.addLight(al);
         
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White.mult(0.6f));
         sun.setDirection(new Vector3f(0.96f, -2.69f, -0.69f).normalizeLocal());
-        rootNode.addLight(sun);
+        stateRootNode.addLight(sun);
         
-        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
+        dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
         dlsr.setLight(sun);
         dlsr.setShadowIntensity(0.5f);
         dlsr.setLambda(0.55f);
@@ -173,7 +186,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         ground.move(-DebugGrid.width / 2, 0, -DebugGrid.height / 2);
         ground.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
         ground.setShadowMode(RenderQueue.ShadowMode.Receive);
-        rootNode.attachChild(ground);
+        stateRootNode.attachChild(ground);
         
         Texture west = assetManager.loadTexture("Textures/clouds/clouds1_west.bmp");
         Texture east = assetManager.loadTexture("Textures/clouds/clouds1_east.bmp");
@@ -208,7 +221,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
 
     private void onDebugKeypress()
     {
-        mhe = new HouseEditor(rootNode, assetManager, testp, rcam);
+        mhe = new HouseEditor(stateRootNode, assetManager, testp, rcam);
         playCont.disableInput();
         world.disableRender();
         mhe.enableRender();
