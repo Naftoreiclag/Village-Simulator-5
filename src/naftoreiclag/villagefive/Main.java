@@ -8,10 +8,11 @@ package naftoreiclag.villagefive;
 
 import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.app.SimpleApplication;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 
-public class Main extends SimpleApplication
+public class Main extends SimpleApplication implements ActionListener
 {
     static int width;
     static int height;
@@ -40,6 +41,8 @@ public class Main extends SimpleApplication
     {
         KeyKeys.hookInputs(inputManager);
         
+        inputManager.addListener(this, KeyKeys.num_9);
+        
         flyCam.setEnabled(false);
         
         tas = new OverworldAppState();
@@ -55,6 +58,15 @@ public class Main extends SimpleApplication
     @Override
     public void simpleRender(RenderManager rm)
     {
+    }
+
+    public void onAction(String name, boolean isPressed, float tpf)
+    {
+        if(name.equals(KeyKeys.num_9))
+        {
+            stateManager.detach(bas);
+            stateManager.attach(tas);
+        }
     }
 
 }

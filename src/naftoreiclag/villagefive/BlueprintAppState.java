@@ -47,13 +47,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Vector2d;
 
-
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
 import naftoreiclag.villagefive.util.SmoothAnglef;
 import naftoreiclag.villagefive.util.SmoothScalarf;
 
 import org.lwjgl.BufferUtils;
 
+// This class is a BEAST
 public class BlueprintAppState extends AbstractAppState implements ActionListener, AnalogListener
 {
     public BlueprintAppState()
@@ -78,304 +78,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 
     Material strokeMat;
     
-    
-    public abstract class Tool
-    {
-        abstract void onSelect(float tpf);
-        abstract void onDeselect(float tpf);
-        abstract void onClick(float tpf);
-        abstract void whileMouseMove(float tpf);
-        abstract void onClickRelease(float tpf);
-        abstract void tick(float tpf);
-    }
-    
-    public class Dragger extends Tool
-    {
-        public Vector3f preclickRootNodeLoc;
-        public Vector2f preclickMouseLoc;
-    
-
-        @Override
-        void onSelect(float tpf)
-        {
-        }
-
-        @Override
-        void onDeselect(float tpf)
-        {
-        }
-        @Override
-        void onClick(float tpf)
-        {
-            preclickMouseLoc = screenMouseLoc;
-            preclickRootNodeLoc = rootNode.getLocalTranslation().clone();
-        }
-
-        @Override
-        void whileMouseMove(float tpf)
-        {
-            if(leftClick)
-            {
-                if(screenMouseLoc != null && preclickMouseLoc != null)
-                {
-                    rootNode.setLocalTranslation(new Vector3f(-preclickMouseLoc.x + screenMouseLoc.x, -0.1f, -preclickMouseLoc.y + screenMouseLoc.y).addLocal(preclickRootNodeLoc));
-                }
-            }
-        }
-
-        @Override
-        void onClickRelease(float tpf)
-        {
-        }
-
-        @Override
-        void tick(float tpf)
-        {
-        }
-    };
-    public Dragger dragger = new Dragger();
-    
-    public class Flagger extends Tool
-    {
-        Node ghostFlag;
-        
-        void setFlagModel()
-        {
-            ghostFlag = (Node) b_flag.clone();
-            ghostFlag.setShadowMode(RenderQueue.ShadowMode.Off);
-            List<Spatial> c = ghostFlag.getChildren();
-            for(Spatial ch : c)
-            {
-                if(ch instanceof Geometry)
-                {
-                    Geometry chg = (Geometry) ch;
-                    
-                    Material mg = chg.getMaterial();
-                    
-                    mg.setColor("Diffuse", new ColorRGBA(1, 1, 1, 0.5f));
-                    mg.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-                }
-            }
-        }
-        
-
-        @Override
-        void onSelect(float tpf)
-        {
-            
-        }
-
-        @Override
-        void onDeselect(float tpf)
-        {
-            ghostFlag.removeFromParent();
-            ghostFlagVisible = false;
-        }
-        @Override
-        void onClick(float tpf)
-        {
-            if(mouseLoc != null)
-            {
-                spawnFlag(mouseLoc);
-            }
-        }
-        
-        boolean ghostFlagVisible = false;
-
-        @Override
-        void whileMouseMove(float tpf)
-        {
-            if(mouseLoc != null)
-            {
-                if(!ghostFlagVisible)
-                {
-                    rootNode.attachChild(ghostFlag);
-                    ghostFlagVisible = true;
-                }
-                ghostFlag.setLocalTranslation(mouseLoc.x, 0, mouseLoc.y);
-            }
-            else
-            {
-                ghostFlag.removeFromParent();
-                ghostFlagVisible = false;
-            }
-        }
-
-        @Override
-        void onClickRelease(float tpf)
-        {
-            
-        }
-
-        @Override
-        void tick(float tpf)
-        {
-        }
-    };
-    public Flagger flagger = new Flagger();
-    
-    public class Ruler extends Tool
-    {
-        Flag firstFlag;
-        Flag closestFlag;
-        
-        Geometry previewLine;
-        Material previewLineMat;
-        float alphaTime = 0.0f;
-        
-        @Override
-        void onSelect(float tpf)
-        {
-            if(previewLineMat == null)
-            {
-                previewLineMat = strokeMat.clone();
-            }
-            
-            // reset selections
-            firstFlag = null;
-            closestFlag = null;
-        }
-
-        @Override
-        void onDeselect(float tpf)
-        {
-            if(previewLine != null)
-            {
-                previewLine.removeFromParent();
-                previewLine = null;
-            }
-        }
-
-        @Override
-        void onClick(float tpf)
-        {
-            // If they click on nothing, then deselect everything
-            if(closestFlag == null)
-            {
-                firstFlag = null;
-                
-                return;
-            }
-            
-            // If they click on a flag, but have had nothing else selected
-            if(firstFlag == null)
-            {
-                firstFlag = closestFlag;
-                
-                return;
-            }
-            
-            // If they click on a flag, and have a first flag selected
-            
-            spawnWall(firstFlag, closestFlag);
-            firstFlag = closestFlag;
-            
-            if(previewLine != null)
-            {
-                previewLine.removeFromParent();
-                previewLine = null;
-            }
-        }
-
-        @Override
-        void whileMouseMove(float tpf)
-        {
-            if(mouseLoc != null && firstFlag != null)
-            {
-                if(previewLine != null)
-                {
-                    previewLine.removeFromParent();
-                }
-                previewLine = makePreviewLine();
-                
-                rootNode.attachChild(previewLine);
-            }
-            
-            if(mouseLoc == null && previewLine != null)
-            {
-                previewLine.removeFromParent();
-                previewLine = null;
-            }
-            
-            closestFlag = findClosestFlagNotMine(selectionRadius);
-        }
-
-        @Override
-        void onClickRelease(float tpf)
-        {
-        }
-        
-        double selectionRadius = 0.5d;
-        
-        private Flag findClosestFlagNotMine()
-        {
-            return findClosestFlagNotMine(Double.MAX_VALUE);
-        }
-
-        private Flag findClosestFlagNotMine(double maxDist)
-        {
-            if(mouseLoc == null)
-            {
-                return null;
-            }
-            
-            double bestDist = maxDist;
-            Flag bestFlag = null;
-            
-            for(Flag flag : flags)
-            {
-                if(flag == firstFlag)
-                {
-                    continue;
-                }
-                
-                // no need to sqrt
-                double dist = ((mouseLoc.x - flag.loc.x) * (mouseLoc.x - flag.loc.x)) + ((mouseLoc.y - flag.loc.y) * (mouseLoc.y - flag.loc.y));
-                
-                if(dist < bestDist)
-                {
-                    bestFlag = flag;
-                }
-            }
-            
-            return bestFlag;
-        }
-        
-        private Geometry makePreviewLine()
-        {
-            BlueprintGeoGen maker = new BlueprintGeoGen();
-            if(closestFlag == null)
-            {
-                maker.addLine((float) firstFlag.loc.x, (float) firstFlag.loc.y, mouseLoc.x, mouseLoc.y);
-            }
-            else
-            {
-                maker.addLine(firstFlag.loc, closestFlag.loc);
-            }
-            Mesh mesh = maker.bake(0.04f, 10.0f, 1.0f, 1.0f);
-
-            Geometry geo = new Geometry("Wall Line", mesh);
-            geo.setMaterial(previewLineMat);
-            geo.setQueueBucket(RenderQueue.Bucket.Transparent);
-            geo.setShadowMode(RenderQueue.ShadowMode.Receive);
-
-            return geo;
-        }
-
-        @Override
-        void tick(float tpf)
-        {
-            this.alphaTime += tpf;
-            
-            this.previewLineMat.setColor("Color", new ColorRGBA(1.0f, 1.0f, 1.0f, 0.7f + (FastMath.cos(alphaTime * 5f) * 0.3f)));
-        }
-        
-    }
-    private Ruler ruler = new Ruler();
-    
-    private Tool tool = dragger;
-    
-    private Node rootNode;
+    private Node editorRootNode;
+    private Node stateRootNode;
     
     private Node b_flag;
     private Node gridDetailed;
@@ -391,6 +95,9 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
 	private Vector2f screenMouseLoc; // Mouse coords relative to the camera (0,0)
     private Vector2f mouseLoc; // Mouse coords relative to the rootNode
+    
+    ViewPort preview;
+    DirectionalLightShadowRenderer dlsr;
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app)
@@ -406,29 +113,40 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
 	    setupWallpaper();
         
-	    rootNode = new Node();
-        rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-	    trueRootNode.attachChild(rootNode);
+        stateRootNode = new Node();
+        trueRootNode.attachChild(stateRootNode);
+        
+	    editorRootNode = new Node();
+        editorRootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+	    stateRootNode.attachChild(editorRootNode);
         
         setupAesteticsMispelled();
 	    
-        rootNode.attachChild(paper);
-        rootNode.attachChild(this.gridDetailed);
+        editorRootNode.attachChild(paper);
+        editorRootNode.attachChild(this.gridDetailed);
 	}
+    
+    @Override
+    public void cleanup()
+    {
+        stateRootNode.removeFromParent();
+        renderManager.removePreView(preview);
+        viewPort.removeProcessor(dlsr);
+    }
 
     
     private void setupAesteticsMispelled()
     {
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(0.4f));
-        trueRootNode.addLight(al);
+        stateRootNode.addLight(al);
         
         DirectionalLight sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White.mult(0.6f));
         sun.setDirection(new Vector3f(-0.96f, -2.69f, 0.69f).normalizeLocal());
-        trueRootNode.addLight(sun);
+        stateRootNode.addLight(sun);
         
-        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
+        dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
         dlsr.setLight(sun);
         dlsr.setShadowIntensity(0.5f);
         dlsr.setLambda(0.55f);
@@ -443,7 +161,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         Spatial flagSpt = b_flag.clone();
         flagSpt.setLocalTranslation(pos.x, 0, pos.y);
         flag.setSpatial(flagSpt);
-        rootNode.attachChild(flagSpt);
+        editorRootNode.attachChild(flagSpt);
         
         flags.add(flag);
     }
@@ -454,7 +172,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
         Spatial wallSpt = makeWallSpt(wall);
         wall.setSpatial(wallSpt);
-        rootNode.attachChild(wallSpt);
+        editorRootNode.attachChild(wallSpt);
         walls.add(wall);
     }
 
@@ -524,13 +242,13 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         if(this.showingGrid)
         {
             this.gridDetailed.removeFromParent();
-            rootNode.attachChild(this.gridFreeform);
+            editorRootNode.attachChild(this.gridFreeform);
             this.showingGrid = false;
         }
         else
         {
             this.gridFreeform.removeFromParent();
-            rootNode.attachChild(this.gridDetailed);
+            editorRootNode.attachChild(this.gridDetailed);
             
             this.showingGrid = true;
         }
@@ -581,7 +299,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             Vector3f res = results.getClosestCollision().getContactPoint();
             screenMouseLoc = new Vector2f(res.x, res.z);
-            mouseLoc = screenMouseLoc.subtract(rootNode.getLocalTranslation().x, rootNode.getLocalTranslation().z);
+            mouseLoc = screenMouseLoc.subtract(editorRootNode.getLocalTranslation().x, editorRootNode.getLocalTranslation().z);
         }
         else
         {
@@ -640,7 +358,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             Main.width / 512f, Main.height / 512f,
             0, Main.height / 512f
         });
-        ViewPort preview = renderManager.createPreView("background", cam);
+        preview = renderManager.createPreView("background", cam);
         preview.setClearFlags(true, true, true);
         preview.attachScene(wallpaper);
         wallpaper.updateGeometricState();
@@ -873,4 +591,305 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         this.strokeMat = assetManager.loadMaterial("Materials/Stroke.j3m");
         strokeMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
     }
+    
+    public abstract class Tool
+    {
+        abstract void onSelect(float tpf);
+        abstract void onDeselect(float tpf);
+        abstract void onClick(float tpf);
+        abstract void whileMouseMove(float tpf);
+        abstract void onClickRelease(float tpf);
+        abstract void tick(float tpf);
+    }
+    
+    public class Dragger extends Tool
+    {
+        public Vector3f preclickRootNodeLoc;
+        public Vector2f preclickMouseLoc;
+    
+
+        @Override
+        void onSelect(float tpf)
+        {
+        }
+
+        @Override
+        void onDeselect(float tpf)
+        {
+        }
+        @Override
+        void onClick(float tpf)
+        {
+            preclickMouseLoc = screenMouseLoc;
+            preclickRootNodeLoc = editorRootNode.getLocalTranslation().clone();
+        }
+
+        @Override
+        void whileMouseMove(float tpf)
+        {
+            if(leftClick)
+            {
+                if(screenMouseLoc != null && preclickMouseLoc != null)
+                {
+                    editorRootNode.setLocalTranslation(new Vector3f(-preclickMouseLoc.x + screenMouseLoc.x, -0.1f, -preclickMouseLoc.y + screenMouseLoc.y).addLocal(preclickRootNodeLoc));
+                }
+            }
+        }
+
+        @Override
+        void onClickRelease(float tpf)
+        {
+        }
+
+        @Override
+        void tick(float tpf)
+        {
+        }
+    };
+    public Dragger dragger = new Dragger();
+    
+    public class Flagger extends Tool
+    {
+        Node ghostFlag;
+        
+        void setFlagModel()
+        {
+            ghostFlag = (Node) b_flag.clone();
+            ghostFlag.setShadowMode(RenderQueue.ShadowMode.Off);
+            List<Spatial> c = ghostFlag.getChildren();
+            for(Spatial ch : c)
+            {
+                if(ch instanceof Geometry)
+                {
+                    Geometry chg = (Geometry) ch;
+                    
+                    Material mg = chg.getMaterial();
+                    
+                    mg.setColor("Diffuse", new ColorRGBA(1, 1, 1, 0.5f));
+                    mg.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+                }
+            }
+        }
+        
+
+        @Override
+        void onSelect(float tpf)
+        {
+            
+        }
+
+        @Override
+        void onDeselect(float tpf)
+        {
+            ghostFlag.removeFromParent();
+            ghostFlagVisible = false;
+        }
+        @Override
+        void onClick(float tpf)
+        {
+            if(mouseLoc != null)
+            {
+                spawnFlag(mouseLoc);
+            }
+        }
+        
+        boolean ghostFlagVisible = false;
+
+        @Override
+        void whileMouseMove(float tpf)
+        {
+            if(mouseLoc != null)
+            {
+                if(!ghostFlagVisible)
+                {
+                    editorRootNode.attachChild(ghostFlag);
+                    ghostFlagVisible = true;
+                }
+                ghostFlag.setLocalTranslation(mouseLoc.x, 0, mouseLoc.y);
+            }
+            else
+            {
+                ghostFlag.removeFromParent();
+                ghostFlagVisible = false;
+            }
+        }
+
+        @Override
+        void onClickRelease(float tpf)
+        {
+            
+        }
+
+        @Override
+        void tick(float tpf)
+        {
+        }
+    };
+    public Flagger flagger = new Flagger();
+    
+    public class Ruler extends Tool
+    {
+        Flag firstFlag;
+        Flag closestFlag;
+        
+        Geometry previewLine;
+        Material previewLineMat;
+        float alphaTime = 0.0f;
+        
+        @Override
+        void onSelect(float tpf)
+        {
+            if(previewLineMat == null)
+            {
+                previewLineMat = strokeMat.clone();
+            }
+            
+            // reset selections
+            firstFlag = null;
+            closestFlag = null;
+        }
+
+        @Override
+        void onDeselect(float tpf)
+        {
+            if(previewLine != null)
+            {
+                previewLine.removeFromParent();
+                previewLine = null;
+            }
+        }
+
+        @Override
+        void onClick(float tpf)
+        {
+            // If they click on nothing, then deselect everything
+            if(closestFlag == null)
+            {
+                firstFlag = null;
+                if(previewLine != null)
+                {
+                    previewLine.removeFromParent();
+                    previewLine = null;
+                }
+                
+                return;
+            }
+            
+            // If they click on a flag, but have had nothing else selected
+            if(firstFlag == null)
+            {
+                firstFlag = closestFlag;
+                
+                return;
+            }
+            
+            // If they click on a flag, and have a first flag selected
+            
+            spawnWall(firstFlag, closestFlag);
+            firstFlag = closestFlag;
+            
+            if(previewLine != null)
+            {
+                previewLine.removeFromParent();
+                previewLine = null;
+            }
+        }
+
+        @Override
+        void whileMouseMove(float tpf)
+        {
+            if(mouseLoc != null && firstFlag != null)
+            {
+                if(previewLine != null)
+                {
+                    previewLine.removeFromParent();
+                }
+                previewLine = makePreviewLine();
+                
+                editorRootNode.attachChild(previewLine);
+            }
+            
+            if(mouseLoc == null && previewLine != null)
+            {
+                previewLine.removeFromParent();
+                previewLine = null;
+            }
+            
+            closestFlag = findClosestFlagNotMine(selectionRadius);
+        }
+
+        @Override
+        void onClickRelease(float tpf)
+        {
+        }
+        
+        double selectionRadius = 0.02d;
+        
+        private Flag findClosestFlagNotMine()
+        {
+            return findClosestFlagNotMine(Double.MAX_VALUE);
+        }
+
+        private Flag findClosestFlagNotMine(double maxDist)
+        {
+            if(mouseLoc == null)
+            {
+                return null;
+            }
+            
+            double bestDist = maxDist;
+            Flag bestFlag = null;
+            
+            for(Flag flag : flags)
+            {
+                if(flag == firstFlag)
+                {
+                    continue;
+                }
+                
+                // no need to sqrt
+                double dist = ((mouseLoc.x - flag.loc.x) * (mouseLoc.x - flag.loc.x)) + ((mouseLoc.y - flag.loc.y) * (mouseLoc.y - flag.loc.y));
+                
+                if(dist < bestDist)
+                {
+                    bestFlag = flag;
+                }
+            }
+            
+            return bestFlag;
+        }
+        
+        private Geometry makePreviewLine()
+        {
+            BlueprintGeoGen maker = new BlueprintGeoGen();
+            if(closestFlag == null)
+            {
+                maker.addLine((float) firstFlag.loc.x, (float) firstFlag.loc.y, mouseLoc.x, mouseLoc.y);
+            }
+            else
+            {
+                maker.addLine(firstFlag.loc, closestFlag.loc);
+            }
+            Mesh mesh = maker.bake(0.04f, 10.0f, 1.0f, 1.0f);
+
+            Geometry geo = new Geometry("Wall Line", mesh);
+            geo.setMaterial(previewLineMat);
+            geo.setQueueBucket(RenderQueue.Bucket.Transparent);
+            geo.setShadowMode(RenderQueue.ShadowMode.Receive);
+
+            return geo;
+        }
+
+        @Override
+        void tick(float tpf)
+        {
+            this.alphaTime += tpf;
+            
+            this.previewLineMat.setColor("Color", new ColorRGBA(1.0f, 1.0f, 1.0f, 0.7f + (FastMath.cos(alphaTime * 5f) * 0.3f)));
+        }
+        
+    }
+    private Ruler ruler = new Ruler();
+    
+    private Tool tool = dragger;
 }

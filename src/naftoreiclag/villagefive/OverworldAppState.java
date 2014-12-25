@@ -12,11 +12,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
@@ -24,7 +20,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -36,7 +31,6 @@ import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.texture.Texture;
-import de.lessvoid.nifty.Nifty;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
 public class OverworldAppState extends AbstractAppState implements ActionListener
@@ -78,8 +72,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         
         rcam = new ReiCamera(cam);
         rcam.mode = ReiCamera.SmoothMode.cubic;
-        
-        // lol
         
         world = new World(rootNode, assetManager);
         world.enableRender();
@@ -155,6 +147,8 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         rootNode.attachChild(chasePnt);
         
         viewPort.setBackgroundColor(new ColorRGBA(66f / 255f, 176f / 255f, 255f / 255f, 1.0f));
+	    viewPort.setClearFlags(true, true, true);
+        
         cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
         
         AmbientLight al = new AmbientLight();
