@@ -19,6 +19,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
@@ -74,23 +75,35 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private List<Flag> flags = new ArrayList<Flag>();
     
     
-    public class Tool
+    public abstract class Tool
     {
-        void onClick(float tpf) {}
-        void whileMouseMove(float tpf) {}
-        void onClickRelease(float tpf) {}
+        abstract void onSelect(float tpf);
+        abstract void onDeselect(float tpf);
+        abstract void onClick(float tpf);
+        abstract void whileMouseMove(float tpf);
+        abstract void onClickRelease(float tpf);
     }
     
-    public Tool dragger = new Tool()
+    public class Dragger extends Tool
     {
-        public Vector3f originalPosition;
-        public Vector2f mouseDrag;
+        public Vector3f preclickRootNodeLoc;
+        public Vector2f preclickMouseLoc;
     
+
+        @Override
+        void onSelect(float tpf)
+        {
+        }
+
+        @Override
+        void onDeselect(float tpf)
+        {
+        }
         @Override
         void onClick(float tpf)
         {
-            mouseDrag = mousePos;
-            originalPosition = rootNode.getLocalTranslation().clone();
+            preclickMouseLoc = screenMouseLoc;
+            preclickRootNodeLoc = rootNode.getLocalTranslation().clone();
         }
 
         @Override
@@ -98,29 +111,109 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             if(leftClick)
             {
-                if(mousePos != null && mouseDrag != null)
+                if(screenMouseLoc != null && preclickMouseLoc != null)
                 {
-                    rootNode.setLocalTranslation(new Vector3f(-mouseDrag.x + mousePos.x, -0.1f, -mouseDrag.y + mousePos.y).addLocal(originalPosition));
+                    rootNode.setLocalTranslation(new Vector3f(-preclickMouseLoc.x + screenMouseLoc.x, -0.1f, -preclickMouseLoc.y + screenMouseLoc.y).addLocal(preclickRootNodeLoc));
                 }
             }
         }
+
+        @Override
+        void onClickRelease(float tpf)
+        {
+        }
     };
+    public Dragger dragger = new Dragger();
+    
+    public class Flagger extends Tool
+    {
+        Node ghostFlag;
+        
+        void setFlagModel()
+        {
+            ghostFlag = (Node) b_flag.clone();
+            ghostFlag.setShadowMode(RenderQueue.ShadowMode.Off);
+            List<Spatial> c = ghostFlag.getChildren();
+            for(Spatial ch : c)
+            {
+                if(ch instanceof Geometry)
+                {
+                    Geometry chg = (Geometry) ch;
+                    
+                    Material mg = chg.getMaterial();
+                    
+                    mg.setColor("Diffuse", new ColorRGBA(1, 1, 1, 0.5f));
+                    mg.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+                }
+            }
+        }
+        
+
+        @Override
+        void onSelect(float tpf)
+        {
+            
+        }
+
+        @Override
+        void onDeselect(float tpf)
+        {
+            ghostFlag.removeFromParent();
+            ghostFlagVisible = false;
+        }
+        @Override
+        void onClick(float tpf)
+        {
+            if(mouseLoc != null)
+            {
+                spawnFlag(mouseLoc);
+            }
+        }
+        
+        boolean ghostFlagVisible = false;
+
+        @Override
+        void whileMouseMove(float tpf)
+        {
+            if(mouseLoc != null)
+            {
+                if(!ghostFlagVisible)
+                {
+                    rootNode.attachChild(ghostFlag);
+                    ghostFlagVisible = true;
+                }
+                ghostFlag.setLocalTranslation(mouseLoc.x, 0, mouseLoc.y);
+            }
+            else
+            {
+                ghostFlag.removeFromParent();
+                ghostFlagVisible = false;
+            }
+        }
+
+        @Override
+        void onClickRelease(float tpf)
+        {
+            
+        }
+    };
+    public Flagger flagger = new Flagger();
     
     private Tool tool = dragger;
     
     private Node rootNode;
     
-    private Spatial flag;
-	private Spatial helperGrid;
-	private Spatial aePaper;
+    private Node b_flag;
+    private Spatial grid;
+	private Spatial paper;
     
     private SmoothScalarf frustumSize = new SmoothScalarf();
     
     private float scrollSpd = 25.0f;
     private boolean leftClick;
-	public boolean isDragging;
     
-	public Vector2f mousePos;
+	private Vector2f screenMouseLoc; // Mouse coords relative to the camera (0,0)
+    private Vector2f mouseLoc; // Mouse coords relative to the rootNode
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app)
@@ -139,14 +232,12 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 	    trueRootNode.attachChild(rootNode);
         
         setupAesteticsMispelled();
-        
-        rootNode.attachChild(flag.clone());
 	    
-	    aePaper = generatePaper();
-	    aePaper.move(0, -0.01f, 0);
-        aePaper.setShadowMode(RenderQueue.ShadowMode.Receive);
-	    rootNode.attachChild(aePaper);
-	    Node grid = makeGrid();
+	    paper = generatePaper();
+	    paper.move(0, -0.01f, 0);
+        paper.setShadowMode(RenderQueue.ShadowMode.Receive);
+	    rootNode.attachChild(paper);
+	    grid = makeGrid();
         grid.setShadowMode(RenderQueue.ShadowMode.Receive);
 	    rootNode.attachChild(grid);
 	}
@@ -170,9 +261,16 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         viewPort.addProcessor(dlsr);
     }
     
-    public void placeFlag(Vector2f pos)
+    private void spawnFlag(Vector2f pos)
     {
+        Flag flag = new Flag(pos);
         
+        Spatial flagSpt = b_flag.clone();
+        flagSpt.setLocalTranslation(flag.loc.x, 0, flag.loc.y);
+        flag.setSpatial(flagSpt);
+        rootNode.attachChild(flagSpt);
+        
+        flags.add(flag);
     }
 
 	@Override
@@ -200,16 +298,21 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
         if(key.equals(KeyKeys.num_0))
         {
-            
-            
-            tool = dragger;
+            switchTool(dragger, tpf);
             System.out.println("drag");
         }
         if(key.equals(KeyKeys.num_1))
         {
-            //tool = flagger;
+            switchTool(flagger, tpf);
             System.out.println("placeFlag");
         }
+    }
+    
+    private void switchTool(Tool other, float tpf)
+    {
+        tool.onDeselect(tpf);
+        tool = other;
+        other.onSelect(tpf);
     }
     
     public void onAnalog(String key, float value, float tpf)
@@ -225,42 +328,45 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 
         if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
         {
-            updateMousePos();
+            updateMouseLoc();
         }
 
         if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
         {
-            updateMousePos();
+            updateMouseLoc();
             tool.whileMouseMove(tpf);
         }
     }
     
     
-    public void updateMousePos()
+    public void updateMouseLoc()
     {
         Vector3f origin = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.0f);
-        Vector3f direction = cam.getWorldCoordinates(inputManager.getCursorPosition(), 0.3f);
+        Vector3f direction = cam.getWorldCoordinates(inputManager.getCursorPosition(), 1.0f);
         direction.subtractLocal(origin).normalizeLocal();
 
         Ray ray = new Ray(origin, direction);
         CollisionResults results = new CollisionResults();
 
-        aePaper.collideWith(ray, results);
+        paper.collideWith(ray, results);
         if(results.size() > 0)
         {
             Vector3f res = results.getClosestCollision().getContactPoint();
-            mousePos = new Vector2f(res.x, res.z);
+            screenMouseLoc = new Vector2f(res.x, res.z);
+            mouseLoc = screenMouseLoc.subtract(rootNode.getLocalTranslation().x, rootNode.getLocalTranslation().z);
         }
         else
         {
-            mousePos = null;
+            screenMouseLoc = null;
+            mouseLoc = null;
         }
     }
 
     private void setupModels()
     {
-        flag = (Spatial) assetManager.loadModel("Models/BlueFlag.mesh.j3o");
-        flag.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        b_flag = (Node) assetManager.loadModel("Models/BlueFlag.mesh.j3o");
+        b_flag.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        flagger.setFlagModel();
     }
 
     private Geometry generatePaper()
@@ -364,12 +470,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 
     private void setupCamera()
     {
-        /*
-        AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White.mult(1.0f));
-        trueRootNode.addLight(al);
-        */
-        
         cam.setParallelProjection(true);
         frustumSize.enableClamp(1, 10);
         updateFrustum();
@@ -391,15 +491,31 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     public static class Flag
     {
         public final Vector2f loc;
+        public Spatial spatial;
         
         public Flag()
         {
             loc = new Vector2f();
         }
         
+        public Flag(Vector2f loc)
+        {
+            this.loc = loc;
+        }
+        
         public Flag(float x, float y)
         {
             loc = new Vector2f(x, y);
+        }
+
+        private void setSpatial(Spatial spatial)
+        {
+            this.spatial = spatial;
+        }
+        
+        private void removeSpatial()
+        {
+            this.spatial.removeFromParent();
         }
     }
     
