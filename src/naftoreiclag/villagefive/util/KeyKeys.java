@@ -36,6 +36,17 @@ public class KeyKeys
     public static final String mouse_move_left = "Mouse Move L";
     public static final String mouse_move_right = "Mouse Move R";
     
+    public static final String num_0 = "Number 0";
+    public static final String num_1 = "Number 1";
+    public static final String num_2 = "Number 2";
+    public static final String num_3 = "Number 3";
+    public static final String num_4 = "Number 4";
+    public static final String num_5 = "Number 5";
+    public static final String num_6 = "Number 6";
+    public static final String num_7 = "Number 7";
+    public static final String num_8 = "Number 8";
+    public static final String num_9 = "Number 9";
+    
     public static void hookInputs(InputManager inputManager)
     {
         inputManager.addMapping(KeyKeys.move_left, new KeyTrigger(KeyInput.KEY_A));
@@ -54,5 +65,16 @@ public class KeyKeys
         inputManager.addMapping(KeyKeys.mouse_move_down, new MouseAxisTrigger(MouseInput.AXIS_Y, false));
         inputManager.addMapping(KeyKeys.mouse_move_left, new MouseAxisTrigger(MouseInput.AXIS_X, false));
         inputManager.addMapping(KeyKeys.mouse_move_right, new MouseAxisTrigger(MouseInput.AXIS_X, true));
+        
+        inputManager.addMapping(KeyKeys.num_0, new KeyTrigger(KeyInput.KEY_0));
+        inputManager.addMapping(KeyKeys.num_1, new KeyTrigger(KeyInput.KEY_1));
+        inputManager.addMapping(KeyKeys.num_2, new KeyTrigger(KeyInput.KEY_2));
+        inputManager.addMapping(KeyKeys.num_3, new KeyTrigger(KeyInput.KEY_3));
+        inputManager.addMapping(KeyKeys.num_4, new KeyTrigger(KeyInput.KEY_4));
+        inputManager.addMapping(KeyKeys.num_5, new KeyTrigger(KeyInput.KEY_5));
+        inputManager.addMapping(KeyKeys.num_6, new KeyTrigger(KeyInput.KEY_6));
+        inputManager.addMapping(KeyKeys.num_7, new KeyTrigger(KeyInput.KEY_7));
+        inputManager.addMapping(KeyKeys.num_8, new KeyTrigger(KeyInput.KEY_8));
+        inputManager.addMapping(KeyKeys.num_9, new KeyTrigger(KeyInput.KEY_9));
     }
 }

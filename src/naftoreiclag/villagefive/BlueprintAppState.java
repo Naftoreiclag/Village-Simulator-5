@@ -73,34 +73,40 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     Plot plotData = new Plot();
     private List<Flag> flags = new ArrayList<Flag>();
     
-    private Tool tool;
+    
+    public class Tool
+    {
+        void onClick(float tpf) {}
+        void whileMouseMove(float tpf) {}
+        void onClickRelease(float tpf) {}
+    }
+    
+    public Tool dragger = new Tool()
+    {
+        public Vector3f originalPosition;
+        public Vector2f mouseDrag;
+    
+        @Override
+        void onClick(float tpf)
+        {
+            mouseDrag = mousePos;
+            originalPosition = rootNode.getLocalTranslation().clone();
+        }
 
-    private void setupAesteticsMispelled()
-    {
-        AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White.mult(0.4f));
-        trueRootNode.addLight(al);
-        
-        DirectionalLight sun = new DirectionalLight();
-        sun.setColor(ColorRGBA.White.mult(0.6f));
-        sun.setDirection(new Vector3f(-0.96f, -2.69f, 0.69f).normalizeLocal());
-        trueRootNode.addLight(sun);
-        
-        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
-        dlsr.setLight(sun);
-        dlsr.setShadowIntensity(0.5f);
-        dlsr.setLambda(0.55f);
-        dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
-        viewPort.addProcessor(dlsr);
-    }
-    public static enum Tool
-    {
-        drag,
-        placeFlag,
-        illuminati,
-        protractor,
-        ruler
-    }
+        @Override
+        void whileMouseMove(float tpf)
+        {
+            if(leftClick)
+            {
+                if(mousePos != null && mouseDrag != null)
+                {
+                    rootNode.setLocalTranslation(new Vector3f(-mouseDrag.x + mousePos.x, -0.1f, -mouseDrag.y + mousePos.y).addLocal(originalPosition));
+                }
+            }
+        }
+    };
+    
+    private Tool tool = dragger;
     
     private Node rootNode;
     
@@ -114,9 +120,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private boolean leftClick;
 	public boolean isDragging;
     
-	public Vector3f originalPosition;
-	private Vector2f mouseDrag;
-	private Vector2f mousePos;
+	public Vector2f mousePos;
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app)
@@ -147,6 +151,25 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 	    rootNode.attachChild(grid);
 	}
     
+    private void setupAesteticsMispelled()
+    {
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.White.mult(0.4f));
+        trueRootNode.addLight(al);
+        
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White.mult(0.6f));
+        sun.setDirection(new Vector3f(-0.96f, -2.69f, 0.69f).normalizeLocal());
+        trueRootNode.addLight(sun);
+        
+        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
+        dlsr.setLight(sun);
+        dlsr.setShadowIntensity(0.5f);
+        dlsr.setLambda(0.55f);
+        dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
+        viewPort.addProcessor(dlsr);
+    }
+    
     public void placeFlag(Vector2f pos)
     {
         
@@ -167,12 +190,25 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             
             if(isPressed)
             {
-                this.onLeftPress(tpf);
+                tool.onClick(tpf);
             }
             else
             {
-                this.onLeftRelease(tpf);
+                tool.onClickRelease(tpf);
             }
+        }
+        
+        if(key.equals(KeyKeys.num_0))
+        {
+            
+            
+            tool = dragger;
+            System.out.println("drag");
+        }
+        if(key.equals(KeyKeys.num_1))
+        {
+            //tool = flagger;
+            System.out.println("placeFlag");
         }
     }
     
@@ -192,30 +228,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             updateMousePos();
         }
 
-        if(leftClick)
+        if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
         {
-            if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
-            {
-                updateMousePos();
-                if(mousePos != null && mouseDrag != null)
-                {
-                    rootNode.setLocalTranslation(new Vector3f(-mouseDrag.x + mousePos.x, -0.1f, -mouseDrag.y + mousePos.y).addLocal(originalPosition));
-                    
-                    //paper.setLotpfcalTranslation(, tpf, tpf);
-                }
-            }
+            updateMousePos();
+            tool.whileMouseMove(tpf);
         }
-    }
-
-    private void onLeftPress(float tpf)
-    {
-        mouseDrag = mousePos;
-        originalPosition = rootNode.getLocalTranslation().clone();
-    }
-
-    private void onLeftRelease(float tpf)
-    {
-        
     }
     
     
@@ -305,6 +322,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         inputManager.addListener(this, KeyKeys.mouse_move_down);
         inputManager.addListener(this, KeyKeys.mouse_move_left);
         inputManager.addListener(this, KeyKeys.mouse_move_right);
+        inputManager.addListener(this, KeyKeys.num_0, KeyKeys.num_1, KeyKeys.num_2, KeyKeys.num_3);
     }
 
     private void setupWallpaper()
