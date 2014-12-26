@@ -60,8 +60,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 {
     public BlueprintAppState()
 	{
-	    plotData.setWidth(7);
-	    plotData.setHeight(5);
+	    plotData.setWidth(14);
+	    plotData.setHeight(20);
 	}
 
 	private Main app;
@@ -382,14 +382,14 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private void setupCamera()
     {
         cam.setParallelProjection(true);
-        frustumSize.enableClamp(1, 10);
+        frustumSize.enableClamp(2f, 20);
         updateFrustum();
         
         // top-dwon
         cam.setLocation(Vector3f.UNIT_Y);
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Z.mult(-1.0f));
         // iso
-        cam.setLocation(Vector3f.UNIT_XYZ);
+        cam.setLocation(new Vector3f(-1f, 1f, -1f));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
     }
 
@@ -409,31 +409,38 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         Material halfMat = wholeMat.clone();
         halfMat.setColor("Color", new ColorRGBA(1.0f, 1.0f, 1.0f, 0.2f));
         
-        BlueprintGeoGen wholeLines = new BlueprintGeoGen();
-        for(float x = 0; x <= plotData.getWidth(); ++ x)
+        int wid = plotData.getWidth();
+        wid /= 2; // divide by two
+        wid += wid & 1; // round up
+        int hei = plotData.getHeight();
+        hei /= 2;
+        hei += wid & 1;
+        
+        BlueprintGeoGen evenLines = new BlueprintGeoGen();
+        for(float x = 0; x <= wid; ++ x)
         {
-            wholeLines.addLine(x, 0, x, plotData.getHeight());
+            evenLines.addLine(x * 2, 0, x * 2, plotData.getHeight());
         }
-        for(float y = 0; y <= plotData.getHeight(); ++ y)
+        for(float y = 0; y <= hei; ++ y)
         {
-            wholeLines.addLine(0, y, plotData.getWidth(), y);
+            evenLines.addLine(0, y * 2, plotData.getWidth(), y * 2);
         }
-        Mesh wholeMesh = wholeLines.bake(0.02f, 20.0f, 1.0f, 1.0f);
+        Mesh wholeMesh = evenLines.bake(0.04f, 10.0f, 1.0f, 1.0f);
         
         Geometry wholeGeo = new Geometry("", wholeMesh);
         wholeGeo.setMaterial(wholeMat);
         wholeGeo.setQueueBucket(RenderQueue.Bucket.Transparent);
         
-        BlueprintGeoGen halfLines = new BlueprintGeoGen();
-        for(float x = 0; x < plotData.getWidth(); ++ x)
+        BlueprintGeoGen oddLines = new BlueprintGeoGen();
+        for(float x = 0; x < wid; ++ x)
         {
-            halfLines.addLine(x + 0.5f, 0, x + 0.5f, plotData.getHeight());
+            oddLines.addLine((x * 2) + 1, 0, (x * 2) + 1, plotData.getHeight());
         }
-        for(float y = 0; y < plotData.getHeight(); ++ y)
+        for(float y = 0; y < hei; ++ y)
         {
-            halfLines.addLine(0, y + 0.5f, plotData.getWidth(), y + 0.5f);
+            oddLines.addLine(0, (y * 2) + 1, plotData.getWidth(), (y * 2) + 1);
         }
-        Mesh halfMesh = halfLines.bake(0.02f, 20.0f, 1.0f, 1.0f);
+        Mesh halfMesh = oddLines.bake(0.04f, 10.0f, 1.0f, 1.0f);
         
         
         Geometry halfGeo = new Geometry("Filled Grid", halfMesh);
