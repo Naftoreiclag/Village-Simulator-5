@@ -60,7 +60,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 {
     public BlueprintAppState()
 	{
-	    plotData.setWidth(14);
+	    plotData.setWidth(15);
 	    plotData.setHeight(20);
 	}
 
@@ -410,11 +410,9 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         halfMat.setColor("Color", new ColorRGBA(1.0f, 1.0f, 1.0f, 0.2f));
         
         int wid = plotData.getWidth();
-        wid /= 2; // divide by two
-        wid += wid & 1; // round up
+        wid /= 2;
         int hei = plotData.getHeight();
         hei /= 2;
-        hei += wid & 1;
         
         BlueprintGeoGen evenLines = new BlueprintGeoGen();
         for(float x = 0; x <= wid; ++ x)
@@ -424,6 +422,15 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         for(float y = 0; y <= hei; ++ y)
         {
             evenLines.addLine(0, y * 2, plotData.getWidth(), y * 2);
+        }
+        
+        if(wid % 2 == 1)
+        {
+            evenLines.addLine(plotData.getWidth(), 0, plotData.getWidth(), plotData.getHeight());
+        }
+        if(hei % 2 == 1)
+        {
+            evenLines.addLine(0, plotData.getHeight(), plotData.getWidth(), plotData.getHeight());
         }
         Mesh wholeMesh = evenLines.bake(0.04f, 10.0f, 1.0f, 1.0f);
         
