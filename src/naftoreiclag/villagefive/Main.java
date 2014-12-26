@@ -9,6 +9,7 @@ package naftoreiclag.villagefive;
 import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.material.Material;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 
@@ -33,6 +34,8 @@ public class Main extends SimpleApplication implements ActionListener
         main.start();
     }
     
+    static Material debugMat;
+    
     OverworldAppState tas;
     BlueprintAppState bas;
     
@@ -42,6 +45,8 @@ public class Main extends SimpleApplication implements ActionListener
         KeyKeys.hookInputs(inputManager);
         
         inputManager.addListener(this, KeyKeys.num_9, KeyKeys.num_8);
+        
+        debugMat = assetManager.loadMaterial("Materials/wiremesh.j3m");
         
         flyCam.setEnabled(false);
         
@@ -65,6 +70,7 @@ public class Main extends SimpleApplication implements ActionListener
         if(name.equals(KeyKeys.num_9))
         {
             stateManager.detach(bas);
+            tas.gimmiePlot(bas.plotData);
             stateManager.attach(tas);
         }
         if(name.equals(KeyKeys.num_8))

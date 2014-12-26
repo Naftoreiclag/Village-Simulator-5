@@ -149,6 +149,20 @@ public class ModelBuilder
         this.addTriangle(a, c, d);
     }
     
+    // Add a quad with Vertor3f. Note: this is mainly used for debugging
+    public void addQuad(Vector3f a, Vector3f b, Vector3f c, Vector3f d)
+    {
+        // 1  2
+        //    
+        // 4  3
+        
+        this.addQuad(a.x, a.y, a.z, Vector3f.UNIT_Y, 0f, 0f, 
+                     b.x, b.y, b.z, Vector3f.UNIT_Y, 0f, 0f, 
+                     c.x, c.y, c.z, Vector3f.UNIT_Y, 0f, 0f, 
+                     d.x, d.y, d.z, Vector3f.UNIT_Y, 0f, 0f);
+    }
+    
+    
     // Add a quad with respects to the user-set origin. Note: this just adds two triangles at once
     public void addQuad(
             float x1, float y1, float z1, Vector3f normal1, float texX1, float texY1,

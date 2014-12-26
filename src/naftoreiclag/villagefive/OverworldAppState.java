@@ -54,7 +54,12 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     
     ReiCamera rcam;
     
-    Plot testp;
+    Plot house;
+    
+    public void gimmiePlot(Plot house)
+    {
+        this.house = house;
+    }
 
     @Override
     public void initialize(AppStateManager stateManager, Application app)
@@ -103,6 +108,13 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         }
         
         
+        house.setX(10);
+        house.setZ(10);
+        
+        world.addPlot(house);
+        
+        /*
+        
         testp = new Plot();
         testp.setHeight(10);
         testp.setWidth(10);
@@ -110,6 +122,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         testp.setZ(10);
         
         world.addPlot(testp);
+        */
         
         
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
@@ -194,7 +207,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         Texture south = assetManager.loadTexture("Textures/clouds/clouds1_south.bmp");
         Texture up = assetManager.loadTexture("Textures/clouds/clouds1_up.bmp");
         Texture down = assetManager.loadTexture("Textures/clouds/clouds1_down.bmp");
-        //rootNode.attachChild(SkyFactory.createSky(assetManager, west, east, north, south, up, down));
     }
 
     boolean debugKey = false;
@@ -207,7 +219,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
             
             if(debugKey)
             {
-            onDebugKeypress();
+                onDebugKeypress();
                 
             }
             else
@@ -221,7 +233,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
 
     private void onDebugKeypress()
     {
-        mhe = new HouseEditor(stateRootNode, assetManager, testp, rcam);
+        mhe = new HouseEditor(stateRootNode, assetManager, house, rcam);
         playCont.disableInput();
         world.disableRender();
         mhe.enableRender();

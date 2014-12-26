@@ -144,6 +144,10 @@ public class World
         
         
         rootNode.attachChild(geo);
+        
+        Node n = PlotNodifier.nodify(p);
+        
+        rootNode.attachChild(n);
     }
 
 }

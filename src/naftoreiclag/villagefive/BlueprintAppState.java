@@ -46,6 +46,8 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Vector2d;
+import naftoreiclag.villagefive.Plot.Edge;
+import naftoreiclag.villagefive.Plot.Vertex;
 
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
 import naftoreiclag.villagefive.util.SmoothAnglef;
@@ -73,8 +75,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 	private RenderManager renderManager;
     
     Plot plotData = new Plot();
-    private List<Flag> flags = new ArrayList<Flag>();
-    private List<Wall> walls = new ArrayList<Wall>();
 
     Material strokeMat;
     
@@ -132,6 +132,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         stateRootNode.removeFromParent();
         renderManager.removePreView(preview);
         viewPort.removeProcessor(dlsr);
+        
+        storePlotData();
     }
 
     
@@ -397,79 +399,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         updateFrustum();
     }
     
-    public static class Flag
-    {
-        public Vector2d loc;
-        public Spatial spatial;
-        
-        public Flag()
-        {
-            loc = new Vector2d();
-        }
-        
-        public Flag(Vector2f loc)
-        {
-            this.loc = new Vector2d(loc.x, loc.y);
-        }
-        
-        public Flag(float x, float y)
-        {
-            this.loc = new Vector2d(x, y);
-        }
-
-        private void setSpatial(Spatial spatial)
-        {
-            this.spatial = spatial;
-        }
-        
-        private void removeSpatial()
-        {
-            this.spatial.removeFromParent();
-        }
-    }
     
-    public static class Wall
-    {
-        public Flag first;
-        public Flag second;
-        public Spatial spatial;
-
-        private Wall(Flag a, Flag b)
-        {
-            this.first = a;
-            this.second = b;
-        }
-        
-        // Is this totally useless?
-        @Override
-        public boolean equals(Object obj)
-        {
-            if(obj instanceof Wall)
-            {
-                return this.equals((Wall) obj);
-            }
-            else
-            {
-                return super.equals(obj);
-            }
-        }
-        
-        // TODO: fix dis
-        public boolean equals(Wall other)
-        {
-            return false;
-        }
-
-        private void setSpatial(Spatial spatial)
-        {
-            this.spatial = spatial;
-        }
-        
-        private void removeSpatial()
-        {
-            this.spatial.removeFromParent();
-        }
-    }
     
     public Node makeDetailedGridNode()
     {
@@ -590,6 +520,39 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     {
         this.strokeMat = assetManager.loadMaterial("Materials/Stroke.j3m");
         strokeMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+    }
+
+    private void storePlotData()
+    {
+        Vertex[] verts = new Vertex[flags.size()];
+        for(int i = 0; i < flags.size(); ++ i)
+        {
+            Flag orig = flags.get(i);
+            Vertex trans = new Vertex();
+            
+            trans.setX(orig.loc.x);
+            trans.setZ(orig.loc.y);
+            trans.setId(i);
+            
+            orig.id = i;
+            
+            verts[i] = trans;
+        }
+        plotData.setVerticies(verts);
+        
+        Edge[] edges = new Edge[walls.size()];
+        for(int i = 0; i < walls.size(); ++ i)
+        {
+            Wall orig = walls.get(i);
+            Edge trans = new Edge();
+            
+            trans.setVertA(orig.first.id);
+            trans.setVertB(orig.second.id);
+            trans.setId(i);
+            
+            edges[i] = trans;
+        }
+        plotData.setEdges(edges);
     }
     
     public abstract class Tool
@@ -892,4 +855,72 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private Ruler ruler = new Ruler();
     
     private Tool tool = dragger;
+    
+    public List<Flag> flags = new ArrayList<Flag>();
+    public List<Wall> walls = new ArrayList<Wall>();
+    
+    public static class Flag
+    {
+        public Vector2d loc;
+        public Spatial spatial;
+        private int id;
+        
+        public Flag()
+        {
+            loc = new Vector2d();
+        }
+        
+        public Flag(Vector2f loc)
+        {
+            this.loc = new Vector2d(loc.x, loc.y);
+        }
+        
+        public Flag(float x, float y)
+        {
+            this.loc = new Vector2d(x, y);
+        }
+
+        public void setSpatial(Spatial spatial)
+        {
+            this.spatial = spatial;
+        }
+        
+        public void removeSpatial()
+        {
+            this.spatial.removeFromParent();
+        }
+
+        private void setId(int i)
+        {
+        }
+    }
+    
+    public static class Wall
+    {
+        public Flag first;
+        public Flag second;
+        public Spatial spatial;
+
+        public Wall(Flag a, Flag b)
+        {
+            this.first = a;
+            this.second = b;
+        }
+        
+        // TODO: fix dis
+        public boolean equals(Wall other)
+        {
+            return false;
+        }
+
+        public void setSpatial(Spatial spatial)
+        {
+            this.spatial = spatial;
+        }
+        
+        public void removeSpatial()
+        {
+            this.spatial.removeFromParent();
+        }
+    }
 }
