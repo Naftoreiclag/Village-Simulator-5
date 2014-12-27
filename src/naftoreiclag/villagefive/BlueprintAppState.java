@@ -172,10 +172,23 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     {
         Wall wall = new Wall(a, b);
         
+        for(Wall check : walls)
+        {
+            if(check.equals(wall))
+            {
+                return;
+            }
+        }
+        
+        a.walls.add(wall);
+        b.walls.add(wall);
+        
         Spatial wallSpt = makeWallSpt(wall);
         wall.setSpatial(wallSpt);
         editorRootNode.attachChild(wallSpt);
         walls.add(wall);
+        
+        System.out.println("walls: " + walls.size());
     }
 
 	@Override
@@ -235,6 +248,14 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             {
                 switchTool(this.ruler, tpf);
                 System.out.println("rulr");
+            }
+        }
+        if(key.equals(KeyKeys.num_6))
+        {
+            if(isPressed)
+            {
+                switchTool(this.roomer, tpf);
+                System.out.println("roomer");
             }
         }
     }
@@ -313,7 +334,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private void setupModels()
     {
         b_flag = (Node) assetManager.loadModel("Models/BlueFlag.mesh.j3o");
-        b_flag.scale(0.3f);
+        //b_flag.scale(0.3f);
         flagger.setFlagModel();
         
         
@@ -867,17 +888,57 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
     }
     private Ruler ruler = new Ruler();
+    public class Roomer extends Tool
+    {
+
+        @Override
+        void onSelect(float tpf)
+        {
+        }
+
+        @Override
+        void onDeselect(float tpf)
+        {
+        }
+
+        @Override
+        void onClick(float tpf)
+        {
+            
+        }
+
+        @Override
+        void whileMouseMove(float tpf)
+        {
+        }
+
+        @Override
+        void onClickRelease(float tpf)
+        {
+        }
+
+        @Override
+        void tick(float tpf)
+        {
+        }
+        
+    }
+    private Roomer roomer = new Roomer();
+    
     
     private Tool tool = dragger;
     
     public List<Flag> flags = new ArrayList<Flag>();
     public List<Wall> walls = new ArrayList<Wall>();
+    public List<Room> rooms = new ArrayList<Room>();
     
     public static class Flag
     {
         public Vector2d loc;
         public Spatial spatial;
         private int id;
+        
+        public List<Wall> walls = new ArrayList<Wall>();
         
         public Flag()
         {
@@ -909,6 +970,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
     }
     
+    // TODO: ghost walls
     public static class Wall
     {
         public Flag first;
@@ -921,10 +983,15 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             this.second = b;
         }
         
-        // TODO: fix dis
         public boolean equals(Wall other)
         {
+            if((other.first.equals(first) && other.second.equals(second)) || (other.first.equals(second) && other.second.equals(first)))
+            {
+                return true;
+            }
+            
             return false;
+            
         }
 
         public void setSpatial(Spatial spatial)
@@ -936,5 +1003,17 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             this.spatial.removeFromParent();
         }
+    }
+    
+    public static class Room
+    {
+        public List<Flag> flags = new ArrayList<Flag>();
+        
+        public List<Room> interiorRooms; // Holes
+        
+        // "Bedroom", "kitchen", "library", etc
+        public String name;
+        
+        
     }
 }

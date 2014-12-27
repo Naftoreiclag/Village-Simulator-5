@@ -33,6 +33,7 @@ public class PlayerController extends EntityController implements ActionListener
 
     public PlayerController()
     {
+        lookDir.maxSpd *= 4f;
 
         camDir.smoothFactor /= 2f;
         camDir.maxSpd /= 2f;

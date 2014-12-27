@@ -36,16 +36,16 @@ public class PlotNodifier
             Vertex bv = plot.getVerticies()[e.getVertB()];
             Vector3f a = new Vector3f((float) av.getX(), 0f, (float) av.getZ());
             Vector3f b = new Vector3f((float) bv.getX(), 0f, (float) bv.getZ());
-            Vector3f c = b.add(0f, 3f, 0f);
-            Vector3f d = a.add(0f, 3f, 0f);
+            Vector3f c = b.add(0f, 7f, 0f);
+            Vector3f d = a.add(0f, 7f, 0f);
             
-            mb.addQuad(a, b, c, d);
+            mb.addQuad(d, c, b, a);
         }
         
         
         Mesh m = mb.bake();
         Geometry geo = new Geometry("", m);
-        geo.setMaterial(Main.debugMat);
+        geo.setMaterial(Main.mat_debug);
         
         ret.attachChild(geo);
         

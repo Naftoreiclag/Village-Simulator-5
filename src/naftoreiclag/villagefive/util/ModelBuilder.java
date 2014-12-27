@@ -157,9 +157,9 @@ public class ModelBuilder
         // 4  3
         
         this.addQuad(a.x, a.y, a.z, Vector3f.UNIT_Y, 0f, 0f, 
-                     b.x, b.y, b.z, Vector3f.UNIT_Y, 0f, 0f, 
-                     c.x, c.y, c.z, Vector3f.UNIT_Y, 0f, 0f, 
-                     d.x, d.y, d.z, Vector3f.UNIT_Y, 0f, 0f);
+                     b.x, b.y, b.z, Vector3f.UNIT_Y, 1f, 0f, 
+                     c.x, c.y, c.z, Vector3f.UNIT_Y, 1f, 1f, 
+                     d.x, d.y, d.z, Vector3f.UNIT_Y, 0f, 1f);
     }
     
     

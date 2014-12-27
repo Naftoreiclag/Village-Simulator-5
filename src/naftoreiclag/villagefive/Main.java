@@ -34,7 +34,8 @@ public class Main extends SimpleApplication implements ActionListener
         main.start();
     }
     
-    static Material debugMat;
+    static Material mat_debug_wireframe;
+    static Material mat_debug;
     
     OverworldAppState tas;
     BlueprintAppState bas;
@@ -46,7 +47,8 @@ public class Main extends SimpleApplication implements ActionListener
         
         inputManager.addListener(this, KeyKeys.num_9, KeyKeys.num_8);
         
-        debugMat = assetManager.loadMaterial("Materials/wiremesh.j3m");
+        mat_debug_wireframe = assetManager.loadMaterial("Materials/wiremesh.j3m");
+        mat_debug = assetManager.loadMaterial("Materials/debug.j3m");
         
         flyCam.setEnabled(false);
         
