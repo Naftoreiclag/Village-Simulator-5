@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Vector2d;
 import naftoreiclag.villagefive.Plot.Edge;
+import naftoreiclag.villagefive.Plot.Face;
 import naftoreiclag.villagefive.Plot.Vertex;
 
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
@@ -158,6 +159,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     private Flag spawnFlag(Vector2f pos)
     {
+        
         Flag flag = new Flag(pos);
         
         Spatial flagSpt = b_flag.clone();
@@ -172,8 +174,12 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 
     private void spawnRoom(Room room)
     {
-        room.setSpt(this.makeSpt(room));
-        editorRootNode.attachChild(room.getSpt());
+        room.updateSpatial();
+        
+        for(Flag f : room.flags)
+        {
+            f.rooms.add(room);
+        }
         
         rooms.add(room);
         
@@ -238,7 +244,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 System.out.println("drag");
             }
         }
-        if(key.equals(KeyKeys.num_2))
+        if(key.equals(KeyKeys.num_2) && false)
         {
             if(isPressed)
             {
@@ -253,12 +259,20 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 toggleGridView();
             }
         }
-        if(key.equals(KeyKeys.num_4))
+        if(key.equals(KeyKeys.num_4) && false)
         {
             if(isPressed)
             {
                 switchTool(this.ruler, tpf);
                 System.out.println("rulr");
+            }
+        }
+        if(key.equals(KeyKeys.num_5))
+        {
+            if(isPressed)
+            {
+                switchTool(this.drafla, tpf);
+                System.out.println("drafla");
             }
         }
         if(key.equals(KeyKeys.num_6))
@@ -550,7 +564,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private Spatial makeWallSpt(Wall wall)
     {
         BlueprintGeoGen maker = new BlueprintGeoGen();
-        maker.addLine(wall.first.loc, wall.second.loc);
+        maker.addLine(wall.first.getLoc(), wall.second.getLoc());
         Mesh mesh = maker.bake(0.04f, 10.0f, 1.0f, 1.0f);
         
         Geometry geo = new Geometry("Wall Line", mesh);
@@ -576,8 +590,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             Flag orig = flags.get(i);
             Vertex trans = new Vertex();
             
-            trans.setX(orig.loc.x);
-            trans.setZ(orig.loc.y);
+            trans.setX(orig.getLoc().x);
+            trans.setZ(orig.getLoc().y);
             trans.setId(i);
             
             orig.id = i;
@@ -585,6 +599,23 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             verts[i] = trans;
         }
         plotData.setVerticies(verts);
+        
+        Face[] faces = new Face[rooms.size()];
+        for(int i = 0; i < rooms.size(); ++ i)
+        {
+            Room orig = rooms.get(i);
+            Face trans = new Face();
+            
+            int[] vertices = new int[orig.flags.size()];
+            for(int j = 0; j < orig.flags.size(); ++ j)
+            {
+                vertices[j] = orig.flags.get(j).id;
+            }
+            trans.setVertexes(vertices);
+            
+            faces[i] = trans;
+        }
+        plotData.setFaces(faces);
         
         Edge[] edges = new Edge[walls.size()];
         for(int i = 0; i < walls.size(); ++ i)
@@ -832,7 +863,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
         }
         
-        double selectionRadius = 0.02d;
+        double selectionRadius = 0.25d;
         
         private Flag findClosestFlagNotMine()
         {
@@ -857,7 +888,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 }
                 
                 // no need to sqrt
-                double dist = ((mouseLoc.x - flag.loc.x) * (mouseLoc.x - flag.loc.x)) + ((mouseLoc.y - flag.loc.y) * (mouseLoc.y - flag.loc.y));
+                double dist = ((mouseLoc.x - flag.getLoc().x) * (mouseLoc.x - flag.getLoc().x)) + ((mouseLoc.y - flag.getLoc().y) * (mouseLoc.y - flag.getLoc().y));
                 
                 if(dist < bestDist)
                 {
@@ -873,11 +904,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             BlueprintGeoGen maker = new BlueprintGeoGen();
             if(closestFlag == null)
             {
-                maker.addLine((float) firstFlag.loc.x, (float) firstFlag.loc.y, mouseLoc.x, mouseLoc.y);
+                maker.addLine((float) firstFlag.getLoc().x, (float) firstFlag.getLoc().y, mouseLoc.x, mouseLoc.y);
             }
             else
             {
-                maker.addLine(firstFlag.loc, closestFlag.loc);
+                maker.addLine(firstFlag.getLoc(), closestFlag.getLoc());
             }
             Mesh mesh = maker.bake(0.04f, 10.0f, 1.0f, 1.0f);
 
@@ -950,6 +981,99 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     }
     private Roomer roomer = new Roomer();
     
+    // Drag flag
+    public class Drafla extends Tool
+    {
+        public Vector2f preclickFlagLoc;
+        public Vector2f preclickMouseLoc;
+        
+        public Flag dragFlag;
+
+        @Override
+        void onSelect(float tpf)
+        {
+            dragFlag = null;
+        }
+
+        @Override
+        void onDeselect(float tpf)
+        {
+        }
+        @Override
+        void onClick(float tpf)
+        {
+            if(mouseLoc != null)
+            {
+                dragFlag = findClosestFlag(selectionRadius);
+
+                if(dragFlag != null)
+                {
+                    preclickMouseLoc = mouseLoc;
+                    preclickFlagLoc = new Vector2f((float) dragFlag.getLoc().x, (float) dragFlag.getLoc().y);
+                }
+            }
+        }
+
+        @Override
+        void whileMouseMove(float tpf)
+        {
+            if(leftClick && dragFlag != null)
+            {
+                if(mouseLoc != null)
+                {
+                    dragFlag.setLoc(new Vector2d(-preclickMouseLoc.x + mouseLoc.x + preclickFlagLoc.x, -preclickMouseLoc.y + mouseLoc.y + preclickFlagLoc.y));
+                }
+                else
+                {
+                    dragFlag = null;
+                }
+            }
+        }
+
+        @Override
+        void onClickRelease(float tpf)
+        {
+            dragFlag = null;
+        }
+
+        @Override
+        void tick(float tpf)
+        {
+        }
+        
+        double selectionRadius = 0.25d;
+        
+        private Flag findClosestFlag()
+        {
+            return findClosestFlag(Double.MAX_VALUE);
+        }
+
+        private Flag findClosestFlag(double maxDist)
+        {
+            if(mouseLoc == null)
+            {
+                return null;
+            }
+            
+            double bestDist = maxDist;
+            Flag bestFlag = null;
+            
+            for(Flag flag : flags)
+            {
+                // no need to sqrt
+                double dist = ((mouseLoc.x - flag.getLoc().x) * (mouseLoc.x - flag.getLoc().x)) + ((mouseLoc.y - flag.getLoc().y) * (mouseLoc.y - flag.getLoc().y));
+                
+                if(dist < bestDist)
+                {
+                    bestFlag = flag;
+                }
+            }
+            
+            return bestFlag;
+        }
+        
+    }
+    private Drafla drafla = new Drafla();
     
     private Tool tool = dragger;
     
@@ -957,11 +1081,13 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     public List<Wall> walls = new ArrayList<Wall>();
     public List<Room> rooms = new ArrayList<Room>();
     
-    public static class Flag
+    public class Flag
     {
-        public Vector2d loc;
+        private Vector2d loc;
         public Spatial spatial;
         private int id;
+        
+        private List<Room> rooms = new ArrayList<Room>();
         
         public List<Wall> walls = new ArrayList<Wall>();
         
@@ -993,10 +1119,33 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         private void setId(int i)
         {
         }
+
+        /**
+         * @return the loc
+         */
+        public Vector2d getLoc()
+        {
+            return loc;
+        }
+
+        /**
+         * @param loc the loc to set
+         */
+        public void setLoc(Vector2d loc)
+        {
+            this.loc = loc;
+            
+            spatial.setLocalTranslation((float) loc.x, 0f, (float) loc.y);
+            
+            for(Room room : rooms)
+            {
+                room.updateSpatial();
+            }
+        }
     }
     
     // TODO: ghost walls
-    public static class Wall
+    public class Wall
     {
         public Flag first;
         public Flag second;
@@ -1028,9 +1177,10 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             this.spatial.removeFromParent();
         }
+        
     }
     
-    public static class Room
+    public class Room
     {
         public List<Flag> flags = new ArrayList<Flag>();
         
@@ -1057,43 +1207,49 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             return spt;
         }
 
-        /**
-         * @param spt the spt to set
-         */
-        public void setSpt(Spatial spt)
+        
+        public void updateSpatial()
         {
-            this.spt = spt;
+            if(spt != null)
+            {
+                spt.removeFromParent();
+            }
+            
+            spt = makeSpt();
+            
+            editorRootNode.attachChild(spt);
         }
         
+        private Spatial makeSpt()
+        {
+            BlueprintGeoGen bgg = new BlueprintGeoGen();
+
+            for(int i = 0; i < flags.size(); ++i)
+            {
+
+                Vector2d a = flags.get(i).getLoc();
+                Vector2d b;
+                if(i < flags.size() - 1)
+                {
+                    b = flags.get(i + 1).getLoc();
+                }
+                else
+                {
+                    b = flags.get(0).getLoc();
+                }
+
+                bgg.addLine(a, b);
+            }
+
+            Mesh m = bgg.bake(0.05f, 20, 1, 1);
+
+            Geometry spt = new Geometry("", m);
+            spt.setMaterial(strokeMat);
+
+            return spt;
+
+        }
     }
     
-    private Spatial makeSpt(Room r)
-    {
-        BlueprintGeoGen bgg = new BlueprintGeoGen();
-
-        for(int i = 0; i < flags.size(); ++ i)
-        {
-            
-            Vector2d a = flags.get(i).loc;
-            Vector2d b;
-            if(i < flags.size() - 1)
-            {
-                b = flags.get(i + 1).loc;
-            }
-            else
-            {
-                b = flags.get(0).loc;
-            }
-
-            bgg.addLine(a, b);
-        }
-
-        Mesh m = bgg.bake(0.05f, 20, 1, 1);
-
-        Geometry spt = new Geometry("", m);
-        spt.setMaterial(strokeMat);
-        
-        return spt;
-
-    }
+    
 }

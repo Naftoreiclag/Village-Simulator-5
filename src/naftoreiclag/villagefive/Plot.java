@@ -64,14 +64,14 @@ public class Plot
     // Store the edges in counter-clockwise order
     public static class Face
     {
-        private int[] edges;
+        private int[] vertexes;
         private int id;
         
         public int getId() { return id; }
         public void setId(int id) { this.id = id; }
 
-        public int[] getEdges() { return edges; }
-        public void setEdges(int[] edges) { this.edges = edges; }
+        public int[] getVertexes() { return vertexes; }
+        public void setVertexes(int[] edges) { this.vertexes = edges; }
 
     }
 

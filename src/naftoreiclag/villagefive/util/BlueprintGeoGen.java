@@ -64,11 +64,12 @@ public class BlueprintGeoGen
             
             float leng = A.distance(D) / thickness;
             leng /= texStretch;
+            leng /= 2f;
             
             v.put(A.x * xscale).put(0f).put(A.y * yscale);
-            t.put(0.0f).put(0.0f);
+            t.put(-leng).put(0.0f);
             v.put(B.x * xscale).put(0f).put(B.y * yscale);
-            t.put(0.0f).put(1.0f);
+            t.put(-leng).put(1.0f);
             v.put(C.x * xscale).put(0f).put(C.y * yscale);
             t.put(leng).put(1.0f);
             v.put(D.x * xscale).put(0f).put(D.y * yscale);
