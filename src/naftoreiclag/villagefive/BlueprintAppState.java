@@ -134,6 +134,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         renderManager.removePreView(preview);
         viewPort.removeProcessor(dlsr);
         
+        inputManager.removeListener(this);
+        
         storePlotData();
     }
 
@@ -912,7 +914,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             if(mouseLoc == null)
             {
-                
+                return;
             }
             
             Flag a = spawnFlag(mouseLoc.clone().addLocal(-5f, -5f));

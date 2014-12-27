@@ -67,9 +67,9 @@ public class PlotNodifier
                 p.vecs.add(new Vector2f((float) v.getX(), (float) v.getZ()));
             }
             
-            Mesh m = p.doit(0.1f, 3f);
+            Mesh m = p.doit(0.4f, 4f);
             Geometry geo = new Geometry("", m);
-            geo.setMaterial(Main.mat_debug);
+            geo.setMaterial(Main.mat_debug_lighting);
 
             ret.attachChild(geo);
         }

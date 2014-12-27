@@ -36,7 +36,7 @@ public class Polygon
             Vector2f ab = b.subtract(a).normalizeLocal();
             
             // if this is positive, then angle baq is non-reflexive
-            float baqC = aq.determinant(ab);
+            float baqC = -aq.determinant(ab);
             
             Vector2f ad = aq.add(ab).multLocal(FastMath.sign(baqC)).multLocal(thickness);
             
@@ -69,11 +69,16 @@ public class Polygon
              *  B       A
              */
             
-            Vector2f ab = b.subtract(b).normalizeLocal();
-            Vertex C = new Vertex(b.x, 1f, b.y, new Vector3f(-ab.y, 0f, ab.x), 0f, 0f);
-            Vertex D = new Vertex(a.x, 1f, a.y, new Vector3f(-ab.y, 0f, ab.x), 1f, 0f);
-            Vertex A = new Vertex(a.x, 0f, a.y, new Vector3f(-ab.y, 0f, ab.x), 1f, 1f);
-            Vertex B = new Vertex(b.x, 0f, b.y, new Vector3f(-ab.y, 0f, ab.x), 0f, 1f);
+            Vector2f ba = a.subtract(b).normalizeLocal();
+            if(reverseNormals)
+            {
+                ba.multLocal(-1f);
+            }
+            
+            Vertex C = new Vertex(b.x, height, b.y, new Vector3f(-ba.y, 0f, ba.x), 0f, 0f);
+            Vertex D = new Vertex(a.x, height, a.y, new Vector3f(-ba.y, 0f, ba.x), 1f, 0f);
+            Vertex A = new Vertex(a.x,     0f, a.y, new Vector3f(-ba.y, 0f, ba.x), 1f, 1f);
+            Vertex B = new Vertex(b.x,     0f, b.y, new Vector3f(-ba.y, 0f, ba.x), 0f, 1f);
             
             if(reverseNormals)
             {

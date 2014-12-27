@@ -115,16 +115,6 @@ public class KatCompleteEntity extends Entity
         
         debugFaceTex = world.assetManager.loadTexture("Textures/debugFace.png");
         mask = world.loadNode("Models/katty/Face.mesh.j3o");
-        //Geometry geo = (Geometry) mask.getChild("Katty");
-        
-        /*
-        
-        Material mat = new Material(world.assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        mat.setBoolean("UseMaterialColors", false);
-        mat.setColor("Diffuse", ColorRGBA.White);
-        mat.setTexture("DiffuseMap", eyeTex);
-        
-        */
         
         eyeOpenTex = generateEyeOpenTexture();
         eyeCloseTex = generateEyeClosedTexture();
@@ -136,20 +126,12 @@ public class KatCompleteEntity extends Entity
         mask.setQueueBucket(Bucket.Transparent);
         mask.setMaterial(faceMat);
         mask.setShadowMode(RenderQueue.ShadowMode.Receive);
-        //mask.setLocalScale(0.3f);
-        
         
         head.attachChild(mask);
         
-        /*
-        eyeTex = world.assetManager.loadTexture("Textures/eye.png");
-        
-        face = head.getControl(SkeletonControl.class);
-        eyeL = makeEye(false);//world.loadNode("Models/katty/KattyFoot.mesh.j3o");
-        face.getAttachmentsNode("Eye.L").attachChild(eyeL);
-        eyeR = makeEye(true);//world.loadNode("Models/katty/KattyFoot.mesh.j3o");
-        face.getAttachmentsNode("Eye.R").attachChild(eyeR);
-        */
+        // gold, just for fun
+        Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
+        node.setMaterial(mat);
     }
     
     

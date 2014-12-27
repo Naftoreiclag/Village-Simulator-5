@@ -1,0 +1,14 @@
+Material My Material : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        DiffuseMap : Textures/debug.png
+        VertexLighting : false
+        UseMaterialColors : true
+        Diffuse : 1.0 1.0 1.0 1.0
+        Ambient : 1.0 1.0 1.0 1.0
+        Specular : 1.0 1.0 1.0 1.0
+        GlowColor : 1.0 1.0 1.0 1.0
+        UseVertexColor : false
+     }
+    AdditionalRenderState {
+    }
+}

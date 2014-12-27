@@ -19,5 +19,6 @@ Material My Material : Common/MatDefs/Light/Lighting.j3md {
       ColorWrite Off
       DepthTest Off
       AlphaTestFalloff 0.0
+      FaceCull FrontAndBack
     }
 }
