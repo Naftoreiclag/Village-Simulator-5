@@ -187,7 +187,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     private void spawnDoor(Flag a, Flag b)
     {
-        Door door = new Door(a, b);
+        WallEffect door = new WallEffect(a, b);
         
         a.doors.add(door);
         b.doors.add(door);
@@ -1043,7 +1043,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private Tool tool = dragger;
     
     public List<Flag> flags = new ArrayList<Flag>();
-    public List<Door> doors = new ArrayList<Door>();
+    public List<WallEffect> doors = new ArrayList<WallEffect>();
     public List<Room> rooms = new ArrayList<Room>();
     
     public class Flag
@@ -1053,7 +1053,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         private int id;
         
         private List<Room> rooms = new ArrayList<Room>();
-        public List<Door> doors = new ArrayList<Door>();
+        public List<WallEffect> doors = new ArrayList<WallEffect>();
         
         public Flag()
         {
@@ -1105,7 +1105,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             {
                 room.updateSpatial();
             }
-            for(Door door : doors)
+            for(WallEffect door : doors)
             {
                 //door.updateLoc();
                 door.updateSpatial();
@@ -1114,7 +1114,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     }
 
     
-    public class Door
+    public class WallEffect
     {
         public Flag a;
         public Flag b;
@@ -1123,7 +1123,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
         private Spatial spt;
 
-        private Door(Flag a, Flag b)
+        private WallEffect(Flag a, Flag b)
         {
             this.a = a;
             this.b = b;

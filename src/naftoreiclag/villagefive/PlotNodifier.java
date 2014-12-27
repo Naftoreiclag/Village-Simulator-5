@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive;
 
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -25,6 +26,7 @@ public class PlotNodifier
         Node ret = new Node();
         ModelBuilder mb = new ModelBuilder();
         
+        /*
         // make walls
         for(Face f : plot.getFaces())
         {
@@ -43,13 +45,6 @@ public class PlotNodifier
                      bi = f.getVertexes()[0];
                 }
                 Vertex b = plot.getVerticies()[bi];
-
-                /* D    C
-                 * 
-                 * 
-                 * A     B
-                 */
-                
                 
                 ModelBuilder.Vertex A = new ModelBuilder.Vertex((float) a.getX(), 0f, (float) a.getZ(), Vector3f.UNIT_Y, 0, 1);
                 ModelBuilder.Vertex B = new ModelBuilder.Vertex((float) b.getX(), 0f, (float) b.getZ(), Vector3f.UNIT_Y, 1, 1);
@@ -57,27 +52,36 @@ public class PlotNodifier
                 ModelBuilder.Vertex C = new ModelBuilder.Vertex((float) b.getX(), 3f, (float) b.getZ(), Vector3f.UNIT_Y, 1, 0);
                 
                 mb.addQuad(D, C, B, A);
-                
             }
-            /*
+        }
+        */
+        
+        for(Face f : plot.getFaces())
+        {
+            Polygon p = new Polygon();
             
-            Vertex av = plot.getVerticies()[f.getVertA()];
-            Vertex bv = plot.getVerticies()[f.getVertB()];
-            Vector3f a = new Vector3f((float) av.getX(), 0f, (float) av.getZ());
-            Vector3f b = new Vector3f((float) bv.getX(), 0f, (float) bv.getZ());
-            Vector3f c = b.add(0f, 7f, 0f);
-            Vector3f d = a.add(0f, 7f, 0f);
+            for(int i = 0; i < f.getVertexes().length; ++ i)
+            {
+                Vertex v = plot.getVerticies()[f.getVertexes()[i]];
+                
+                p.vecs.add(new Vector2f((float) v.getX(), (float) v.getZ()));
+            }
             
-            mb.addQuad(d, c, b, a);
-            */
+            Mesh m = p.doit(0.1f, 3f);
+            Geometry geo = new Geometry("", m);
+            geo.setMaterial(Main.mat_debug);
+
+            ret.attachChild(geo);
         }
         
         
+        /*
         Mesh m = mb.bake();
         Geometry geo = new Geometry("", m);
         geo.setMaterial(Main.mat_debug);
         
         ret.attachChild(geo);
+        */
         
         return ret;
     }
