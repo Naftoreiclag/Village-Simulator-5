@@ -156,7 +156,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         viewPort.addProcessor(dlsr);
     }
     
-    private void spawnFlag(Vector2f pos)
+    private Flag spawnFlag(Vector2f pos)
     {
         Flag flag = new Flag(pos);
         
@@ -166,6 +166,17 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         editorRootNode.attachChild(flagSpt);
         
         flags.add(flag);
+        return flag;
+    }
+    
+
+    private void spawnRoom(Room room)
+    {
+        room.setSpt(this.makeSpt(room));
+        editorRootNode.attachChild(room.getSpt());
+        
+        rooms.add(room);
+        
     }
     
     private void spawnWall(Flag a, Flag b)
@@ -888,6 +899,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
     }
     private Ruler ruler = new Ruler();
+    
     public class Roomer extends Tool
     {
 
@@ -904,7 +916,19 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         @Override
         void onClick(float tpf)
         {
+            if(mouseLoc == null)
+            {
+                
+            }
             
+            Flag a = spawnFlag(mouseLoc.clone().addLocal(-5f, -5f));
+            Flag b = spawnFlag(mouseLoc.clone().addLocal(5f, -5f));
+            Flag c = spawnFlag(mouseLoc.clone().addLocal(5f, 5f));
+            Flag d = spawnFlag(mouseLoc.clone().addLocal(-5f, 5f));
+            
+            Room room = new Room(a, b, c, d);
+            
+            spawnRoom(room);
         }
 
         @Override
@@ -921,6 +945,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         void tick(float tpf)
         {
         }
+
         
     }
     private Roomer roomer = new Roomer();
@@ -1014,6 +1039,61 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         // "Bedroom", "kitchen", "library", etc
         public String name;
         
+        public Room(Flag ... flags)
+        {
+            for(int i = 0; i < flags.length; ++ i)
+            {
+                this.flags.add(flags[i]);
+            }
+        }
+
+        private Spatial spt;
+
+        /**
+         * @return the spt
+         */
+        public Spatial getSpt()
+        {
+            return spt;
+        }
+
+        /**
+         * @param spt the spt to set
+         */
+        public void setSpt(Spatial spt)
+        {
+            this.spt = spt;
+        }
         
+    }
+    
+    private Spatial makeSpt(Room r)
+    {
+        BlueprintGeoGen bgg = new BlueprintGeoGen();
+
+        for(int i = 0; i < flags.size(); ++ i)
+        {
+            
+            Vector2d a = flags.get(i).loc;
+            Vector2d b;
+            if(i < flags.size() - 1)
+            {
+                b = flags.get(i + 1).loc;
+            }
+            else
+            {
+                b = flags.get(0).loc;
+            }
+
+            bgg.addLine(a, b);
+        }
+
+        Mesh m = bgg.bake(0.05f, 20, 1, 1);
+
+        Geometry spt = new Geometry("", m);
+        spt.setMaterial(strokeMat);
+        
+        return spt;
+
     }
 }

@@ -178,19 +178,13 @@ public class ModelBuilder
         this.addTriangle(x1, y1, z1, normal1, texX1, texY1, x3, y3, z3, normal3, texX3, texY3, x4, y4, z4, normal4, texX4, texY4);
     }
     
-    // Add a quad with respects to the user-set origin. Note: this just adds two triangles at once
     public void addPentagon(Vertex a, Vertex b, Vertex c, Vertex d, Vertex e)
     {
-        // 1  2
-        //    
-        // 4  3
-        
         this.addTriangle(a, b, c);
         this.addTriangle(a, c, d);
         this.addTriangle(a, d, e);
     }
     
-    // Add a quad with respects to the user-set origin. Note: this just adds two triangles at once
     public void addPentagon(
             float x1, float y1, float z1, Vector3f normal1, float texX1, float texY1,
             float x2, float y2, float z2, Vector3f normal2, float texX2, float texY2,
@@ -198,29 +192,19 @@ public class ModelBuilder
             float x4, float y4, float z4, Vector3f normal4, float texX4, float texY4,
             float x5, float y5, float z5, Vector3f normal5, float texX5, float texY5)
     {
-        // 1  2
-        //    
-        // 4  3
-        
         this.addTriangle(x1, y1, z1, normal1, texX1, texY1, x2, y2, z2, normal2, texX2, texY2, x3, y3, z3, normal3, texX3, texY3);
         this.addTriangle(x1, y1, z1, normal1, texX1, texY1, x3, y3, z3, normal3, texX3, texY3, x4, y4, z4, normal4, texX4, texY4);
         this.addTriangle(x1, y1, z1, normal1, texX1, texY1, x4, y4, z4, normal4, texX4, texY4, x5, y5, z5, normal5, texX5, texY5);
     }
     
-    // Add a quad with respects to the user-set origin. Note: this just adds two triangles at once
     public void addHexagon(Vertex a, Vertex b, Vertex c, Vertex d, Vertex e, Vertex f)
     {
-        // 1  2
-        //    
-        // 4  3
-        
         this.addTriangle(a, b, c);
         this.addTriangle(a, c, d);
         this.addTriangle(a, d, e);
         this.addTriangle(a, e, f);
     }
     
-    // Add a quad with respects to the user-set origin. Note: this just adds two triangles at once
     public void addHexagon(
             float x1, float y1, float z1, Vector3f normal1, float texX1, float texY1,
             float x2, float y2, float z2, Vector3f normal2, float texX2, float texY2,
@@ -229,10 +213,6 @@ public class ModelBuilder
             float x5, float y5, float z5, Vector3f normal5, float texX5, float texY5,
             float x6, float y6, float z6, Vector3f normal6, float texX6, float texY6)
     {
-        // 1  2
-        //    
-        // 4  3
-        
         this.addTriangle(x1, y1, z1, normal1, texX1, texY1, x2, y2, z2, normal2, texX2, texY2, x3, y3, z3, normal3, texX3, texY3);
         this.addTriangle(x1, y1, z1, normal1, texX1, texY1, x3, y3, z3, normal3, texX3, texY3, x4, y4, z4, normal4, texX4, texY4);
         this.addTriangle(x1, y1, z1, normal1, texX1, texY1, x4, y4, z4, normal4, texX4, texY4, x5, y5, z5, normal5, texX5, texY5);
