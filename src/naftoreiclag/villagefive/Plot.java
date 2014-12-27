@@ -16,15 +16,15 @@ public class Plot
     private int width, height;
     
     private Vertex[] verticies;
-    private Edge[] edges;
+    private EdgeFeature[] edges;
     private Face[] faces;
 
     public Vertex[] getVerticies() { return verticies; }
-    public Edge[] getEdges() { return edges; }
+    public EdgeFeature[] getEdges() { return edges; }
     public Face[] getFaces() { return faces; }
 
     public void setVerticies(Vertex[] verticies) { this.verticies = verticies; }
-    public void setEdges(Edge[] edges) { this.edges = edges; }
+    public void setEdges(EdgeFeature[] edges) { this.edges = edges; }
     public void setFaces(Face[] faces) { this.faces = faces; }
     
     // "Flags"
@@ -43,12 +43,13 @@ public class Plot
         public void setZ(double z) { this.z = z; }
     }
     
-    // "Walls"
+    // "Doors"
     // Store decal data (doors, windows, graffiti)
-    public static class Edge
+    public static class EdgeFeature
     {
         private int vertA;
         private int vertB;
+        private double distance;
         private int id;
         
         public int getId() { return id; }
@@ -58,6 +59,9 @@ public class Plot
         public int getVertB() { return vertB; }
         public void setVertA(int id) { this.vertA = id; }
         public void setVertB(int id) { this.vertB = id; }
+
+        public double getDistance() { return distance; }
+        public void setDistance(double distance) { this.distance = distance; }
     }
     
     // "Rooms"

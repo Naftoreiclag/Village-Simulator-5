@@ -12,7 +12,7 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.List;
-import naftoreiclag.villagefive.Plot.Edge;
+import naftoreiclag.villagefive.Plot.EdgeFeature;
 import naftoreiclag.villagefive.Plot.Face;
 import naftoreiclag.villagefive.Plot.Vertex;
 import naftoreiclag.villagefive.util.ModelBuilder;
