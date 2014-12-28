@@ -160,6 +160,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         viewPort.addProcessor(dlsr);
     }
     
+    @Deprecated
     private Flag spawnLooseFlag(Vector2f pos)
     {
         Flag flag = new Flag(pos);
@@ -183,13 +184,10 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
         
         rooms.add(room);
-        
-        spawnSplittingFlag(room.flags.get(0), room.flags.get(1), 2d);
-        
     }
     
     // Spawn a new flag to split an existing wall
-    private void spawnSplittingFlag(Flag first, Flag second, double dist)
+    private Flag spawnSplittingFlag(Flag first, Flag second, double dist)
     {
         System.out.println("spawn");
         /*
@@ -246,23 +244,19 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             {
                 Flag currFlag = r.flags.get(i);
                 
-                if(currFlag == second && prevFlag == first)
+                if((currFlag == second && prevFlag == first) || (currFlag == first && prevFlag == second))
                 {
                     System.out.println("inserted");
                     r.flags.add(i, newFlag);
                     newFlag.rooms.add(r);
                     break;
                 }
-                if(currFlag == first && prevFlag == second)
-                {
-                    System.out.println("inserted");
-                    r.flags.add(i, newFlag);
-                    newFlag.rooms.add(r);
-                    break;
-                }
+                
                 prevFlag = currFlag;
             }
         }
+        
+        return newFlag;
         
     }
     
@@ -787,6 +781,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         public Vector2f preclickFlagLoc;
         public Vector2f preclickMouseLoc;
         
+        public LinePoint nearestPoint;
         public Flag nearestFlag;
         public Flag dragFlag;
 
@@ -803,12 +798,23 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         @Override
         void onClick(float tpf)
         {
-            if(mouseLoc != null && nearestFlag != null)
+            if(mouseLoc != null)
             {
-                dragFlag = nearestFlag;
+                if(nearestFlag != null)
+                {
+                    dragFlag = nearestFlag;
 
-                preclickMouseLoc = mouseLoc;
-                preclickFlagLoc = new Vector2f((float) dragFlag.getLoc().a, (float) dragFlag.getLoc().b);
+                    preclickMouseLoc = mouseLoc;
+                    preclickFlagLoc = new Vector2f((float) dragFlag.getLoc().a, (float) dragFlag.getLoc().b);
+                }
+                else if(nearestPoint != null)
+                {
+                    Flag newFlag = spawnSplittingFlag(nearestPoint.a, nearestPoint.b, nearestPoint.distance);
+                    
+                    dragFlag = newFlag;
+                    preclickMouseLoc = mouseLoc;
+                    preclickFlagLoc = new Vector2f((float) dragFlag.getLoc().a, (float) dragFlag.getLoc().b);
+                }
             }
         }
 
@@ -842,7 +848,23 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 {
                     // Try find a valid spot for a flag
                     
+                    nearestPoint = findClosestPoint();
                     
+                    if(nearestPoint != null)
+                    {
+                    System.out.println("nearest: " + nearestPoint.distance);
+                        
+                    }
+                    
+                    if(nearestPoint == null)
+                    {
+                        
+                    }
+
+                }
+                else
+                {
+                    nearestPoint = null;
                 }
             }
         }
@@ -870,12 +892,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             // Standard search algorithm
             
             // Keep track of the closest flag
-            double bestDist = selectionRadius * selectionRadius;
+            double bestDist = selectionRadius;
             Flag bestFlag = null;
             for(Flag flag : flags)
             {
-                // No need to sqrt
-                double dist = ((mouseLoc.x - flag.getLoc().a) * (mouseLoc.x - flag.getLoc().a)) + ((mouseLoc.y - flag.getLoc().b) * (mouseLoc.y - flag.getLoc().b));
+                double dist =  Math.sqrt(((mouseLoc.x - flag.getLoc().a) * (mouseLoc.x - flag.getLoc().a)) + ((mouseLoc.y - flag.getLoc().b) * (mouseLoc.y - flag.getLoc().b)));
                 
                 if(dist < bestDist)
                 {
@@ -884,6 +905,76 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             }
             
             return bestFlag;
+        }
+        
+        // improve pls
+        private LinePoint findClosestPoint()
+        {
+            // Make sure the mouse is somewhere on the paper
+            if(mouseLoc == null)
+            {
+                return null;
+            }
+            
+            Vector2d c = new Vector2d(mouseLoc.x, mouseLoc.y);
+            
+            // Keep track of the closest point
+            double bestDist = selectionRadius;
+            LinePoint bestLp = null;
+            
+            for(Room r : rooms)
+            {
+                Flag prevFlag = r.flags.get(r.flags.size() - 1);
+                for(int i = 0; i < r.flags.size(); ++ i)
+                {
+                    Flag currFlag = r.flags.get(i);
+                    
+                    /*
+                     *                 C   mouse pos
+                     *                 |
+                     *                 |
+                     *                 |
+                     *                 |
+                     *    A------------D-----------B  flags
+                     *                distance
+                     */
+                    
+                    
+                    Vector2d a = prevFlag.getLoc();
+                    Vector2d b = currFlag.getLoc();
+                    Vector2d ab = b.subtract(a);
+                    Vector2d ac = c.subtract(a);
+                    
+                    double ab_distsq = ab.magnitudeSquared();
+                    double ac_dot_ab = ac.dotProduct(ab);
+                    
+                    double fractionOfAB = ac_dot_ab / ab_distsq;
+                    
+                    // If it is off the wall (lol)
+                    if(fractionOfAB > 1 || fractionOfAB < 0)
+                    {
+                        prevFlag = currFlag;
+                        continue;
+                    }
+                    
+                    double trueDist = Math.sqrt(ab_distsq) * fractionOfAB;
+                    
+                    Vector2d d = a.add(ab.multiply(fractionOfAB));
+                    Vector2d dc = c.subtract(d);
+                    
+                    double distFromMouse = Math.sqrt(dc.magnitudeSquared());
+                    
+                    if(distFromMouse < bestDist)
+                    {
+                        bestDist = trueDist;
+                        bestLp = new LinePoint(prevFlag, currFlag, trueDist);
+                    }
+                    
+                    prevFlag = currFlag;
+                }
+            }
+            
+            return bestLp;
         }
         
         
@@ -963,6 +1054,20 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
     }
 
+    
+    public static class LinePoint
+    {
+        public LinePoint(Flag a, Flag b, double dist)
+        {
+            this.a = a;
+            this.b = b;
+            this.distance = dist;
+        }
+        
+        public Flag a;
+        public Flag b;
+        public double distance;
+    }
     
     public class Door
     {
