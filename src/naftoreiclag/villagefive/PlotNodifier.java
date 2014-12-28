@@ -13,9 +13,10 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.List;
-import naftoreiclag.villagefive.Plot.EdgeFeature;
+import naftoreiclag.villagefive.Plot.Decal;
 import naftoreiclag.villagefive.Plot.Face;
 import naftoreiclag.villagefive.Plot.Vertex;
+import naftoreiclag.villagefive.Polygon.Hole;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
 public class PlotNodifier
@@ -64,8 +65,44 @@ public class PlotNodifier
             {
                 Vertex v = plot.getVerticies()[f.getVertexes()[i]];
                 
+                
                 p.vecs.add(new Vector2f((float) v.getX(), (float) v.getZ()));
             }
+            for(Decal decal : plot.getEdges())
+            {
+                Hole jam = new Hole();
+                
+                jam.point = 0;
+                jam.x = 1f;
+                jam.y = 1f;
+                jam.h = 1f;
+                jam.w = 1f;
+                
+                Hole clam = new Hole();
+                
+                clam.point = 0;
+                clam.x = 3f;
+                clam.y = 0f;
+                clam.h = 3f;
+                clam.w = 2f;
+                
+                Hole spam = new Hole();
+                
+                spam.point = 0;
+                spam.x = 7f;
+                spam.y = 1f;
+                spam.h = 1f;
+                spam.w = 1f;
+                
+                ArrayList<Hole> h = new ArrayList<Hole>();
+                h.add(jam);
+                h.add(clam);
+                h.add(spam);
+                
+                // fix dis
+                p.binmods.put(0, h);
+            }
+            
             
             Mesh m = p.doit(0.4f, 4f, 4f);
             Geometry geo = new Geometry("", m);

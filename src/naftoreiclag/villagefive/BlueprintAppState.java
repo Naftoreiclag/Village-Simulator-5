@@ -46,7 +46,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Vector2d;
-import naftoreiclag.villagefive.Plot.EdgeFeature;
+import naftoreiclag.villagefive.Plot.Decal;
 import naftoreiclag.villagefive.Plot.Face;
 import naftoreiclag.villagefive.Plot.Vertex;
 
@@ -189,7 +189,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     private void spawnDoor(Flag a, Flag b)
     {
-        WallEffect door = new WallEffect(a, b);
+        Door door = new Door(a, b);
         
         a.doors.add(door);
         b.doors.add(door);
@@ -594,6 +594,20 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             faces[i] = trans;
         }
         plotData.setFaces(faces);
+        
+        Decal[] edges = new Decal[doors.size()];
+        for(int i = 0; i < doors.size(); ++ i)
+        {
+            Door door = doors.get(i);
+            Decal trans = new Decal();
+            
+            trans.setVertA(door.a.id);
+            trans.setVertA(door.b.id);
+            
+            
+            edges[i] = trans;
+        }
+        plotData.setEdges(edges);
         
     }
     
@@ -1045,7 +1059,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private Tool tool = dragger;
     
     public List<Flag> flags = new ArrayList<Flag>();
-    public List<WallEffect> doors = new ArrayList<WallEffect>();
+    public List<Door> doors = new ArrayList<Door>();
     public List<Room> rooms = new ArrayList<Room>();
     
     public class Flag
@@ -1055,7 +1069,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         private int id;
         
         private List<Room> rooms = new ArrayList<Room>();
-        public List<WallEffect> doors = new ArrayList<WallEffect>();
+        public List<Door> doors = new ArrayList<Door>();
         
         public Flag()
         {
@@ -1107,7 +1121,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             {
                 room.updateSpatial();
             }
-            for(WallEffect door : doors)
+            for(Door door : doors)
             {
                 //door.updateLoc();
                 door.updateSpatial();
@@ -1116,7 +1130,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     }
 
     
-    public class WallEffect
+    public class Door
     {
         public Flag a;
         public Flag b;
@@ -1125,7 +1139,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
         private Spatial spt;
 
-        private WallEffect(Flag a, Flag b)
+        private Door(Flag a, Flag b)
         {
             this.a = a;
             this.b = b;

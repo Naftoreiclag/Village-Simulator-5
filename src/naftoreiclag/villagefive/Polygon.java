@@ -25,15 +25,15 @@ public class Polygon
     
     public Map<Integer, ArrayList<Hole>> binmods = new HashMap<Integer, ArrayList<Hole>>();
     
-    public class Hole
+    public static class Hole
     {
         // On what edge
-        int point;
+        public int point;
         
-        float x;
-        float y;
-        float w;
-        float h;
+        public float x;
+        public float y;
+        public float w;
+        public float h;
     }
     
     public Polygon shrink(float thickness)
@@ -118,7 +118,7 @@ public class Polygon
                 Vertex prevBOT = A;
                 Vector2f prevZ = a;
                 
-                float tX = -tW;
+                float tX = tW;
                 
                 for(int j = 0; j < holes.size(); j ++)
                 {
@@ -134,7 +134,6 @@ public class Polygon
                      *                       q     z
                      */
                     
-                    
                     Hole hole = holes.get(j);
                     
                     Vector2f q = ab.mult(hole.x).addLocal(a);
@@ -143,36 +142,54 @@ public class Polygon
                     float r = hole.y + hole.h;
                     float g = hole.y;
                     
-                    tX += prevZ.distance(q) / textureWidth;
+                    tX -= prevZ.distance(q) / textureWidth;
                     Vertex T = new Vertex(q.x, tall, q.y, joe, tX, 0f);
                     Vertex R = new Vertex(q.x,    r, q.y, joe, tX, (tall - r) / textureHeight);
                     Vertex G = new Vertex(q.x,    g, q.y, joe, tX, (tall - g) / textureHeight);
                     Vertex V = new Vertex(q.x,   0f, q.y, joe, tX, tH);
                     
-                    tX += q.distance(z) / textureWidth;
+                    tX -= q.distance(z) / textureWidth;
                     Vertex P = new Vertex(z.x, tall, z.y, joe, tX, 0f);
                     Vertex Y = new Vertex(z.x,    r, z.y, joe, tX, (tall - r) / textureHeight);
                     Vertex J = new Vertex(z.x,    g, z.y, joe, tX, (tall - g) / textureHeight);
                     Vertex N = new Vertex(z.x,   0f, z.y, joe, tX, tH);
                     
-                    mb.addQuad(T, P, Y, R);
-                    mb.addQuad(G, J, N, V);
+                    prevZ = z;
                     
+                    if(reverseNormals)
+                    {
+                        mb.addQuad(T, P, Y, R);
+                        mb.addQuad(G, J, N, V);
+                    }
+                    else
+                    {
+                        mb.addQuad(P, T, R, Y);
+                        mb.addQuad(J, G, V, N);
+                    }
                     
-                    mb.addQuad(prevTOP, T, V, prevBOT);
+                    if(reverseNormals)
+                    {
+                        mb.addQuad(prevTOP, T, V, prevBOT);
+                    }
+                    else
+                    {
+                        mb.addQuad(T, prevTOP, prevBOT, V);
+                    }
                     prevTOP = P;
                     prevBOT = N;
-                    
-                    
                 }
                 
-                
-                mb.addQuad(prevTOP, C, B, prevBOT);
+                if(reverseNormals)
+                {
+                    mb.addQuad(prevTOP, C, B, prevBOT);
+                }
+                else
+                {
+                    mb.addQuad(C, prevTOP, prevBOT, B);
+                }
             }
             else
             {
-                
-                
                 if(reverseNormals)
                 {
                     mb.addQuad(D, C, B, A);

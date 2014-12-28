@@ -16,15 +16,15 @@ public class Plot
     private int width, height;
     
     private Vertex[] verticies;
-    private EdgeFeature[] edges;
+    private Decal[] edges;
     private Face[] faces;
 
     public Vertex[] getVerticies() { return verticies; }
-    public EdgeFeature[] getEdges() { return edges; }
+    public Decal[] getEdges() { return edges; }
     public Face[] getFaces() { return faces; }
 
     public void setVerticies(Vertex[] verticies) { this.verticies = verticies; }
-    public void setEdges(EdgeFeature[] edges) { this.edges = edges; }
+    public void setEdges(Decal[] edges) { this.edges = edges; }
     public void setFaces(Face[] faces) { this.faces = faces; }
     
     // "Flags"
@@ -45,7 +45,7 @@ public class Plot
     
     // "Doors"
     // Store decal data (doors, windows, graffiti)
-    public static class EdgeFeature
+    public static class Decal
     {
         private int vertA;
         private int vertB;
