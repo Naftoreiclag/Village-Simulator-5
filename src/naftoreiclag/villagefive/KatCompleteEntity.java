@@ -130,8 +130,8 @@ public class KatCompleteEntity extends Entity
         head.attachChild(mask);
         
         // gold, just for fun
-        Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
-        node.setMaterial(mat);
+        // Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
+        // node.setMaterial(mat);
     }
     
     

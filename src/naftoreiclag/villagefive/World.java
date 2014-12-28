@@ -126,26 +126,11 @@ public class World
     
     private void drawPlot(Plot p)
     {
-        ModelBuilder mb = new ModelBuilder();
-
-        mb.addQuad(0, 0, 0, new Vector3f(0, 2, 0), 0, 0,
-                    1, 0, 0, new Vector3f(0, 2, 0), 0, 0,
-                    1, 0, 1, new Vector3f(0, 2, 0), 0, 0,
-                    0, 0, 1, new Vector3f(0, 2, 0), 0, 0);
-
-        Mesh m = mb.bake(p.getWidth(), 0, p.getHeight());
-        
-        Geometry geo = new Geometry("aaaa", m);
-        geo.setLocalTranslation((float) p.getX(), 0.1f, (float) p.getZ());
-        geo.setMaterial((Material) assetManager.loadMaterial("Materials/wiremesh.j3m"));
-        geo.setShadowMode(RenderQueue.ShadowMode.Receive);
-        
-        System.out.println(geo.getLocalTranslation());
         
         
-        rootNode.attachChild(geo);
         
         Node n = PlotNodifier.nodify(p);
+        n.setLocalTranslation((float) p.getX(), 0.1f, (float) p.getZ());
         
         rootNode.attachChild(n);
     }

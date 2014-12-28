@@ -111,18 +111,8 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         house.setX(10);
         house.setZ(10);
         
+        world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         world.addPlot(house);
-        
-        /*
-        
-        testp = new Plot();
-        testp.setHeight(10);
-        testp.setWidth(10);
-        testp.setX(10);
-        testp.setZ(10);
-        
-        world.addPlot(testp);
-        */
         
         
         world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));

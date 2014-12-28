@@ -37,6 +37,7 @@ public class Main extends SimpleApplication implements ActionListener
     static Material mat_debug_wireframe;
     static Material mat_debug;
     static Material mat_debug_lighting;
+    static Material mat_debug_bricks;
     
     OverworldAppState tas;
     BlueprintAppState bas;
@@ -51,6 +52,7 @@ public class Main extends SimpleApplication implements ActionListener
         mat_debug_wireframe = assetManager.loadMaterial("Materials/wiremesh.j3m");
         mat_debug = assetManager.loadMaterial("Materials/debug.j3m");
         mat_debug_lighting = assetManager.loadMaterial("Materials/debugLighting.j3m");
+        mat_debug_bricks = assetManager.loadMaterial("Materials/Bricks.j3m");
         
         flyCam.setEnabled(false);
         
