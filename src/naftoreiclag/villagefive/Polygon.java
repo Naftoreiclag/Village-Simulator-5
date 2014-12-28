@@ -23,7 +23,7 @@ public class Polygon
 {
     public List<Vector2f> vecs = new ArrayList<Vector2f>();
     
-    public Map<Integer, ArrayList<Hole>> binmods = new HashMap<Integer, ArrayList<Hole>>();
+    public Map<Integer, ArrayList<Hole>> holesPerEdge = new HashMap<Integer, ArrayList<Hole>>();
     
     public static class Hole
     {
@@ -43,9 +43,9 @@ public class Polygon
         
         for(int i = 0; i < vecs.size(); ++ i)
         {
-            Vector2f q = get(i);
-            Vector2f a = get(i + 1);
-            Vector2f b = get(i + 2);
+            Vector2f q = get(i - 1);
+            Vector2f a = get(i);
+            Vector2f b = get(i + 1);
             
             Vector2f aq = q.subtract(a).normalizeLocal();
             Vector2f ab = b.subtract(a).normalizeLocal();
@@ -56,22 +56,61 @@ public class Polygon
             Vector2f ad = aq.add(ab).multLocal(FastMath.sign(baqC)).multLocal(thickness);
             
             /*
-             *                 D
-             * 
-             * 
-             *         B       A        Q
+             *           D
+             *           |
+             *           |
+             *   Q-------A-------B
              */
             
-            ret.vecs.add(ad.addLocal(a));
+            /*
+             * 
+             * Q     D
+             * |    /
+             * |   /
+             * |  /
+             * | /
+             * A-----------B
+             * 
+             * 
+             * 
+             */
+            
+            ret.vecs.add(ad.add(a));
+            
+            // Has holes
+            if(holesPerEdge.containsKey(i))
+            {
+                float offset = FastMath.sqrt(ad.lengthSquared() - FastMath.sqr(thickness));
+                
+                ArrayList<Hole> origHoles = holesPerEdge.get(i);
+                ArrayList<Hole> offsetHoles = new ArrayList<Hole>();
+                
+                for(int j = 0; j < origHoles.size(); ++ j)
+                {
+                    Hole origHole = origHoles.get(j);
+                    Hole offsetHole = new Hole();
+                    
+                    offsetHole.point = origHole.point;
+                    offsetHole.h = origHole.h;
+                    offsetHole.w = origHole.w;
+                    offsetHole.x = origHole.x;
+                    offsetHole.y = origHole.y;
+                    
+                    offsetHole.x -= offset;
+                    
+                    offsetHoles.add(offsetHole);
+                }
+                
+                ret.holesPerEdge.put(i, offsetHoles);
+            }
         }
         
         return ret;
     }
     
-    public void makeWall(float tall, float textureWidth, ModelBuilder mb, boolean reverseNormals)
+    public void makeWall(float height, float textureWidth, float textureHeight, ModelBuilder mb, boolean reverseNormals)
     {
-        float textureHeight = textureWidth;
-        float tH = tall / textureHeight;
+        float tH = height / textureHeight;
         
         for(int i = 0; i < vecs.size(); ++ i)
         {
@@ -79,12 +118,12 @@ public class Polygon
             Vector2f b = get(i + 1);
             
             /*
-             *     [viewing front of wall]
+             *  [viewing front of wall]
              * 
-             *  D       C
-             * 
-             * 
-             *  A       B
+             *  D-------C
+             *  |       |
+             *  |       |
+             *  A-------B
              */
             
             Vector2f ab = b.subtract(a).normalizeLocal();
@@ -92,26 +131,25 @@ public class Polygon
             float tW = a.distance(b) / textureWidth;
             tW /= 2f;
             
-            Vector3f joe;
+            Vector3f normalVec;
             
             if(reverseNormals)
             {
-                joe = new Vector3f(-ab.y, 0f, ab.x);
+                normalVec = new Vector3f(-ab.y, 0f, ab.x);
             }
             else
             {
-                joe = new Vector3f(ab.y, 0f, -ab.x);
+                normalVec = new Vector3f(ab.y, 0f, -ab.x);
             }
             
+            Vertex C = new Vertex(b.x, height, b.y, normalVec, -tW, 0f);
+            Vertex D = new Vertex(a.x, height, a.y, normalVec,  tW, 0f);
+            Vertex A = new Vertex(a.x,     0f, a.y, normalVec,  tW, tH);
+            Vertex B = new Vertex(b.x,     0f, b.y, normalVec, -tW, tH);
             
-            Vertex C = new Vertex(b.x, tall, b.y, joe, -tW, 0f);
-            Vertex D = new Vertex(a.x, tall, a.y, joe, tW, 0f);
-            Vertex A = new Vertex(a.x,   0f, a.y, joe, tW, tH);
-            Vertex B = new Vertex(b.x,   0f, b.y, joe, -tW, tH);
-            
-            if(binmods.containsKey(i))
+            if(holesPerEdge.containsKey(i))
             {
-                List<Hole> holes = binmods.get(i);
+                List<Hole> holes = holesPerEdge.get(i);
                 
                 // Last thingy
                 Vertex prevTOP = D;
@@ -139,20 +177,21 @@ public class Polygon
                     Vector2f q = ab.mult(hole.x).addLocal(a);
                     Vector2f z = ab.mult(hole.w).addLocal(q);
                     
+                    // Reusable y-values for the R,Y,G,J vertexes
                     float r = hole.y + hole.h;
                     float g = hole.y;
                     
                     tX -= prevZ.distance(q) / textureWidth;
-                    Vertex T = new Vertex(q.x, tall, q.y, joe, tX, 0f);
-                    Vertex R = new Vertex(q.x,    r, q.y, joe, tX, (tall - r) / textureHeight);
-                    Vertex G = new Vertex(q.x,    g, q.y, joe, tX, (tall - g) / textureHeight);
-                    Vertex V = new Vertex(q.x,   0f, q.y, joe, tX, tH);
+                    Vertex T = new Vertex(q.x, height, q.y, normalVec, tX, 0f);
+                    Vertex R = new Vertex(q.x,    r, q.y, normalVec, tX, (height - r) / textureHeight);
+                    Vertex G = new Vertex(q.x,    g, q.y, normalVec, tX, (height - g) / textureHeight);
+                    Vertex V = new Vertex(q.x,   0f, q.y, normalVec, tX, tH);
                     
                     tX -= q.distance(z) / textureWidth;
-                    Vertex P = new Vertex(z.x, tall, z.y, joe, tX, 0f);
-                    Vertex Y = new Vertex(z.x,    r, z.y, joe, tX, (tall - r) / textureHeight);
-                    Vertex J = new Vertex(z.x,    g, z.y, joe, tX, (tall - g) / textureHeight);
-                    Vertex N = new Vertex(z.x,   0f, z.y, joe, tX, tH);
+                    Vertex P = new Vertex(z.x, height, z.y, normalVec, tX, 0f);
+                    Vertex Y = new Vertex(z.x,    r, z.y, normalVec, tX, (height - r) / textureHeight);
+                    Vertex J = new Vertex(z.x,    g, z.y, normalVec, tX, (height - g) / textureHeight);
+                    Vertex N = new Vertex(z.x,   0f, z.y, normalVec, tX, tH);
                     
                     prevZ = z;
                     
@@ -202,33 +241,20 @@ public class Polygon
         }
     }
     
-    
-    public Mesh doit(float thickness, float height, float texWidth)
+    public Mesh doit(float thickness, float height, float texWidth, float texHeight)
     {
         ModelBuilder mb = new ModelBuilder();
         
         Polygon shrunk = this.shrink(thickness);
         
-        this.makeWall(height, texWidth, mb, false);
-        shrunk.makeWall(height, texWidth, mb, true);
+        this.makeWall(height, texWidth, texHeight, mb, false);
+        shrunk.makeWall(height, texWidth, texHeight, mb, true);
         
         return mb.bake();
     }
-    /*
-    public void tall(float height, float texWidth, ModelBuilder mb)
-    {
-        this.tall(height, texWidth, mb, false);
-    }
-    public Mesh tall(float height, float texWidth)
-    {
-        ModelBuilder mb = new ModelBuilder();
-        tall(height, texWidth, mb);
-                
-        return mb.bake();
-    }
-    */
+    
     public Vector2f get(int i)
     {
-        return vecs.get(i % vecs.size());
+        return vecs.get(((i % vecs.size()) + vecs.size()) % vecs.size());
     }
 }

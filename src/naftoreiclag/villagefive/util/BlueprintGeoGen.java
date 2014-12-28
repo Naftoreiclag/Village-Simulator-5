@@ -13,7 +13,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.vecmath.Vector2d;
 import org.lwjgl.BufferUtils;
 
 public class BlueprintGeoGen
@@ -26,7 +25,7 @@ public class BlueprintGeoGen
     }
     public void addLine(Vector2d a, Vector2d b)
     {
-        lines.add(new Line((float) a.x, (float) a.y, (float) b.x, (float) b.y));
+        lines.add(new Line((float) a.a, (float) a.b, (float) b.a, (float) b.b));
     }
     public void addLine(float ax, float ay, float bx, float by)
     {

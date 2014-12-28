@@ -23,39 +23,8 @@ public class PlotNodifier
 {
     public static Node nodify(Plot plot)
     {
-        
         Node ret = new Node();
         ModelBuilder mb = new ModelBuilder();
-        
-        /*
-        // make walls
-        for(Face f : plot.getFaces())
-        {
-            for(int i = 0; i < f.getVertexes().length; ++ i)
-            {
-                int ai = f.getVertexes()[i];
-                Vertex a = plot.getVerticies()[ai];
-                
-                int bi;
-                if(i < f.getVertexes().length - 1)
-                {
-                    bi = f.getVertexes()[i + 1];
-                }
-                else
-                {
-                     bi = f.getVertexes()[0];
-                }
-                Vertex b = plot.getVerticies()[bi];
-                
-                ModelBuilder.Vertex A = new ModelBuilder.Vertex((float) a.getX(), 0f, (float) a.getZ(), Vector3f.UNIT_Y, 0, 1);
-                ModelBuilder.Vertex B = new ModelBuilder.Vertex((float) b.getX(), 0f, (float) b.getZ(), Vector3f.UNIT_Y, 1, 1);
-                ModelBuilder.Vertex D = new ModelBuilder.Vertex((float) a.getX(), 3f, (float) a.getZ(), Vector3f.UNIT_Y, 0, 0);
-                ModelBuilder.Vertex C = new ModelBuilder.Vertex((float) b.getX(), 3f, (float) b.getZ(), Vector3f.UNIT_Y, 1, 0);
-                
-                mb.addQuad(D, C, B, A);
-            }
-        }
-        */
         
         for(Face f : plot.getFaces())
         {
@@ -100,11 +69,11 @@ public class PlotNodifier
                 h.add(spam);
                 
                 // fix dis
-                p.binmods.put(0, h);
+                p.holesPerEdge.put(0, h);
             }
             
-            
-            Mesh m = p.doit(0.4f, 4f, 4f);
+            //    public Mesh doit(float thickness, float height, float texWidth, float texHeight)
+            Mesh m = p.doit(0.4f, 4f, 4f, 4f);
             Geometry geo = new Geometry("", m);
             geo.setMaterial(Main.mat_debug_bricks);
 

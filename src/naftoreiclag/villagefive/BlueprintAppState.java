@@ -45,7 +45,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.vecmath.Vector2d;
 import naftoreiclag.villagefive.Plot.Decal;
 import naftoreiclag.villagefive.Plot.Face;
 import naftoreiclag.villagefive.Plot.Vertex;
@@ -53,10 +52,12 @@ import naftoreiclag.villagefive.Plot.Vertex;
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
 import naftoreiclag.villagefive.util.SmoothAnglef;
 import naftoreiclag.villagefive.util.SmoothScalarf;
+import naftoreiclag.villagefive.util.Vector2d;
 
 import org.lwjgl.BufferUtils;
 
 // This class is a BEAST
+// Locations of flags, rooms, and stuff are stored as doubles
 public class BlueprintAppState extends AbstractAppState implements ActionListener, AnalogListener
 {
     public BlueprintAppState()
@@ -159,9 +160,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         viewPort.addProcessor(dlsr);
     }
     
-    private Flag spawnFlag(Vector2f pos)
+    private Flag spawnLooseFlag(Vector2f pos)
     {
-        
         Flag flag = new Flag(pos);
         
         Spatial flagSpt = b_flag.clone();
@@ -173,7 +173,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         return flag;
     }
     
-
     private void spawnRoom(Room room)
     {
         room.updateSpatial();
@@ -184,6 +183,86 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
         
         rooms.add(room);
+        
+        spawnSplittingFlag(room.flags.get(0), room.flags.get(1), 2d);
+        
+    }
+    
+    // Spawn a new flag to split an existing wall
+    private void spawnSplittingFlag(Flag first, Flag second, double dist)
+    {
+        System.out.println("spawn");
+        /*
+         *          new flag
+         *            v
+         * A----------N----------B
+         * 
+         */
+        
+        Vector2d a = first.loc;
+        Vector2d b = second.loc;
+        Vector2d an = b.subtract(a).normalizeLocal().multiplyLocal(dist);
+        Vector2d n = a.add(an);
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(an);
+        System.out.println(n);
+        
+        Flag newFlag = new Flag();
+        newFlag.loc = n;
+        System.out.println(newFlag.loc);
+        
+        Spatial flagSpt = b_flag.clone();
+        flagSpt.setLocalTranslation((float) newFlag.loc.a, 0, (float) newFlag.loc.b);
+        newFlag.setSpatial(flagSpt);
+        editorRootNode.attachChild(flagSpt);
+        
+        flags.add(newFlag);
+        
+        
+        List<Room> affectedRooms = new ArrayList<Room>();
+        
+        for(Room r : first.rooms)
+        {
+            if(!affectedRooms.contains(r))
+            {
+                affectedRooms.add(r);
+            }
+        }
+        for(Room r : second.rooms)
+        {
+            if(!affectedRooms.contains(r))
+            {
+                affectedRooms.add(r);
+            }
+        }
+        
+        System.out.println(affectedRooms.size() + " rooms affected ");
+        for(Room r : affectedRooms)
+        {
+            System.out.println(r.flags.size() + " afsaf");
+            Flag prevFlag = r.flags.get(r.flags.size() - 1);
+            for(int i = 0; i < r.flags.size(); ++ i)
+            {
+                Flag currFlag = r.flags.get(i);
+                
+                if(currFlag == second && prevFlag == first)
+                {
+                    System.out.println("inserted");
+                    r.flags.add(i, newFlag);
+                    newFlag.rooms.add(r);
+                    break;
+                }
+                if(currFlag == first && prevFlag == second)
+                {
+                    System.out.println("inserted");
+                    r.flags.add(i, newFlag);
+                    newFlag.rooms.add(r);
+                    break;
+                }
+                prevFlag = currFlag;
+            }
+        }
         
     }
     
@@ -236,14 +315,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 System.out.println("drag");
             }
         }
-        if(key.equals(KeyKeys.num_2) && false)
-        {
-            if(isPressed)
-            {
-                switchTool(flagger, tpf);
-                System.out.println("placeFlag");
-            }
-        }
         if(key.equals(KeyKeys.num_3))
         {
             if(isPressed)
@@ -251,19 +322,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 toggleGridView();
             }
         }
-        if(key.equals(KeyKeys.num_4) && false)
-        {
-            if(isPressed)
-            {
-                switchTool(this.ruler, tpf);
-                System.out.println("rulr");
-            }
-        }
         if(key.equals(KeyKeys.num_5))
         {
             if(isPressed)
             {
-                switchTool(this.drafla, tpf);
+                switchTool(this.flagMover, tpf);
                 System.out.println("drafla");
             }
         }
@@ -352,7 +415,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     {
         b_flag = (Node) assetManager.loadModel("Models/BlueFlag.mesh.j3o");
         //b_flag.scale(0.3f);
-        flagger.setFlagModel();
+        //flagger.setFlagModel();
         
         
 	    paper = makePaperGeo();
@@ -568,8 +631,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             Flag orig = flags.get(i);
             Vertex trans = new Vertex();
             
-            trans.setX(orig.getLoc().x);
-            trans.setZ(orig.getLoc().y);
+            trans.setX(orig.getLoc().a);
+            trans.setZ(orig.getLoc().b);
             trans.setId(i);
             
             orig.id = i;
@@ -667,249 +730,6 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     };
     public Dragger dragger = new Dragger();
     
-    public class Flagger extends Tool
-    {
-        Node ghostFlag;
-        
-        void setFlagModel()
-        {
-            ghostFlag = (Node) b_flag.clone();
-            ghostFlag.setShadowMode(RenderQueue.ShadowMode.Off);
-            List<Spatial> c = ghostFlag.getChildren();
-            for(Spatial ch : c)
-            {
-                if(ch instanceof Geometry)
-                {
-                    Geometry chg = (Geometry) ch;
-                    
-                    Material mg = chg.getMaterial();
-                    
-                    mg.setColor("Diffuse", new ColorRGBA(1, 1, 1, 0.5f));
-                    mg.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-                }
-            }
-        }
-        
-
-        @Override
-        void onSelect(float tpf)
-        {
-            
-        }
-
-        @Override
-        void onDeselect(float tpf)
-        {
-            ghostFlag.removeFromParent();
-            ghostFlagVisible = false;
-        }
-        @Override
-        void onClick(float tpf)
-        {
-            if(mouseLoc != null)
-            {
-                spawnFlag(mouseLoc);
-            }
-        }
-        
-        boolean ghostFlagVisible = false;
-
-        @Override
-        void whileMouseMove(float tpf)
-        {
-            if(mouseLoc != null)
-            {
-                if(!ghostFlagVisible)
-                {
-                    editorRootNode.attachChild(ghostFlag);
-                    ghostFlagVisible = true;
-                }
-                ghostFlag.setLocalTranslation(mouseLoc.x, 0, mouseLoc.y);
-            }
-            else
-            {
-                ghostFlag.removeFromParent();
-                ghostFlagVisible = false;
-            }
-        }
-
-        @Override
-        void onClickRelease(float tpf)
-        {
-            
-        }
-
-        @Override
-        void tick(float tpf)
-        {
-        }
-    };
-    public Flagger flagger = new Flagger();
-    
-    public class Ruler extends Tool
-    {
-        Flag firstFlag;
-        Flag closestFlag;
-        
-        Geometry previewLine;
-        Material previewLineMat;
-        float alphaTime = 0.0f;
-        
-        @Override
-        void onSelect(float tpf)
-        {
-            if(previewLineMat == null)
-            {
-                previewLineMat = strokeMat.clone();
-            }
-            
-            // reset selections
-            firstFlag = null;
-            closestFlag = null;
-        }
-
-        @Override
-        void onDeselect(float tpf)
-        {
-            if(previewLine != null)
-            {
-                previewLine.removeFromParent();
-                previewLine = null;
-            }
-        }
-
-        @Override
-        void onClick(float tpf)
-        {
-            // If they click on nothing, then deselect everything
-            if(closestFlag == null)
-            {
-                firstFlag = null;
-                if(previewLine != null)
-                {
-                    previewLine.removeFromParent();
-                    previewLine = null;
-                }
-                
-                return;
-            }
-            
-            // If they click on a flag, but have had nothing else selected
-            if(firstFlag == null)
-            {
-                firstFlag = closestFlag;
-                
-                return;
-            }
-            
-            // If they click on a flag, and have a first flag selected
-            
-            //spawnWall(firstFlag, closestFlag);
-            firstFlag = closestFlag;
-            
-            if(previewLine != null)
-            {
-                previewLine.removeFromParent();
-                previewLine = null;
-            }
-        }
-
-        @Override
-        void whileMouseMove(float tpf)
-        {
-            if(mouseLoc != null && firstFlag != null)
-            {
-                if(previewLine != null)
-                {
-                    previewLine.removeFromParent();
-                }
-                previewLine = makePreviewLine();
-                
-                editorRootNode.attachChild(previewLine);
-            }
-            
-            if(mouseLoc == null && previewLine != null)
-            {
-                previewLine.removeFromParent();
-                previewLine = null;
-            }
-            
-            closestFlag = findClosestFlagNotMine(selectionRadius);
-        }
-
-        @Override
-        void onClickRelease(float tpf)
-        {
-        }
-        
-        double selectionRadius = 0.25d;
-        
-        private Flag findClosestFlagNotMine()
-        {
-            return findClosestFlagNotMine(Double.MAX_VALUE);
-        }
-
-        private Flag findClosestFlagNotMine(double maxDist)
-        {
-            if(mouseLoc == null)
-            {
-                return null;
-            }
-            
-            double bestDist = maxDist;
-            Flag bestFlag = null;
-            
-            for(Flag flag : flags)
-            {
-                if(flag == firstFlag)
-                {
-                    continue;
-                }
-                
-                // no need to sqrt
-                double dist = ((mouseLoc.x - flag.getLoc().x) * (mouseLoc.x - flag.getLoc().x)) + ((mouseLoc.y - flag.getLoc().y) * (mouseLoc.y - flag.getLoc().y));
-                
-                if(dist < bestDist)
-                {
-                    bestFlag = flag;
-                }
-            }
-            
-            return bestFlag;
-        }
-        
-        private Geometry makePreviewLine()
-        {
-            BlueprintGeoGen maker = new BlueprintGeoGen();
-            if(closestFlag == null)
-            {
-                maker.addLine((float) firstFlag.getLoc().x, (float) firstFlag.getLoc().y, mouseLoc.x, mouseLoc.y);
-            }
-            else
-            {
-                maker.addLine(firstFlag.getLoc(), closestFlag.getLoc());
-            }
-            Mesh mesh = maker.bake(0.04f, 10.0f, 1.0f, 1.0f);
-
-            Geometry geo = new Geometry("Wall Line", mesh);
-            geo.setMaterial(previewLineMat);
-            geo.setQueueBucket(RenderQueue.Bucket.Transparent);
-            geo.setShadowMode(RenderQueue.ShadowMode.Receive);
-
-            return geo;
-        }
-
-        @Override
-        void tick(float tpf)
-        {
-            this.alphaTime += tpf;
-            
-            this.previewLineMat.setColor("Color", new ColorRGBA(1.0f, 1.0f, 1.0f, 0.7f + (FastMath.cos(alphaTime * 5f) * 0.3f)));
-        }
-        
-    }
-    private Ruler ruler = new Ruler();
-    
     public class Roomer extends Tool
     {
 
@@ -931,10 +751,10 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 return;
             }
             
-            Flag a = spawnFlag(mouseLoc.clone().addLocal(-5f, -5f));
-            Flag b = spawnFlag(mouseLoc.clone().addLocal(5f, -5f));
-            Flag c = spawnFlag(mouseLoc.clone().addLocal(5f, 5f));
-            Flag d = spawnFlag(mouseLoc.clone().addLocal(-5f, 5f));
+            Flag a = spawnLooseFlag(mouseLoc.clone().addLocal(-5f, -5f));
+            Flag b = spawnLooseFlag(mouseLoc.clone().addLocal(5f, -5f));
+            Flag c = spawnLooseFlag(mouseLoc.clone().addLocal(5f, 5f));
+            Flag d = spawnLooseFlag(mouseLoc.clone().addLocal(-5f, 5f));
             
             spawnDoor(a, b);
             
@@ -962,12 +782,12 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     }
     private Roomer roomer = new Roomer();
     
-    // Drag flag
-    public class Drafla extends Tool
+    public class FlagMover extends Tool
     {
         public Vector2f preclickFlagLoc;
         public Vector2f preclickMouseLoc;
         
+        public Flag nearestFlag;
         public Flag dragFlag;
 
         @Override
@@ -983,30 +803,46 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         @Override
         void onClick(float tpf)
         {
-            if(mouseLoc != null)
+            if(mouseLoc != null && nearestFlag != null)
             {
-                dragFlag = findClosestFlag(selectionRadius);
+                dragFlag = nearestFlag;
 
-                if(dragFlag != null)
-                {
-                    preclickMouseLoc = mouseLoc;
-                    preclickFlagLoc = new Vector2f((float) dragFlag.getLoc().x, (float) dragFlag.getLoc().y);
-                }
+                preclickMouseLoc = mouseLoc;
+                preclickFlagLoc = new Vector2f((float) dragFlag.getLoc().a, (float) dragFlag.getLoc().b);
             }
         }
 
         @Override
         void whileMouseMove(float tpf)
         {
+            // If we are dragging a flag around
             if(leftClick && dragFlag != null)
             {
+                // If the mouse is somewhere on the paper
                 if(mouseLoc != null)
                 {
+                    // Continue moving it to the mouse
                     dragFlag.setLoc(new Vector2d(-preclickMouseLoc.x + mouseLoc.x + preclickFlagLoc.x, -preclickMouseLoc.y + mouseLoc.y + preclickFlagLoc.y));
                 }
                 else
                 {
+                    // Stop dragging since they dragged it off the paper
                     dragFlag = null;
+                }
+            }
+            
+            // Not currently dragging a flag around
+            else
+            {
+                // Search for the next flag they will pick up
+                nearestFlag = findClosestFlag();
+                
+                // If there is not a flag nearby
+                if(nearestFlag == null)
+                {
+                    // Try find a valid spot for a flag
+                    
+                    
                 }
             }
         }
@@ -1023,26 +859,23 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
         
         double selectionRadius = 0.25d;
-        
         private Flag findClosestFlag()
         {
-            return findClosestFlag(Double.MAX_VALUE);
-        }
-
-        private Flag findClosestFlag(double maxDist)
-        {
+            // Make sure the mouse is somewhere on the paper
             if(mouseLoc == null)
             {
                 return null;
             }
             
-            double bestDist = maxDist;
-            Flag bestFlag = null;
+            // Standard search algorithm
             
+            // Keep track of the closest flag
+            double bestDist = selectionRadius * selectionRadius;
+            Flag bestFlag = null;
             for(Flag flag : flags)
             {
-                // no need to sqrt
-                double dist = ((mouseLoc.x - flag.getLoc().x) * (mouseLoc.x - flag.getLoc().x)) + ((mouseLoc.y - flag.getLoc().y) * (mouseLoc.y - flag.getLoc().y));
+                // No need to sqrt
+                double dist = ((mouseLoc.x - flag.getLoc().a) * (mouseLoc.x - flag.getLoc().a)) + ((mouseLoc.y - flag.getLoc().b) * (mouseLoc.y - flag.getLoc().b));
                 
                 if(dist < bestDist)
                 {
@@ -1053,8 +886,9 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             return bestFlag;
         }
         
+        
     }
-    private Drafla drafla = new Drafla();
+    private FlagMover flagMover = new FlagMover();
     
     private Tool tool = dragger;
     
@@ -1115,7 +949,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             this.loc = loc;
             
-            spatial.setLocalTranslation((float) loc.x, 0f, (float) loc.y);
+            spatial.setLocalTranslation((float) loc.a, 0f, (float) loc.b);
             
             for(Room room : rooms)
             {
@@ -1169,11 +1003,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
             BlueprintGeoGen bgg = new BlueprintGeoGen();
             
-            Vector2f dir = new Vector2f((float) (b.loc.x - a.loc.x), (float) (b.loc.y - a.loc.y)).normalizeLocal();
+            Vector2f dir = new Vector2f((float) (b.loc.a - a.loc.a), (float) (b.loc.b - a.loc.b)).normalizeLocal();
             
             Vector2f perp = new Vector2f(-dir.y, dir.x).multLocal(0.5f);
             
-            Vector2f pos = new Vector2f((float) a.loc.x, (float) a.loc.y).addLocal(dir.mult((float) distance));
+            Vector2f pos = new Vector2f((float) a.loc.a, (float) a.loc.b).addLocal(dir.mult((float) distance));
 
             bgg.addLine(pos.add(perp), pos.subtract(perp));
             
