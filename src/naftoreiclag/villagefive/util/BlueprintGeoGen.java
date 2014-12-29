@@ -41,6 +41,14 @@ public class BlueprintGeoGen
         this.addLine(x2, y1, x1, y1);
     }
     
+    public void addRect(Vector2f a, Vector2f b, Vector2f c, Vector2f d)
+    {
+        this.addLine(a, b);
+        this.addLine(b, c);
+        this.addLine(c, d);
+        this.addLine(d, a);
+    }
+    
     public Mesh bake(float thickness, float texStretch, float xscale, float yscale)
     {
         FloatBuffer v = BufferUtils.createFloatBuffer(lines.size() * 12);

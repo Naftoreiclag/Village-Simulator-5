@@ -52,6 +52,9 @@ public class Plot
         private double distance;
         private int id;
         
+        // temp
+        public double width;
+        
         public int getId() { return id; }
         public void setId(int id) { this.id = id; }
 

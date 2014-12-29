@@ -37,43 +37,26 @@ public class PlotNodifier
                 
                 p.vecs.add(new Vector2f((float) v.getX(), (float) v.getZ()));
             }
+            
             for(Decal decal : plot.getEdges())
             {
                 Hole jam = new Hole();
-                
-                jam.point = 0;
-                jam.x = 1f;
-                jam.y = 1f;
-                jam.h = 1f;
-                jam.w = 1f;
-                
-                Hole clam = new Hole();
-                
-                clam.point = 0;
-                clam.x = 3f;
-                clam.y = 0f;
-                clam.h = 3f;
-                clam.w = 2f;
-                
-                Hole spam = new Hole();
-                
-                spam.point = 0;
-                spam.x = 7f;
-                spam.y = 1f;
-                spam.h = 1f;
-                spam.w = 1f;
+                jam.point = decal.getVertA();
+                jam.x = (float) decal.getDistance();
+                jam.y = 0f;
+                jam.h = 5f;
+                jam.w = (float) decal.width;
+
                 
                 ArrayList<Hole> h = new ArrayList<Hole>();
                 h.add(jam);
-                h.add(clam);
-                h.add(spam);
                 
                 // fix dis
-                p.holesPerEdge.put(0, h);
+                p.holesPerEdge.put(decal.getVertA(), h);
             }
             
             //    public Mesh doit(float thickness, float height, float texWidth, float texHeight)
-            Mesh m = p.doit(0.4f, 4f, 4f, 4f);
+            Mesh m = p.doit(0.4f, 7f, 3f, 3f);
             Geometry geo = new Geometry("", m);
             geo.setMaterial(Main.mat_debug_bricks);
 

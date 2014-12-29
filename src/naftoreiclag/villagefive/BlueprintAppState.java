@@ -163,12 +163,9 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     @Deprecated
     private Flag spawnLooseFlag(Vector2f pos)
     {
-        Flag flag = new Flag(pos);
-        
-        Spatial flagSpt = b_flag.clone();
-        flagSpt.setLocalTranslation(pos.x, 0, pos.y);
-        flag.setSpatial(flagSpt);
-        editorRootNode.attachChild(flagSpt);
+        Flag flag = new Flag();
+        flag.loc = new Vector2d((float) pos.x, (float) pos.y);
+        flag.updateSpatial();
         
         flags.add(flag);
         return flag;
@@ -187,72 +184,126 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     }
     
     // Spawn a new flag to split an existing wall
-    private Flag spawnSplittingFlag(Flag first, Flag second, double dist)
+    private Flag spawnSplittingFlag(LinePoint point)
     {
-        System.out.println("spawn");
-        /*
-         *          new flag
-         *            v
-         * A----------N----------B
-         * 
-         */
-        
-        Vector2d a = first.loc;
-        Vector2d b = second.loc;
-        Vector2d an = b.subtract(a).normalizeLocal().multiplyLocal(dist);
-        Vector2d n = a.add(an);
-        System.out.println(a);
-        System.out.println(b);
-        System.out.println(an);
-        System.out.println(n);
-        
         Flag newFlag = new Flag();
-        newFlag.loc = n;
-        System.out.println(newFlag.loc);
-        
-        Spatial flagSpt = b_flag.clone();
-        flagSpt.setLocalTranslation((float) newFlag.loc.a, 0, (float) newFlag.loc.b);
-        newFlag.setSpatial(flagSpt);
-        editorRootNode.attachChild(flagSpt);
+        newFlag.loc = point.calcLoc();
+        newFlag.updateSpatial();
         
         flags.add(newFlag);
         
         
+        // Find all the rooms that will be affected by this change
         List<Room> affectedRooms = new ArrayList<Room>();
-        
-        for(Room r : first.rooms)
+        for(Room room : point.a.rooms)
         {
-            if(!affectedRooms.contains(r))
+            if(!affectedRooms.contains(room))
             {
-                affectedRooms.add(r);
+                affectedRooms.add(room);
             }
         }
-        for(Room r : second.rooms)
+        for(Room room : point.b.rooms)
         {
-            if(!affectedRooms.contains(r))
+            if(!affectedRooms.contains(room))
             {
-                affectedRooms.add(r);
+                affectedRooms.add(room);
             }
         }
         
-        System.out.println(affectedRooms.size() + " rooms affected ");
-        for(Room r : affectedRooms)
+        // Insert the new flag and update each room
+        for(Room room : affectedRooms)
         {
-            System.out.println(r.flags.size() + " afsaf");
-            Flag prevFlag = r.flags.get(r.flags.size() - 1);
-            for(int i = 0; i < r.flags.size(); ++ i)
+            // Standard edge iteration
+            Flag prevFlag = room.flags.get(room.flags.size() - 1);
+            for(int i = 0; i < room.flags.size(); ++ i)
             {
-                Flag currFlag = r.flags.get(i);
+                // Standard edge iteration
+                Flag currFlag = room.flags.get(i);
                 
-                if((currFlag == second && prevFlag == first) || (currFlag == first && prevFlag == second))
+                // If this is the proper insertion point in the vertex path
+                if((currFlag == point.a && prevFlag == point.b) || (currFlag == point.b && prevFlag == point.a))
                 {
-                    System.out.println("inserted");
-                    r.flags.add(i, newFlag);
-                    newFlag.rooms.add(r);
+                    // Insert it here
+                    room.flags.add(i, newFlag);
+                    
+                    // Make sure the new flag is a part of the family
+                    newFlag.rooms.add(room);
+                    
+                    // Move on to the next room
                     break;
                 }
                 
+                // Standard edge iteration
                 prevFlag = currFlag;
+            }
+        }
+        
+        // Find all the doors that will be affected by this change
+        List<Door> affectedDoors = new ArrayList<Door>();
+        for(Door door : point.a.doors)
+        {
+            if(!affectedDoors.contains(door))
+            {
+                affectedDoors.add(door);
+            }
+        }
+        for(Door door : point.b.doors)
+        {
+            if(!affectedDoors.contains(door))
+            {
+                affectedDoors.add(door);
+            }
+        }
+        
+        // Insert the new flag and update each door
+        for(Door door : affectedDoors)
+        {
+            // If the new flag is on the same wall that the door is
+            if(door.loc.a == point.a && door.loc.b == point.b)
+            {
+                // Closer to the second point than the door
+                if(point.distance >= door.loc.distance)
+                {
+                    door.loc.b.doors.remove(door);
+                    door.loc.b = newFlag;
+                }
+                else
+                {
+                    door.loc.distance -= point.distance;
+                    
+                    door.loc.a.doors.remove(door);
+                    door.loc.a = newFlag;
+                }
+                
+                // Make sure the new flag is a part of the family
+                newFlag.doors.add(door);
+
+                // Move on to the next room
+                break;
+            }
+            
+            // Same, but if the door's a/b values are swapped
+            if(door.loc.b == point.a && door.loc.a == point.b)
+            {
+                // Closer to the second point than the door
+                if(point.distance >= door.loc.distance)
+                {
+                    door.loc.distance -= point.invertedDistance();
+                    
+                    door.loc.a.doors.remove(door);
+                    door.loc.a = newFlag;
+                }
+                else
+                {
+                    door.loc.b.doors.remove(door);
+                    door.loc.b = newFlag;
+                }
+                
+                // Make sure the new flag is a part of the family
+                newFlag.doors.add(door);
+
+                // Move on to the next room
+                break;
             }
         }
         
@@ -260,9 +311,13 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
     }
     
-    private void spawnDoor(Flag a, Flag b)
+    private Door spawnDoor(Flag a, Flag b)
     {
-        Door door = new Door(a, b);
+        Door door = new Door();
+        
+        door.loc.a = a;
+        door.loc.b = b;
+        door.loc.distance = 5f;
         
         a.doors.add(door);
         b.doors.add(door);
@@ -270,6 +325,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         door.updateSpatial();
         
         doors.add(door);
+        
+        return door;
     }
     
 
@@ -658,9 +715,10 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             Door door = doors.get(i);
             Decal trans = new Decal();
             
-            trans.setVertA(door.a.id);
-            trans.setVertA(door.b.id);
-            
+            trans.setVertA(door.loc.a.id);
+            trans.setVertB(door.loc.b.id);
+            trans.setDistance(door.loc.distance);
+            trans.width = door.width;
             
             edges[i] = trans;
         }
@@ -750,9 +808,10 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             Flag c = spawnLooseFlag(mouseLoc.clone().addLocal(5f, 5f));
             Flag d = spawnLooseFlag(mouseLoc.clone().addLocal(-5f, 5f));
             
-            spawnDoor(a, b);
+            Door door = spawnDoor(a, b);
             
             Room room = new Room(a, b, c, d);
+            
             
             spawnRoom(room);
         }
@@ -809,7 +868,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 }
                 else if(nearestPoint != null)
                 {
-                    Flag newFlag = spawnSplittingFlag(nearestPoint.a, nearestPoint.b, nearestPoint.distance);
+                    Flag newFlag = spawnSplittingFlag(nearestPoint);
                     
                     dragFlag = newFlag;
                     preclickMouseLoc = mouseLoc;
@@ -847,20 +906,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 if(nearestFlag == null)
                 {
                     // Try find a valid spot for a flag
-                    
                     nearestPoint = findClosestPoint();
-                    
-                    if(nearestPoint != null)
-                    {
-                    System.out.println("nearest: " + nearestPoint.distance);
-                        
-                    }
-                    
-                    if(nearestPoint == null)
-                    {
-                        
-                    }
-
                 }
                 else
                 {
@@ -880,7 +926,10 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         {
         }
         
+        // Farthest distance something can be from the mouse and still be considered "close"
         double selectionRadius = 0.25d;
+        
+        // Find the closest flag to the mouse
         private Flag findClosestFlag()
         {
             // Make sure the mouse is somewhere on the paper
@@ -907,7 +956,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             return bestFlag;
         }
         
-        // improve pls
+        // Find the closest point on an edge to the mouse
         private LinePoint findClosestPoint()
         {
             // Make sure the mouse is somewhere on the paper
@@ -916,20 +965,25 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 return null;
             }
             
+            // Location of the mouse in vec2d form
             Vector2d c = new Vector2d(mouseLoc.x, mouseLoc.y);
             
-            // Keep track of the closest point
-            double bestDist = selectionRadius;
+            // Keep track of the optimal point
+            double bestDistFromMouse = selectionRadius;
             LinePoint bestLp = null;
             
+            // Loop through all the rooms, since there is no list of edges yet
             for(Room r : rooms)
             {
+                // Standard looping through all the edges by iterating over the vertexes while remembering where the previous one was
                 Flag prevFlag = r.flags.get(r.flags.size() - 1);
                 for(int i = 0; i < r.flags.size(); ++ i)
                 {
+                    // Standard dge iteration
                     Flag currFlag = r.flags.get(i);
                     
-                    /*
+                    /* Map:
+                     *  
                      *                 C   mouse pos
                      *                 |
                      *                 |
@@ -939,45 +993,60 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                      *                distance
                      */
                     
-                    
+                    // Nice aliases
                     Vector2d a = prevFlag.getLoc();
                     Vector2d b = currFlag.getLoc();
+                    
+                    // 
                     Vector2d ab = b.subtract(a);
                     Vector2d ac = c.subtract(a);
                     
+                    // Magic math
                     double ab_distsq = ab.magnitudeSquared();
                     double ac_dot_ab = ac.dotProduct(ab);
                     
+                    // Distance of D from A as a fraction of the distance of B from A
                     double fractionOfAB = ac_dot_ab / ab_distsq;
                     
                     // If it is off the wall (lol)
                     if(fractionOfAB > 1 || fractionOfAB < 0)
                     {
+                        // Standard edge iteration
                         prevFlag = currFlag;
+                        
+                        // Skip further calculation
                         continue;
                     }
                     
+                    // Actual distance of D from A
                     double trueDist = Math.sqrt(ab_distsq) * fractionOfAB;
                     
+                    // Find the closest point (d) and its distance from the mouse (c)
                     Vector2d d = a.add(ab.multiply(fractionOfAB));
                     Vector2d dc = c.subtract(d);
-                    
                     double distFromMouse = Math.sqrt(dc.magnitudeSquared());
                     
-                    if(distFromMouse < bestDist)
+                    // Compare this data to the best stuff we found so far
+                    if(distFromMouse < bestDistFromMouse)
                     {
-                        bestDist = trueDist;
-                        bestLp = new LinePoint(prevFlag, currFlag, trueDist);
+                        // It is even closer!
+                        
+                        // Record this
+                        bestDistFromMouse = distFromMouse;
+                        bestLp = new LinePoint();
+                        bestLp.a = prevFlag;
+                        bestLp.b = currFlag;
+                        bestLp.distance = trueDist;
                     }
                     
+                    // Standard edge iteration
                     prevFlag = currFlag;
                 }
             }
             
+            // The best, or null if none were found to be closer than selectionRadius
             return bestLp;
         }
-        
-        
     }
     private FlagMover flagMover = new FlagMover();
     
@@ -1001,41 +1070,17 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             loc = new Vector2d();
         }
         
-        public Flag(Vector2f loc)
-        {
-            this.loc = new Vector2d(loc.x, loc.y);
-        }
-        
-        public Flag(float x, float y)
-        {
-            this.loc = new Vector2d(x, y);
-        }
-
-        public void setSpatial(Spatial spatial)
-        {
-            this.spatial = spatial;
-        }
         
         public void removeSpatial()
         {
             this.spatial.removeFromParent();
         }
 
-        private void setId(int i)
-        {
-        }
-
-        /**
-         * @return the loc
-         */
         public Vector2d getLoc()
         {
             return loc;
         }
 
-        /**
-         * @param loc the loc to set
-         */
         public void setLoc(Vector2d loc)
         {
             this.loc = loc;
@@ -1048,73 +1093,70 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             }
             for(Door door : doors)
             {
-                //door.updateLoc();
                 door.updateSpatial();
             }
         }
+
+        private void updateSpatial()
+        {
+            if(spatial != null)
+            {
+                spatial.removeFromParent();
+            }
+            
+            spatial = b_flag.clone();
+            spatial.setLocalTranslation((float) loc.a, 0, (float) loc.b);
+            editorRootNode.attachChild(spatial);
+        }
     }
 
-    
-    public static class LinePoint
-    {
-        public LinePoint(Flag a, Flag b, double dist)
-        {
-            this.a = a;
-            this.b = b;
-            this.distance = dist;
-        }
-        
-        public Flag a;
-        public Flag b;
-        public double distance;
-    }
     
     public class Door
     {
-        public Flag a;
-        public Flag b;
+        LinePoint loc = new LinePoint();
         
-        double distance = 2f;
+        float width = 3f;
         
-        private Spatial spt;
+        private Spatial spatial;
 
-        private Door(Flag a, Flag b)
+        public Spatial getSpatial()
         {
-            this.a = a;
-            this.b = b;
-        }
-
-        /**
-         * @return the spt
-         */
-        public Spatial getSpt()
-        {
-            return spt;
+            return spatial;
         }
 
         public void updateSpatial()
         {
-            if(spt != null)
+            if(spatial != null)
             {
-                spt.removeFromParent();
+                spatial.removeFromParent();
             }
             
-            spt = makeSpt();
+            spatial = makeSpt();
             
-            editorRootNode.attachChild(spt);
+            editorRootNode.attachChild(spatial);
         }
         
         private Spatial makeSpt()
         {
             BlueprintGeoGen bgg = new BlueprintGeoGen();
             
-            Vector2f dir = new Vector2f((float) (b.loc.a - a.loc.a), (float) (b.loc.b - a.loc.b)).normalizeLocal();
+            Vector2d lenD = loc.b.loc.subtract(loc.a.loc);
+            Vector2f len = new Vector2f((float) lenD.a, (float) lenD.b);
+            Vector2f perp = new Vector2f(-len.y, len.x);
             
-            Vector2f perp = new Vector2f(-dir.y, dir.x).multLocal(0.5f);
+            Vector2d baseD = loc.calcLoc();
+            Vector2f base = new Vector2f((float) baseD.a, (float) baseD.b);
             
-            Vector2f pos = new Vector2f((float) a.loc.a, (float) a.loc.b).addLocal(dir.mult((float) distance));
-
-            bgg.addLine(pos.add(perp), pos.subtract(perp));
+            len.normalizeLocal().multLocal(width);
+            perp.normalizeLocal().multLocal(0.5f);
+            Vector2f A = base;
+            Vector2f B = base.add(len);
+            Vector2f C = B.subtract(perp);
+            Vector2f D = A.subtract(perp);
+            A.addLocal(perp);
+            B.addLocal(perp);
+            
+            bgg.addRect(A, B, C, D);
             
             Mesh m = bgg.bake(0.05f, 20, 1, 1);
 
@@ -1144,28 +1186,20 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             }
         }
 
-        private Spatial spt;
+        private Spatial spatial;
 
-        public Spatial getSpt()
+        public Spatial getSpatial()
         {
-            return spt;
+            return spatial;
         }
-
         
         public void updateSpatial()
         {
-            if(spt != null)
+            if(spatial != null)
             {
-                spt.removeFromParent();
+                spatial.removeFromParent();
             }
             
-            spt = makeSpt();
-            
-            editorRootNode.attachChild(spt);
-        }
-        
-        private Spatial makeSpt()
-        {
             BlueprintGeoGen bgg = new BlueprintGeoGen();
 
             for(int i = 0; i < flags.size(); ++i)
@@ -1187,13 +1221,38 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
 
             Mesh m = bgg.bake(0.05f, 20, 1, 1);
 
-            Geometry spt = new Geometry("", m);
-            spt.setMaterial(strokeMat);
-
-            return spt;
-
+            spatial = new Geometry("", m);
+            spatial.setMaterial(strokeMat);
+            
+            editorRootNode.attachChild(spatial);
         }
     }
     
-    
+    public class LinePoint
+    {
+        public Flag a;
+        public Flag b;
+        public double distance; // from A
+        
+        public Vector2d calcLoc()
+        {
+            /*
+             *          new flag
+             *            v
+             * A----------N----------B
+             * 
+             */
+
+            Vector2d A = a.loc;
+            Vector2d B = b.loc;
+            Vector2d an = B.subtract(A).normalizeLocal().multiplyLocal(distance);
+            return A.add(an);
+        }
+        
+        // Distance from B
+        public double invertedDistance()
+        {
+            return Math.sqrt(a.loc.distanceSquared(b.loc)) - distance;
+        }
+    }
 }

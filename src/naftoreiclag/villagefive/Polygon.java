@@ -18,7 +18,17 @@ import naftoreiclag.villagefive.util.ModelBuilder;
 import naftoreiclag.villagefive.util.ModelBuilder.Vertex;
 
 
-// Clockwise
+// Counter-Clockwise
+
+/*
+ *  D<------C
+ *  |       ^
+ *  v inside|
+ *  A------>B
+ * 
+ *  When traversing the perimeter of the polygon, the area on the left is the "inside."
+ * 
+ */
 public class Polygon
 {
     public List<Vector2f> vecs = new ArrayList<Vector2f>();
@@ -34,6 +44,163 @@ public class Polygon
         public float y;
         public float w;
         public float h;
+    }
+    
+    public enum RoundingMethod
+    {
+        round,
+        sharp,
+        box
+    }
+    
+    public Polygon margin(float thickness)
+    {
+        Polygon ret = new Polygon();
+        
+        /*
+         * Process:
+         * 1. Duplicate all the edges and expand them by a given amount
+         * 2. "Diminish" the resulting polygon by removing any unusual geometry
+         * 3. Copy over the hole data
+         * 
+         */
+        
+        // Loop through my own verticies
+        for(int i = 0; i < vecs.size(); ++ i)
+        {
+            /*
+             *  Top-down view:
+             *  
+             *   [inside]
+             * 
+             *   D-------C
+             *   ^       ^
+             *   |       |
+             *   A-------B
+             * 
+             * A: you are here
+             * B: next vertex
+             * 
+             */
+            
+            Vector2f a = get(i);
+            Vector2f b = get(i + 1);
+            
+            Vector2f ab = b.subtract(a).normalizeLocal();
+            Vector2f ad = new Vector2f(ab.y, -ab.x);
+            ad.multLocal(thickness);
+            
+            Vector2f d = a.add(ad);
+            Vector2f c = b.add(ad);
+            
+            ret.vecs.add(d);
+            ret.vecs.add(c);
+        }
+        
+        ret = ret.diminish();
+        
+        // Hole check
+        for(int i = 0; i < vecs.size(); ++ i)
+        {
+        	// Has holes
+            if(holesPerEdge.containsKey(i))
+            {
+                // How far it moved
+                Vector2f change = vecs.get(i).subtract(ret.vecs.get(i));
+                
+                float offset = FastMath.sqrt(change.lengthSquared() - FastMath.sqr(thickness));
+                
+                ArrayList<Hole> origHoles = holesPerEdge.get(i);
+                ArrayList<Hole> offsetHoles = new ArrayList<Hole>();
+                
+                for(int j = 0; j < origHoles.size(); ++ j)
+                {
+                    Hole origHole = origHoles.get(j);
+                    Hole offsetHole = new Hole();
+                    
+                    offsetHole.point = origHole.point;
+                    offsetHole.h = origHole.h;
+                    offsetHole.w = origHole.w;
+                    offsetHole.x = origHole.x;
+                    offsetHole.y = origHole.y;
+                    
+                    offsetHole.x -= offset;
+                    
+                    offsetHoles.add(offsetHole);
+                }
+                
+                ret.holesPerEdge.put(i, offsetHoles);
+            }
+        }
+        
+        
+        return ret;
+    }
+    
+    public Polygon diminish()
+    {
+        Polygon ret = new Polygon();
+        
+        // Loop through my own verticies
+        for(int i = 0; i < vecs.size(); i += 2)
+        {
+
+            /*
+             *           ^
+             *           C
+             *           |
+             *  <-A------N------B->
+             *           |
+             *           D
+             *           v
+             * 
+             * N: new vertex
+             * 
+             */
+        	
+            Vector2f a = get(i - 2);
+            Vector2f b = get(i - 1);
+            Vector2f c = get(i);
+            Vector2f d = get(i + 1);
+            
+            ret.vecs.add(intersect(a, b, c, d));
+        }
+        
+        return ret;
+    }
+    
+    // Point where two lines meet
+    public static Vector2f intersect(Vector2f a, Vector2f b, Vector2f c, Vector2f d)
+    {
+        /*
+         *           ^
+         *           C
+         *           |
+         *  <-A------R------B->
+         *           |
+         *           D
+         *           v
+         * 
+         *  R: return value
+         * 
+         */
+    	
+    	float crossProduct = (a.x - b.x) * (c.y - d.y) - (a.y - b.y) * (c.x - d.x);
+
+		// Parallel or equal -> infinite or no solutions
+		if (crossProduct == 0)
+		{
+			return null;
+		}
+
+		// Has an intersection
+		else
+		{
+			float xi = ((c.x - d.x) * (a.x * b.y - a.y * b.x) - (a.x - b.x) * (c.x * d.y - c.y * d.x)) / crossProduct;
+			float yi = ((c.y - d.y) * (a.x * b.y - a.y * b.x) - (a.y - b.y) * (c.x * d.y - c.y * d.x)) / crossProduct;
+
+			return new Vector2f(xi, yi);
+		}
     }
     
     public Polygon shrink(float thickness)
@@ -108,6 +275,7 @@ public class Polygon
         return ret;
     }
     
+    // Make into a wall, with regards to the holes
     public void makeWall(float height, float textureWidth, float textureHeight, ModelBuilder mb, boolean reverseNormals)
     {
         float tH = height / textureHeight;
@@ -245,7 +413,7 @@ public class Polygon
     {
         ModelBuilder mb = new ModelBuilder();
         
-        Polygon shrunk = this.shrink(thickness);
+        Polygon shrunk = this.margin(-thickness);
         
         this.makeWall(height, texWidth, texHeight, mb, false);
         shrunk.makeWall(height, texWidth, texHeight, mb, true);
