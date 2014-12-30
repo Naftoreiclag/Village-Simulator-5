@@ -4,7 +4,7 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive.util;
+package naftoreiclag.villagefive.util.scenegraph;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import naftoreiclag.villagefive.util.ModelBuilder;
-import naftoreiclag.villagefive.util.ModelBuilder.Vertex;
+import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
+import naftoreiclag.villagefive.util.scenegraph.ModelBuilder.Vertex;
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.geometry.polygon.PolygonPoint;
 import org.poly2tri.triangulation.TriangulationPoint;

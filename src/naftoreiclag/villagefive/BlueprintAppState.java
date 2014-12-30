@@ -6,7 +6,7 @@
 
 package naftoreiclag.villagefive;
 
-import naftoreiclag.villagefive.util.PlotSerial;
+import naftoreiclag.villagefive.util.serializable.PlotSerial;
 import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -44,14 +44,14 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import naftoreiclag.villagefive.util.PlotSerial.Decal;
-import naftoreiclag.villagefive.util.PlotSerial.Face;
-import naftoreiclag.villagefive.util.PlotSerial.Vertex;
+import naftoreiclag.villagefive.util.serializable.PlotSerial.Decal;
+import naftoreiclag.villagefive.util.serializable.PlotSerial.Face;
+import naftoreiclag.villagefive.util.serializable.PlotSerial.Vertex;
 
-import naftoreiclag.villagefive.util.BlueprintGeoGen;
-import naftoreiclag.villagefive.util.SmoothAnglef;
-import naftoreiclag.villagefive.util.SmoothScalarf;
-import naftoreiclag.villagefive.util.Vector2d;
+import naftoreiclag.villagefive.util.scenegraph.BlueprintGeoGen;
+import naftoreiclag.villagefive.util.math.SmoothAnglef;
+import naftoreiclag.villagefive.util.math.SmoothScalarf;
+import naftoreiclag.villagefive.util.math.Vector2d;
 
 import org.lwjgl.BufferUtils;
 

@@ -4,9 +4,9 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive.util;
+package naftoreiclag.villagefive.util.math;
 
-import static naftoreiclag.villagefive.util.Anglef.wrap;
+import static naftoreiclag.villagefive.util.math.Anglef.wrap;
 
 public class SmoothAnglef extends Anglef
 {

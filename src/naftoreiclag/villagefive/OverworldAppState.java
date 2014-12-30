@@ -6,7 +6,7 @@
 package naftoreiclag.villagefive;
 
 import naftoreiclag.villagefive.util.ReiCamera;
-import naftoreiclag.villagefive.util.PlotSerial;
+import naftoreiclag.villagefive.util.serializable.PlotSerial;
 import naftoreiclag.villagefive.world.entity.PinguinEntity;
 import naftoreiclag.villagefive.world.entity.KatCompleteEntity;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
@@ -38,7 +38,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.texture.Texture;
-import naftoreiclag.villagefive.util.ModelBuilder;
+import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 
 public class OverworldAppState extends AbstractAppState implements ActionListener
 {

@@ -13,9 +13,9 @@ import naftoreiclag.villagefive.world.World;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import naftoreiclag.villagefive.Main;
-import naftoreiclag.villagefive.util.PlotSerial;
-import naftoreiclag.villagefive.util.Polygon;
-import naftoreiclag.villagefive.util.ModelBuilder;
+import naftoreiclag.villagefive.util.serializable.PlotSerial;
+import naftoreiclag.villagefive.util.scenegraph.Polygon;
+import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.world.Mundane;
 
 public class Plot implements Mundane

@@ -4,8 +4,9 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive.util;
+package naftoreiclag.villagefive.util.scenegraph;
 
+import naftoreiclag.villagefive.util.math.Vector2d;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;

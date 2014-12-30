@@ -4,7 +4,7 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive.util;
+package naftoreiclag.villagefive.util.math;
 
 import com.jme3.math.FastMath;
 

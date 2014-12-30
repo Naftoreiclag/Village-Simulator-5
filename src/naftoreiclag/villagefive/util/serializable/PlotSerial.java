@@ -4,11 +4,12 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive.util;
+package naftoreiclag.villagefive.util.serializable;
 
-// TODO: add layers
+import java.io.Serializable;
+
 // Serializable format
-public class PlotSerial
+public class PlotSerial implements Serializable
 {
     private double x, z;
     private double angle;

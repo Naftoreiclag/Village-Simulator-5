@@ -32,8 +32,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import naftoreiclag.villagefive.util.Anglef;
-import naftoreiclag.villagefive.util.GR;
+import naftoreiclag.villagefive.util.math.Anglef;
+import naftoreiclag.villagefive.util.math.GR;
 
 public class KatCompleteEntity extends Entity
 {
