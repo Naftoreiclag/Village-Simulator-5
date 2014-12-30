@@ -4,7 +4,7 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.util;
 
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;

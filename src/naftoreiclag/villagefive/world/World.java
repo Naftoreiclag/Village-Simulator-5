@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
-import naftoreiclag.villagefive.PlotSerial;
+import naftoreiclag.villagefive.util.PlotSerial;
 
 public class World
 {

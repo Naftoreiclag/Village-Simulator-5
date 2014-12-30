@@ -5,6 +5,7 @@
  */
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.util.ReiCamera;
 import naftoreiclag.villagefive.world.entity.KatCompleteEntity;
 import naftoreiclag.villagefive.world.World;
 import naftoreiclag.villagefive.util.KeyKeys;
@@ -16,7 +17,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.Camera;
 import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.SmoothAnglef;
 

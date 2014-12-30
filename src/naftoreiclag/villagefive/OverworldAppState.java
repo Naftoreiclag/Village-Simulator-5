@@ -5,6 +5,9 @@
  */
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.util.ReiCamera;
+import naftoreiclag.villagefive.util.PlotSerial;
+import naftoreiclag.villagefive.world.entity.PinguinEntity;
 import naftoreiclag.villagefive.world.entity.KatCompleteEntity;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
 import naftoreiclag.villagefive.world.entity.FlowerEntity;

@@ -8,4 +8,5 @@ package naftoreiclag.villagefive;
 
 public abstract class EntityController
 {
+
 }

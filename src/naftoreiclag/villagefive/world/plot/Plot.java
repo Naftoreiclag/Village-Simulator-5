@@ -13,8 +13,8 @@ import naftoreiclag.villagefive.world.World;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
 import naftoreiclag.villagefive.Main;
-import naftoreiclag.villagefive.PlotSerial;
-import naftoreiclag.villagefive.Polygon;
+import naftoreiclag.villagefive.util.PlotSerial;
+import naftoreiclag.villagefive.util.Polygon;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
 public class Plot
@@ -33,13 +33,11 @@ public class Plot
     {
         this.node = new Node();
         
-        ModelBuilder mb = new ModelBuilder();
-        
         // For each room
         for(PlotSerial.Face room : data.getFaces())
         {
             // Create a new polygon to represent it
-            Polygon p = new Polygon();
+            Polygon polygon = new Polygon();
             
             // Copy over the vertex data
             for(int i = 0; i < room.getVertexes().length; ++ i)
@@ -48,7 +46,7 @@ public class Plot
                 PlotSerial.Vertex vert = data.getVerticies()[room.getVertexes()[i]];
                 
                 // Copy it over
-                p.vecs.add(new Vector2f((float) vert.getX(), (float) vert.getZ()));
+                polygon.vecs.add(new Vector2f((float) vert.getX(), (float) vert.getZ()));
                 
                 // Copy over decal (hole) data
                 for(PlotSerial.Decal decal : data.getEdges())
@@ -73,12 +71,11 @@ public class Plot
                     h.add(jam);
 
                     // fix dis
-                    p.holesPerEdge.put(i, h);
+                    polygon.holesPerEdge.put(i, h);
                 }
             }
             
-            //    public Mesh doit(float thickness, float height, float texWidth, float texHeight)
-            Mesh m = p.doit(0.4f, 7f, 3f, 3f);
+            Mesh m = polygon.doit(0.4f, 7f, 3f, 3f);
             Geometry geo = new Geometry("", m);
             geo.setMaterial(Main.mat_debug_bricks);
 
