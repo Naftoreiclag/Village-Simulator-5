@@ -4,7 +4,7 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.world.entity;
 
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
@@ -63,7 +63,7 @@ public class KatCompleteEntity extends Entity
     Node handR;
     Node mask;
     AnimControl bodyAnimControl;
-    AnimChannel bodyAnimChannel;
+    public AnimChannel bodyAnimChannel;
     AnimControl tailAnimControl;
     AnimChannel tailAnimChannel;
     

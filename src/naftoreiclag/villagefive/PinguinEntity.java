@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.world.entity.Entity;
 import com.jme3.material.Material;
 import com.jme3.scene.Node;
 
@@ -32,8 +33,6 @@ public class PinguinEntity extends Entity
         super.assertNode(newNode);
         
         Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
-        //Material mat = world.assetManager.loadMaterial("Materials/fur.j3m");
-        
         
         node.setMaterial(mat);
         

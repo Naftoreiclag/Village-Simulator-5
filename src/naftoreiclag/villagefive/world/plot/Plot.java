@@ -4,30 +4,39 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.world.plot;
 
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import naftoreiclag.villagefive.world.World;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
-import java.util.List;
-import naftoreiclag.villagefive.PlotSerial.Decal;
-import naftoreiclag.villagefive.PlotSerial.Face;
-import naftoreiclag.villagefive.PlotSerial.Vertex;
-import naftoreiclag.villagefive.Polygon.Hole;
+import naftoreiclag.villagefive.Main;
+import naftoreiclag.villagefive.PlotSerial;
+import naftoreiclag.villagefive.Polygon;
 import naftoreiclag.villagefive.util.ModelBuilder;
 
-public class PlotNodifier
+public class Plot
 {
-    public static Node nodify(PlotSerial plot)
+    public PlotSerial data;
+    public World world;
+    public Node node;
+    
+    public Plot(PlotSerial data, World world)
     {
-        Node ret = new Node();
+        this.data = data;
+        this.world = world;
+    }
+    
+    public void loadNode()
+    {
+        this.node = new Node();
+        
         ModelBuilder mb = new ModelBuilder();
         
         // For each room
-        for(Face room : plot.getFaces())
+        for(PlotSerial.Face room : data.getFaces())
         {
             // Create a new polygon to represent it
             Polygon p = new Polygon();
@@ -36,13 +45,13 @@ public class PlotNodifier
             for(int i = 0; i < room.getVertexes().length; ++ i)
             {
                 // Get the vertex by its id
-                Vertex vert = plot.getVerticies()[room.getVertexes()[i]];
+                PlotSerial.Vertex vert = data.getVerticies()[room.getVertexes()[i]];
                 
                 // Copy it over
                 p.vecs.add(new Vector2f((float) vert.getX(), (float) vert.getZ()));
                 
                 // Copy over decal (hole) data
-                for(Decal decal : plot.getEdges())
+                for(PlotSerial.Decal decal : data.getEdges())
                 {
                     // If this decal does not apply
                     if(decal.getVertA() != vert.getId())
@@ -51,7 +60,7 @@ public class PlotNodifier
                         continue;
                     }
                     
-                    Hole jam = new Hole();
+                    Polygon.Hole jam = new Polygon.Hole();
                     jam.point = decal.getVertA();
                     jam.x = (float) decal.getDistance();
                     jam.y = 0f;
@@ -60,7 +69,7 @@ public class PlotNodifier
 
                     System.out.println(jam.point);
 
-                    ArrayList<Hole> h = new ArrayList<Hole>();
+                    ArrayList<Polygon.Hole> h = new ArrayList<Polygon.Hole>();
                     h.add(jam);
 
                     // fix dis
@@ -73,18 +82,7 @@ public class PlotNodifier
             Geometry geo = new Geometry("", m);
             geo.setMaterial(Main.mat_debug_bricks);
 
-            ret.attachChild(geo);
+            node.attachChild(geo);
         }
-        
-        
-        /*
-        Mesh m = mb.bake();
-        Geometry geo = new Geometry("", m);
-        geo.setMaterial(Main.mat_debug);
-        
-        ret.attachChild(geo);
-        */
-        
-        return ret;
     }
 }

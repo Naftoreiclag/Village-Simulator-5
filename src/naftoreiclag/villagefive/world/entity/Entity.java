@@ -4,8 +4,9 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.world.entity;
 
+import naftoreiclag.villagefive.world.World;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -19,8 +20,8 @@ import com.jme3.scene.Spatial;
 // Position and rotation are stored in the node
 public abstract class Entity
 {
-    protected World world;
-    protected Node node;
+    public World world;
+    public Node node;
     
     public abstract void meow();
     
@@ -52,7 +53,7 @@ public abstract class Entity
     
     public abstract String getModelName();
 
-    void move(Vector2f dir)
+    public void move(Vector2f dir)
     {
         this.node.move(dir.x, 0f, dir.y);
     }

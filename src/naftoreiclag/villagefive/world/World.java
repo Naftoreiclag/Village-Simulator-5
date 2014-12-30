@@ -4,46 +4,34 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.world;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.material.Material;
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.Control;
 import java.util.ArrayList;
 import java.util.List;
-import naftoreiclag.villagefive.PlotSerial.Decal;
-import naftoreiclag.villagefive.util.ModelBuilder;
-import org.poly2tri.geometry.polygon.PolygonPoint;
+import naftoreiclag.villagefive.world.entity.Entity;
+import naftoreiclag.villagefive.world.plot.Plot;
+import naftoreiclag.villagefive.PlotSerial;
 
 public class World
 {
-    Node trueRootNode;
-    Node rootNode;
-    AssetManager assetManager;
+    public Node trueRootNode;
+    public Node rootNode;
+    public AssetManager assetManager;
     
-    List<Entity> entities = new ArrayList<Entity>();
-    List<Plot> plots = new ArrayList<Plot>();
+    public List<Entity> entities = new ArrayList<Entity>();
+    public List<Plot> plots = new ArrayList<Plot>();
     
-    World(Node rootNode, AssetManager assetManager)
+    public World(Node rootNode, AssetManager assetManager)
     {
         this.rootNode = new Node();
         this.trueRootNode = rootNode;
+        this.trueRootNode.attachChild(this.rootNode);
         this.assetManager = assetManager;
-    }
-    
-    public void disableRender()
-    {
-        this.trueRootNode.detachChild(rootNode);
-    }
-    public void enableRender()
-    {
-        this.trueRootNode.attachChild(rootNode);
     }
     
     /*
@@ -55,7 +43,10 @@ public class World
     
     public Plot spawnPlot(PlotSerial plotType)
     {
-        Plot plot = new Plot(plotType, this, new Node());
+        Plot plot = new Plot(plotType, this);
+        plot.loadNode();
+        
+        rootNode.attachChild(plot.node);
         
         plots.add(plot);
         
@@ -85,22 +76,18 @@ public class World
         
         return e;
     }
+    
     public Node loadNode(String modelName)
     {
-        
-        //System.out.println(modelName);
-        
         if(modelName == null)
         {
             Node body = new Node();
-            body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
             rootNode.attachChild(body);
 
             return body;
         }
         
         Node body = (Node) assetManager.loadModel(modelName);
-        body.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         
         rootNode.attachChild(body);
         
@@ -121,25 +108,18 @@ public class World
         return controls;
     }
 
-    void destroyEntity(Entity aThis)
+    public void destroyEntity(Entity aThis)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    void tick(float tpf)
+    public void tick(float tpf)
     {
         for(Entity entity : entities)
         {
             entity.tick(tpf);
         }
     }
-    
-    private void drawPlot(PlotSerial p)
-    {
-        Node n = PlotNodifier.nodify(p);
-        n.setLocalTranslation((float) p.getX(), 0.01f, (float) p.getZ());
-        
-        rootNode.attachChild(n);
-    }
+
 
 }

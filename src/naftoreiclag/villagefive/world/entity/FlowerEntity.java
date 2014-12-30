@@ -4,24 +4,25 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.world.entity;
 
-public class StoolEntity extends Entity
+import naftoreiclag.villagefive.world.entity.Entity;
+
+public class FlowerEntity extends Entity
 {
     @Override
     public void meow()
     {
-        System.out.println("im a stool");
+        System.out.println("flower");
     }
-
     @Override
     public String getModelName()
     {
-        return "Models/stool/Stool.j3o";
+        return "Models/Flower.mesh.j3o";
     }
-
     @Override
     public void tick(float tpf)
     {
     }
+
 }

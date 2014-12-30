@@ -34,11 +34,11 @@ public class Main extends SimpleApplication implements ActionListener
         main.start();
     }
     
-    static Material mat_debug_wireframe;
-    static Material mat_debug;
-    static Material mat_debug_lighting;
-    static Material mat_debug_bricks;
-    static Material mat_debug_gold;
+    public static Material mat_debug_wireframe;
+    public static Material mat_debug;
+    public static Material mat_debug_lighting;
+    public static Material mat_debug_bricks;
+    public static Material mat_debug_gold;
     
     OverworldAppState tas;
     BlueprintAppState bas;

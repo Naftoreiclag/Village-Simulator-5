@@ -5,6 +5,8 @@
  */
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.world.entity.KatCompleteEntity;
+import naftoreiclag.villagefive.world.World;
 import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
@@ -228,8 +230,6 @@ public class PlayerController extends EntityController implements ActionListener
 
     private void move(Vector2f dir)
     {
-        
-        
         puppet.move(dir);
     }
 }

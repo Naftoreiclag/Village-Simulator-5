@@ -5,6 +5,10 @@
  */
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.world.entity.KatCompleteEntity;
+import naftoreiclag.villagefive.world.entity.DoorEntity;
+import naftoreiclag.villagefive.world.entity.FlowerEntity;
+import naftoreiclag.villagefive.world.World;
 import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -83,7 +87,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         rcam.mode = ReiCamera.SmoothMode.cubic;
         
         world = new World(stateRootNode, assetManager);
-        world.enableRender();
         
         playCont = new PlayerController();
         
@@ -99,8 +102,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         playCont.setManager(inputManager);
         
         
-        MailboxEntity ent = world.spawnEntity(MailboxEntity.class, new Vector2f(5f, 5f));
-        ent.meow();
         
         for(int i = 0; i < 200; ++ i)
         {
@@ -136,11 +137,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         
         playCont.tick(tpf);
         world.tick(tpf);
-        
-        if(mhe != null)
-        {
-            mhe.tick(tpf);
-        }
         
         rcam.tick(tpf);
     }
@@ -205,36 +201,9 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         {
             debugKey = isPressed;
             
-            if(debugKey)
-            {
-                onDebugKeypress();
-                
-            }
-            else
-            {
-                onDebugKeyrelease();
-            }
         }
     }
     
-    HouseEditor mhe;
-
-    private void onDebugKeypress()
-    {
-        mhe = new HouseEditor(stateRootNode, assetManager, house, rcam);
-        playCont.disableInput();
-        world.disableRender();
-        mhe.enableRender();
-        mhe.enableInput();
-    }
-
-    private void onDebugKeyrelease()
-    {
-        playCont.enable();
-        mhe.disableRender();
-        mhe.disableInput();
-        world.enableRender();
-    }
 
     class DebugGrid
     {

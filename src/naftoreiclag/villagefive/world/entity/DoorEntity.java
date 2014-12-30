@@ -4,7 +4,9 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.world.entity;
+
+import naftoreiclag.villagefive.world.entity.Entity;
 
 public class DoorEntity extends Entity
 {
