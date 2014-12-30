@@ -19,10 +19,10 @@ import naftoreiclag.villagefive.world.Mundane;
  */
 
 // Position and rotation are stored in the node
-public abstract class Entity implements Mundane
+public abstract class Entity extends Mundane
 {
     public World world;
-    public Node node;
+    protected Node node;
     
     public void destroy()
     {
@@ -37,15 +37,9 @@ public abstract class Entity implements Mundane
     @Override
     public abstract void loadNode();
     
-    public Node loadNode(String modelName)
+    @Override
+    public Node getNode()
     {
-        if(modelName == null)
-        {
-            Node node = new Node();
-            return node;
-        }
-        
-        Node node = (Node) world.assetManager.loadModel(modelName);
         return node;
     }
     
@@ -56,14 +50,4 @@ public abstract class Entity implements Mundane
         this.node.attachChild(spatial);
     }
     
-    public void teleport(Vector2f pos)
-    {
-        this.node.setLocalTranslation(pos.x, 0f, pos.y);
-    }
-    
-
-    public void move(Vector2f dir)
-    {
-        this.node.move(dir.x, 0f, dir.y);
-    }
 }

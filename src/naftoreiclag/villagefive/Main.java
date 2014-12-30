@@ -12,6 +12,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.material.Material;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
+import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 
 public class Main extends SimpleApplication implements ActionListener
 {
@@ -47,6 +48,8 @@ public class Main extends SimpleApplication implements ActionListener
     public void simpleInitApp()
     {
         KeyKeys.hookInputs(inputManager);
+        
+        ModelManipulator.assetManager = this.assetManager;
         
         inputManager.addListener(this, KeyKeys.num_9, KeyKeys.num_8);
         

@@ -6,7 +6,7 @@
 package naftoreiclag.villagefive;
 
 import naftoreiclag.villagefive.util.ReiCamera;
-import naftoreiclag.villagefive.world.entity.KatCompleteEntity;
+import naftoreiclag.villagefive.world.entity.PlayerEntity;
 import naftoreiclag.villagefive.world.World;
 import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.collision.CollisionResults;
@@ -22,17 +22,17 @@ import naftoreiclag.villagefive.util.math.SmoothAnglef;
 
 public class PlayerController extends EntityController implements ActionListener
 {
-    public KatCompleteEntity puppet;
+    public PlayerEntity puppet;
     public World world;
 
-    public void setEntity(KatCompleteEntity entity)
+    public void setEntity(PlayerEntity entity)
     {
         this.puppet = entity;
         this.world = puppet.world;
     }
     
     float turnSpd = 3f;
-    float speed = 3.5f;
+    float speed = 4.5f;
     
     SmoothAnglef lookDir = new SmoothAnglef();
     SmoothAnglef camDir = new SmoothAnglef();
@@ -102,7 +102,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
         camDir.tick(tpf);
 
-        puppet.node.setLocalRotation((new Quaternion()).fromAngleAxis(lookDir.x, Vector3f.UNIT_Y));
+        puppet.setRotation(lookDir.x);
 
         Vector3f groundGoto = null;
         if(leftClick)
@@ -123,7 +123,7 @@ public class PlayerController extends EntityController implements ActionListener
         {
             if(groundGoto != null)
             {
-                groundGoto.subtractLocal(puppet.node.getLocalTranslation());
+                groundGoto.subtractLocal(puppet.getNode().getLocalTranslation());
                 lookDir.tx = FastMath.atan2(groundGoto.x, groundGoto.z);
             }
             else
@@ -131,7 +131,7 @@ public class PlayerController extends EntityController implements ActionListener
                 lookDir.tx = whereDoesThePlayerWantToGo();
             }
 
-            this.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
+            puppet.setLocationRelative(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
 
             if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
@@ -141,8 +141,8 @@ public class PlayerController extends EntityController implements ActionListener
         }
 
 
-        cam.setLocation((new Vector3f(FastMath.cos(FastMath.HALF_PI - camDir.x) * 15.0f, 7.0f, FastMath.sin(FastMath.HALF_PI - camDir.x) * 15.0f)).addLocal(puppet.node.getLocalTranslation()));
-        cam.lookAt(puppet.node.getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
+        cam.setLocation((new Vector3f(FastMath.cos(FastMath.HALF_PI - camDir.x) * 15.0f, 7.0f, FastMath.sin(FastMath.HALF_PI - camDir.x) * 15.0f)).addLocal(puppet.getNode().getLocalTranslation()));
+        cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
     }
 
     // When a key is pressed
@@ -228,8 +228,4 @@ public class PlayerController extends EntityController implements ActionListener
         this.enabled = true;
     }
 
-    private void move(Vector2f dir)
-    {
-        puppet.move(dir);
-    }
 }

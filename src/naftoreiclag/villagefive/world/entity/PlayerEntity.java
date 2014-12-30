@@ -12,66 +12,52 @@ import com.jme3.animation.LoopMode;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
-import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.Spatial;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture2D;
-import com.jme3.texture.image.ImageRaster;
 import com.jme3.texture.plugins.AWTLoader;
-import com.jme3.util.BufferUtils;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import naftoreiclag.villagefive.util.math.Anglef;
 import naftoreiclag.villagefive.util.math.GR;
+import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 
-public class KatCompleteEntity extends Entity
+public class PlayerEntity extends Entity
 {
-    public KatCompleteEntity()
-    {
-        random = new Random();
-    }
+    public Node head;
+    public Node tail;
+    public Node ears;
     
-    Node head;
-    Node tail;
-    Node ears;
+    public Node footL;
+    public Node footR;
+    public Node handL;
+    public Node handR;
+    public Node mask;
     
-    Geometry eyeL;
-    Geometry eyeR;
+    public SkeletonControl skele;
+    public AnimControl bodyAnimControl;
+    public AnimControl tailAnimControl;
     
-    Node footL;
-    Node footR;
-    Node handL;
-    Node handR;
-    Node mask;
-    AnimControl bodyAnimControl;
     public AnimChannel bodyAnimChannel;
-    AnimControl tailAnimControl;
-    AnimChannel tailAnimChannel;
+    public AnimChannel tailAnimChannel;
     
-    SkeletonControl skele;
-    SkeletonControl face;
+    public Texture eyeOpenTex;
+    public Texture eyeCloseTex;
+    public Material faceMat;
     
-    Texture debugFaceTex;
-    
-    Texture eyeOpenTex;
-    Texture eyeCloseTex;
-    Material faceMat;
+    private float currBlinkTime;
     
     @Override
     public void loadNode()
     {
-        node = loadNode("Models/katty/KattyBody.mesh.j3o");
+        node = ModelManipulator.loadNode("Models/katty/KattyBody.mesh.j3o");
         
         bodyAnimControl = node.getControl(AnimControl.class);
         bodyAnimChannel = bodyAnimControl.createChannel();
@@ -80,13 +66,13 @@ public class KatCompleteEntity extends Entity
         
         skele = node.getControl(SkeletonControl.class);
         
-        head = loadNode("Models/katty/Katty.mesh.j3o");
+        head = ModelManipulator.loadNode("Models/katty/Katty.mesh.j3o");
         skele.getAttachmentsNode("Head").attachChild(head);
         
-        ears = loadNode("Models/katty/KattyEars.mesh.j3o");
+        ears = ModelManipulator.loadNode("Models/katty/KattyEars.mesh.j3o");
         head.attachChild(ears);
         
-        tail = loadNode("Models/katty/KattyTail.mesh.j3o");
+        tail = ModelManipulator.loadNode("Models/katty/KattyTail.mesh.j3o");
         skele.getAttachmentsNode("Tail").attachChild(tail);
         
         tailAnimControl = tail.getControl(AnimControl.class);
@@ -94,19 +80,18 @@ public class KatCompleteEntity extends Entity
         tailAnimChannel.setAnim("Happy");
         tailAnimChannel.setLoopMode(LoopMode.Loop);
         
-        footL = loadNode("Models/katty/KattyFoot.mesh.j3o");
+        footL = ModelManipulator.loadNode("Models/katty/KattyFoot.mesh.j3o");
         skele.getAttachmentsNode("Foot.L").attachChild(footL);
-        footR = loadNode("Models/katty/KattyFoot.mesh.j3o");
+        footR = ModelManipulator.loadNode("Models/katty/KattyFoot.mesh.j3o");
         skele.getAttachmentsNode("Foot.R").attachChild(footR);
         
-        handL = loadNode("Models/katty/KattyHand.mesh.j3o");
+        handL = ModelManipulator.loadNode("Models/katty/KattyHand.mesh.j3o");
         skele.getAttachmentsNode("Hand.L").attachChild(handL);
-        handR = loadNode("Models/katty/KattyHand.mesh.j3o");
+        handR = ModelManipulator.loadNode("Models/katty/KattyHand.mesh.j3o");
         skele.getAttachmentsNode("Hand.R").attachChild(handR);
         
         
-        debugFaceTex = world.assetManager.loadTexture("Textures/debugFace.png");
-        mask = loadNode("Models/katty/Face.mesh.j3o");
+        mask = ModelManipulator.loadNode("Models/katty/Face.mesh.j3o");
         
         eyeOpenTex = generateEyeOpenTexture();
         eyeCloseTex = generateEyeClosedTexture();
@@ -126,75 +111,22 @@ public class KatCompleteEntity extends Entity
         // node.setMaterial(mat);
     }
     
+    Spatial ground;
+    public void attachGround(Spatial ground)
+    {
+        this.ground = ground;
+    }
     
-    private Mesh getEyeMesh(boolean right)
+    @Override
+    public void setLocation(Vector2f loc)
     {
-        Mesh mesh = new Mesh();
-        Vector3f[] vertices = new Vector3f[4];
-        vertices[0] = new Vector3f(0.5f, 0, 0.5f);
-        vertices[1] = new Vector3f(-0.5f, 0, 0.5f);
-        vertices[2] = new Vector3f(-0.5f, 0, -0.5f);
-        vertices[3] = new Vector3f(0.5f, 0, -0.5f);
+        super.setLocation(loc);
         
-        Vector3f[] normals = new Vector3f[4];
-        normals[0] = new Vector3f(0, 1, 0);
-        normals[1] = new Vector3f(0, 1, 0);
-        normals[2] = new Vector3f(0, 1, 0);
-        normals[3] = new Vector3f(0, 1, 0);
-
-        Vector2f[] texCoord = new Vector2f[4];
-        if(right)
-        {
-            texCoord[0] = new Vector2f(1, 1);
-            texCoord[1] = new Vector2f(0, 1);
-            texCoord[2] = new Vector2f(0, 0);
-            texCoord[3] = new Vector2f(1, 0);
-        }
-        else
-        {
-            texCoord[0] = new Vector2f(0, 1);
-            texCoord[1] = new Vector2f(1, 1);
-            texCoord[2] = new Vector2f(1, 0);
-            texCoord[3] = new Vector2f(0, 0);
-        }
-
-        int[] indexes = {0, 3, 2, 0, 2, 1};
+        Vector2f me = this.getLocation();
         
-
-        float[] colorArray =
-        {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            1, 1, 1, 0
-        };
-        mesh.setBuffer(Type.Color, 4, colorArray);
-        
-        mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(vertices));
-        mesh.setBuffer(Type.TexCoord, 2, BufferUtils.createFloatBuffer(texCoord));
-        mesh.setBuffer(Type.Normal, 3, BufferUtils.createFloatBuffer(normals));
-        mesh.setBuffer(Type.Index, 3, BufferUtils.createIntBuffer(indexes));
-        mesh.updateBound();
-
-        return mesh;
+        if(ground != null) { ground.setLocalTranslation(me.x, 0f, me.y); }
     }
 
-    private Geometry makeEye(boolean right)
-    {
-        Geometry geo = new Geometry("Eyemesh", getEyeMesh(right));
-        Material matVC = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        //matVC.setBoolean("VertexColor", true);
-        matVC.setTexture("ColorMap", debugFaceTex);
-        matVC.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        geo.setQueueBucket(Bucket.Transparent);
-        geo.setMaterial(matVC);
-        geo.setShadowMode(RenderQueue.ShadowMode.Receive);
-        geo.setLocalScale(0.3f);
-        return geo;
-    }
-
-    float blinkLength;
-    Random random;
     
     @Override
     public void tick(float tpf)
@@ -206,11 +138,11 @@ public class KatCompleteEntity extends Entity
             blink();
         }
         
-        if(blinkLength > 0)
+        if(currBlinkTime > 0)
         {
 
-            blinkLength -= tpf;
-            if(blinkLength < 0)
+            currBlinkTime -= tpf;
+            if(currBlinkTime < 0)
             {
                 faceMat.setTexture("ColorMap", eyeOpenTex);
 
@@ -225,7 +157,7 @@ public class KatCompleteEntity extends Entity
         
         faceMat.setTexture("ColorMap", eyeCloseTex);
         
-        blinkLength = 0.1f;
+        currBlinkTime = 0.1f;
     }
 
     //

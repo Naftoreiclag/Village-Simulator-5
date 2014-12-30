@@ -16,9 +16,15 @@ import java.util.List;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
 import naftoreiclag.villagefive.util.serializable.PlotSerial;
+import naftoreiclag.villagefive.world.chunk.Chunk;
 
 public class World
 {
+    public int width = 8;
+    public int height = 8;
+    
+    public Chunk[][] chunks = new Chunk[width][height];
+    
     public Node trueRootNode;
     public Node rootNode;
     public AssetManager assetManager;
@@ -32,6 +38,23 @@ public class World
         this.trueRootNode = rootNode;
         this.trueRootNode.attachChild(this.rootNode);
         this.assetManager = assetManager;
+        
+        for(int x = 0; x < width; ++ x)
+        {
+            for(int z = 0; z < height; ++ z)
+            {
+                Chunk chunk  = new Chunk();
+                
+                chunk.x = x;
+                chunk.z = z;
+                
+                System.out.println(x + ", " + z);
+                chunk.loadNode();
+                rootNode.attachChild(chunk.getNode());
+                
+                chunks[x][z] = chunk;
+            }
+        }
     }
     
     /*
@@ -52,7 +75,7 @@ public class World
         
         // Load the node
         plot.loadNode();
-        rootNode.attachChild(plot.node);
+        rootNode.attachChild(plot.getNode());
         
         // Keep track of it
         plots.add(plot);
@@ -80,29 +103,16 @@ public class World
         
         // Load the node
         entity.loadNode();
-        rootNode.attachChild(entity.node);
+        rootNode.attachChild(entity.getNode());
         
         // Move it into position
-        entity.teleport(vector2f);
+        entity.setLocation(vector2f);
         
         // Keep track of it
         entities.add(entity);
         
         // Return it
         return entity;
-    }
-    
-    public Control[] getControls(Node model)
-    {
-        int numControls = model.getNumControls();
-        
-        Control[] controls = new Control[numControls];
-        for(int i = 0; i < numControls; ++ i)
-        {
-            controls[i] = model.getControl(i);
-        }
-        
-        return controls;
     }
 
     public void destroyEntity(Entity aThis)

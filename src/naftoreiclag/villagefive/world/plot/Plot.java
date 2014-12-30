@@ -18,11 +18,11 @@ import naftoreiclag.villagefive.util.scenegraph.Polygon;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.world.Mundane;
 
-public class Plot implements Mundane
+public class Plot extends Mundane
 {
     public PlotSerial data;
     public World world;
-    public Node node;
+    protected Node node;
     
     public Plot(PlotSerial data, World world)
     {
@@ -47,6 +47,12 @@ public class Plot implements Mundane
             node.attachChild(geo);
         }
     }
+    
+    @Override
+    public Node getNode()
+    {
+        return node;
+    }
 
     private Polygon roomToPoly(PlotSerial.Face room)
     {
@@ -62,7 +68,7 @@ public class Plot implements Mundane
             polygon.vecs.add(new Vector2f((float) vert.getX(), (float) vert.getZ()));
             
             // Copy over decal (hole) data
-            for(PlotSerial.Decal decal : data.getEdges())
+            for(PlotSerial.Decal decal : data.getDecals())
             {
                 // If this decal does not apply
                 if(decal.getVertA() != vert.getId())

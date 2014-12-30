@@ -21,7 +21,7 @@ public class PlotSerial implements Serializable
     private Face[] faces;
 
     public Vertex[] getVerticies() { return verticies; }
-    public Decal[] getEdges() { return edges; }
+    public Decal[] getDecals() { return edges; }
     public Face[] getFaces() { return faces; }
 
     public void setVerticies(Vertex[] verticies) { this.verticies = verticies; }

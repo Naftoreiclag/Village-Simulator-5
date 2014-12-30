@@ -8,7 +8,7 @@ package naftoreiclag.villagefive;
 import naftoreiclag.villagefive.util.ReiCamera;
 import naftoreiclag.villagefive.util.serializable.PlotSerial;
 import naftoreiclag.villagefive.world.entity.PinguinEntity;
-import naftoreiclag.villagefive.world.entity.KatCompleteEntity;
+import naftoreiclag.villagefive.world.entity.PlayerEntity;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
 import naftoreiclag.villagefive.world.entity.FlowerEntity;
 import naftoreiclag.villagefive.world.World;
@@ -35,12 +35,14 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Quad;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.texture.Texture;
+import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 
-public class OverworldAppState extends AbstractAppState implements ActionListener
+public class OverworldAppState extends AbstractAppState
 {
     private Main app;
     private Node trueRootNode;
@@ -53,7 +55,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     World world;
     Node chasePnt;
     
-    KatCompleteEntity morgan;
+    PlayerEntity player;
     private Node stateRootNode;
     
     PlayerController playCont;
@@ -93,24 +95,23 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         
         playCont = new PlayerController();
         
-        inputManager.addListener(playCont, KeyKeys.move_backward, KeyKeys.move_forward, KeyKeys.move_left, KeyKeys.move_right, KeyKeys.rotate_camera_left, KeyKeys.rotate_camera_right, KeyKeys.mouse_left);
-        inputManager.addListener(this, KeyKeys.debug);
+        inputManager.addListener(playCont, KeyKeys.move_backward, 
+                                 KeyKeys.move_forward, 
+                                 KeyKeys.move_left, 
+                                 KeyKeys.move_right, 
+                                 KeyKeys.rotate_camera_left, 
+                                 KeyKeys.rotate_camera_right, 
+                                 KeyKeys.mouse_left);
         
-        morgan = world.spawnEntity(KatCompleteEntity.class, new Vector2f(0f, 0f));
-        morgan.attachSpatial(chasePnt);
+        player = world.spawnEntity(PlayerEntity.class, new Vector2f(0f, 0f));
+        player.attachSpatial(chasePnt);
+        player.attachGround(ground);
+        stateRootNode.attachChild(ground);
         
-        playCont.setEntity(morgan);
+        playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
         playCont.setManager(inputManager);
-        
-        
-        
-        for(int i = 0; i < 200; ++ i)
-        {
-            world.spawnEntity(FlowerEntity.class, new Vector2f(FastMath.rand.nextFloat() * 64f - 32f, FastMath.rand.nextFloat() * 64f - 32f));
-        }
-        
         
         house.setX(10);
         house.setZ(10);
@@ -148,6 +149,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     public void render(RenderManager rm)
     {
     }
+    
     Spatial ground;
     
     DirectionalLightShadowRenderer dlsr;
@@ -180,64 +182,9 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
         viewPort.addProcessor(dlsr);
         
-        DebugGrid gridMeshThing = new DebugGrid();
-        gridMeshThing.buildGeometry();
-        ground = new Geometry("84903401239015290", gridMeshThing.evenCells);
-        ground.move(-DebugGrid.width / 2, 0, -DebugGrid.height / 2);
-        ground.setMaterial((Material) assetManager.loadMaterial("Materials/camograss.j3m"));
-        ground.setShadowMode(RenderQueue.ShadowMode.Receive);
-        stateRootNode.attachChild(ground);
+        HorizQuad quad = new HorizQuad(-300, -300, 300, 300);
+        ground = new Geometry("", quad);
+        ground.setMaterial(Main.mat_debug_wireframe);
         
-        Texture west = assetManager.loadTexture("Textures/clouds/clouds1_west.bmp");
-        Texture east = assetManager.loadTexture("Textures/clouds/clouds1_east.bmp");
-        Texture north = assetManager.loadTexture("Textures/clouds/clouds1_north.bmp");
-        Texture south = assetManager.loadTexture("Textures/clouds/clouds1_south.bmp");
-        Texture up = assetManager.loadTexture("Textures/clouds/clouds1_up.bmp");
-        Texture down = assetManager.loadTexture("Textures/clouds/clouds1_down.bmp");
-    }
-
-    boolean debugKey = false;
-    
-    public void onAction(String key, boolean isPressed, float tpf)
-    {
-        if(key.equals(KeyKeys.debug))
-        {
-            debugKey = isPressed;
-            
-        }
-    }
-    
-
-    class DebugGrid
-    {
-        public static final int width = 64;
-        public static final int height = 64;
-        public Mesh evenCells;
-
-        public void buildGeometry()
-        {
-            ModelBuilder mb = new ModelBuilder();
-            
-            float tw = 1f / 32f;
-            float th = 1f / 32f;
-
-            for(int x = 0; x < width; ++x)
-            {
-                for(int z = 0; z < height; ++z)
-                {
-                    mb.setAppendOrigin(x, 0.0f, z);
-                    
-                    float tx = ((float ) x) * tw;
-                    float ty = ((float ) z) * th;
-
-                    mb.addQuad(0, 0, 0, new Vector3f(0, 2, 0), tx, ty,
-                               1, 0, 0, new Vector3f(0, 2, 0), tx + tw, ty,
-                               1, 0, 1, new Vector3f(0, 2, 0), tx + tw, ty + th,
-                               0, 0, 1, new Vector3f(0, 2, 0), tx, ty + th);
-                }
-            }
-
-            evenCells = mb.bake();
-        }
     }
 }

@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive.world.entity;
 
+import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import naftoreiclag.villagefive.world.entity.Entity;
 
 public class FlowerEntity extends Entity
@@ -18,7 +19,7 @@ public class FlowerEntity extends Entity
     @Override
     public void loadNode()
     {
-        node = loadNode("Models/Flower.mesh.j3o");
+        node = ModelManipulator.loadNode("Models/Flower.mesh.j3o");
     }
 
 }
