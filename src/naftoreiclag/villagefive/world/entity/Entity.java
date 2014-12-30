@@ -34,9 +34,26 @@ public abstract class Entity
     {
         this.world = world;
     }
-    public void assertNode(Node node)
+    public void loadNode()
     {
-        this.node = node;
+        if(getModelName() == null)
+        {
+            node = new Node();
+        }
+        
+        node = (Node) world.assetManager.loadModel(getModelName());
+    }
+    
+    public Node loadNode(String modelName)
+    {
+        if(modelName == null)
+        {
+            Node node = new Node();
+            return node;
+        }
+        
+        Node node = (Node) world.assetManager.loadModel(modelName);
+        return node;
     }
     
     public abstract void tick(float tpf);

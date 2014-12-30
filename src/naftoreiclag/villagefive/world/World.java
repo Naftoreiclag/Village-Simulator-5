@@ -43,22 +43,31 @@ public class World
     
     public Plot spawnPlot(PlotSerial plotType)
     {
+        // Create the thing
+        if(plotType == null)
+        {
+            return null;
+        }
         Plot plot = new Plot(plotType, this);
-        plot.loadNode();
         
+        // Load the node
+        plot.loadNode();
         rootNode.attachChild(plot.node);
         
+        // Keep track of it
         plots.add(plot);
         
+        // Return it
         return plot;
     }
     
     public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType, Vector2f vector2f)
     {
-        SomeEntity e;
+        // Create the thing
+        SomeEntity entity;
         try
         {
-            e = entityType.getConstructor().newInstance();
+            entity = entityType.getConstructor().newInstance();
             
         }
         catch(Exception ex)
@@ -67,32 +76,20 @@ public class World
             
             return null;
         }
+        entity.assertWorld(this);
         
-        e.assertWorld(this);
-        e.assertNode(loadNode(e.getModelName()));
-        e.teleport(vector2f);
+        // Load the node
+        entity.loadNode();
+        rootNode.attachChild(entity.node);
         
-        entities.add(e);
+        // Move it into position
+        entity.teleport(vector2f);
         
-        return e;
-    }
-    
-    public Node loadNode(String modelName)
-    {
-        if(modelName == null)
-        {
-            Node body = new Node();
-            rootNode.attachChild(body);
-
-            return body;
-        }
+        // Keep track of it
+        entities.add(entity);
         
-        Node body = (Node) assetManager.loadModel(modelName);
-        
-        rootNode.attachChild(body);
-        
-        return body;
-        
+        // Return it
+        return entity;
     }
     
     public Control[] getControls(Node model)

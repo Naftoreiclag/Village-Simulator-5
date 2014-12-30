@@ -77,9 +77,9 @@ public class KatCompleteEntity extends Entity
     Material faceMat;
     
     @Override
-    public void assertNode(Node newNode)
+    public void loadNode()
     {
-        super.assertNode(newNode);
+        super.loadNode();
         
         bodyAnimControl = node.getControl(AnimControl.class);
         bodyAnimChannel = bodyAnimControl.createChannel();
@@ -88,13 +88,13 @@ public class KatCompleteEntity extends Entity
         
         skele = node.getControl(SkeletonControl.class);
         
-        head = world.loadNode("Models/katty/Katty.mesh.j3o");
+        head = loadNode("Models/katty/Katty.mesh.j3o");
         skele.getAttachmentsNode("Head").attachChild(head);
         
-        ears = world.loadNode("Models/katty/KattyEars.mesh.j3o");
+        ears = loadNode("Models/katty/KattyEars.mesh.j3o");
         head.attachChild(ears);
         
-        tail = world.loadNode("Models/katty/KattyTail.mesh.j3o");
+        tail = loadNode("Models/katty/KattyTail.mesh.j3o");
         skele.getAttachmentsNode("Tail").attachChild(tail);
         
         tailAnimControl = tail.getControl(AnimControl.class);
@@ -102,19 +102,19 @@ public class KatCompleteEntity extends Entity
         tailAnimChannel.setAnim("Happy");
         tailAnimChannel.setLoopMode(LoopMode.Loop);
         
-        footL = world.loadNode("Models/katty/KattyFoot.mesh.j3o");
+        footL = loadNode("Models/katty/KattyFoot.mesh.j3o");
         skele.getAttachmentsNode("Foot.L").attachChild(footL);
-        footR = world.loadNode("Models/katty/KattyFoot.mesh.j3o");
+        footR = loadNode("Models/katty/KattyFoot.mesh.j3o");
         skele.getAttachmentsNode("Foot.R").attachChild(footR);
         
-        handL = world.loadNode("Models/katty/KattyHand.mesh.j3o");
+        handL = loadNode("Models/katty/KattyHand.mesh.j3o");
         skele.getAttachmentsNode("Hand.L").attachChild(handL);
-        handR = world.loadNode("Models/katty/KattyHand.mesh.j3o");
+        handR = loadNode("Models/katty/KattyHand.mesh.j3o");
         skele.getAttachmentsNode("Hand.R").attachChild(handR);
         
         
         debugFaceTex = world.assetManager.loadTexture("Textures/debugFace.png");
-        mask = world.loadNode("Models/katty/Face.mesh.j3o");
+        mask = loadNode("Models/katty/Face.mesh.j3o");
         
         eyeOpenTex = generateEyeOpenTexture();
         eyeCloseTex = generateEyeClosedTexture();

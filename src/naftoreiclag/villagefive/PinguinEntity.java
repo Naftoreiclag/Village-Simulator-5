@@ -28,9 +28,9 @@ public class PinguinEntity extends Entity
     }
     
     @Override
-    public void assertNode(Node newNode)
+    public void loadNode()
     {
-        super.assertNode(newNode);
+        super.loadNode();
         
         Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
         
