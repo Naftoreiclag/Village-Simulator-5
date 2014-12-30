@@ -28,8 +28,7 @@ public class World
     AssetManager assetManager;
     
     List<Entity> entities = new ArrayList<Entity>();
-    
-    List<PlotSerial> plots = new ArrayList<PlotSerial>();
+    List<Plot> plots = new ArrayList<Plot>();
     
     World(Node rootNode, AssetManager assetManager)
     {
@@ -47,16 +46,20 @@ public class World
         this.trueRootNode.attachChild(rootNode);
     }
     
-    public void addPlot(PlotSerial p)
+    /*
+     * Spawn methods accept a "static" set of data (class, serializables...) which is then translated to physical
+     * world-elements.
+     * 
+     * 
+     */
+    
+    public Plot spawnPlot(PlotSerial plotType)
     {
-        plots.add(p);
+        Plot plot = new Plot(plotType, this, new Node());
         
-        drawPlot(p);
+        plots.add(plot);
         
-        for(Decal d : p.getEdges())
-        {
-            
-        }
+        return plot;
     }
     
     public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType, Vector2f vector2f)
