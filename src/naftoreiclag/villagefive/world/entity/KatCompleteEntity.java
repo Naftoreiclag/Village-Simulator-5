@@ -37,8 +37,6 @@ import naftoreiclag.villagefive.util.GR;
 
 public class KatCompleteEntity extends Entity
 {
-    
-    
     public KatCompleteEntity()
     {
         random = new Random();
@@ -73,7 +71,7 @@ public class KatCompleteEntity extends Entity
     @Override
     public void loadNode()
     {
-        super.loadNode();
+        node = loadNode("Models/katty/KattyBody.mesh.j3o");
         
         bodyAnimControl = node.getControl(AnimControl.class);
         bodyAnimChannel = bodyAnimControl.createChannel();
@@ -129,13 +127,6 @@ public class KatCompleteEntity extends Entity
     }
     
     
-
-    @Override
-    public String getModelName()
-    {
-        return "Models/katty/KattyBody.mesh.j3o";
-    }
-
     private Mesh getEyeMesh(boolean right)
     {
         Mesh mesh = new Mesh();

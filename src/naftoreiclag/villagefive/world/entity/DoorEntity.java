@@ -11,12 +11,12 @@ import naftoreiclag.villagefive.world.entity.Entity;
 public class DoorEntity extends Entity
 {
     @Override
-    public String getModelName()
-    {
-        return "Models/Frame.mesh.j3o";
-    }
-
-    @Override
     public void tick(float tpf)
     {}
+
+    @Override
+    public void loadNode()
+    {
+        node = loadNode("Models/Frame.mesh.j3o");
+    }
 }

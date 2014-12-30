@@ -11,13 +11,14 @@ import naftoreiclag.villagefive.world.entity.Entity;
 public class FlowerEntity extends Entity
 {
     @Override
-    public String getModelName()
-    {
-        return "Models/Flower.mesh.j3o";
-    }
-    @Override
     public void tick(float tpf)
     {
+    }
+
+    @Override
+    public void loadNode()
+    {
+        node = loadNode("Models/Flower.mesh.j3o");
     }
 
 }

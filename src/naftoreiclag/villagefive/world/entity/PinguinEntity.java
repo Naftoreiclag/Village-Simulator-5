@@ -6,17 +6,10 @@
 
 package naftoreiclag.villagefive.world.entity;
 
-import naftoreiclag.villagefive.world.entity.Entity;
 import com.jme3.material.Material;
-import com.jme3.scene.Node;
 
 public class PinguinEntity extends Entity
 {
-    @Override
-    public String getModelName()
-    {
-        return "Models/Knight.mesh.j3o";
-    }
     @Override
     public void tick(float tpf)
     {
@@ -25,7 +18,7 @@ public class PinguinEntity extends Entity
     @Override
     public void loadNode()
     {
-        super.loadNode();
+        node = loadNode("Models/Knight.mesh.j3o");
         
         Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
         

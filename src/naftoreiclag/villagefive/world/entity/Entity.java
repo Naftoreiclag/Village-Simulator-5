@@ -24,7 +24,6 @@ public abstract class Entity implements Mundane
     public World world;
     public Node node;
     
-    
     public void destroy()
     {
         this.world.destroyEntity(this);
@@ -36,15 +35,7 @@ public abstract class Entity implements Mundane
     }
     
     @Override
-    public void loadNode()
-    {
-        if(getModelName() == null)
-        {
-            node = new Node();
-        }
-        
-        node = (Node) world.assetManager.loadModel(getModelName());
-    }
+    public abstract void loadNode();
     
     public Node loadNode(String modelName)
     {
@@ -70,7 +61,6 @@ public abstract class Entity implements Mundane
         this.node.setLocalTranslation(pos.x, 0f, pos.y);
     }
     
-    public abstract String getModelName();
 
     public void move(Vector2f dir)
     {
