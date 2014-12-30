@@ -17,7 +17,7 @@ public class DoorEntity extends Entity
     @Override
     public String getModelName()
     {
-        return "Models/door/Door.mesh.j3o";
+        return "Models/Frame.mesh.j3o";
     }
 
     @Override

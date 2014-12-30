@@ -16,6 +16,7 @@ import com.jme3.scene.Spatial;
  * Important: All sub-classes must have one 0-argument constructor. (or have no written constructors at all)
  */
 
+// Position and rotation are stored in the node
 public abstract class Entity
 {
     protected World world;

@@ -25,12 +25,12 @@ public class HouseEditor
     final Node trueRootNode;
     final Node rootNode;
     AssetManager assetManager;
-    final Plot plot;
+    final PlotSerial plot;
     final ReiCamera cam;
     
     float camDir;
     
-    public HouseEditor(Node rootNode, AssetManager assetManager, Plot plot, ReiCamera cam)
+    public HouseEditor(Node rootNode, AssetManager assetManager, PlotSerial plot, ReiCamera cam)
     {
         this.rootNode = new Node();
         this.trueRootNode = rootNode;

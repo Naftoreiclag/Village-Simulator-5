@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Map;
 import naftoreiclag.villagefive.util.ModelBuilder;
 import naftoreiclag.villagefive.util.ModelBuilder.Vertex;
+import org.poly2tri.Poly2Tri;
+import org.poly2tri.geometry.polygon.PolygonPoint;
+import org.poly2tri.triangulation.TriangulationPoint;
+import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 
 
 // Counter-Clockwise
@@ -35,6 +39,7 @@ public class Polygon
     
     public Map<Integer, ArrayList<Hole>> holesPerEdge = new HashMap<Integer, ArrayList<Hole>>();
     
+    // Doors and windows in walls
     public static class Hole
     {
         // On what edge
@@ -53,6 +58,7 @@ public class Polygon
         box
     }
     
+    // "Inflate" a polygon
     public Polygon margin(float thickness)
     {
         Polygon ret = new Polygon();
@@ -105,10 +111,33 @@ public class Polygon
         	// Has holes
             if(holesPerEdge.containsKey(i))
             {
-                // How far it moved
-                Vector2f change = vecs.get(i).subtract(ret.vecs.get(i));
                 
-                float offset = FastMath.sqrt(change.lengthSquared() - FastMath.sqr(thickness));
+                
+                /* map:
+                 *  
+                 *      C
+                 *     /
+                 *    /
+                 *   /
+                 *  A------------B
+                 * 
+                 *  A: you are here (original polygon)
+                 *  B: next vertex on this polygon
+                 *  C: the new position for A after margining/padding
+                 * 
+                 */
+                
+                
+                // How far it moved
+                Vector2f a = get(i);
+                Vector2f c = ret.vecs.get(i);
+                Vector2f b = get(i + 1);
+                
+                Vector2f ac = c.subtract(a);
+                Vector2f ab = b.subtract(a);
+                
+                float offset = ac.dot(ab);
+                offset /= ab.length();
                 
                 ArrayList<Hole> origHoles = holesPerEdge.get(i);
                 ArrayList<Hole> offsetHoles = new ArrayList<Hole>();
@@ -137,6 +166,7 @@ public class Polygon
         return ret;
     }
     
+    // Replace each line segment with a single vertex that is the original line's intersection with its incident edge
     public Polygon diminish()
     {
         Polygon ret = new Polygon();
@@ -203,80 +233,36 @@ public class Polygon
 		}
     }
     
-    public Polygon shrink(float thickness)
+    // Make into a floor
+    public void makeFloor(ModelBuilder mb, float textureWidth, float textureHeight)
     {
-        // "inside" polygon
-        Polygon ret = new Polygon();
+        List<PolygonPoint> points = new ArrayList<PolygonPoint>();
         
-        for(int i = 0; i < vecs.size(); ++ i)
+        for(Vector2f a : vecs)
         {
-            Vector2f q = get(i - 1);
-            Vector2f a = get(i);
-            Vector2f b = get(i + 1);
-            
-            Vector2f aq = q.subtract(a).normalizeLocal();
-            Vector2f ab = b.subtract(a).normalizeLocal();
-            
-            // if this is positive, then angle baq is non-reflexive
-            float baqC = -aq.determinant(ab);
-            
-            Vector2f ad = aq.add(ab).multLocal(FastMath.sign(baqC)).multLocal(thickness);
-            
-            /*
-             *           D
-             *           |
-             *           |
-             *   Q-------A-------B
-             */
-            
-            /*
-             * 
-             * Q     D
-             * |    /
-             * |   /
-             * |  /
-             * | /
-             * A-----------B
-             * 
-             * 
-             * 
-             */
-            
-            ret.vecs.add(ad.add(a));
-            
-            // Has holes
-            if(holesPerEdge.containsKey(i))
-            {
-                float offset = FastMath.sqrt(ad.lengthSquared() - FastMath.sqr(thickness));
-                
-                ArrayList<Hole> origHoles = holesPerEdge.get(i);
-                ArrayList<Hole> offsetHoles = new ArrayList<Hole>();
-                
-                for(int j = 0; j < origHoles.size(); ++ j)
-                {
-                    Hole origHole = origHoles.get(j);
-                    Hole offsetHole = new Hole();
-                    
-                    offsetHole.point = origHole.point;
-                    offsetHole.h = origHole.h;
-                    offsetHole.w = origHole.w;
-                    offsetHole.x = origHole.x;
-                    offsetHole.y = origHole.y;
-                    
-                    offsetHole.x -= offset;
-                    
-                    offsetHoles.add(offsetHole);
-                }
-                
-                ret.holesPerEdge.put(i, offsetHoles);
-            }
+            points.add(new PolygonPoint(a.x, a.y));
         }
         
-        return ret;
+        org.poly2tri.geometry.polygon.Polygon polygon = new org.poly2tri.geometry.polygon.Polygon(points);
+        Poly2Tri.triangulate(polygon);
+        
+        
+        for(DelaunayTriangle tri : polygon.getTriangles())
+        {
+            TriangulationPoint a = tri.points[0];
+            TriangulationPoint b = tri.points[1];
+            TriangulationPoint c = tri.points[2];
+            
+            Vertex A = new Vertex(a.getXf(), 0f, a.getYf(), Vector3f.UNIT_Y, a.getXf() / textureWidth, a.getYf() / textureHeight);
+            Vertex B = new Vertex(b.getXf(), 0f, b.getYf(), Vector3f.UNIT_Y, b.getXf() / textureWidth, b.getYf() / textureHeight);
+            Vertex C = new Vertex(c.getXf(), 0f, c.getYf(), Vector3f.UNIT_Y, c.getXf() / textureWidth, c.getYf() / textureHeight);
+            
+            mb.addTriangle(A, B, C);
+        }
     }
     
-    // Make into a wall, with regards to the holes
-    public void makeWall(float height, float textureWidth, float textureHeight, ModelBuilder mb, boolean reverseNormals)
+    // Make into a wall
+    public void makeWall(ModelBuilder mb, float height, float textureWidth, float textureHeight, boolean reverseNormals)
     {
         float tH = height / textureHeight;
         
@@ -414,9 +400,11 @@ public class Polygon
         ModelBuilder mb = new ModelBuilder();
         
         Polygon shrunk = this.margin(-thickness);
+        Polygon grow = this.margin(thickness);
         
-        this.makeWall(height, texWidth, texHeight, mb, false);
-        shrunk.makeWall(height, texWidth, texHeight, mb, true);
+        shrunk.makeWall(mb, height, texWidth, texHeight, true);
+        grow.makeWall(mb, height, texWidth, texHeight, false);
+        this.makeFloor(mb, texWidth, texHeight);
         
         return mb.bake();
     }

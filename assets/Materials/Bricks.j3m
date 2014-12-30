@@ -6,6 +6,6 @@ Material My Material : Common/MatDefs/Light/Lighting.j3md {
         DiffuseMap : Repeat Textures/bricks.jpg
      }
     AdditionalRenderState {
-      FaceCull Off
+      FaceCull Back
     }
 }

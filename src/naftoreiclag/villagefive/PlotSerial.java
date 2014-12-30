@@ -8,7 +8,7 @@ package naftoreiclag.villagefive;
 
 // TODO: add layers
 // Serializable format
-public class Plot
+public class PlotSerial
 {
     private double x, z;
     private double angle;

@@ -54,9 +54,9 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     
     ReiCamera rcam;
     
-    Plot house;
+    PlotSerial house;
     
-    public void gimmiePlot(Plot house)
+    public void gimmiePlot(PlotSerial house)
     {
         this.house = house;
     }
@@ -114,9 +114,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         world.addPlot(house);
         
-        
-        world.spawnEntity(StoolEntity.class, new Vector2f(0f, 0f));
-        world.spawnEntity(DoorEntity.class, new Vector2f(-2f, 2f));
+        world.spawnEntity(DoorEntity.class, new Vector2f(0f, 0f));
         world.spawnEntity(PinguinEntity.class, new Vector2f(-4f, 4f));
         
         inputManager.setCursorVisible(true);

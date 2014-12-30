@@ -19,9 +19,7 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
-import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -45,9 +43,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import naftoreiclag.villagefive.Plot.Decal;
-import naftoreiclag.villagefive.Plot.Face;
-import naftoreiclag.villagefive.Plot.Vertex;
+import naftoreiclag.villagefive.PlotSerial.Decal;
+import naftoreiclag.villagefive.PlotSerial.Face;
+import naftoreiclag.villagefive.PlotSerial.Vertex;
 
 import naftoreiclag.villagefive.util.BlueprintGeoGen;
 import naftoreiclag.villagefive.util.SmoothAnglef;
@@ -76,7 +74,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     private ViewPort viewPort;
 	private RenderManager renderManager;
     
-    Plot plotData = new Plot();
+    PlotSerial plotData = new PlotSerial();
 
     Material strokeMat;
     
@@ -674,19 +672,21 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         strokeMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
     }
 
+    // 
     private void storePlotData()
     {
         Vertex[] verts = new Vertex[flags.size()];
         for(int i = 0; i < flags.size(); ++ i)
         {
             Flag orig = flags.get(i);
-            Vertex trans = new Vertex();
             
+            // Give every flag its id // This is a genius idea
+            orig.id = i;
+            
+            Vertex trans = new Vertex();
             trans.setX(orig.getLoc().a);
             trans.setZ(orig.getLoc().b);
-            trans.setId(i);
-            
-            orig.id = i;
+            trans.setId(orig.id);
             
             verts[i] = trans;
         }

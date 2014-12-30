@@ -21,14 +21,18 @@ import naftoreiclag.villagefive.util.SmoothAnglef;
 public class PlayerController extends EntityController implements ActionListener
 {
     public KatCompleteEntity puppet;
+    public World world;
 
     public void setEntity(KatCompleteEntity entity)
     {
         this.puppet = entity;
+        this.world = puppet.world;
     }
-    SmoothAnglef lookDir = new SmoothAnglef();
+    
     float turnSpd = 3f;
     float speed = 3.5f;
+    
+    SmoothAnglef lookDir = new SmoothAnglef();
     SmoothAnglef camDir = new SmoothAnglef();
 
     public PlayerController()
@@ -40,6 +44,7 @@ public class PlayerController extends EntityController implements ActionListener
         
         camDir.disableSmoothing();
     }
+    
     ReiCamera cam;
     Spatial ground;
     boolean turningLeft = false;
@@ -95,9 +100,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
         camDir.tick(tpf);
 
-
         puppet.node.setLocalRotation((new Quaternion()).fromAngleAxis(lookDir.x, Vector3f.UNIT_Y));
-
 
         Vector3f groundGoto = null;
         if(leftClick)
@@ -126,11 +129,7 @@ public class PlayerController extends EntityController implements ActionListener
                 lookDir.tx = whereDoesThePlayerWantToGo();
             }
 
-
-            puppet.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
-
-
-
+            this.move(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
 
             if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
@@ -144,6 +143,7 @@ public class PlayerController extends EntityController implements ActionListener
         cam.lookAt(puppet.node.getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
     }
 
+    // When a key is pressed
     public void onAction(String key, boolean isPressed, float tpf)
     {
         if(!enabled)
@@ -224,5 +224,12 @@ public class PlayerController extends EntityController implements ActionListener
     void enable()
     {
         this.enabled = true;
+    }
+
+    private void move(Vector2f dir)
+    {
+        
+        
+        puppet.move(dir);
     }
 }

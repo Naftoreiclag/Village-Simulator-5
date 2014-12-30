@@ -17,7 +17,9 @@ import com.jme3.scene.Node;
 import com.jme3.scene.control.Control;
 import java.util.ArrayList;
 import java.util.List;
+import naftoreiclag.villagefive.PlotSerial.Decal;
 import naftoreiclag.villagefive.util.ModelBuilder;
+import org.poly2tri.geometry.polygon.PolygonPoint;
 
 public class World
 {
@@ -27,7 +29,7 @@ public class World
     
     List<Entity> entities = new ArrayList<Entity>();
     
-    List<Plot> plots = new ArrayList<Plot>();
+    List<PlotSerial> plots = new ArrayList<PlotSerial>();
     
     World(Node rootNode, AssetManager assetManager)
     {
@@ -45,11 +47,16 @@ public class World
         this.trueRootNode.attachChild(rootNode);
     }
     
-    public void addPlot(Plot p)
+    public void addPlot(PlotSerial p)
     {
         plots.add(p);
         
         drawPlot(p);
+        
+        for(Decal d : p.getEdges())
+        {
+            
+        }
     }
     
     public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType, Vector2f vector2f)
@@ -124,13 +131,10 @@ public class World
         }
     }
     
-    private void drawPlot(Plot p)
+    private void drawPlot(PlotSerial p)
     {
-        
-        
-        
         Node n = PlotNodifier.nodify(p);
-        n.setLocalTranslation((float) p.getX(), 0.1f, (float) p.getZ());
+        n.setLocalTranslation((float) p.getX(), 0.01f, (float) p.getZ());
         
         rootNode.attachChild(n);
     }
