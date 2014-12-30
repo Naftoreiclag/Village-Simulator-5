@@ -11,11 +11,6 @@ import naftoreiclag.villagefive.world.entity.Entity;
 public class FlowerEntity extends Entity
 {
     @Override
-    public void meow()
-    {
-        System.out.println("flower");
-    }
-    @Override
     public String getModelName()
     {
         return "Models/Flower.mesh.j3o";

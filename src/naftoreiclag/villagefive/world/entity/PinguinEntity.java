@@ -13,11 +13,6 @@ import com.jme3.scene.Node;
 public class PinguinEntity extends Entity
 {
     @Override
-    public void meow()
-    {
-        System.out.println("pinguin");
-    }
-    @Override
     public String getModelName()
     {
         return "Models/Knight.mesh.j3o";

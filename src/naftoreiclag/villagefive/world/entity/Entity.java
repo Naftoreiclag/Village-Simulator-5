@@ -10,6 +10,7 @@ import naftoreiclag.villagefive.world.World;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import naftoreiclag.villagefive.world.Mundane;
 
 /*
  * An easy-to-use interface for synchronizing all the different bodies involved.
@@ -18,12 +19,11 @@ import com.jme3.scene.Spatial;
  */
 
 // Position and rotation are stored in the node
-public abstract class Entity
+public abstract class Entity implements Mundane
 {
     public World world;
     public Node node;
     
-    public abstract void meow();
     
     public void destroy()
     {
@@ -34,6 +34,8 @@ public abstract class Entity
     {
         this.world = world;
     }
+    
+    @Override
     public void loadNode()
     {
         if(getModelName() == null)

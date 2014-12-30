@@ -11,12 +11,6 @@ import naftoreiclag.villagefive.world.entity.Entity;
 public class DoorEntity extends Entity
 {
     @Override
-    public void meow()
-    {
-        System.out.println("im a mailbox");
-    }
-
-    @Override
     public String getModelName()
     {
         return "Models/Frame.mesh.j3o";

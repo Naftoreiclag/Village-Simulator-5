@@ -39,12 +39,6 @@ public class KatCompleteEntity extends Entity
 {
     
     
-    @Override
-    public void meow()
-    {
-        System.out.println("MEOW mew meeow");
-    }
-    
     public KatCompleteEntity()
     {
         random = new Random();
