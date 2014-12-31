@@ -92,35 +92,28 @@ public class OverworldAppState extends AbstractAppState
         rcam.mode = ReiCamera.SmoothMode.cubic;
         
         world = new World(stateRootNode, assetManager);
+        world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         
-        playCont = new PlayerController();
         
-        inputManager.addListener(playCont, KeyKeys.move_backward, 
-                                 KeyKeys.move_forward, 
-                                 KeyKeys.move_left, 
-                                 KeyKeys.move_right, 
-                                 KeyKeys.rotate_camera_left, 
-                                 KeyKeys.rotate_camera_right, 
-                                 KeyKeys.mouse_left);
         
-        player = world.spawnEntity(PlayerEntity.class, new Vector2f(0f, 0f));
+        player = world.spawnEntity(PlayerEntity.class, new Vector2f(256f, 256f));
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
-        stateRootNode.attachChild(ground);
         
+        
+        playCont = new PlayerController();
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
         playCont.setManager(inputManager);
         
-        house.setX(10);
-        house.setZ(10);
+        house.setX(266);
+        house.setZ(266);
         
-        world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         world.spawnPlot(house);
         
-        world.spawnEntity(DoorEntity.class, new Vector2f(0f, 0f));
-        world.spawnEntity(PinguinEntity.class, new Vector2f(-4f, 4f));
+        world.spawnEntity(DoorEntity.class, new Vector2f(256f, 256f));
+        world.spawnEntity(PinguinEntity.class, new Vector2f(266f, 266f));
         
         inputManager.setCursorVisible(true);
 
@@ -180,11 +173,10 @@ public class OverworldAppState extends AbstractAppState
         dlsr.setShadowIntensity(0.5f);
         dlsr.setLambda(0.55f);
         dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
-        viewPort.addProcessor(dlsr);
+        //viewPort.addProcessor(dlsr);
         
         HorizQuad quad = new HorizQuad(-300, -300, 300, 300);
         ground = new Geometry("", quad);
-        ground.setMaterial(Main.mat_debug_wireframe);
         
     }
 }

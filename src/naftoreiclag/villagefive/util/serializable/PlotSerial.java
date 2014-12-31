@@ -16,20 +16,20 @@ public class PlotSerial implements Serializable
     
     private int width, height;
     
-    private Vertex[] verticies;
+    private Vert[] verts;
     private Decal[] edges;
     private Face[] faces;
 
-    public Vertex[] getVerticies() { return verticies; }
+    public Vert[] getVerts() { return verts; }
     public Decal[] getDecals() { return edges; }
     public Face[] getFaces() { return faces; }
 
-    public void setVerticies(Vertex[] verticies) { this.verticies = verticies; }
-    public void setEdges(Decal[] edges) { this.edges = edges; }
+    public void setVerts(Vert[] verts) { this.verts = verts; }
+    public void setDecals(Decal[] decals) { this.edges = decals; }
     public void setFaces(Face[] faces) { this.faces = faces; }
     
     // "Flags"
-    public static class Vertex
+    public static class Vert
     {
         private double x;
         private double z;
@@ -72,14 +72,14 @@ public class PlotSerial implements Serializable
     // Store the edges in counter-clockwise order
     public static class Face
     {
-        private int[] vertexes;
+        private int[] verts;
         private int id;
         
         public int getId() { return id; }
         public void setId(int id) { this.id = id; }
 
-        public int[] getVertexes() { return vertexes; }
-        public void setVertexes(int[] edges) { this.vertexes = edges; }
+        public int[] getVerts() { return verts; }
+        public void setVerts(int[] edges) { this.verts = edges; }
 
     }
 

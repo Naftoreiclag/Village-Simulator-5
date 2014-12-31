@@ -37,12 +37,13 @@ public class Main extends SimpleApplication implements ActionListener
     
     public static Material mat_debug_wireframe;
     public static Material mat_debug;
+    public static Material mat_grass;
     public static Material mat_debug_lighting;
     public static Material mat_debug_bricks;
     public static Material mat_debug_gold;
     
     OverworldAppState tas;
-    BlueprintAppState bas;
+    PlotEditorAppState bas;
     
     @Override
     public void simpleInitApp()
@@ -58,11 +59,12 @@ public class Main extends SimpleApplication implements ActionListener
         mat_debug_lighting = assetManager.loadMaterial("Materials/debugLighting.j3m");
         mat_debug_bricks = assetManager.loadMaterial("Materials/Bricks.j3m");
         mat_debug_gold = assetManager.loadMaterial("Materials/TestMaterial.j3m");
+        mat_grass = assetManager.loadMaterial("Materials/camograss.j3m");
         
         flyCam.setEnabled(false);
         
         tas = new OverworldAppState();
-        bas = new BlueprintAppState();
+        bas = new PlotEditorAppState();
         stateManager.attach(bas);
     }
 

@@ -16,9 +16,9 @@ import naftoreiclag.villagefive.world.Mundane;
 
 public class Chunk extends Mundane
 {
+    // 
     public static final int chunkWidth = 16;
     public static final int chunkHeight = 16;
-    
     public static final float tileSize = 4f;
     
     protected Node node;
@@ -30,13 +30,13 @@ public class Chunk extends Mundane
         ModelBuilder mb = new ModelBuilder();
         
         mb.addQuad(0, 0, 0, Vector3f.UNIT_Y, 0, 0, 
-                   chunkWidth, 0, 0, Vector3f.UNIT_Y, chunkWidth, 0, 
-                   chunkWidth, 0, chunkHeight, Vector3f.UNIT_Y, chunkWidth, chunkHeight, 
-                   0, 0, chunkHeight, Vector3f.UNIT_Y, 0, chunkHeight);
+                   chunkWidth, 0, 0, Vector3f.UNIT_Y, 1, 0, 
+                   chunkWidth, 0, chunkHeight, Vector3f.UNIT_Y, 1, 1, 
+                   0, 0, chunkHeight, Vector3f.UNIT_Y, 0, 1);
 
         Mesh evenCells = mb.bake(tileSize, 0, tileSize);
         Geometry geo = new Geometry("", evenCells);
-        geo.setMaterial(Main.mat_debug);
+        geo.setMaterial(Main.mat_grass);
         
         
         node = new Node();

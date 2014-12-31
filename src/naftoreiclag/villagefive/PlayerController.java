@@ -18,6 +18,7 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.SmoothAnglef;
 
 public class PlayerController extends EntityController implements ActionListener
@@ -61,6 +62,13 @@ public class PlayerController extends EntityController implements ActionListener
     public void setManager(InputManager inputManager)
     {
         this.inputManager = inputManager;
+        this.inputManager.addListener(this, KeyKeys.move_backward, 
+                                 KeyKeys.move_forward, 
+                                 KeyKeys.move_left, 
+                                 KeyKeys.move_right, 
+                                 KeyKeys.rotate_camera_left, 
+                                 KeyKeys.rotate_camera_right, 
+                                 KeyKeys.mouse_left);
     }
 
     public Vector3f whereClickingOnGround()
@@ -131,7 +139,7 @@ public class PlayerController extends EntityController implements ActionListener
                 lookDir.tx = whereDoesThePlayerWantToGo();
             }
 
-            puppet.setLocationRelative(new Vector2f(FastMath.cos(FastMath.HALF_PI - lookDir.x), FastMath.sin(FastMath.HALF_PI - lookDir.x)).multLocal(tpf * speed));
+            puppet.setLocationRelative(OreDict.JmeAngleToVec2(lookDir.x).multLocal(tpf * speed));
 
             if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
@@ -141,7 +149,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
 
 
-        cam.setLocation((new Vector3f(FastMath.cos(FastMath.HALF_PI - camDir.x) * 15.0f, 7.0f, FastMath.sin(FastMath.HALF_PI - camDir.x) * 15.0f)).addLocal(puppet.getNode().getLocalTranslation()));
+        cam.setLocation(OreDict.JmeAngleToVec3(camDir.x).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));
         cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
     }
 

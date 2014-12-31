@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import naftoreiclag.villagefive.util.serializable.PlotSerial.Decal;
 import naftoreiclag.villagefive.util.serializable.PlotSerial.Face;
-import naftoreiclag.villagefive.util.serializable.PlotSerial.Vertex;
+import naftoreiclag.villagefive.util.serializable.PlotSerial.Vert;
 
 import naftoreiclag.villagefive.util.scenegraph.BlueprintGeoGen;
 import naftoreiclag.villagefive.util.math.SmoothAnglef;
@@ -57,9 +57,9 @@ import org.lwjgl.BufferUtils;
 
 // This class is a BEAST
 // Locations of flags, rooms, and stuff are stored as doubles
-public class BlueprintAppState extends AbstractAppState implements ActionListener, AnalogListener
+public class PlotEditorAppState extends AbstractAppState implements ActionListener, AnalogListener
 {
-    public BlueprintAppState()
+    public PlotEditorAppState()
 	{
 	    plotData.setWidth(15);
 	    plotData.setHeight(20);
@@ -160,9 +160,9 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     }
     
     @Deprecated
-    private Flag spawnLooseFlag(Vector2f pos)
+    private MVert spawnLooseFlag(Vector2f pos)
     {
-        Flag flag = new Flag();
+        MVert flag = new MVert();
         flag.loc = new Vector2d((float) pos.x, (float) pos.y);
         flag.updateSpatial();
         
@@ -170,11 +170,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         return flag;
     }
     
-    private void spawnRoom(Room room)
+    private void spawnRoom(MRoom room)
     {
         room.updateSpatial();
         
-        for(Flag f : room.flags)
+        for(MVert f : room.flags)
         {
             f.rooms.add(room);
         }
@@ -183,9 +183,9 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     }
     
     // Spawn a new flag to split an existing wall
-    private Flag spawnSplittingFlag(LinePoint point)
+    private MVert spawnSplittingFlag(LinePoint point)
     {
-        Flag newFlag = new Flag();
+        MVert newFlag = new MVert();
         newFlag.loc = point.calcLoc();
         newFlag.updateSpatial();
         
@@ -193,15 +193,15 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
         
         // Find all the rooms that will be affected by this change
-        List<Room> affectedRooms = new ArrayList<Room>();
-        for(Room room : point.a.rooms)
+        List<MRoom> affectedRooms = new ArrayList<MRoom>();
+        for(MRoom room : point.a.rooms)
         {
             if(!affectedRooms.contains(room))
             {
                 affectedRooms.add(room);
             }
         }
-        for(Room room : point.b.rooms)
+        for(MRoom room : point.b.rooms)
         {
             if(!affectedRooms.contains(room))
             {
@@ -210,14 +210,14 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
         
         // Insert the new flag and update each room
-        for(Room room : affectedRooms)
+        for(MRoom room : affectedRooms)
         {
             // Standard edge iteration
-            Flag prevFlag = room.flags.get(room.flags.size() - 1);
+            MVert prevFlag = room.flags.get(room.flags.size() - 1);
             for(int i = 0; i < room.flags.size(); ++ i)
             {
                 // Standard edge iteration
-                Flag currFlag = room.flags.get(i);
+                MVert currFlag = room.flags.get(i);
                 
                 // If this is the proper insertion point in the vertex path
                 if((currFlag == point.a && prevFlag == point.b) || (currFlag == point.b && prevFlag == point.a))
@@ -238,15 +238,15 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
         
         // Find all the doors that will be affected by this change
-        List<Door> affectedDoors = new ArrayList<Door>();
-        for(Door door : point.a.doors)
+        List<MDecal> affectedDoors = new ArrayList<MDecal>();
+        for(MDecal door : point.a.doors)
         {
             if(!affectedDoors.contains(door))
             {
                 affectedDoors.add(door);
             }
         }
-        for(Door door : point.b.doors)
+        for(MDecal door : point.b.doors)
         {
             if(!affectedDoors.contains(door))
             {
@@ -255,7 +255,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
         
         // Insert the new flag and update each door
-        for(Door door : affectedDoors)
+        for(MDecal door : affectedDoors)
         {
             // If the new flag is on the same wall that the door is
             if(door.loc.a == point.a && door.loc.b == point.b)
@@ -310,9 +310,9 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         
     }
     
-    private Door spawnDoor(Flag a, Flag b)
+    private MDecal spawnDoor(MVert a, MVert b)
     {
-        Door door = new Door();
+        MDecal door = new MDecal();
         
         door.loc.a = a;
         door.loc.b = b;
@@ -676,44 +676,48 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     // 
     private void storePlotData()
     {
-        Vertex[] verts = new Vertex[flags.size()];
+        Vert[] verts = new Vert[flags.size()];
         for(int i = 0; i < flags.size(); ++ i)
         {
-            Flag orig = flags.get(i);
+            MVert orig = flags.get(i);
             
             // Give every flag its id // This is a genius idea
             orig.id = i;
             
-            Vertex trans = new Vertex();
+            Vert trans = new Vert();
             trans.setX(orig.getLoc().a);
             trans.setZ(orig.getLoc().b);
             trans.setId(orig.id);
             
             verts[i] = trans;
         }
-        plotData.setVerticies(verts);
+        plotData.setVerts(verts);
         
         Face[] faces = new Face[rooms.size()];
         for(int i = 0; i < rooms.size(); ++ i)
         {
-            Room orig = rooms.get(i);
+            MRoom orig = rooms.get(i);
+            
+            orig.id = i;
+            
             Face trans = new Face();
             
+            trans.setId(orig.id);
             int[] vertices = new int[orig.flags.size()];
             for(int j = 0; j < orig.flags.size(); ++ j)
             {
                 vertices[j] = orig.flags.get(j).id;
             }
-            trans.setVertexes(vertices);
+            trans.setVerts(vertices);
             
             faces[i] = trans;
         }
         plotData.setFaces(faces);
         
-        Decal[] edges = new Decal[doors.size()];
+        Decal[] decals = new Decal[doors.size()];
         for(int i = 0; i < doors.size(); ++ i)
         {
-            Door door = doors.get(i);
+            MDecal door = doors.get(i);
             Decal trans = new Decal();
             
             trans.setVertA(door.loc.a.id);
@@ -721,9 +725,9 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             trans.setDistance(door.loc.distance);
             trans.width = door.width;
             
-            edges[i] = trans;
+            decals[i] = trans;
         }
-        plotData.setEdges(edges);
+        plotData.setDecals(decals);
         
     }
     
@@ -804,14 +808,14 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 return;
             }
             
-            Flag a = spawnLooseFlag(mouseLoc.clone().addLocal(-5f, -5f));
-            Flag b = spawnLooseFlag(mouseLoc.clone().addLocal(5f, -5f));
-            Flag c = spawnLooseFlag(mouseLoc.clone().addLocal(5f, 5f));
-            Flag d = spawnLooseFlag(mouseLoc.clone().addLocal(-5f, 5f));
+            MVert a = spawnLooseFlag(mouseLoc.clone().addLocal(-5f, -5f));
+            MVert b = spawnLooseFlag(mouseLoc.clone().addLocal(5f, -5f));
+            MVert c = spawnLooseFlag(mouseLoc.clone().addLocal(5f, 5f));
+            MVert d = spawnLooseFlag(mouseLoc.clone().addLocal(-5f, 5f));
             
-            Door door = spawnDoor(a, b);
+            MDecal door = spawnDoor(a, b);
             
-            Room room = new Room(a, b, c, d);
+            MRoom room = new MRoom(a, b, c, d);
             
             
             spawnRoom(room);
@@ -842,8 +846,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         public Vector2f preclickMouseLoc;
         
         public LinePoint nearestPoint;
-        public Flag nearestFlag;
-        public Flag dragFlag;
+        public MVert nearestFlag;
+        public MVert dragFlag;
 
         @Override
         void onSelect(float tpf)
@@ -869,7 +873,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
                 }
                 else if(nearestPoint != null)
                 {
-                    Flag newFlag = spawnSplittingFlag(nearestPoint);
+                    MVert newFlag = spawnSplittingFlag(nearestPoint);
                     
                     dragFlag = newFlag;
                     preclickMouseLoc = mouseLoc;
@@ -931,7 +935,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         double selectionRadius = 0.25d;
         
         // Find the closest flag to the mouse
-        private Flag findClosestFlag()
+        private MVert findClosestFlag()
         {
             // Make sure the mouse is somewhere on the paper
             if(mouseLoc == null)
@@ -943,8 +947,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             
             // Keep track of the closest flag
             double bestDist = selectionRadius;
-            Flag bestFlag = null;
-            for(Flag flag : flags)
+            MVert bestFlag = null;
+            for(MVert flag : flags)
             {
                 double dist =  Math.sqrt(((mouseLoc.x - flag.getLoc().a) * (mouseLoc.x - flag.getLoc().a)) + ((mouseLoc.y - flag.getLoc().b) * (mouseLoc.y - flag.getLoc().b)));
                 
@@ -974,14 +978,14 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             LinePoint bestLp = null;
             
             // Loop through all the rooms, since there is no list of edges yet
-            for(Room r : rooms)
+            for(MRoom r : rooms)
             {
                 // Standard looping through all the edges by iterating over the vertexes while remembering where the previous one was
-                Flag prevFlag = r.flags.get(r.flags.size() - 1);
+                MVert prevFlag = r.flags.get(r.flags.size() - 1);
                 for(int i = 0; i < r.flags.size(); ++ i)
                 {
                     // Standard dge iteration
-                    Flag currFlag = r.flags.get(i);
+                    MVert currFlag = r.flags.get(i);
                     
                     /* Map:
                      *  
@@ -1053,20 +1057,20 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     private Tool tool = dragger;
     
-    public List<Flag> flags = new ArrayList<Flag>();
-    public List<Door> doors = new ArrayList<Door>();
-    public List<Room> rooms = new ArrayList<Room>();
+    public List<MVert> flags = new ArrayList<MVert>();
+    public List<MDecal> doors = new ArrayList<MDecal>();
+    public List<MRoom> rooms = new ArrayList<MRoom>();
     
-    public class Flag
+    public class MVert
     {
         private Vector2d loc;
         public Spatial spatial;
         private int id;
         
-        private List<Room> rooms = new ArrayList<Room>();
-        public List<Door> doors = new ArrayList<Door>();
+        private List<MRoom> rooms = new ArrayList<MRoom>();
+        public List<MDecal> doors = new ArrayList<MDecal>();
         
-        public Flag()
+        public MVert()
         {
             loc = new Vector2d();
         }
@@ -1088,11 +1092,11 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
             
             spatial.setLocalTranslation((float) loc.a, 0f, (float) loc.b);
             
-            for(Room room : rooms)
+            for(MRoom room : rooms)
             {
                 room.updateSpatial();
             }
-            for(Door door : doors)
+            for(MDecal door : doors)
             {
                 door.updateSpatial();
             }
@@ -1112,7 +1116,7 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     }
 
     
-    public class Door
+    public class MDecal
     {
         LinePoint loc = new LinePoint();
         
@@ -1169,17 +1173,18 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
         }
     }
     
-    public class Room
+    public class MRoom
     {
-        public List<Flag> flags = new ArrayList<Flag>();
+        public List<MVert> flags = new ArrayList<MVert>();
         
-        public List<Room> interiorRooms; // Holes
+        public List<MRoom> interiorRooms; // Holes
         
         
         // "Bedroom", "kitchen", "library", etc
         public String name;
+        private int id;
         
-        public Room(Flag ... flags)
+        public MRoom(MVert ... flags)
         {
             for(int i = 0; i < flags.length; ++ i)
             {
@@ -1231,8 +1236,8 @@ public class BlueprintAppState extends AbstractAppState implements ActionListene
     
     public class LinePoint
     {
-        public Flag a;
-        public Flag b;
+        public MVert a;
+        public MVert b;
         public double distance; // from A
         
         public Vector2d calcLoc()

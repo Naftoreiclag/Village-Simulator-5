@@ -12,7 +12,10 @@ import com.jme3.scene.Mesh;
 import naftoreiclag.villagefive.world.World;
 import com.jme3.scene.Node;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import naftoreiclag.villagefive.Main;
+import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.serializable.PlotSerial;
 import naftoreiclag.villagefive.util.scenegraph.Polygon;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
@@ -23,6 +26,8 @@ public class Plot extends Mundane
     public PlotSerial data;
     public World world;
     protected Node node;
+    
+    public Map<Integer, Node> wholeRooms = new HashMap<Integer, Node>();
     
     public Plot(PlotSerial data, World world)
     {
@@ -38,13 +43,34 @@ public class Plot extends Mundane
         // For each room
         for(PlotSerial.Face room : data.getFaces())
         {
-            Polygon polygon = roomToPoly(room);
+            Polygon polygon = OreDict.roomToPoly(data, room);
             
-            Mesh m = polygon.doit(0.4f, 7f, 3f, 3f);
-            Geometry geo = new Geometry("", m);
-            geo.setMaterial(Main.mat_debug_bricks);
-
-            node.attachChild(geo);
+            Node roomNode = new Node();
+            
+            Mesh floorM = polygon.genFloor(0.2f, 7f, 3f, 3f);
+            Geometry floorG = new Geometry("Floor", floorM);
+            floorG.setMaterial(Main.mat_debug_bricks);
+            roomNode.attachChild(floorG);
+            
+            Mesh outM = polygon.genOutsideWall(0.2f, 7f, 3f, 3f);
+            Geometry outG = new Geometry("Outside", outM);
+            outG.setMaterial(Main.mat_debug_bricks);
+            roomNode.attachChild(outG);
+            
+            Mesh inM = polygon.genInsideWall(0.2f, 7f, 3f, 3f);
+            Geometry inG = new Geometry("Inside", inM);
+            inG.setMaterial(Main.mat_debug_bricks);
+            roomNode.attachChild(inG);
+            
+            Mesh rM = polygon.genRoof(3f, 3f);
+            Geometry rG = new Geometry("Roof", rM);
+            rG.setMaterial(Main.mat_debug_bricks);
+            roomNode.attachChild(rG);
+            
+            wholeRooms.put(room.getId(), roomNode);
+            System.out.println("loaded: " + room.getId());
+            
+            node.attachChild(roomNode);
         }
     }
     
@@ -54,45 +80,4 @@ public class Plot extends Mundane
         return node;
     }
 
-    private Polygon roomToPoly(PlotSerial.Face room)
-    {
-        // Create a new polygon to represent it
-        Polygon polygon = new Polygon();
-        // Copy over the vertex data
-        for(int i = 0; i < room.getVertexes().length; ++ i)
-        {
-            // Get the vertex by its id
-            PlotSerial.Vertex vert = data.getVerticies()[room.getVertexes()[i]];
-            
-            // Copy it over
-            polygon.vecs.add(new Vector2f((float) vert.getX(), (float) vert.getZ()));
-            
-            // Copy over decal (hole) data
-            for(PlotSerial.Decal decal : data.getDecals())
-            {
-                // If this decal does not apply
-                if(decal.getVertA() != vert.getId())
-                {
-                    // Skip it
-                    continue;
-                }
-                
-                Polygon.Hole jam = new Polygon.Hole();
-                jam.point = decal.getVertA();
-                jam.x = (float) decal.getDistance();
-                jam.y = 0f;
-                jam.h = 5f;
-                jam.w = (float) decal.width;
-
-                System.out.println(jam.point);
-
-                ArrayList<Polygon.Hole> h = new ArrayList<Polygon.Hole>();
-                h.add(jam);
-
-                // fix dis
-                polygon.holesPerEdge.put(i, h);
-            }
-        }
-        return polygon;
-    }
 }

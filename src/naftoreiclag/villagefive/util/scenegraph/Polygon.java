@@ -233,6 +233,50 @@ public class Polygon
 		}
     }
     
+    // Even-odd thing
+    public boolean inside(Vector2f test)
+	{
+		Vector2f prevPoint = this.get(-1);
+		boolean even = false;
+		for(int i = 0; i < vecs.size(); ++ i)
+		{
+			Vector2f currPoint = this.get(i);
+			
+			if((currPoint.y > test.y) != (prevPoint.y > test.y) && (test.x < (prevPoint.x - currPoint.x) * (test.y - currPoint.y) / (prevPoint.y - currPoint.y) + currPoint.x))
+			{
+				even = !even;
+			}
+			
+			prevPoint = currPoint;
+		}
+        return even;
+    }
+    
+    // Make into a floor
+    public void makeRoof(ModelBuilder mb, float thickness, float height, float textureWidth, float textureHeight)
+    {
+        Polygon out = this.margin(thickness);
+        
+        for(int i = 0; i < vecs.size(); ++ i)
+        {
+            Vector2f a = this.get(i);
+            Vector2f b = this.get(i + 1);
+            Vector2f c = out.get(i + 1);
+            Vector2f d = out.get(i);
+            
+            
+            Vertex A = new Vertex(a.x, height, a.y, Vector3f.UNIT_Y, a.x / textureWidth, a.y / textureHeight);
+            Vertex B = new Vertex(b.x, height, b.y, Vector3f.UNIT_Y, b.x / textureWidth, b.y / textureHeight);
+            Vertex C = new Vertex(c.x, 0, c.y, Vector3f.UNIT_Y, c.x / textureWidth, c.y / textureHeight);
+            Vertex D = new Vertex(d.x, 0, d.y, Vector3f.UNIT_Y, d.x / textureWidth, d.y / textureHeight);
+            
+            mb.addQuad(D, C, B, A);
+        }
+        mb.addAppendOrigin(0, height, 0);
+        this.makeFloor(mb, textureWidth, textureHeight);
+        mb.addAppendOrigin(0, -height, 0);
+    }
+    
     // Make into a floor
     public void makeFloor(ModelBuilder mb, float textureWidth, float textureHeight)
     {
@@ -244,8 +288,8 @@ public class Polygon
         }
         
         org.poly2tri.geometry.polygon.Polygon polygon = new org.poly2tri.geometry.polygon.Polygon(points);
-        Poly2Tri.triangulate(polygon);
         
+        Poly2Tri.triangulate(polygon);
         
         for(DelaunayTriangle tri : polygon.getTriangles())
         {
@@ -395,17 +439,36 @@ public class Polygon
         }
     }
     
-    public Mesh doit(float thickness, float height, float texWidth, float texHeight)
+    public Mesh genOutsideWall(float thickness, float height, float texWidth, float texHeight)
     {
         ModelBuilder mb = new ModelBuilder();
-        
-        Polygon shrunk = this.margin(-thickness);
         Polygon grow = this.margin(thickness);
-        
-        shrunk.makeWall(mb, height, texWidth, texHeight, true);
         grow.makeWall(mb, height, texWidth, texHeight, false);
+        return mb.bake();
+    }
+    
+    public Mesh genInsideWall(float thickness, float height, float texWidth, float texHeight)
+    {
+        ModelBuilder mb = new ModelBuilder();
+        Polygon shrunk = this.margin(-thickness);
+        shrunk.makeWall(mb, height, texWidth, texHeight, true);
+        return mb.bake();
+    }
+    
+    public Mesh genFloor(float thickness, float height, float texWidth, float texHeight)
+    {
+        ModelBuilder mb = new ModelBuilder();
+        mb.setAppendOrigin(0, 0.02f, 0f);
         this.makeFloor(mb, texWidth, texHeight);
-        
+        return mb.bake();
+    }
+    
+    
+    public Mesh genRoof(float texWidth, float texHeight)
+    {
+        ModelBuilder mb = new ModelBuilder();
+        mb.setAppendOrigin(0, 7f, 0f);
+        this.makeRoof(mb, 1f, 1f, texWidth, texHeight);
         return mb.bake();
     }
     

@@ -27,6 +27,12 @@ public class ModelBuilder
         this.appendY = y;
         this.appendZ = z;
     }
+    public void addAppendOrigin(float x, float y, float z)
+    {
+        this.appendX += x;
+        this.appendY += y;
+        this.appendZ += z;
+    }
     public void resetAppendOrigin()
     {
         this.appendX = 0;

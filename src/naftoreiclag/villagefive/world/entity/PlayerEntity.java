@@ -122,6 +122,10 @@ public class PlayerEntity extends Entity
     {
         super.setLocation(loc);
         
+        world.something(loc);
+        
+        System.out.println(world.insideRoom(loc));
+        
         Vector2f me = this.getLocation();
         
         if(ground != null) { ground.setLocalTranslation(me.x, 0f, me.y); }
