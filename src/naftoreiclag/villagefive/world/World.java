@@ -26,13 +26,15 @@ import naftoreiclag.villagefive.util.serializable.PlotSerial.Face;
 import naftoreiclag.villagefive.util.serializable.PlotSerial.Vert;
 import naftoreiclag.villagefive.world.chunk.Chunk;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
+import org.dyn4j.collision.AxisAlignedBounds;
+import org.dyn4j.collision.Bounds;
 
 // Thingy that handles pretty much anything that can be considered a part of the world
 public class World
 {
     // Size in chunks
-    public int width = 8;
-    public int height = 8;
+    public int width = 5;
+    public int height = 5;
     
     public Chunk[][] chunks = new Chunk[width][height];
     
@@ -40,7 +42,7 @@ public class World
     public Node rootNode;
     public AssetManager assetManager;
     
-    public org.dyn4j.dynamics.World physWorld = new org.dyn4j.dynamics.World();
+    public PhysWorld physics = new PhysWorld();
     
     public List<Entity> entities = new ArrayList<Entity>();
     public List<Plot> plots = new ArrayList<Plot>();
@@ -52,6 +54,8 @@ public class World
         this.trueRootNode.attachChild(this.rootNode);
         this.assetManager = assetManager;
         
+        Bounds bounds = new AxisAlignedBounds(width * Chunk.width, height * Chunk.height);
+        physics.setBounds(bounds);
         
         for(int x = 0; x < width; ++ x)
         {
@@ -245,6 +249,8 @@ public class World
         {
             entity.tick(tpf);
         }
+        
+        physics.update(tpf);
     }
 
 
