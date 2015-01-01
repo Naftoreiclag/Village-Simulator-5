@@ -6,7 +6,7 @@
 
 package naftoreiclag.villagefive.util.scenegraph;
 
-import naftoreiclag.villagefive.util.math.Vector2d;
+import naftoreiclag.villagefive.util.math.Vec2;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
@@ -24,9 +24,9 @@ public class BlueprintGeoGen
     {
         lines.add(new Line(a, b));
     }
-    public void addLine(Vector2d a, Vector2d b)
+    public void addLine(Vec2 a, Vec2 b)
     {
-        lines.add(new Line((float) a.a, (float) a.b, (float) b.a, (float) b.b));
+        lines.add(new Line((float) a.getX(), (float) a.getY(), (float) b.getX(), (float) b.getY()));
     }
     public void addLine(float ax, float ay, float bx, float by)
     {

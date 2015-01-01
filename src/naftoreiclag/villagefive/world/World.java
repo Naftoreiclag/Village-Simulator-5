@@ -8,7 +8,6 @@ package naftoreiclag.villagefive.world;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.math.FastMath;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
@@ -17,6 +16,7 @@ import com.jme3.scene.control.Control;
 import java.util.ArrayList;
 import java.util.List;
 import naftoreiclag.villagefive.util.math.OreDict;
+import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.Polygon;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
@@ -93,7 +93,7 @@ public class World
         
         // Load the node
         plot.loadNode();
-        plot.setLocation(new Vector2f((float) plotType.getX(), (float) plotType.getZ()));
+        plot.setLocation(new Vec2((float) plotType.getX(), (float) plotType.getZ()));
         rootNode.attachChild(plot.getNode());
         
         for(Decal d : plotType.getDecals())
@@ -103,10 +103,10 @@ public class World
             Vert a = plotType.getVerts()[d.getVertA()];
             Vert b = plotType.getVerts()[d.getVertB()];
             
-            Vector2f A = new Vector2f((float) a.getX(), (float) a.getZ());
-            Vector2f B = new Vector2f((float) b.getX(), (float) b.getZ());
+            Vec2 A = new Vec2((float) a.getX(), (float) a.getZ());
+            Vec2 B = new Vec2((float) b.getX(), (float) b.getZ());
             
-            Vector2f AB = B.subtract(A).normalizeLocal().multLocal((float) d.getDistance());
+            Vec2 AB = B.subtract(A).normalizeLocal().multLocal((float) d.getDistance());
             
             float angle = AB.getAngle();
             
@@ -127,14 +127,14 @@ public class World
     }
     
     // Are you in room
-    public boolean insideRoom(Vector2f loc2)
+    public boolean insideRoom(Vec2 loc2)
     {
         Vector3f loc3 = OreDict.Vec2ToVec3(loc2);
         
         for(Plot plot : plots)
         {
             Vector3f relPos3 = plot.getNode().worldToLocal(loc3, null);
-            Vector2f relPos2 = OreDict.vec3ToVec2(relPos3);
+            Vec2 relPos2 = OreDict.vec3ToVec2(relPos3);
             
             for(Face f : plot.data.getFaces())
             {
@@ -154,7 +154,7 @@ public class World
     // Something
     public Spatial hiddenRoom;
     public Node hiddenRoomParen;
-    public boolean something(Vector2f loc2)
+    public boolean something(Vec2 loc2)
     {
         
         if(hiddenRoom != null)
@@ -167,7 +167,7 @@ public class World
         for(Plot plot : plots)
         {
             Vector3f relPos3 = plot.getNode().worldToLocal(loc3, null);
-            Vector2f relPos2 = OreDict.vec3ToVec2(relPos3);
+            Vec2 relPos2 = OreDict.vec3ToVec2(relPos3);
             
             for(Face f : plot.data.getFaces())
             {
@@ -221,7 +221,7 @@ public class World
         return entity;
     }
     
-    public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType, Vector2f vector2f)
+    public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType, Vec2 vector2f)
     {
         // Create the thing
         SomeEntity entity = spawnEntity(entityType);

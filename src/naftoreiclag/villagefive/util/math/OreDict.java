@@ -7,7 +7,6 @@
 package naftoreiclag.villagefive.util.math;
 
 import com.jme3.math.FastMath;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
 import naftoreiclag.villagefive.util.scenegraph.Polygon;
@@ -15,9 +14,9 @@ import naftoreiclag.villagefive.util.serializable.PlotSerial;
 
 public class OreDict
 {
-    public static Vector2f JmeAngleToVec2(float angle)
+    public static Vec2 JmeAngleToVec2(float angle)
     {
-        return new Vector2f(FastMath.cos(FastMath.HALF_PI - angle), FastMath.sin(FastMath.HALF_PI - angle));
+        return new Vec2(FastMath.cos(FastMath.HALF_PI - angle), FastMath.sin(FastMath.HALF_PI - angle));
     }
     
     public static Vector3f JmeAngleToVec3(float angle)
@@ -25,14 +24,14 @@ public class OreDict
         return new Vector3f(FastMath.cos(FastMath.HALF_PI - angle), 0f, FastMath.sin(FastMath.HALF_PI - angle));
     }
     
-    public static Vector3f Vec2ToVec3(Vector2f vec)
+    public static Vector3f Vec2ToVec3(Vec2 vec)
     {
-        return new Vector3f(vec.x, 0f, vec.y);
+        return new Vector3f(vec.getXf(), 0f, vec.getYf());
     }
 
-    public static Vector2f vec3ToVec2(Vector3f vec)
+    public static Vec2 vec3ToVec2(Vector3f vec)
     {
-        return new Vector2f(vec.x, vec.z);
+        return new Vec2(vec.x, vec.z);
     }
     
     public static Polygon roomToPoly(PlotSerial data, PlotSerial.Face room)
@@ -46,7 +45,7 @@ public class OreDict
             PlotSerial.Vert vert = data.getVerts()[room.getVerts()[i]];
             
             // Copy it over
-            polygon.vecs.add(new Vector2f((float) vert.getX(), (float) vert.getZ()));
+            polygon.vecs.add(new Vec2((float) vert.getX(), (float) vert.getZ()));
             
             // Copy over decal (hole) data
             for(PlotSerial.Decal decal : data.getDecals())

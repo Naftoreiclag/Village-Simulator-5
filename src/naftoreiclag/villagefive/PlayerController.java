@@ -20,6 +20,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.SmoothAnglef;
+import naftoreiclag.villagefive.util.math.Vec2;
 
 public class PlayerController extends EntityController implements ActionListener
 {
@@ -198,8 +199,8 @@ public class PlayerController extends EntityController implements ActionListener
 
     private float whereDoesThePlayerWantToGo()
     {
-        Vector2f fwd = new Vector2f(cam.c.getDirection().x, cam.c.getDirection().z);
-        Vector2f dir = new Vector2f();
+        Vec2 fwd = new Vec2(cam.c.getDirection().x, cam.c.getDirection().z);
+        Vec2 dir = new Vec2();
         if(movingFwd)
         {
             dir.addLocal(fwd);
@@ -210,12 +211,14 @@ public class PlayerController extends EntityController implements ActionListener
         }
         if(turningLeft)
         {
-            dir.addLocal(fwd.y, -fwd.x);
+            dir.addLocal(fwd.getY(), -fwd.getX());
         }
         if(turningRight)
         {
-            dir.addLocal(-fwd.y, fwd.x);
+            dir.addLocal(-fwd.getY(), fwd.getX());
         }
+        
+        
         float targAngle = FastMath.HALF_PI - dir.getAngle();
         return targAngle;
     }

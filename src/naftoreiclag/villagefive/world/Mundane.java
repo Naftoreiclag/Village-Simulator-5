@@ -8,9 +8,9 @@ package naftoreiclag.villagefive.world;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import naftoreiclag.villagefive.util.math.Vec2;
 
 // so dumb
 public abstract class Mundane
@@ -18,17 +18,17 @@ public abstract class Mundane
     public abstract void loadNode();
     protected abstract Node getNode();
     
-    public void setLocation(Vector2f loc)
+    public void setLocation(Vec2 loc)
     {
-        this.getNode().setLocalTranslation(loc.x, 0f, loc.y);
+        this.getNode().setLocalTranslation(loc.getXf(), 0f, loc.getYf());
     }
-    public Vector2f getLocation()
+    public Vec2 getLocation()
     {
         Vector3f loc3f = this.getNode().getLocalTranslation();
         
-        return new Vector2f(loc3f.x, loc3f.z);
+        return new Vec2(loc3f.x, loc3f.z);
     }
-    public void setLocationRelative(Vector2f loc)
+    public void setLocationRelative(Vec2 loc)
     {
         this.setLocation(this.getLocation().add(loc));
     }

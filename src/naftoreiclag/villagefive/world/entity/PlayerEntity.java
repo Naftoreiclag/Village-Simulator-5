@@ -12,7 +12,6 @@ import com.jme3.animation.LoopMode;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
-import com.jme3.math.Vector2f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Node;
@@ -27,6 +26,7 @@ import java.io.File;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import naftoreiclag.villagefive.util.math.GR;
+import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 
 public class PlayerEntity extends Entity
@@ -118,7 +118,7 @@ public class PlayerEntity extends Entity
     }
     
     @Override
-    public void setLocation(Vector2f loc)
+    public void setLocation(Vec2 loc)
     {
         super.setLocation(loc);
         
@@ -126,9 +126,9 @@ public class PlayerEntity extends Entity
         
         System.out.println(world.insideRoom(loc));
         
-        Vector2f me = this.getLocation();
+        Vec2 me = this.getLocation();
         
-        if(ground != null) { ground.setLocalTranslation(me.x, 0f, me.y); }
+        if(ground != null) { ground.setLocalTranslation(me.getXf(), 0f, me.getYf()); }
     }
 
     
