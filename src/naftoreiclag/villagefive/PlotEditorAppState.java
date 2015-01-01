@@ -22,7 +22,6 @@ import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Ray;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
@@ -94,8 +93,8 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     private float scrollSpd = 25.0f;
     private boolean leftClick;
     
-	private Vector2f screenMouseLoc; // Mouse coords relative to the camera (0,0)
-    private Vector2f mouseLoc; // Mouse coords relative to the rootNode
+	private Vec2 screenMouseLoc; // Mouse coords relative to the camera (0,0)
+    private Vec2 mouseLoc; // Mouse coords relative to the rootNode
     
     ViewPort preview;
     DirectionalLightShadowRenderer dlsr;
@@ -160,10 +159,10 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     }
     
     @Deprecated
-    private MVert spawnLooseFlag(Vector2f pos)
+    private MVert spawnLooseFlag(Vec2 pos)
     {
         MVert flag = new MVert();
-        flag.loc = new Vec2((float) pos.x, (float) pos.y);
+        flag.loc = new Vec2((float) pos.getX(), (float) pos.getY());
         flag.updateSpatial();
         
         flags.add(flag);
@@ -451,7 +450,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
         if(results.size() > 0)
         {
             Vector3f res = results.getClosestCollision().getContactPoint();
-            screenMouseLoc = new Vector2f(res.x, res.z);
+            screenMouseLoc = new Vec2(res.x, res.z);
             mouseLoc = screenMouseLoc.subtract(editorRootNode.getLocalTranslation().x, editorRootNode.getLocalTranslation().z);
         }
         else
@@ -744,7 +743,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     public class Dragger extends Tool
     {
         public Vector3f preclickRootNodeLoc;
-        public Vector2f preclickMouseLoc;
+        public Vec2 preclickMouseLoc;
     
 
         @Override
@@ -770,7 +769,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
             {
                 if(screenMouseLoc != null && preclickMouseLoc != null)
                 {
-                    editorRootNode.setLocalTranslation(new Vector3f(-preclickMouseLoc.x + screenMouseLoc.x, -0.1f, -preclickMouseLoc.y + screenMouseLoc.y).addLocal(preclickRootNodeLoc));
+                    editorRootNode.setLocalTranslation(new Vector3f(-preclickMouseLoc.getXf() + screenMouseLoc.getXf(), -0.1f, -preclickMouseLoc.getYf() + screenMouseLoc.getYf()).addLocal(preclickRootNodeLoc));
                 }
             }
         }
@@ -842,8 +841,8 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     
     public class FlagMover extends Tool
     {
-        public Vector2f preclickFlagLoc;
-        public Vector2f preclickMouseLoc;
+        public Vec2 preclickFlagLoc;
+        public Vec2 preclickMouseLoc;
         
         public LinePoint nearestPoint;
         public MVert nearestFlag;
@@ -869,7 +868,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
                     dragFlag = nearestFlag;
 
                     preclickMouseLoc = mouseLoc;
-                    preclickFlagLoc = new Vector2f((float) dragFlag.getLoc().getX(), (float) dragFlag.getLoc().getY());
+                    preclickFlagLoc = new Vec2((float) dragFlag.getLoc().getX(), (float) dragFlag.getLoc().getY());
                 }
                 else if(nearestPoint != null)
                 {
@@ -877,7 +876,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
                     
                     dragFlag = newFlag;
                     preclickMouseLoc = mouseLoc;
-                    preclickFlagLoc = new Vector2f((float) dragFlag.getLoc().getX(), (float) dragFlag.getLoc().getY());
+                    preclickFlagLoc = new Vec2((float) dragFlag.getLoc().getX(), (float) dragFlag.getLoc().getY());
                 }
             }
         }
@@ -892,7 +891,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
                 if(mouseLoc != null)
                 {
                     // Continue moving it to the mouse
-                    dragFlag.setLoc(new Vec2(-preclickMouseLoc.x + mouseLoc.x + preclickFlagLoc.x, -preclickMouseLoc.y + mouseLoc.y + preclickFlagLoc.y));
+                    dragFlag.setLoc(new Vec2(-preclickMouseLoc.getXf() + mouseLoc.getXf() + preclickFlagLoc.getXf(), -preclickMouseLoc.getYf() + mouseLoc.getYf() + preclickFlagLoc.getYf()));
                 }
                 else
                 {
@@ -950,7 +949,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
             MVert bestFlag = null;
             for(MVert flag : flags)
             {
-                double dist =  Math.sqrt(((mouseLoc.x - flag.getLoc().getX()) * (mouseLoc.x - flag.getLoc().getX())) + ((mouseLoc.y - flag.getLoc().getY()) * (mouseLoc.y - flag.getLoc().getY())));
+                double dist =  Math.sqrt(((mouseLoc.getXf() - flag.getLoc().getX()) * (mouseLoc.getXf() - flag.getLoc().getX())) + ((mouseLoc.getYf() - flag.getLoc().getY()) * (mouseLoc.getYf() - flag.getLoc().getY())));
                 
                 if(dist < bestDist)
                 {
@@ -971,7 +970,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
             }
             
             // Location of the mouse in vec2d form
-            Vec2 c = new Vec2(mouseLoc.x, mouseLoc.y);
+            Vec2 c = new Vec2(mouseLoc.getXf(), mouseLoc.getYf());
             
             // Keep track of the optimal point
             double bestDistFromMouse = selectionRadius;
@@ -1007,7 +1006,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
                     Vec2 ac = c.subtract(a);
                     
                     // Magic math
-                    double ab_distsq = ab.lengthSq();
+                    double ab_distsq = ab.lenSqF();
                     double ac_dot_ab = ac.dotd(ab);
                     
                     // Distance of D from A as a fraction of the distance of B from A
@@ -1029,7 +1028,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
                     // Find the closest point (d) and its distance from the mouse (c)
                     Vec2 d = a.add(ab.mult(fractionOfAB));
                     Vec2 dc = c.subtract(d);
-                    double distFromMouse = Math.sqrt(dc.lengthSq());
+                    double distFromMouse = Math.sqrt(dc.lenSqF());
                     
                     // Compare this data to the best stuff we found so far
                     if(distFromMouse < bestDistFromMouse)
@@ -1146,18 +1145,18 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
             BlueprintGeoGen bgg = new BlueprintGeoGen();
             
             Vec2 lenD = loc.b.loc.subtract(loc.a.loc);
-            Vector2f len = new Vector2f((float) lenD.getX(), (float) lenD.getY());
-            Vector2f perp = new Vector2f(-len.y, len.x);
+            Vec2 len = new Vec2((float) lenD.getX(), (float) lenD.getY());
+            Vec2 perp = new Vec2(-len.getYf(), len.getXf());
             
             Vec2 baseD = loc.calcLoc();
-            Vector2f base = new Vector2f((float) baseD.getX(), (float) baseD.getY());
+            Vec2 base = new Vec2((float) baseD.getX(), (float) baseD.getY());
             
             len.normalizeLocal().multLocal(width);
             perp.normalizeLocal().multLocal(0.5f);
-            Vector2f A = base;
-            Vector2f B = base.add(len);
-            Vector2f C = B.subtract(perp);
-            Vector2f D = A.subtract(perp);
+            Vec2 A = base;
+            Vec2 B = base.add(len);
+            Vec2 C = B.subtract(perp);
+            Vec2 D = A.subtract(perp);
             A.addLocal(perp);
             B.addLocal(perp);
             
@@ -1258,7 +1257,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
         // Distance from B
         public double invertedDistance()
         {
-            return Math.sqrt(a.loc.distanceSquared(b.loc)) - distance;
+            return Math.sqrt(a.loc.distSq(b.loc)) - distance;
         }
     }
 }

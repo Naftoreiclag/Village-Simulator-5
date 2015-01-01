@@ -235,35 +235,35 @@ public class Vec2
 		return this.clone().inverseLocal();
 	}
 	
-	public double distanceSquared(Vec2 other)
+	public double distSq(Vec2 other)
 	{
 		return ((this.getX() - other.getX()) * (this.getX() - other.getX())) + ((this.getY() - other.getY()) * (this.getY() - other.getY()));
 	}
     
-    public double distanced(Vec2 other)
+    public double dist(Vec2 other)
     {
-        return Math.sqrt(this.distanceSquared(other));
+        return Math.sqrt(this.distSq(other));
     }
-    public float distance(Vec2 other)
+    public float distF(Vec2 other)
     {
-        return (float) this.distanced(other);
+        return (float) this.dist(other);
     }
 	
-	public double lengthSqD()
+	public double lenSq()
 	{
 		return (this.getX() * this.getX()) + (this.getY() * this.getY());
 	}
-	public float lengthSq()
+	public float lenSqF()
 	{
-		return (float) this.lengthSqD();
+		return (float) this.lenSq();
 	}
-	public double lengthD()
+	public double len()
 	{
-		return Math.sqrt(this.lengthSqD());
+		return Math.sqrt(this.lenSq());
 	}
-	public float length()
+	public float lenF()
 	{
-		return (float) this.lengthD();
+		return (float) this.len();
 	}
 	
 	
@@ -284,7 +284,7 @@ public class Vec2
 
 	public Vec2 normalizeLocal()
 	{
-		return this.divideLocal(Math.sqrt(this.lengthSq()));
+		return this.divideLocal(Math.sqrt(this.lenSqF()));
 	}
 
 	public Vec2 normalize()
@@ -322,7 +322,7 @@ public class Vec2
 
     public double getAngled()
     {
-        return Math.atan2(y, x);
+        return Math.atan2(getY(), getX());
     }
 
     public float getAngle()

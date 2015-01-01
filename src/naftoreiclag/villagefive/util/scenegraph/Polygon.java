@@ -137,7 +137,7 @@ public class Polygon
                 Vec2 ab = b.subtract(a);
                 
                 float offset = ac.dot(ab);
-                offset /= ab.length();
+                offset /= ab.lenF();
                 
                 ArrayList<Hole> origHoles = holesPerEdge.get(i);
                 ArrayList<Hole> offsetHoles = new ArrayList<Hole>();
@@ -326,7 +326,7 @@ public class Polygon
             
             Vec2 ab = b.subtract(a).normalizeLocal();
             
-            float tW = a.distance(b) / textureWidth;
+            float tW = a.distF(b) / textureWidth;
             tW /= 2f;
             
             Vector3f normalVec;
@@ -379,13 +379,13 @@ public class Polygon
                     float r = hole.y + hole.h;
                     float g = hole.y;
                     
-                    tX -= prevZ.distance(q) / textureWidth;
+                    tX -= prevZ.distF(q) / textureWidth;
                     Vertex T = new Vertex(q.getXf(), height, q.getYf(), normalVec, tX, 0f);
                     Vertex R = new Vertex(q.getXf(),    r, q.getYf(), normalVec, tX, (height - r) / textureHeight);
                     Vertex G = new Vertex(q.getXf(),    g, q.getYf(), normalVec, tX, (height - g) / textureHeight);
                     Vertex V = new Vertex(q.getXf(),   0f, q.getYf(), normalVec, tX, tH);
                     
-                    tX -= q.distance(z) / textureWidth;
+                    tX -= q.distF(z) / textureWidth;
                     Vertex P = new Vertex(z.getXf(), height, z.getYf(), normalVec, tX, 0f);
                     Vertex Y = new Vertex(z.getXf(),    r, z.getYf(), normalVec, tX, (height - r) / textureHeight);
                     Vertex J = new Vertex(z.getXf(),    g, z.getYf(), normalVec, tX, (height - g) / textureHeight);

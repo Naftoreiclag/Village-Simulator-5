@@ -7,7 +7,6 @@
 package naftoreiclag.villagefive.util.scenegraph;
 
 import naftoreiclag.villagefive.util.math.Vec2;
-import com.jme3.math.Vector2f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import java.nio.FloatBuffer;
@@ -20,10 +19,6 @@ public class BlueprintGeoGen
 {
     List<Line> lines = new ArrayList<Line>();
     
-    public void addLine(Vector2f a, Vector2f b)
-    {
-        lines.add(new Line(a, b));
-    }
     public void addLine(Vec2 a, Vec2 b)
     {
         lines.add(new Line((float) a.getX(), (float) a.getY(), (float) b.getX(), (float) b.getY()));
@@ -42,7 +37,7 @@ public class BlueprintGeoGen
         this.addLine(x2, y1, x1, y1);
     }
     
-    public void addRect(Vector2f a, Vector2f b, Vector2f c, Vector2f d)
+    public void addRect(Vec2 a, Vec2 b, Vec2 c, Vec2 d)
     {
         this.addLine(a, b);
         this.addLine(b, c);
@@ -62,25 +57,25 @@ public class BlueprintGeoGen
              * B            C
              */
             
-            Vector2f p = new Vector2f(l.a.y - l.b.y, l.b.x - l.a.x).normalize().multLocal(thickness); // vector that is 90 deg away (counter-clockwise)
-            Vector2f w = new Vector2f(l.a.x - l.b.x, l.a.y - l.b.y).normalize().multLocal(thickness); // vector that is 180 deg away
+            Vec2 p = new Vec2(l.a.getYf() - l.b.getYf(), l.b.getXf() - l.a.getXf()).normalize().multLocal(thickness); // vector that is 90 deg away (counter-clockwise)
+            Vec2 w = new Vec2(l.a.getXf() - l.b.getXf(), l.a.getYf() - l.b.getYf()).normalize().multLocal(thickness); // vector that is 180 deg away
             
-            Vector2f A = l.a.add(p).addLocal(w);
-            Vector2f B = l.a.subtract(p).addLocal(w);
-            Vector2f C = l.b.subtract(p).subtractLocal(w);
-            Vector2f D = l.b.add(p).subtractLocal(w);
+            Vec2 A = l.a.add(p).addLocal(w);
+            Vec2 B = l.a.subtract(p).addLocal(w);
+            Vec2 C = l.b.subtract(p).subtractLocal(w);
+            Vec2 D = l.b.add(p).subtractLocal(w);
             
-            float leng = A.distance(D) / thickness;
+            float leng = A.distF(D) / thickness;
             leng /= texStretch;
             leng /= 2f;
             
-            v.put(A.x * xscale).put(0f).put(A.y * yscale);
+            v.put(A.getXf() * xscale).put(0f).put(A.getYf() * yscale);
             t.put(-leng).put(0.0f);
-            v.put(B.x * xscale).put(0f).put(B.y * yscale);
+            v.put(B.getXf() * xscale).put(0f).put(B.getYf() * yscale);
             t.put(-leng).put(1.0f);
-            v.put(C.x * xscale).put(0f).put(C.y * yscale);
+            v.put(C.getXf() * xscale).put(0f).put(C.getYf() * yscale);
             t.put(leng).put(1.0f);
-            v.put(D.x * xscale).put(0f).put(D.y * yscale);
+            v.put(D.getXf() * xscale).put(0f).put(D.getYf() * yscale);
             t.put(leng).put(0.0f);
         }
         IntBuffer i = BufferUtils.createIntBuffer(lines.size() * 6);
@@ -108,18 +103,18 @@ public class BlueprintGeoGen
     
     public static class Line
     {
-        final Vector2f a;
-        final Vector2f b;
+        final Vec2 a;
+        final Vec2 b;
         
-        public Line(Vector2f a, Vector2f b)
+        public Line(Vec2 a, Vec2 b)
         {
             this.a = a.clone();
             this.b = b.clone();
         }
         public Line(float ax, float ay, float bx, float by)
         {
-            this.a = new Vector2f(ax, ay);
-            this.b = new Vector2f(bx, by);
+            this.a = new Vec2(ax, ay);
+            this.b = new Vec2(bx, by);
         }
     }
 }
