@@ -11,13 +11,13 @@ import static naftoreiclag.villagefive.util.math.Anglef.wrap;
 public class SmoothAnglef extends Anglef
 {
     // Target angle
-    public float tx;
+    public double tx;
     
     //
-    public float maxSpd = 5f;
+    public double maxSpd = 5f;
     
     //
-    public float smoothFactor = 20f;
+    public double smoothFactor = 20f;
     
     //
     Anglef dummy;
@@ -29,7 +29,7 @@ public class SmoothAnglef extends Anglef
         dummy = new Anglef();
     }
     
-    public SmoothAnglef(float x)
+    public SmoothAnglef(double x)
     {
         super(x);
         
@@ -37,7 +37,7 @@ public class SmoothAnglef extends Anglef
     }
     
     //
-    public void tick(float tpf)
+    public void tick(double tpf)
     {
         if(smoothEn)
         {

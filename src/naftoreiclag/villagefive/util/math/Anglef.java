@@ -10,9 +10,9 @@ import com.jme3.math.FastMath;
 
 public class Anglef
 {
-	public float x;
+	public double x;
 	
-	public Anglef(float x)
+	public Anglef(double x)
 	{
 		this.x = x;
 	}
@@ -20,7 +20,7 @@ public class Anglef
 	public Anglef() {}
     
     // Interpolate between two values linearly
-	public void lerp(float other, float amount)
+	public void lerp(double other, double amount)
 	{
         // If we are already within range
 		if(difference(other) < amount)
@@ -36,12 +36,12 @@ public class Anglef
 	}
     
     // The direction (clockwise or counter-clockwise) to get to another angle
-	public float direction(float other)
+	public double direction(double other)
 	{
         other = wrap(other);
         
-		float displacement = other - this.x;
-		float dirSign = Math.signum(displacement);
+		double displacement = other - this.x;
+		double dirSign = Math.signum(displacement);
         
         // If the distance with the given direction is reflex (ie > 180 degrees)
         if(displacement * dirSign > FastMath.PI)
@@ -54,11 +54,11 @@ public class Anglef
 	}
     
     // The measure of the angle formed with this and another angle (unsigned)
-    public float difference(float other)
+    public double difference(double other)
 	{
         other = wrap(other);
         
-		float diff = Math.abs(other - this.x);
+		double diff = Math.abs(other - this.x);
         
         // If the angle with the given direction is reflex (ie > 180 degrees)
         if(diff > FastMath.PI)
@@ -70,14 +70,14 @@ public class Anglef
         return diff;
 	}
     
-    // Makes sure that this float is between 0 to tau
-    public static float wrap(float a)
+    // Makes sure that this double is between 0 to tau
+    public static double wrap(double a)
     {
         return ((a % FastMath.TWO_PI) + FastMath.TWO_PI) % FastMath.TWO_PI;
     }
     
     // Like regular modulus, but it "wraps around" (e.g. magicmod(-1, 5) = 4)
-    public static float magicModulus(float a, float b)
+    public static double magicModulus(double a, double b)
     {
         return ((a % b) + b) % b;
     }

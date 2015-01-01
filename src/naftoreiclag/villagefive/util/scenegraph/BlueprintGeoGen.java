@@ -57,8 +57,8 @@ public class BlueprintGeoGen
              * B            C
              */
             
-            Vec2 p = new Vec2(l.a.getYf() - l.b.getYf(), l.b.getXf() - l.a.getXf()).normalize().multLocal(thickness); // vector that is 90 deg away (counter-clockwise)
-            Vec2 w = new Vec2(l.a.getXf() - l.b.getXf(), l.a.getYf() - l.b.getYf()).normalize().multLocal(thickness); // vector that is 180 deg away
+            Vec2 p = new Vec2(l.a.getY() - l.b.getY(), l.b.getX() - l.a.getX()).normalize().multLocal(thickness); // vector that is 90 deg away (counter-clockwise)
+            Vec2 w = new Vec2(l.a.getX() - l.b.getX(), l.a.getY() - l.b.getY()).normalize().multLocal(thickness); // vector that is 180 deg away
             
             Vec2 A = l.a.add(p).addLocal(w);
             Vec2 B = l.a.subtract(p).addLocal(w);
@@ -69,13 +69,13 @@ public class BlueprintGeoGen
             leng /= texStretch;
             leng /= 2f;
             
-            v.put(A.getXf() * xscale).put(0f).put(A.getYf() * yscale);
+            v.put(A.getXF() * xscale).put(0f).put(A.getYF() * yscale);
             t.put(-leng).put(0.0f);
-            v.put(B.getXf() * xscale).put(0f).put(B.getYf() * yscale);
+            v.put(B.getXF() * xscale).put(0f).put(B.getYF() * yscale);
             t.put(-leng).put(1.0f);
-            v.put(C.getXf() * xscale).put(0f).put(C.getYf() * yscale);
+            v.put(C.getXF() * xscale).put(0f).put(C.getYF() * yscale);
             t.put(leng).put(1.0f);
-            v.put(D.getXf() * xscale).put(0f).put(D.getYf() * yscale);
+            v.put(D.getXF() * xscale).put(0f).put(D.getYF() * yscale);
             t.put(leng).put(0.0f);
         }
         IntBuffer i = BufferUtils.createIntBuffer(lines.size() * 6);

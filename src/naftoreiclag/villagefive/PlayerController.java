@@ -138,7 +138,7 @@ public class PlayerController extends EntityController implements ActionListener
                 lookDir.tx = whereDoesThePlayerWantToGo();
             }
 
-            puppet.setLocationRelative(OreDict.JmeAngleToVec2(lookDir.x).multLocal(tpf * speed));
+            puppet.setLocationRelative(OreDict.JmeAngleToVec2((float) lookDir.x).multLocal(tpf * speed));
 
             if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
@@ -148,7 +148,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
 
 
-        cam.setLocation(OreDict.JmeAngleToVec3(camDir.x).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));
+        cam.setLocation(OreDict.JmeAngleToVec3((float) camDir.x).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));
         cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
     }
 

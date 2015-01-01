@@ -477,7 +477,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     private void updateFrustum()
     {
         float aspect = (float) cam.getWidth() / cam.getHeight();
-        cam.setFrustum(-1000, 1000, -aspect * frustumSize.x, aspect * frustumSize.x, frustumSize.x, -frustumSize.x);
+        cam.setFrustum(-1000, 1000, (float) -frustumSize.x * aspect, (float) frustumSize.x * aspect, (float) frustumSize.x, (float) -frustumSize.x);
     }
 
     private void bindKeys()
@@ -769,7 +769,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
             {
                 if(screenMouseLoc != null && preclickMouseLoc != null)
                 {
-                    editorRootNode.setLocalTranslation(new Vector3f(-preclickMouseLoc.getXf() + screenMouseLoc.getXf(), -0.1f, -preclickMouseLoc.getYf() + screenMouseLoc.getYf()).addLocal(preclickRootNodeLoc));
+                    editorRootNode.setLocalTranslation(new Vector3f(-preclickMouseLoc.getXF() + screenMouseLoc.getXF(), -0.1f, -preclickMouseLoc.getYF() + screenMouseLoc.getYF()).addLocal(preclickRootNodeLoc));
                 }
             }
         }
@@ -891,7 +891,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
                 if(mouseLoc != null)
                 {
                     // Continue moving it to the mouse
-                    dragFlag.setLoc(new Vec2(-preclickMouseLoc.getXf() + mouseLoc.getXf() + preclickFlagLoc.getXf(), -preclickMouseLoc.getYf() + mouseLoc.getYf() + preclickFlagLoc.getYf()));
+                    dragFlag.setLoc(new Vec2(-preclickMouseLoc.getXF() + mouseLoc.getXF() + preclickFlagLoc.getXF(), -preclickMouseLoc.getYF() + mouseLoc.getYF() + preclickFlagLoc.getYF()));
                 }
                 else
                 {
@@ -949,7 +949,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
             MVert bestFlag = null;
             for(MVert flag : flags)
             {
-                double dist =  Math.sqrt(((mouseLoc.getXf() - flag.getLoc().getX()) * (mouseLoc.getXf() - flag.getLoc().getX())) + ((mouseLoc.getYf() - flag.getLoc().getY()) * (mouseLoc.getYf() - flag.getLoc().getY())));
+                double dist =  Math.sqrt(((mouseLoc.getXF() - flag.getLoc().getX()) * (mouseLoc.getXF() - flag.getLoc().getX())) + ((mouseLoc.getYF() - flag.getLoc().getY()) * (mouseLoc.getYF() - flag.getLoc().getY())));
                 
                 if(dist < bestDist)
                 {
@@ -970,7 +970,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
             }
             
             // Location of the mouse in vec2d form
-            Vec2 c = new Vec2(mouseLoc.getXf(), mouseLoc.getYf());
+            Vec2 c = new Vec2(mouseLoc.getXF(), mouseLoc.getYF());
             
             // Keep track of the optimal point
             double bestDistFromMouse = selectionRadius;
@@ -1146,7 +1146,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
             
             Vec2 lenD = loc.b.loc.subtract(loc.a.loc);
             Vec2 len = new Vec2((float) lenD.getX(), (float) lenD.getY());
-            Vec2 perp = new Vec2(-len.getYf(), len.getXf());
+            Vec2 perp = new Vec2(-len.getYF(), len.getXF());
             
             Vec2 baseD = loc.calcLoc();
             Vec2 base = new Vec2((float) baseD.getX(), (float) baseD.getY());

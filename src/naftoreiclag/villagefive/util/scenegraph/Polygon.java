@@ -93,7 +93,7 @@ public class Polygon
             Vec2 b = get(i + 1);
             
             Vec2 ab = b.subtract(a).normalizeLocal();
-            Vec2 ad = new Vec2(ab.getYf(), -ab.getXf());
+            Vec2 ad = new Vec2(ab.getYF(), -ab.getXF());
             ad.multLocal(thickness);
             
             Vec2 d = a.add(ad);
@@ -215,7 +215,7 @@ public class Polygon
          * 
          */
     	
-    	float crossProduct = (a.getXf() - b.getXf()) * (c.getYf() - d.getYf()) - (a.getYf() - b.getYf()) * (c.getXf() - d.getXf());
+    	float crossProduct = (a.getXF() - b.getXF()) * (c.getYF() - d.getYF()) - (a.getYF() - b.getYF()) * (c.getXF() - d.getXF());
 
 		// Parallel or equal -> infinite or no solutions
 		if (crossProduct == 0)
@@ -226,8 +226,8 @@ public class Polygon
 		// Has an intersection
 		else
 		{
-			float xi = ((c.getXf() - d.getXf()) * (a.getXf() * b.getYf() - a.getYf() * b.getXf()) - (a.getXf() - b.getXf()) * (c.getXf() * d.getYf() - c.getYf() * d.getXf())) / crossProduct;
-			float yi = ((c.getYf() - d.getYf()) * (a.getXf() * b.getYf() - a.getYf() * b.getXf()) - (a.getYf() - b.getYf()) * (c.getXf() * d.getYf() - c.getYf() * d.getXf())) / crossProduct;
+			float xi = ((c.getXF() - d.getXF()) * (a.getXF() * b.getYF() - a.getYF() * b.getXF()) - (a.getXF() - b.getXF()) * (c.getXF() * d.getYF() - c.getYF() * d.getXF())) / crossProduct;
+			float yi = ((c.getYF() - d.getYF()) * (a.getXF() * b.getYF() - a.getYF() * b.getXF()) - (a.getYF() - b.getYF()) * (c.getXF() * d.getYF() - c.getYF() * d.getXF())) / crossProduct;
 
 			return new Vec2(xi, yi);
 		}
@@ -242,7 +242,7 @@ public class Polygon
 		{
 			Vec2 currPoint = this.get(i);
 			
-			if((currPoint.getYf() > test.getYf()) != (prevPoint.getYf() > test.getYf()) && (test.getXf() < (prevPoint.getXf() - currPoint.getXf()) * (test.getYf() - currPoint.getYf()) / (prevPoint.getYf() - currPoint.getYf()) + currPoint.getXf()))
+			if((currPoint.getYF() > test.getYF()) != (prevPoint.getYF() > test.getYF()) && (test.getXF() < (prevPoint.getXF() - currPoint.getXF()) * (test.getYF() - currPoint.getYF()) / (prevPoint.getYF() - currPoint.getYF()) + currPoint.getXF()))
 			{
 				even = !even;
 			}
@@ -265,10 +265,10 @@ public class Polygon
             Vec2 d = out.get(i);
             
             
-            Vertex A = new Vertex(a.getXf(), height, a.getYf(), Vector3f.UNIT_Y, a.getXf() / textureWidth, a.getYf() / textureHeight);
-            Vertex B = new Vertex(b.getXf(), height, b.getYf(), Vector3f.UNIT_Y, b.getXf() / textureWidth, b.getYf() / textureHeight);
-            Vertex C = new Vertex(c.getXf(), 0, c.getYf(), Vector3f.UNIT_Y, c.getXf() / textureWidth, c.getYf() / textureHeight);
-            Vertex D = new Vertex(d.getXf(), 0, d.getYf(), Vector3f.UNIT_Y, d.getXf() / textureWidth, d.getYf() / textureHeight);
+            Vertex A = new Vertex(a.getXF(), height, a.getYF(), Vector3f.UNIT_Y, a.getXF() / textureWidth, a.getYF() / textureHeight);
+            Vertex B = new Vertex(b.getXF(), height, b.getYF(), Vector3f.UNIT_Y, b.getXF() / textureWidth, b.getYF() / textureHeight);
+            Vertex C = new Vertex(c.getXF(), 0, c.getYF(), Vector3f.UNIT_Y, c.getXF() / textureWidth, c.getYF() / textureHeight);
+            Vertex D = new Vertex(d.getXF(), 0, d.getYF(), Vector3f.UNIT_Y, d.getXF() / textureWidth, d.getYF() / textureHeight);
             
             mb.addQuad(D, C, B, A);
         }
@@ -284,7 +284,7 @@ public class Polygon
         
         for(Vec2 a : vecs)
         {
-            points.add(new PolygonPoint(a.getXf(), a.getYf()));
+            points.add(new PolygonPoint(a.getXF(), a.getYF()));
         }
         
         org.poly2tri.geometry.polygon.Polygon polygon = new org.poly2tri.geometry.polygon.Polygon(points);
@@ -333,17 +333,17 @@ public class Polygon
             
             if(reverseNormals)
             {
-                normalVec = new Vector3f(-ab.getYf(), 0f, ab.getXf());
+                normalVec = new Vector3f(-ab.getYF(), 0f, ab.getXF());
             }
             else
             {
-                normalVec = new Vector3f(ab.getYf(), 0f, -ab.getXf());
+                normalVec = new Vector3f(ab.getYF(), 0f, -ab.getXF());
             }
             
-            Vertex C = new Vertex(b.getXf(), height, b.getYf(), normalVec, -tW, 0f);
-            Vertex D = new Vertex(a.getXf(), height, a.getYf(), normalVec,  tW, 0f);
-            Vertex A = new Vertex(a.getXf(),     0f, a.getYf(), normalVec,  tW, tH);
-            Vertex B = new Vertex(b.getXf(),     0f, b.getYf(), normalVec, -tW, tH);
+            Vertex C = new Vertex(b.getXF(), height, b.getYF(), normalVec, -tW, 0f);
+            Vertex D = new Vertex(a.getXF(), height, a.getYF(), normalVec,  tW, 0f);
+            Vertex A = new Vertex(a.getXF(),     0f, a.getYF(), normalVec,  tW, tH);
+            Vertex B = new Vertex(b.getXF(),     0f, b.getYF(), normalVec, -tW, tH);
             
             if(holesPerEdge.containsKey(i))
             {
@@ -380,16 +380,16 @@ public class Polygon
                     float g = hole.y;
                     
                     tX -= prevZ.distF(q) / textureWidth;
-                    Vertex T = new Vertex(q.getXf(), height, q.getYf(), normalVec, tX, 0f);
-                    Vertex R = new Vertex(q.getXf(),    r, q.getYf(), normalVec, tX, (height - r) / textureHeight);
-                    Vertex G = new Vertex(q.getXf(),    g, q.getYf(), normalVec, tX, (height - g) / textureHeight);
-                    Vertex V = new Vertex(q.getXf(),   0f, q.getYf(), normalVec, tX, tH);
+                    Vertex T = new Vertex(q.getXF(), height, q.getYF(), normalVec, tX, 0f);
+                    Vertex R = new Vertex(q.getXF(),    r, q.getYF(), normalVec, tX, (height - r) / textureHeight);
+                    Vertex G = new Vertex(q.getXF(),    g, q.getYF(), normalVec, tX, (height - g) / textureHeight);
+                    Vertex V = new Vertex(q.getXF(),   0f, q.getYF(), normalVec, tX, tH);
                     
                     tX -= q.distF(z) / textureWidth;
-                    Vertex P = new Vertex(z.getXf(), height, z.getYf(), normalVec, tX, 0f);
-                    Vertex Y = new Vertex(z.getXf(),    r, z.getYf(), normalVec, tX, (height - r) / textureHeight);
-                    Vertex J = new Vertex(z.getXf(),    g, z.getYf(), normalVec, tX, (height - g) / textureHeight);
-                    Vertex N = new Vertex(z.getXf(),   0f, z.getYf(), normalVec, tX, tH);
+                    Vertex P = new Vertex(z.getXF(), height, z.getYF(), normalVec, tX, 0f);
+                    Vertex Y = new Vertex(z.getXF(),    r, z.getYF(), normalVec, tX, (height - r) / textureHeight);
+                    Vertex J = new Vertex(z.getXF(),    g, z.getYF(), normalVec, tX, (height - g) / textureHeight);
+                    Vertex N = new Vertex(z.getXF(),   0f, z.getYF(), normalVec, tX, tH);
                     
                     prevZ = z;
                     

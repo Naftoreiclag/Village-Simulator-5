@@ -10,9 +10,9 @@ import com.jme3.math.FastMath;
 
 public class Scalarf
 {
-    public float x;
+    public double x;
 	
-	public Scalarf(float x)
+	public Scalarf(double x)
 	{
 		this.x = x;
 	}
@@ -20,7 +20,7 @@ public class Scalarf
 	public Scalarf() {}
     
     // Interpolate between two values linearly
-	public void lerp(float other, float amount)
+	public void lerp(double other, double amount)
 	{
         // If we are already within range
 		if(difference(other) < amount)
@@ -36,14 +36,14 @@ public class Scalarf
 	}
     
     // The direction (increase or decrease)
-	public float direction(float other)
+	public double direction(double other)
 	{
-		return FastMath.sign(other - this.x);
+		return Math.signum(other - this.x);
 	}
     
     // The absolute difference
-    public float difference(float other)
+    public double difference(double other)
 	{
-        return FastMath.abs(other - this.x);
+        return Math.abs(other - this.x);
 	}
 }

@@ -23,7 +23,6 @@ import com.jme3.texture.plugins.AWTLoader;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Random;
 import javax.imageio.ImageIO;
 import naftoreiclag.villagefive.util.math.GR;
 import naftoreiclag.villagefive.util.math.Vec2;
@@ -128,7 +127,7 @@ public class PlayerEntity extends Entity
         
         Vec2 me = this.getLocation();
         
-        if(ground != null) { ground.setLocalTranslation(me.getXf(), 0f, me.getYf()); }
+        if(ground != null) { ground.setLocalTranslation(me.getXF(), 0f, me.getYF()); }
     }
 
     

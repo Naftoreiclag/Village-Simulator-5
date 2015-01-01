@@ -26,7 +26,7 @@ public class OreDict
     
     public static Vector3f Vec2ToVec3(Vec2 vec)
     {
-        return new Vector3f(vec.getXf(), 0f, vec.getYf());
+        return new Vector3f(vec.getXF(), 0f, vec.getYF());
     }
 
     public static Vec2 vec3ToVec2(Vector3f vec)

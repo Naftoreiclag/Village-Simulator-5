@@ -20,7 +20,7 @@ public abstract class Mundane
     
     public void setLocation(Vec2 loc)
     {
-        this.getNode().setLocalTranslation(loc.getXf(), 0f, loc.getYf());
+        this.getNode().setLocalTranslation(loc.getXF(), 0f, loc.getYF());
     }
     public Vec2 getLocation()
     {
@@ -32,8 +32,8 @@ public abstract class Mundane
     {
         this.setLocation(this.getLocation().add(loc));
     }
-    public void setRotation(float dir)
+    public void setRotation(double dir)
     {
-        this.getNode().setLocalRotation((new Quaternion()).fromAngleAxis(dir, Vector3f.UNIT_Y));
+        this.getNode().setLocalRotation((new Quaternion()).fromAngleAxis((float) dir, Vector3f.UNIT_Y));
     }
 }

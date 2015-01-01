@@ -11,28 +11,28 @@ import com.jme3.math.FastMath;
 public class SmoothScalarf extends Scalarf
 {
     // Target amount
-    public float tx;
+    public double tx;
     
     //
-    public float maxSpd = 5f;
+    public double maxSpd = 5f;
     
     //
-    public float smoothFactor = 20f;
+    public double smoothFactor = 20f;
     
     //
     Scalarf dummy;
     
     //
     boolean clamp = false;
-    float min;
-    float max;
+    double min;
+    double max;
     
-    public void setClamp(float min, float max)
+    public void setClamp(double min, double max)
     {
         this.min = min;
         this.max = max;
     }
-    public void enableClamp(float min, float max)
+    public void enableClamp(double min, double max)
     {
         this.min = min;
         this.max = max;
@@ -54,7 +54,7 @@ public class SmoothScalarf extends Scalarf
         dummy = new Scalarf();
     }
     
-    public SmoothScalarf(float x)
+    public SmoothScalarf(double x)
     {
         super(x);
         
@@ -62,11 +62,18 @@ public class SmoothScalarf extends Scalarf
     }
     
     //
-    public void tick(float tpf)
+    public void tick(double tpf)
     {
         if(clamp)
         {
-            tx = FastMath.clamp(tx, min, max);
+            if(tx > max)
+            {
+                tx = max;
+            }
+            if(tx < min)
+            {
+                tx = min;
+            }
         }
         
         if(smooth)
@@ -83,7 +90,14 @@ public class SmoothScalarf extends Scalarf
         
         if(clamp)
         {
-            dummy.x = FastMath.clamp(dummy.x, min, max);
+            if(dummy.x > max)
+            {
+                dummy.x = max;
+            }
+            if(dummy.x < min)
+            {
+                dummy.x = min;
+            }
         }
 
         //
