@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+/* Copyright (c) 2014-2015 "Naftoreiclag" https://github.com/Naftoreiclag
  *
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
@@ -6,18 +6,26 @@
 
 package naftoreiclag.villagefive.util.math;
 
-import com.jme3.math.FastMath;
 
-public class Anglef
+public class Angle
 {
+    public static double PI = Math.PI;
+    public static double TWO_PI = PI * 2d;
+    public static double HALF_PI = PI / 2d;
+    
 	public double x;
 	
-	public Anglef(double x)
+	public Angle(double x)
 	{
 		this.x = x;
 	}
     
-	public Anglef() {}
+	public Angle() {}
+    
+    public com.jme3.math.Quaternion toQuaternion()
+    {
+        return (new com.jme3.math.Quaternion()).fromAngleAxis((float) this.x, com.jme3.math.Vector3f.UNIT_Y);
+    }
     
     // Interpolate between two values linearly
 	public void lerp(double other, double amount)
@@ -44,7 +52,7 @@ public class Anglef
 		double dirSign = Math.signum(displacement);
         
         // If the distance with the given direction is reflex (ie > 180 degrees)
-        if(displacement * dirSign > FastMath.PI)
+        if(displacement * dirSign > PI)
         {
             // Then flip the direction around, since the other way is obviously faster (acute)
             dirSign = -dirSign;
@@ -61,10 +69,10 @@ public class Anglef
 		double diff = Math.abs(other - this.x);
         
         // If the angle with the given direction is reflex (ie > 180 degrees)
-        if(diff > FastMath.PI)
+        if(diff > PI)
         {
             // Then it can't be the shortest. It must be the other way around.
-            return FastMath.TWO_PI - diff;
+            return TWO_PI - diff;
         }
         
         return diff;
@@ -73,7 +81,7 @@ public class Anglef
     // Makes sure that this double is between 0 to tau
     public static double wrap(double a)
     {
-        return ((a % FastMath.TWO_PI) + FastMath.TWO_PI) % FastMath.TWO_PI;
+        return ((a % TWO_PI) + TWO_PI) % TWO_PI;
     }
     
     // Like regular modulus, but it "wraps around" (e.g. magicmod(-1, 5) = 4)

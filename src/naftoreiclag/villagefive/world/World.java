@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+/* Copyright (c) 2014-2015 "Naftoreiclag" https://github.com/Naftoreiclag
  *
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.Vec2;
-import naftoreiclag.villagefive.util.scenegraph.Polygon;
+import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
 import naftoreiclag.villagefive.util.serializable.PlotSerial;
@@ -42,7 +42,8 @@ public class World
     public Node rootNode;
     public AssetManager assetManager;
     
-    public PhysWorld physics = new PhysWorld();
+    public PhysWorld physWorld = new PhysWorld();
+    public Bounds physBounds = new AxisAlignedBounds(width * Chunk.width, height * Chunk.height);
     
     public List<Entity> entities = new ArrayList<Entity>();
     public List<Plot> plots = new ArrayList<Plot>();
@@ -54,8 +55,7 @@ public class World
         this.trueRootNode.attachChild(this.rootNode);
         this.assetManager = assetManager;
         
-        Bounds bounds = new AxisAlignedBounds(width * Chunk.width, height * Chunk.height);
-        physics.setBounds(bounds);
+        physWorld.setBounds(physBounds);
         
         for(int x = 0; x < width; ++ x)
         {
@@ -73,6 +73,17 @@ public class World
                 chunks[x][z] = chunk;
             }
         }
+    }
+
+    public void tick(float tpf)
+    {
+        physWorld.update(tpf);
+        
+        for(Entity entity : entities)
+        {
+            entity.tick(tpf);
+        }
+        
     }
     
     /*
@@ -241,16 +252,6 @@ public class World
     public void destroyEntity(Entity aThis)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public void tick(float tpf)
-    {
-        for(Entity entity : entities)
-        {
-            entity.tick(tpf);
-        }
-        
-        physics.update(tpf);
     }
 
 

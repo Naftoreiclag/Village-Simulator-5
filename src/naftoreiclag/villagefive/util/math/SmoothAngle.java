@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+/* Copyright (c) 2014-2015 "Naftoreiclag" https://github.com/Naftoreiclag
  *
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
@@ -6,9 +6,9 @@
 
 package naftoreiclag.villagefive.util.math;
 
-import static naftoreiclag.villagefive.util.math.Anglef.wrap;
+import static naftoreiclag.villagefive.util.math.Angle.wrap;
 
-public class SmoothAnglef extends Anglef
+public class SmoothAngle extends Angle
 {
     // Target angle
     public double tx;
@@ -20,20 +20,20 @@ public class SmoothAnglef extends Anglef
     public double smoothFactor = 20f;
     
     //
-    Anglef dummy;
+    Angle dummy;
     
-    public SmoothAnglef()
+    public SmoothAngle()
     {
         super();
         
-        dummy = new Anglef();
+        dummy = new Angle();
     }
     
-    public SmoothAnglef(double x)
+    public SmoothAngle(double x)
     {
         super(x);
         
-        dummy = new Anglef(x);
+        dummy = new Angle(x);
     }
     
     //

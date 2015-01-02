@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+/* Copyright (c) 2014-2015 "Naftoreiclag" https://github.com/Naftoreiclag
  *
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
@@ -20,6 +20,12 @@ public class Vec2
     public float getYF() { return (float) this.getY(); }
     public void setY(double y) { this.y = y; }
 	
+    // Transformation constructor
+    public Vec2(org.dyn4j.geometry.Vector2 data)
+    {
+        this(data.x, data.y);
+    }
+    
     // Default constructor
 	public Vec2()
 	{

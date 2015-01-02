@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+/* Copyright (c) 2014-2015 "Naftoreiclag" https://github.com/Naftoreiclag
  *
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
@@ -17,7 +17,7 @@ import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.math.OreDict;
-import naftoreiclag.villagefive.util.math.SmoothAnglef;
+import naftoreiclag.villagefive.util.math.SmoothAngle;
 import naftoreiclag.villagefive.util.math.Vec2;
 
 public class PlayerController extends EntityController implements ActionListener
@@ -34,8 +34,8 @@ public class PlayerController extends EntityController implements ActionListener
     float turnSpd = 3f;
     float speed = 4.5f;
     
-    SmoothAnglef lookDir = new SmoothAnglef();
-    SmoothAnglef camDir = new SmoothAnglef();
+    SmoothAngle lookDir = new SmoothAngle();
+    SmoothAngle camDir = new SmoothAngle();
 
     public PlayerController()
     {

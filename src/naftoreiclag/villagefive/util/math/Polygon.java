@@ -1,10 +1,10 @@
-/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+/* Copyright (c) 2014-2015 "Naftoreiclag" https://github.com/Naftoreiclag
  *
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive.util.scenegraph;
+package naftoreiclag.villagefive.util.math;
 
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import naftoreiclag.villagefive.util.math.Vec2;
+import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder.Vertex;
 import org.poly2tri.Poly2Tri;

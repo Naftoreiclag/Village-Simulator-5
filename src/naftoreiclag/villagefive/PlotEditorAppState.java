@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+/* Copyright (c) 2014-2015 "Naftoreiclag" https://github.com/Naftoreiclag
  *
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
@@ -48,8 +48,8 @@ import naftoreiclag.villagefive.util.serializable.PlotSerial.Face;
 import naftoreiclag.villagefive.util.serializable.PlotSerial.Vert;
 
 import naftoreiclag.villagefive.util.scenegraph.BlueprintGeoGen;
-import naftoreiclag.villagefive.util.math.SmoothAnglef;
-import naftoreiclag.villagefive.util.math.SmoothScalarf;
+import naftoreiclag.villagefive.util.math.SmoothAngle;
+import naftoreiclag.villagefive.util.math.SmoothScalar;
 import naftoreiclag.villagefive.util.math.Vec2;
 
 import org.lwjgl.BufferUtils;
@@ -70,7 +70,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     private AppStateManager stateManager;
     private InputManager inputManager;
     private Camera cam;
-    private SmoothAnglef camAng;
+    private SmoothAngle camAng;
     private ViewPort viewPort;
 	private RenderManager renderManager;
     
@@ -88,7 +88,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     
     private boolean showingGrid = true;
     
-    private SmoothScalarf frustumSize = new SmoothScalarf();
+    private SmoothScalar frustumSize = new SmoothScalar();
     
     private float scrollSpd = 25.0f;
     private boolean leftClick;

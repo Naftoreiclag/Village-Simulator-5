@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+/* Copyright (c) 2014-2015 "Naftoreiclag" https://github.com/Naftoreiclag
  *
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
@@ -17,7 +17,7 @@ import java.util.Map;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.serializable.PlotSerial;
-import naftoreiclag.villagefive.util.scenegraph.Polygon;
+import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.world.Mundane;
 

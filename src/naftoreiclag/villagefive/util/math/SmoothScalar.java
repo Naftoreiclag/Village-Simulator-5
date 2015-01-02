@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 "Naftoreiclag" https://github.com/Naftoreiclag
+/* Copyright (c) 2014-2015 "Naftoreiclag" https://github.com/Naftoreiclag
  *
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
@@ -8,7 +8,7 @@ package naftoreiclag.villagefive.util.math;
 
 import com.jme3.math.FastMath;
 
-public class SmoothScalarf extends Scalarf
+public class SmoothScalar extends Scalarf
 {
     // Target amount
     public double tx;
@@ -47,14 +47,14 @@ public class SmoothScalarf extends Scalarf
         this.clamp = false;
     }
     
-    public SmoothScalarf()
+    public SmoothScalar()
     {
         super();
         
         dummy = new Scalarf();
     }
     
-    public SmoothScalarf(double x)
+    public SmoothScalar(double x)
     {
         super(x);
         
