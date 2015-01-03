@@ -27,4 +27,11 @@ public class DoorEntity extends Entity
     {
     }
 
+    @Override
+    public String getTypeName()
+    {
+        return "Door";
+    }
+
+
 }

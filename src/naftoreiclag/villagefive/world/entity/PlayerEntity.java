@@ -126,7 +126,7 @@ public class PlayerEntity extends Entity
         world.something(loc);
         
         
-        if(ground != null) { ground.setLocalTranslation(loc.toJme3()); }
+        if(ground != null) { ground.setLocalTranslation(loc.toJmeVec3()); }
     }
 
     @Override
@@ -224,5 +224,12 @@ public class PlayerEntity extends Entity
             e.printStackTrace();
             return null;
         }
+    }
+    
+    
+    @Override
+    public String getTypeName()
+    {
+        return "Player";
     }
 }

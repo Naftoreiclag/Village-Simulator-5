@@ -14,6 +14,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.OreDict;
@@ -29,9 +30,11 @@ import naftoreiclag.villagefive.world.chunk.Chunk;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
 import org.dyn4j.collision.AxisAlignedBounds;
 import org.dyn4j.collision.Bounds;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 // Thingy that handles pretty much anything that can be considered a part of the world
-public class World
+public class World implements JSONAware
 {
     // Size in chunks
     public int width = 5;
@@ -280,6 +283,17 @@ public class World
     public void destroyEntity(Entity aThis)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public String toJSONString()
+    {
+        JSONObject json = new JSONObject();
+        
+        json.put("name", "swagland");
+        json.put("entities", entities);
+        json.put("plots", plots);
+        
+        return json.toJSONString();
     }
 
 

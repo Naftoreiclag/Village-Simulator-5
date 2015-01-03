@@ -7,8 +7,12 @@
 package naftoreiclag.villagefive.util.math;
 
 // Class adapter
+
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
+
 // Universal 2d vector
-public class Vec2
+public class Vec2 implements JSONAware
 {
     public static final Vec2 ZERO = new Vec2(0, 0);
     public static final org.dyn4j.geometry.Vector2 ZERO_DYN4J = new org.dyn4j.geometry.Vector2(0, 0);
@@ -29,6 +33,14 @@ public class Vec2
     {
         this(strange.x, strange.y);
     }
+    public Vec2(com.jme3.math.Vector3f strange)
+    {
+        this(strange.x, strange.z);
+    }
+    public Vec2(com.jme3.math.Vector2f strange)
+    {
+        this(strange.x, strange.y);
+    }
     public static Vec2 fromAngle(double d)
     {
         return new Vec2(Math.cos(d), Math.sin(d));
@@ -37,9 +49,13 @@ public class Vec2
     {
         return new org.dyn4j.geometry.Vector2(this.getX(), this.getY());
     }
-    public com.jme3.math.Vector3f toJme3()
+    public com.jme3.math.Vector3f toJmeVec3()
     {
         return new com.jme3.math.Vector3f(this.getXF(), 0f, this.getYF());
+    }
+    public com.jme3.math.Vector2f toJmeVec2()
+    {
+        return new com.jme3.math.Vector2f(this.getXF(), this.getYF());
     }
     
     // Default constructor
@@ -352,6 +368,16 @@ public class Vec2
     public Angle getAngle()
     {
         return new Angle(Math.atan2(this.getY(), this.getX()));
+    }
+
+    public String toJSONString()
+    {
+        JSONObject obj = new JSONObject();
+        
+        obj.put("x", this.getX());
+        obj.put("y", this.getY());
+        
+        return obj.toJSONString();
     }
 
 

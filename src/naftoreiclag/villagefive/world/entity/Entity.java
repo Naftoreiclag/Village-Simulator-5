@@ -15,11 +15,13 @@ import naftoreiclag.villagefive.world.Mundane;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Transform;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 // Concrete entities define the behavior for all "instances" of itself.
 // Important: All sub-classes must have one 0-argument constructor. (or have no written constructors at all)
 // Position and rotation are stored in the node
-public abstract class Entity extends Mundane
+public abstract class Entity extends Mundane implements JSONAware
 {
     protected Body body = null;
     protected Node node = null;
@@ -64,5 +66,24 @@ public abstract class Entity extends Mundane
     {
         this.node.attachChild(spatial);
     }
+    
+    public final String toJSONString()
+    {
+        JSONObject obj = new JSONObject();
+        
+        obj.put("instanceof", this.getTypeName());
+        obj.put("location", new Vec2(this.node.getLocalTranslation()));
+        this.addAdditionalData(obj);
+        
+        return obj.toJSONString();
+    }
+    
+    public abstract String getTypeName();
+    
+    public void addAdditionalData(JSONObject data)
+    {
+        
+    }
+    
     
 }

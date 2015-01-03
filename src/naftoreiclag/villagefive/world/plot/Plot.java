@@ -21,8 +21,9 @@ import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.world.Mundane;
 import org.dyn4j.dynamics.Body;
+import org.json.simple.JSONAware;
 
-public class Plot extends Mundane
+public class Plot extends Mundane implements JSONAware
 {
     public PlotSerial data;
     protected Node node;
@@ -108,6 +109,11 @@ public class Plot extends Mundane
     public Body getBody()
     {
         return this.body;
+    }
+
+    public String toJSONString()
+    {
+        return this.data.toJSONString();
     }
 
 }

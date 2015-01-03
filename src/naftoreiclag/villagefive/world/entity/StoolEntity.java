@@ -32,5 +32,10 @@ public class StoolEntity extends Entity
         this.setLocation(location);
     }
     
+    @Override
+    public String getTypeName()
+    {
+        return "Stool";
+    }
 
 }

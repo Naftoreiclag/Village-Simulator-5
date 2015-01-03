@@ -33,4 +33,9 @@ public class PinguinEntity extends Entity
         this.setLocation(location);
     }
 
+    @Override
+    public String getTypeName()
+    {
+        return "Pinguin";
+    }
 }

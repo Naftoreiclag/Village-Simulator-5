@@ -26,5 +26,10 @@ public class FlowerEntity extends Entity
     public void createBody()
     {
     }
+    @Override
+    public String getTypeName()
+    {
+        return "Flower";
+    }
 
 }

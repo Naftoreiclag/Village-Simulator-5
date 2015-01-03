@@ -112,6 +112,9 @@ public class OverworldAppState extends AbstractAppState
         
         inputManager.setCursorVisible(true);
 
+        SaveLoad.save(world);
+        System.out.println();
+        
     }
     
     @Override
