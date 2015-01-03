@@ -34,6 +34,7 @@ import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import naftoreiclag.villagefive.world.entity.StoolEntity;
+import naftoreiclag.villagefive.world.plot.Plot;
 
 public class OverworldAppState extends AbstractAppState
 {
@@ -103,7 +104,7 @@ public class OverworldAppState extends AbstractAppState
         house.setX(266);
         house.setZ(266);
         
-        world.spawnPlot(house);
+        Plot plot = world.spawnPlot(house);
         
         world.spawnEntity(DoorEntity.class, new Vec2(256f, 256f));
         world.spawnEntity(PinguinEntity.class, new Vec2(266f, 266f));
@@ -126,7 +127,7 @@ public class OverworldAppState extends AbstractAppState
     {
         if(KeyKeys.p_fastforward)
         {
-            tpf *= 2;
+            tpf *= 5;
         }
         
         super.update(tpf);

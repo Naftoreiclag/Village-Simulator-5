@@ -281,7 +281,10 @@ public class Polygon
             
             Rectangle wall = new Rectangle(length, thickness);
             
+            // rotate first, translate second
+            
             wall.rotate(a.angleTo(b));
+            wall.translate((a.getX() + b.getX()) / 2, (a.getY() + b.getY()) / 2);
             
             body.addFixture(wall);
         }

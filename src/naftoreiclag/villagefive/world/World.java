@@ -122,7 +122,6 @@ public class World
         
         // Load the node
         plot.createNode();
-        plot.setLocation(new Vec2((float) plotType.getX(), (float) plotType.getZ()));
         rootNode.attachChild(plot.getNode());
         
         // Spawn attached entities
@@ -151,6 +150,7 @@ public class World
         // Body
         plot.createBody();
         if(plot.getBody() != null) { physWorld.addBody(plot.getBody()); }
+        plot.setLocation(new Vec2((float) plotType.getX(), (float) plotType.getZ()));
         
         // Keep track of it
         plots.add(plot);

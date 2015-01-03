@@ -105,7 +105,7 @@ public abstract class Mundane
             trans.setTranslation(loc.getX(), loc.getY());
             this.getBody().setTransform(trans);
         }
-        else if(this.getNode() != null)
+        if(this.getNode() != null)
         {
             this.getNode().setLocalTranslation(loc.getXF(), 0f, loc.getYF());
         }

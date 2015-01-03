@@ -93,10 +93,10 @@ public class PhysWorld extends org.dyn4j.dynamics.World
         
         for(int i = 0; i < num; ++ i)
         {
-            Vec2 bbb = Vec2.fromAngle((Math.PI * 2 * i) / num).multLocal(radius);
-            bbb.addLocal(center);
+            Vec2 loc = Vec2.fromAngle((Math.PI * 2 * i) / num).multLocal(radius);
+            loc.addLocal(center);
             
-            v.put(bbb.getXF()).put(0f).put(bbb.getYF());
+            v.put(loc.getXF()).put(0f).put(loc.getYF());
         }
 
         mesh.setBuffer(VertexBuffer.Type.Position, 3, v);
@@ -108,7 +108,24 @@ public class PhysWorld extends org.dyn4j.dynamics.World
 
     private Mesh makeGeoPoly(Polygon polygon)
     {
-        return null;
+        
+        
+        Mesh mesh = new Mesh();
+        mesh.setMode(Mesh.Mode.LineLoop);
+        FloatBuffer v = BufferUtils.createFloatBuffer(polygon.getVertices().length * 3);
+        
+        
+        for(int i = 0; i < polygon.getVertices().length; ++ i)
+        {
+            Vec2 loc = new Vec2(polygon.getVertices()[i]);
+            
+            v.put(loc.getXF()).put(0f).put(loc.getYF());
+        }
+        
+        mesh.setBuffer(VertexBuffer.Type.Position, 3, v);
+
+        mesh.updateBound();
+        return mesh;
     }
     
     
