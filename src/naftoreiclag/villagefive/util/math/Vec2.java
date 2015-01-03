@@ -29,6 +29,10 @@ public class Vec2
     {
         this(strange.x, strange.y);
     }
+    public static Vec2 fromAngle(double d)
+    {
+        return new Vec2(Math.cos(d), Math.sin(d));
+    }
     public org.dyn4j.geometry.Vector2 toDyn4j()
     {
         return new org.dyn4j.geometry.Vector2(this.getX(), this.getY());

@@ -25,15 +25,14 @@ import org.dyn4j.dynamics.Body;
 public class Plot extends Mundane
 {
     public PlotSerial data;
-    public World world;
     protected Node node;
+    protected Body body;
     
     public Map<Integer, Node> wholeRooms = new HashMap<Integer, Node>();
     
-    public Plot(PlotSerial data, World world)
+    public Plot(PlotSerial data)
     {
         this.data = data;
-        this.world = world;
     }
     
     @Override
@@ -84,12 +83,31 @@ public class Plot extends Mundane
     @Override
     public void createBody()
     {
+        if(data.getFaces().length == 0)
+        {
+            this.body = null;
+            return;
+        }
+        
+        Body newBod = new Body();
+        
+        // For each room
+        for(PlotSerial.Face room : data.getFaces())
+        {
+            Polygon polygon = OreDict.roomToPoly(data, room);
+            
+            polygon.makeBody(newBod, 0.4);
+        }
+        
+        
+        
+        this.body = newBod;
     }
 
     @Override
-    protected Body getBody()
+    public Body getBody()
     {
-        return null;
+        return this.body;
     }
 
 }

@@ -11,11 +11,12 @@ package naftoreiclag.villagefive.util;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 
-public class KeyKeys
+public class KeyKeys implements ActionListener
 {
     public static final String move_forward = "Forward";
     public static final String move_backward = "Backward";
@@ -35,6 +36,8 @@ public class KeyKeys
     public static final String mouse_move_down = "Mouse Move D";
     public static final String mouse_move_left = "Mouse Move L";
     public static final String mouse_move_right = "Mouse Move R";
+    
+    public static final String fastforward = "Fast Forward";
     
     public static final String num_0 = "Number 0";
     public static final String num_1 = "Number 1";
@@ -76,5 +79,20 @@ public class KeyKeys
         inputManager.addMapping(KeyKeys.num_7, new KeyTrigger(KeyInput.KEY_7));
         inputManager.addMapping(KeyKeys.num_8, new KeyTrigger(KeyInput.KEY_8));
         inputManager.addMapping(KeyKeys.num_9, new KeyTrigger(KeyInput.KEY_9));
+        
+        inputManager.addMapping(KeyKeys.fastforward, new KeyTrigger(KeyInput.KEY_F));
+        
+        inputManager.addListener(global, KeyKeys.fastforward);
+    }
+
+    public static KeyKeys global = new KeyKeys();
+    public static boolean p_fastforward;
+    
+    public void onAction(String name, boolean isPressed, float tpf)
+    {
+        if(name.equals(fastforward))
+        {
+            p_fastforward = isPressed;
+        }
     }
 }

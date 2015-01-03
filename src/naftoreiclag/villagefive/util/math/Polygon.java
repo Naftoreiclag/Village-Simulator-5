@@ -17,6 +17,9 @@ import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder.Vertex;
+import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.Rectangle;
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.geometry.polygon.PolygonPoint;
 import org.poly2tri.triangulation.TriangulationPoint;
@@ -46,10 +49,10 @@ public class Polygon
         // On what edge
         public int point;
         
-        public float x;
-        public float y;
-        public float w;
-        public float h;
+        public double x;
+        public double y;
+        public double w;
+        public double h;
     }
     
     public enum RoundingMethod
@@ -60,7 +63,7 @@ public class Polygon
     }
     
     // "Inflate" a polygon
-    public Polygon margin(float thickness)
+    public Polygon margin(double thickness)
     {
         Polygon ret = new Polygon();
         
@@ -137,7 +140,7 @@ public class Polygon
                 Vec2 ac = c.subtract(a);
                 Vec2 ab = b.subtract(a);
                 
-                float offset = ac.dot(ab);
+                double offset = ac.dot(ab);
                 offset /= ab.lenF();
                 
                 ArrayList<Hole> origHoles = holesPerEdge.get(i);
@@ -216,7 +219,7 @@ public class Polygon
          * 
          */
     	
-    	float crossProduct = (a.getXF() - b.getXF()) * (c.getYF() - d.getYF()) - (a.getYF() - b.getYF()) * (c.getXF() - d.getXF());
+    	double crossProduct = (a.getXF() - b.getXF()) * (c.getYF() - d.getYF()) - (a.getYF() - b.getYF()) * (c.getXF() - d.getXF());
 
 		// Parallel or equal -> infinite or no solutions
 		if (crossProduct == 0)
@@ -227,11 +230,24 @@ public class Polygon
 		// Has an intersection
 		else
 		{
-			float xi = ((c.getXF() - d.getXF()) * (a.getXF() * b.getYF() - a.getYF() * b.getXF()) - (a.getXF() - b.getXF()) * (c.getXF() * d.getYF() - c.getYF() * d.getXF())) / crossProduct;
-			float yi = ((c.getYF() - d.getYF()) * (a.getXF() * b.getYF() - a.getYF() * b.getXF()) - (a.getYF() - b.getYF()) * (c.getXF() * d.getYF() - c.getYF() * d.getXF())) / crossProduct;
+			double xi = ((c.getXF() - d.getXF()) * (a.getXF() * b.getYF() - a.getYF() * b.getXF()) - (a.getXF() - b.getXF()) * (c.getXF() * d.getYF() - c.getYF() * d.getXF())) / crossProduct;
+			double yi = ((c.getYF() - d.getYF()) * (a.getXF() * b.getYF() - a.getYF() * b.getXF()) - (a.getYF() - b.getYF()) * (c.getXF() * d.getYF() - c.getYF() * d.getXF())) / crossProduct;
 
 			return new Vec2(xi, yi);
 		}
+    }
+    
+    
+    // Would these two intersect if they were line segments? (General case aka no coinciding lines)
+    public static boolean segsIntersect(Vec2 a, Vec2 b, Vec2 c, Vec2 d)
+    {
+    	return (
+                    ((a.getX() - c.getX()) * (d.getY() - c.getY())) - ((a.getY() - c.getY()) * (d.getX() - c.getX())) > 0 != 
+                    ((b.getX() - c.getX()) * (d.getY() - c.getY())) - ((b.getY() - c.getY()) * (d.getX() - c.getX())) > 0
+               ) && (
+                    ((d.getX() - a.getX()) * (b.getY() - a.getY())) - ((d.getY() - a.getY()) * (b.getX() - a.getX())) > 0 != 
+                    ((c.getX() - a.getX()) * (b.getY() - a.getY())) - ((c.getY() - a.getY()) * (b.getX() - a.getX())) > 0
+               );
     }
     
     // Even-odd thing
@@ -253,8 +269,29 @@ public class Polygon
         return even;
     }
     
+    // lol bodybuilder
+    public void makeBody(Body body, double thickness)
+    {
+        for(int i = 0; i < vecs.size(); ++ i)
+        {
+            Vec2 a = this.get(i);
+            Vec2 b = this.get(i + 1);
+            
+            double length = a.dist(b);
+            
+            Rectangle wall = new Rectangle(length, thickness);
+            
+            wall.rotate(a.angleTo(b));
+            
+            body.addFixture(wall);
+        }
+        
+        
+    }
+
+            
     // Make into a floor
-    public void makeRoof(ModelBuilder mb, float thickness, float height, float textureWidth, float textureHeight)
+    public void makeRoof(ModelBuilder mb, double thickness, double height, double textureWidth, double textureHeight)
     {
         Polygon out = this.margin(thickness);
         
@@ -279,7 +316,7 @@ public class Polygon
     }
     
     // Make into a floor
-    public void makeFloor(ModelBuilder mb, float textureWidth, float textureHeight)
+    public void makeFloor(ModelBuilder mb, double textureWidth, double textureHeight)
     {
         List<PolygonPoint> points = new ArrayList<PolygonPoint>();
         
@@ -307,9 +344,9 @@ public class Polygon
     }
     
     // Make into a wall
-    public void makeWall(ModelBuilder mb, float height, float textureWidth, float textureHeight, boolean reverseNormals)
+    public void makeWall(ModelBuilder mb, double height, double textureWidth, double textureHeight, boolean reverseNormals)
     {
-        float tH = height / textureHeight;
+        double tH = height / textureHeight;
         
         for(int i = 0; i < vecs.size(); ++ i)
         {
@@ -327,7 +364,7 @@ public class Polygon
             
             Vec2 ab = b.subtract(a).normalizeLocal();
             
-            float tW = a.distF(b) / textureWidth;
+            double tW = a.distF(b) / textureWidth;
             tW /= 2f;
             
             Vector3f normalVec;
@@ -355,7 +392,7 @@ public class Polygon
                 Vertex prevBOT = A;
                 Vec2 prevZ = a;
                 
-                float tX = tW;
+                double tX = tW;
                 
                 for(int j = 0; j < holes.size(); j ++)
                 {
@@ -377,8 +414,8 @@ public class Polygon
                     Vec2 z = ab.mult(hole.w).addLocal(q);
                     
                     // Reusable y-values for the R,Y,G,J vertexes
-                    float r = hole.y + hole.h;
-                    float g = hole.y;
+                    double r = hole.y + hole.h;
+                    double g = hole.y;
                     
                     tX -= prevZ.distF(q) / textureWidth;
                     Vertex T = new Vertex(q.getXF(), height, q.getYF(), normalVec, tX, 0f);
@@ -440,7 +477,7 @@ public class Polygon
         }
     }
     
-    public Mesh genOutsideWall(float thickness, float height, float texWidth, float texHeight)
+    public Mesh genOutsideWall(double thickness, double height, double texWidth, double texHeight)
     {
         ModelBuilder mb = new ModelBuilder();
         Polygon grow = this.margin(thickness);
@@ -448,7 +485,7 @@ public class Polygon
         return mb.bake();
     }
     
-    public Mesh genInsideWall(float thickness, float height, float texWidth, float texHeight)
+    public Mesh genInsideWall(double thickness, double height, double texWidth, double texHeight)
     {
         ModelBuilder mb = new ModelBuilder();
         Polygon shrunk = this.margin(-thickness);
@@ -456,7 +493,7 @@ public class Polygon
         return mb.bake();
     }
     
-    public Mesh genFloor(float thickness, float height, float texWidth, float texHeight)
+    public Mesh genFloor(double thickness, double height, double texWidth, double texHeight)
     {
         ModelBuilder mb = new ModelBuilder();
         mb.setAppendOrigin(0, 0.02f, 0f);
@@ -465,7 +502,7 @@ public class Polygon
     }
     
     
-    public Mesh genRoof(float texWidth, float texHeight)
+    public Mesh genRoof(double texWidth, double texHeight)
     {
         ModelBuilder mb = new ModelBuilder();
         mb.setAppendOrigin(0, 7f, 0f);

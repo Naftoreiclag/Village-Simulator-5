@@ -77,9 +77,24 @@ public class World
         }
     }
 
+    public boolean showStuff = true;
+    public Node last = null;
     public void tick(float tpf)
     {
         physWorld.update(tpf);
+        
+        if(showStuff)
+        {
+            if(last != null)
+            {
+                last.removeFromParent();
+            }
+            
+            last = physWorld.debugShow();
+            last.setLocalTranslation(0, 0.1f, 0);
+            rootNode.attachChild(last);
+        }
+        
         
         for(Entity entity : entities)
         {
@@ -102,13 +117,15 @@ public class World
         {
             return null;
         }
-        Plot plot = new Plot(plotType, this);
+        Plot plot = new Plot(plotType);
+        plot.assertWorld(this);
         
         // Load the node
         plot.createNode();
         plot.setLocation(new Vec2((float) plotType.getX(), (float) plotType.getZ()));
         rootNode.attachChild(plot.getNode());
         
+        // Spawn attached entities
         for(Decal d : plotType.getDecals())
         {
             DoorEntity doorEnt = this.spawnEntity(DoorEntity.class);
@@ -130,6 +147,10 @@ public class World
             
             plot.getNode().attachChild(doorEnt.getNode());
         }
+        
+        // Body
+        plot.createBody();
+        if(plot.getBody() != null) { physWorld.addBody(plot.getBody()); }
         
         // Keep track of it
         plots.add(plot);

@@ -30,6 +30,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
+import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import naftoreiclag.villagefive.world.entity.StoolEntity;
@@ -123,6 +124,11 @@ public class OverworldAppState extends AbstractAppState
     @Override
     public void update(float tpf)
     {
+        if(KeyKeys.p_fastforward)
+        {
+            tpf *= 2;
+        }
+        
         super.update(tpf);
         
         playCont.tick(tpf);

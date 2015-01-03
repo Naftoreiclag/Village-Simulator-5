@@ -27,11 +27,23 @@ public class ModelBuilder
         this.appendY = y;
         this.appendZ = z;
     }
+    public void setAppendOrigin(double x, double y, double z)
+    {
+        this.appendX = (float) x;
+        this.appendY = (float) y;
+        this.appendZ = (float) z;
+    }
     public void addAppendOrigin(float x, float y, float z)
     {
         this.appendX += x;
         this.appendY += y;
         this.appendZ += z;
+    }
+    public void addAppendOrigin(double x, double y, double z)
+    {
+        this.appendX += (float) x;
+        this.appendY += (float) y;
+        this.appendZ += (float) z;
     }
     public void resetAppendOrigin()
     {
@@ -285,6 +297,16 @@ public class ModelBuilder
             this.normal = normal;
             this.texX = texX;
             this.texY = texY;
+        }
+        
+        public Vertex(double x, double y, double z, Vector3f normal, double texX, double texY)
+        {
+            this.x = (float) x;
+            this.y = (float) y;
+            this.z = (float) z;
+            this.normal = normal;
+            this.texX = (float) texX;
+            this.texY = (float) texY;
         }
         
         // Clone and add values to location
