@@ -26,11 +26,16 @@ import org.dyn4j.geometry.Transform;
  * - Controller calls getLocation();
  * - Entity gets the location from the spatial, which is determined from the body.
  * 
+ * This class is anything that exists in the world. It only provides some default functionality.
+ * 
+ * 
  */
 public abstract class Mundane
 {
-    private double frictionCoeff = 5;
-    private double impulseCoeff = 100;
+    private double linearFrictionCoeff = 5;
+    private double angularFrictionCoeff = 5;
+    private double impulseCoeff = 20;
+    private double torqueCoeff = 20;
     private double velocityCoeff = 50;
     
     protected World world = null;
@@ -61,35 +66,38 @@ public abstract class Mundane
         this.getBody().setLinearVelocity(velocity.mult(this.velocityCoeff).toDyn4j());
     }
     
-    public void applyImpulse(Vec2 impulse)
+    public final void applyImpulse(Vec2 impulse)
     {
         if(this.getBody() == null) { return; }
         
-        this.getBody().applyImpulse(impulse.mult(this.impulseCoeff).toDyn4j());
+        this.getBody().applyImpulse(impulse.mult(this.impulseCoeff * this.linearFrictionCoeff).toDyn4j());
     }
-    public void applyImpulse(Vec2 impulse, Vec2 point)
+    public final void applyImpulse(Vec2 impulse, Vec2 point)
     {
         if(this.getBody() == null) { return; }
         
-        this.getBody().applyImpulse(impulse.mult(this.impulseCoeff).toDyn4j(), point.toDyn4j());
+        this.getBody().applyImpulse(impulse.mult(this.impulseCoeff * this.linearFrictionCoeff).toDyn4j(), point.toDyn4j());
     }
-    public void applyTorque(double torque)
+    public final void applyTorque(double torque)
     {
         if(this.getBody() == null) { return; }
         
-        this.getBody().applyTorque(torque);
+        this.getBody().applyTorque(torque * this.torqueCoeff * this.angularFrictionCoeff);
     }
-    public void applyFriction()
+    public final void applyFriction()
     {
         if(this.getBody() == null) { return; }
         
-        Vec2 currentDir = new Vec2(this.getBody().getLinearVelocity());
-        currentDir.multLocal(-frictionCoeff);
-        this.getBody().applyForce(currentDir.toDyn4j());
+        double angVel = this.getBody().getAngularVelocity();
+        this.getBody().applyTorque(angVel * -angularFrictionCoeff);
+        
+        Vec2 currLinVel = new Vec2(this.getBody().getLinearVelocity());
+        currLinVel.multLocal(-linearFrictionCoeff);
+        this.getBody().applyForce(currLinVel.toDyn4j());
     }
     
     // Be careful when using this on physics objects!
-    public void setLocation(Vec2 loc)
+    public final void setLocation(Vec2 loc)
     {
         if(this.getBody() != null)
         {
@@ -102,12 +110,13 @@ public abstract class Mundane
             this.getNode().setLocalTranslation(loc.getXF(), 0f, loc.getYF());
         }
         
+        onLocationChange(loc);
     }
-    public void setLocationRelative(Vec2 loc)
+    public final void setLocationRelative(Vec2 loc)
     {
         this.setLocation(this.getLocation().add(loc));
     }
-    public void setRotation(Angle dir)
+    public final void setRotation(Angle dir)
     {
         if(this.getBody() != null)
         {
@@ -123,7 +132,7 @@ public abstract class Mundane
         
     }
     
-    public Vec2 getLocation()
+    public final Vec2 getLocation()
     {
         if(this.getNode() == null) { return new Vec2(); }
         
@@ -131,12 +140,6 @@ public abstract class Mundane
         
         return new Vec2(loc3f.x, loc3f.z);
     }
-    /*
-    public Angle getRotation()
-    {
-        if(this.getNode() == null) { return new Angle(); }
-        
-        return new Angle(this.getNode().getLocalRotation());
-    }
-    */
+    
+    public void onLocationChange(Vec2 loc) {};
 }

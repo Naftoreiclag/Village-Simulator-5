@@ -6,22 +6,21 @@
 
 package naftoreiclag.villagefive.world.entity;
 
-import com.jme3.material.Material;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Circle;
-import org.dyn4j.geometry.Transform;
 
-public class PinguinEntity extends Entity
+public class StoolEntity extends Entity
 {
+    
     @Override
     public void createNode()
     {
-        node = ModelManipulator.loadNode("Models/Knight.mesh.j3o");
-        Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
-        node.setMaterial(mat);
+        node = ModelManipulator.loadNode("Models/stool/Stool.j3o");
+        
     }
+    
 
     @Override
     public void createBody()
@@ -32,5 +31,6 @@ public class PinguinEntity extends Entity
         body.setMass();
         this.setLocation(location);
     }
+    
 
 }

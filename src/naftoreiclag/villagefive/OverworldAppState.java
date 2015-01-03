@@ -32,6 +32,7 @@ import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
+import naftoreiclag.villagefive.world.entity.StoolEntity;
 
 public class OverworldAppState extends AbstractAppState
 {
@@ -105,6 +106,7 @@ public class OverworldAppState extends AbstractAppState
         
         world.spawnEntity(DoorEntity.class, new Vec2(256f, 256f));
         world.spawnEntity(PinguinEntity.class, new Vec2(266f, 266f));
+        world.spawnEntity(StoolEntity.class, new Vec2(246f, 256f));
         
         inputManager.setCursorVisible(true);
 

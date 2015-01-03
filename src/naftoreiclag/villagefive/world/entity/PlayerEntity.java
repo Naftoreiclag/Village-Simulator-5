@@ -121,30 +121,22 @@ public class PlayerEntity extends Entity
     }
     
     @Override
-    public void setLocation(Vec2 loc)
+    public void onLocationChange(Vec2 loc)
     {
-        super.setLocation(loc);
-        
         world.something(loc);
         
-        System.out.println(world.insideRoom(loc));
         
-        Vec2 me = this.getLocation();
-        
-        if(ground != null) { ground.setLocalTranslation(me.getXF(), 0f, me.getYF()); }
+        if(ground != null) { ground.setLocalTranslation(loc.toJme3()); }
     }
 
     @Override
     public void createBody()
     {
+        Vec2 location = this.getLocation();
         body = new Body();
         body.addFixture(new Circle(1), 5);
         body.setMass();
-        Transform t = new Transform();
-        t.setTranslation(256, 256);
-        body.setTransform(t);
-        //this.setFriction(1.0f);
-        
+        this.setLocation(location);
     }
     
     @Override

@@ -42,6 +42,7 @@ public abstract class Entity extends Mundane
         return node;
     }
     
+    // Make sure you call the super!
     public void tick(float tpf)
     {
         if(body != null)
@@ -53,6 +54,8 @@ public abstract class Entity extends Mundane
             this.node.setLocalRotation(rot.toQuaternion());
             
             this.applyFriction();
+            
+            this.onLocationChange(loc);
         }
         
     }
