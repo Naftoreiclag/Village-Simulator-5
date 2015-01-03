@@ -277,16 +277,72 @@ public class Polygon
             Vec2 a = this.get(i);
             Vec2 b = this.get(i + 1);
             
-            double length = a.dist(b);
+            if(holesPerEdge.containsKey(i))
+            {
+                Vec2 ab = b.subtract(a).normalizeLocal();
+                
+                Vec2 prev = a;
             
-            Rectangle wall = new Rectangle(length, thickness);
+                List<Hole> holes = holesPerEdge.get(i);
+                
+                for(int j = 0; j < holes.size(); j ++)
+                {
+                    /*
+                     *    D   -T-----P-     -T-----P-    tall       C
+                     *    |    |     |       |     |                |
+                     *    |   -R-----Y-     -R-----Y-    r          |
+                     *    |    |     |       |     |                |
+                     *    |   -G-----J-     -G-----J-    g          |
+                     *    |    |     |       |     |                |
+                     *    A   -V-----N- ... -V-----N-    0f         B
+                     *             
+                     *            1    ->    q  2  z
+                     */
+                    
+                    Hole hole = holes.get(j);
+                    
+                    // If it is a window then skip
+                    if(hole.y > 0)
+                    {
+                        continue;
+                    }
+                    
+                    Vec2 q = ab.mult(hole.x).addLocal(a);
+                    Vec2 z = ab.mult(hole.w).addLocal(q);
+                    
+                    double length = prev.dist(q);
+                    Rectangle wall = new Rectangle(length, thickness);
+                    
+                    wall.rotate(prev.angleTo(q));
+                    wall.translate((prev.getX() + q.getX()) / 2, (prev.getY() + q.getY()) / 2);
+                    
+                    body.addFixture(wall);
+                    
+                    prev = z;
+                    
+                }
+
+                double length = prev.dist(b);
+                Rectangle wall = new Rectangle(length, thickness);
+
+                wall.rotate(prev.angleTo(b));
+                wall.translate((prev.getX() + b.getX()) / 2, (prev.getY() + b.getY()) / 2);
+
+                body.addFixture(wall);
+            }
+            else
+            {
+                double length = a.dist(b);
             
-            // rotate first, translate second
-            
-            wall.rotate(a.angleTo(b));
-            wall.translate((a.getX() + b.getX()) / 2, (a.getY() + b.getY()) / 2);
-            
-            body.addFixture(wall);
+                Rectangle wall = new Rectangle(length, thickness);
+
+                // rotate first, translate second
+
+                wall.rotate(a.angleTo(b));
+                wall.translate((a.getX() + b.getX()) / 2, (a.getY() + b.getY()) / 2);
+
+                body.addFixture(wall);
+            }
         }
         
         
@@ -408,7 +464,7 @@ public class Polygon
                      *    |    |     |       |     |                |
                      *    A   -V-----N- ... -V-----N-    0f         B
                      *             
-                     *                       q     z
+                     *            1    ->    q  2  z
                      */
                     
                     Hole hole = holes.get(j);

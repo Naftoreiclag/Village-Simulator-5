@@ -81,7 +81,7 @@ public class PhysWorld extends org.dyn4j.dynamics.World
 
     private Mesh makeGeoCircle(Circle circle)
     {
-        int num = 20;
+        int num = 16;
         
         Mesh mesh = new Mesh();
         mesh.setMode(Mesh.Mode.LineLoop);
