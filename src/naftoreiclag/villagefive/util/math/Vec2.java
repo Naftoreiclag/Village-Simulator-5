@@ -6,9 +6,13 @@
 
 package naftoreiclag.villagefive.util.math;
 
+// Class adapter
 // Universal 2d vector
 public class Vec2
 {
+    public static final Vec2 ZERO = new Vec2(0, 0);
+    public static final org.dyn4j.geometry.Vector2 ZERO_DYN4J = new org.dyn4j.geometry.Vector2(0, 0);
+    
 	private double x;
 	private double y;
 
@@ -20,10 +24,15 @@ public class Vec2
     public float getYF() { return (float) this.getY(); }
     public void setY(double y) { this.y = y; }
 	
-    // Transformation constructor
-    public Vec2(org.dyn4j.geometry.Vector2 data)
+    // Transformations
+    
+    public Vec2(org.dyn4j.geometry.Vector2 strange)
     {
-        this(data.x, data.y);
+        this(strange.x, strange.y);
+    }
+    public org.dyn4j.geometry.Vector2 toDyn4j()
+    {
+        return new org.dyn4j.geometry.Vector2(this.x, this.y);
     }
     
     // Default constructor
@@ -333,14 +342,9 @@ public class Vec2
         return "Vector2d [" + getX() + ", " + getY() + "]";
     }
 
-    public double getAngled()
+    public Angle getAngle()
     {
-        return Math.atan2(getY(), getX());
-    }
-
-    public float getAngle()
-    {
-        return (float) this.getAngled();
+        return new Angle(Math.atan2(this.getY(), this.getX()));
     }
 
 }

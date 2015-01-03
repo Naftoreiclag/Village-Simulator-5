@@ -20,6 +20,7 @@ import naftoreiclag.villagefive.util.serializable.PlotSerial;
 import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.world.Mundane;
+import org.dyn4j.dynamics.Body;
 
 public class Plot extends Mundane
 {
@@ -36,7 +37,7 @@ public class Plot extends Mundane
     }
     
     @Override
-    public void loadNode()
+    public void createNode()
     {
         this.node = new Node();
         
@@ -78,6 +79,17 @@ public class Plot extends Mundane
     public Node getNode()
     {
         return node;
+    }
+
+    @Override
+    public void createBody()
+    {
+    }
+
+    @Override
+    protected Body getBody()
+    {
+        return null;
     }
 
 }

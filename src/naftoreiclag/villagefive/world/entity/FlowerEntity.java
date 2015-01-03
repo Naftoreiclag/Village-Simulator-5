@@ -17,9 +17,14 @@ public class FlowerEntity extends Entity
     }
 
     @Override
-    public void loadNode()
+    public void createNode()
     {
         node = ModelManipulator.loadNode("Models/Flower.mesh.j3o");
+    }
+
+    @Override
+    public void createBody()
+    {
     }
 
 }

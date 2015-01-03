@@ -13,6 +13,8 @@ import com.jme3.scene.Node;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.world.Mundane;
+import naftoreiclag.villagefive.world.World;
+import org.dyn4j.dynamics.Body;
 
 public class Chunk extends Mundane
 {
@@ -24,7 +26,7 @@ public class Chunk extends Mundane
     public int x;
     public int z;
 
-    public void loadNode()
+    public void createNode()
     {
         ModelBuilder mb = new ModelBuilder();
         
@@ -46,6 +48,15 @@ public class Chunk extends Mundane
     public Node getNode()
     {
         return node;
+    }
+
+    @Override
+    public void createBody() {}
+
+    @Override
+    protected Body getBody()
+    {
+        return null;
     }
 
 }

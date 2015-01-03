@@ -17,7 +17,7 @@ public class PinguinEntity extends Entity
     }
     
     @Override
-    public void loadNode()
+    public void createNode()
     {
         node = ModelManipulator.loadNode("Models/Knight.mesh.j3o");
         
@@ -26,6 +26,11 @@ public class PinguinEntity extends Entity
         node.setMaterial(mat);
         
           
+    }
+
+    @Override
+    public void createBody()
+    {
     }
 
 }

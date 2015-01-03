@@ -27,6 +27,10 @@ import javax.imageio.ImageIO;
 import naftoreiclag.villagefive.util.math.GR;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
+import org.dyn4j.dynamics.Body;
+import org.dyn4j.geometry.Circle;
+import org.dyn4j.geometry.Mass;
+import org.dyn4j.geometry.Transform;
 
 public class PlayerEntity extends Entity
 {
@@ -54,7 +58,7 @@ public class PlayerEntity extends Entity
     private float currBlinkTime;
     
     @Override
-    public void loadNode()
+    public void createNode()
     {
         node = ModelManipulator.loadNode("Models/katty/KattyBody.mesh.j3o");
         
@@ -130,13 +134,23 @@ public class PlayerEntity extends Entity
         if(ground != null) { ground.setLocalTranslation(me.getXF(), 0f, me.getYF()); }
     }
 
+    @Override
+    public void createBody()
+    {
+        body = new Body();
+        body.addFixture(new Circle(1), 5);
+        body.setMass();
+        Transform t = new Transform();
+        t.setTranslation(256, 256);
+        body.setTransform(t);
+        //this.setFriction(1.0f);
+        
+    }
     
     @Override
     public void tick(float tpf)
     {
         super.tick(tpf);
-        
-        //System.out.println(tpf);
         
         if(GR.chanceHertz(tpf, 0.1f))
         {
@@ -153,7 +167,6 @@ public class PlayerEntity extends Entity
 
             }
         }
-
     }
     
     public void blink()

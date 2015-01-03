@@ -13,7 +13,10 @@ public class Angle
     public static double TWO_PI = PI * 2d;
     public static double HALF_PI = PI / 2d;
     
-	public double x;
+	private double x;
+    public double getX() { return this.x; }
+    public float getXF() { return (float) this.getX(); }
+    public void setX(double x) { this.x = x; }
 	
 	public Angle(double x)
 	{
@@ -24,31 +27,31 @@ public class Angle
     
     public com.jme3.math.Quaternion toQuaternion()
     {
-        return (new com.jme3.math.Quaternion()).fromAngleAxis((float) this.x, com.jme3.math.Vector3f.UNIT_Y);
+        return (new com.jme3.math.Quaternion()).fromAngleAxis((float) this.getX(), com.jme3.math.Vector3f.UNIT_Y);
     }
     
     // Interpolate between two values linearly
-	public void lerp(double other, double amount)
+	public void lerpLocal(double other, double amount)
 	{
         // If we are already within range
-		if(difference(other) < amount)
+		if(calcDiff(other) < amount)
 		{
             // Then just be there already
-			this.x = wrap(other);
+			this.setX(wrap(other));
 		}
 		else
 		{
             // Try move linearly
-			this.x = wrap(this.x + (amount * direction(other)));
+			this.setX(wrap(this.getX() + (amount * calcDir(other))));
 		}
 	}
     
     // The direction (clockwise or counter-clockwise) to get to another angle
-	public double direction(double other)
+	public final double calcDir(double other)
 	{
         other = wrap(other);
         
-		double displacement = other - this.x;
+		double displacement = other - this.getX();
 		double dirSign = Math.signum(displacement);
         
         // If the distance with the given direction is reflex (ie > 180 degrees)
@@ -62,11 +65,11 @@ public class Angle
 	}
     
     // The measure of the angle formed with this and another angle (unsigned)
-    public double difference(double other)
+    public final double calcDiff(double other)
 	{
         other = wrap(other);
         
-		double diff = Math.abs(other - this.x);
+		double diff = Math.abs(other - this.getX());
         
         // If the angle with the given direction is reflex (ie > 180 degrees)
         if(diff > PI)
@@ -89,5 +92,23 @@ public class Angle
     {
         return ((a % b) + b) % b;
     }
+    
+    @Override
+    public Angle clone()
+    {
+        return new Angle(this.getX());
+    }
+
+    public Angle inverseLocal()
+    {
+        this.setX(-this.getX());
+        
+        return this;
+    }
+    public Angle inverse()
+    {
+        return this.clone().inverseLocal();
+    }
+
 }
 

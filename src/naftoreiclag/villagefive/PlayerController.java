@@ -28,7 +28,7 @@ public class PlayerController extends EntityController implements ActionListener
     public void setEntity(PlayerEntity entity)
     {
         this.puppet = entity;
-        this.world = puppet.world;
+        this.world = puppet.getWorld();
     }
     
     float turnSpd = 3f;
@@ -109,7 +109,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
         camDir.tick(tpf);
 
-        puppet.setRotation(lookDir.x);
+        puppet.setRotation(lookDir);
 
         Vector3f groundGoto = null;
         if(leftClick)
@@ -122,7 +122,7 @@ public class PlayerController extends EntityController implements ActionListener
             if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
                 puppet.bodyAnimChannel.setAnim("Stand");
-                lookDir.tx = lookDir.x;
+                lookDir.tx = lookDir.getX();
             }
 
         }
@@ -138,7 +138,7 @@ public class PlayerController extends EntityController implements ActionListener
                 lookDir.tx = whereDoesThePlayerWantToGo();
             }
 
-            puppet.setLocationRelative(OreDict.JmeAngleToVec2((float) lookDir.x).multLocal(tpf * speed));
+            puppet.applyImpulse(OreDict.JmeAngleToVec2((float) lookDir.getX()).multLocal(tpf * speed));
 
             if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
@@ -148,7 +148,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
 
 
-        cam.setLocation(OreDict.JmeAngleToVec3((float) camDir.x).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));
+        cam.setLocation(OreDict.JmeAngleToVec3((float) camDir.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));
         cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
     }
 
@@ -217,7 +217,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
         
         
-        float targAngle = FastMath.HALF_PI - dir.getAngle();
+        float targAngle = FastMath.HALF_PI - dir.getAngle().getXF();
         return targAngle;
     }
 

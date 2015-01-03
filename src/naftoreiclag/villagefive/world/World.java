@@ -15,6 +15,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import java.util.ArrayList;
 import java.util.List;
+import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.math.Polygon;
@@ -43,7 +44,7 @@ public class World
     public AssetManager assetManager;
     
     public PhysWorld physWorld = new PhysWorld();
-    public Bounds physBounds = new AxisAlignedBounds(width * Chunk.width, height * Chunk.height);
+    public Bounds physBounds = new AxisAlignedBounds(width * Chunk.width * 2, height * Chunk.height * 2);
     
     public List<Entity> entities = new ArrayList<Entity>();
     public List<Plot> plots = new ArrayList<Plot>();
@@ -56,6 +57,7 @@ public class World
         this.assetManager = assetManager;
         
         physWorld.setBounds(physBounds);
+        physWorld.setGravity(Vec2.ZERO_DYN4J);
         
         for(int x = 0; x < width; ++ x)
         {
@@ -67,7 +69,7 @@ public class World
                 chunk.z = z;
                 
                 System.out.println(x + ", " + z);
-                chunk.loadNode();
+                chunk.createNode();
                 this.rootNode.attachChild(chunk.getNode());
                 
                 chunks[x][z] = chunk;
@@ -103,7 +105,7 @@ public class World
         Plot plot = new Plot(plotType, this);
         
         // Load the node
-        plot.loadNode();
+        plot.createNode();
         plot.setLocation(new Vec2((float) plotType.getX(), (float) plotType.getZ()));
         rootNode.attachChild(plot.getNode());
         
@@ -119,13 +121,12 @@ public class World
             
             Vec2 AB = B.subtract(A).normalizeLocal().multLocal((float) d.getDistance());
             
-            float angle = AB.getAngle();
+            Angle angle = AB.getAngle();
             
             System.out.println("angle = " + angle);
             
-            
             doorEnt.setLocation(A.add(AB));
-            doorEnt.setRotation(-angle); // what
+            doorEnt.setRotation(angle.inverse()); // what
             
             plot.getNode().attachChild(doorEnt.getNode());
         }
@@ -136,6 +137,57 @@ public class World
         // Return it
         return plot;
     }
+    
+    public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType)
+    {
+        // Create the thing
+        SomeEntity entity;
+        try
+        {
+            entity = entityType.getConstructor().newInstance();
+            
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace();
+            
+            return null;
+        }
+        entity.assertWorld(this);
+        
+        // Load the node
+        entity.createNode();
+        rootNode.attachChild(entity.getNode());
+        
+        // Body
+        entity.createBody();
+        if(entity.getBody() != null) { physWorld.addBody(entity.getBody()); }
+        
+        // Keep track of it
+        entities.add(entity);
+        
+        // Return it
+        return entity;
+    }
+    
+    public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType, Vec2 vector2f)
+    {
+        // Create the thing
+        SomeEntity entity = spawnEntity(entityType);
+        
+        if(entity == null)
+        {
+            return null;
+        }
+        
+        // Move it into position
+        entity.setLocation(vector2f);
+        
+        // Return it
+        return entity;
+    }
+
+    
     
     // Are you in room
     public boolean insideRoom(Vec2 loc2)
@@ -204,51 +256,6 @@ public class World
         return false;
     }
     
-    public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType)
-    {
-        // Create the thing
-        SomeEntity entity;
-        try
-        {
-            entity = entityType.getConstructor().newInstance();
-            
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
-            
-            return null;
-        }
-        entity.assertWorld(this);
-        
-        // Load the node
-        entity.loadNode();
-        rootNode.attachChild(entity.getNode());
-        
-        // Keep track of it
-        entities.add(entity);
-        
-        // Return it
-        return entity;
-    }
-    
-    public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType, Vec2 vector2f)
-    {
-        // Create the thing
-        SomeEntity entity = spawnEntity(entityType);
-        
-        if(entity == null)
-        {
-            return null;
-        }
-        
-        // Move it into position
-        entity.setLocation(vector2f);
-        
-        // Return it
-        return entity;
-    }
-
     public void destroyEntity(Entity aThis)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

@@ -14,10 +14,10 @@ public class SmoothAngle extends Angle
     public double tx;
     
     //
-    public double maxSpd = 5f;
+    public double maxSpd = 5;
     
     //
-    public double smoothFactor = 20f;
+    public double smoothFactor = 20;
     
     //
     Angle dummy;
@@ -42,13 +42,13 @@ public class SmoothAngle extends Angle
         if(smoothEn)
         {
 
-            dummy.lerp(tx, maxSpd * tpf);
+            dummy.lerpLocal(tx, maxSpd * tpf);
 
-            x = wrap(x + (direction(dummy.x) * (difference(dummy.x) / smoothFactor)));
+            setX(wrap(getX() + (calcDir(dummy.getX()) * (calcDiff(dummy.getX()) / smoothFactor))));
         }
         else
         {
-            x = this.tx;
+            setX(this.tx);
         }
 
         //

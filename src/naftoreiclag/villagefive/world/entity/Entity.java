@@ -13,37 +13,31 @@ import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.Mundane;
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.geometry.Circle;
+import org.dyn4j.geometry.Transform;
 
-/*
- * An easy-to-use interface for synchronizing all the different bodies involved.
- * 
- * Important: All sub-classes must have one 0-argument constructor. (or have no written constructors at all)
- */
-
+// Concrete entities define the behavior for all "instances" of itself.
+// Important: All sub-classes must have one 0-argument constructor. (or have no written constructors at all)
 // Position and rotation are stored in the node
 public abstract class Entity extends Mundane
 {
-    public Body body;
-    public World world;
-    public Node node;
+    protected Body body = null;
+    protected Node node = null;
     
-    public void destroy()
+    public void destroySelf()
     {
         this.world.destroyEntity(this);
     }
     
-    public void assertWorld(World world)
-    {
-        this.world = world;
-    }
     
-    public void assertBody(Body body)
+    @Override
+    public final Body getBody()
     {
-        this.body = body;
+        return body;
     }
     
     @Override
-    public Node getNode()
+    public final Node getNode()
     {
         return node;
     }
@@ -57,6 +51,8 @@ public abstract class Entity extends Mundane
 
             this.node.setLocalTranslation(loc.getXF(), 0f, loc.getYF());
             this.node.setLocalRotation(rot.toQuaternion());
+            
+            this.applyFriction();
         }
         
     }

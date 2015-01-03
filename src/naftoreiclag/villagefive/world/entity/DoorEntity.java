@@ -8,6 +8,7 @@ package naftoreiclag.villagefive.world.entity;
 
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import naftoreiclag.villagefive.world.entity.Entity;
+import org.dyn4j.dynamics.Body;
 
 public class DoorEntity extends Entity
 {
@@ -16,9 +17,14 @@ public class DoorEntity extends Entity
     {}
 
     @Override
-    public void loadNode()
+    public void createNode()
     {
         node = ModelManipulator.loadNode("Models/Frame.mesh.j3o");
+    }
+
+    @Override
+    public void createBody()
+    {
     }
 
 }
