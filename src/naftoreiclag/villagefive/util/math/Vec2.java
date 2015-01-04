@@ -379,6 +379,12 @@ public class Vec2 implements JSONAware
         
         return obj.toJSONString();
     }
+    
+    public Vec2(JSONObject data)
+    {
+        this.x = (Double) data.get("x");
+        this.y = (Double) data.get("y");
+    }
 
 
 }

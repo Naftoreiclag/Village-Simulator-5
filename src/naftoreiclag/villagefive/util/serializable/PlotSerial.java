@@ -9,6 +9,7 @@ package naftoreiclag.villagefive.util.serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import naftoreiclag.villagefive.util.math.Vec2;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
@@ -17,6 +18,8 @@ import org.json.simple.JSONObject;
 // Serializable format
 public class PlotSerial implements JSONAware
 {
+    // Subclass ids are not saved because their index in the containing array determines that.
+
     private long id = 1337L;
     private String name = "Bakery";
     
@@ -37,18 +40,81 @@ public class PlotSerial implements JSONAware
     public void setDecals(Decal[] decals) { this.decals = decals; }
     public void setFaces(Face[] faces) { this.faces = faces; }
 
+    public PlotSerial() {}
+    
     @Override
     public String toJSONString()
     {
         JSONObject obj = new JSONObject();
         
-        obj.put("id", id);
-        obj.put("name", name);
+        obj.put("id", this.getId());
+        obj.put("name", this.getName());
+        obj.put("x", x);
+        obj.put("z", z);
         obj.put("vertexes", Arrays.asList(verts));
         obj.put("decals", Arrays.asList(decals));
         obj.put("faces", Arrays.asList(faces));
         
+        
         return obj.toJSONString();
+    }
+    
+    public PlotSerial(JSONObject data)
+    {
+        id = (Long) data.get("id");
+        name = (String) data.get("name");
+        x = (Double) data.get("x");
+        z = (Double) data.get("z");
+        JSONArray rawVerts = (JSONArray) data.get("vertexes");
+        JSONArray rawDecals = (JSONArray) data.get("decals");
+        JSONArray rawFaces = (JSONArray) data.get("faces");
+        
+        verts = new Vert[rawVerts.size()];
+        for(int i = 0; i < rawVerts.size(); ++ i)
+        {
+            JSONObject vert = (JSONObject) rawVerts.get(i);
+            
+            verts[i] = new Vert(vert);
+            verts[i].setId(i);
+        }
+        
+        decals = new Decal[rawDecals.size()];
+        for(int i = 0; i < rawDecals.size(); ++ i)
+        {
+            JSONObject decal = (JSONObject) rawDecals.get(i);
+            
+            decals[i] = new Decal(decal);
+            decals[i].setId(i);
+        }
+        
+        faces = new Face[rawFaces.size()];
+        for(int i = 0; i < rawFaces.size(); ++ i)
+        {
+            JSONObject face = (JSONObject) rawFaces.get(i);
+            
+            faces[i] = new Face(face);
+            faces[i].setId(i);
+        }
+    }
+
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id = id;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
     
     
@@ -58,6 +124,8 @@ public class PlotSerial implements JSONAware
         private double x;
         private double z;
         private int id;
+        
+        public Vert() {}
 
         public int getId() { return id; }
         public void setId(int id) { this.id = id; }
@@ -72,11 +140,16 @@ public class PlotSerial implements JSONAware
         {
             JSONObject obj = new JSONObject();
 
-            obj.put("id", id);
             obj.put("x", x);
             obj.put("z", z);
 
             return obj.toJSONString();
+        }
+        
+        private Vert(JSONObject vert)
+        {
+            this.x = (Double) vert.get("x");
+            this.z = (Double) vert.get("z");
         }
     }
     
@@ -91,6 +164,8 @@ public class PlotSerial implements JSONAware
         
         // temp
         public double width;
+        
+        public Decal() {}
         
         public int getId() { return id; }
         public void setId(int id) { this.id = id; }
@@ -108,13 +183,20 @@ public class PlotSerial implements JSONAware
         {
             JSONObject obj = new JSONObject();
 
-            obj.put("id", id);
             obj.put("vertA", vertA);
             obj.put("vertB", vertB);
             obj.put("x", distance);
             obj.put("width", width);
 
             return obj.toJSONString();
+        }
+        
+        private Decal(JSONObject data)
+        {
+            vertA = ((Long) data.get("vertA")).intValue();
+            vertB = ((Long) data.get("vertB")).intValue();
+            distance = (Double) data.get("x");
+            width = (Double) data.get("width");
         }
     }
     
@@ -124,6 +206,8 @@ public class PlotSerial implements JSONAware
     {
         private int[] verts;
         private int id;
+        
+        public Face() {}
         
         public int getId() { return id; }
         public void setId(int id) { this.id = id; }
@@ -135,8 +219,6 @@ public class PlotSerial implements JSONAware
         public String toJSONString()
         {
             JSONObject obj = new JSONObject();
-
-            obj.put("id", id);
             
             JSONArray jsonVerts = new JSONArray();
             for(int i = 0; i < verts.length; ++ i)
@@ -146,6 +228,16 @@ public class PlotSerial implements JSONAware
             obj.put("loop", jsonVerts);
 
             return obj.toJSONString();
+        }
+        private Face(JSONObject data)
+        {
+            JSONArray loop = (JSONArray) data.get("loop");
+            
+            verts = new int[loop.size()];
+            for(int i = 0; i < loop.size(); ++ i)
+            {
+                verts[i] = ((Long) loop.get(i)).intValue();
+            }
         }
     }
 

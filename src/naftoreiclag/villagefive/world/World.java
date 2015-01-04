@@ -28,8 +28,10 @@ import naftoreiclag.villagefive.util.serializable.PlotSerial.Face;
 import naftoreiclag.villagefive.util.serializable.PlotSerial.Vert;
 import naftoreiclag.villagefive.world.chunk.Chunk;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
+import naftoreiclag.villagefive.world.entity.EntityRegistry;
 import org.dyn4j.collision.AxisAlignedBounds;
 import org.dyn4j.collision.Bounds;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
@@ -285,6 +287,7 @@ public class World implements JSONAware
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
     public String toJSONString()
     {
         JSONObject json = new JSONObject();
@@ -296,5 +299,30 @@ public class World implements JSONAware
         return json.toJSONString();
     }
 
-
+    public void spawnFromJson(JSONObject worldj)
+    {
+        JSONArray plotList = (JSONArray) worldj.get("plots");
+        JSONArray entityList = (JSONArray) worldj.get("entities");
+        
+        // For the plots
+        for(Object obj : plotList)
+        {
+            JSONObject plotData = (JSONObject) obj;
+            PlotSerial data = new PlotSerial(plotData);
+            
+            this.spawnPlot(data);
+        }
+        
+        for(Object obj : entityList)
+        {
+            JSONObject entityData = (JSONObject) obj;
+            
+            Class<? extends Entity> ddd = EntityRegistry.entities.get((String) entityData.get("instanceof"));
+            
+            Vec2 loc = new Vec2((JSONObject) entityData.get("location"));
+            
+            this.spawnEntity(ddd, loc);
+            
+        }
+    }
 }

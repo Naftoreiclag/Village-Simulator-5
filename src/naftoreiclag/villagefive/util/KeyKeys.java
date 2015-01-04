@@ -37,6 +37,9 @@ public class KeyKeys implements ActionListener
     public static final String mouse_move_left = "Mouse Move L";
     public static final String mouse_move_right = "Mouse Move R";
     
+    public static final String save = "save";
+    public static final String load = "load";
+    
     public static final String fastforward = "Fast Forward";
     
     public static final String num_0 = "Number 0";
@@ -82,17 +85,33 @@ public class KeyKeys implements ActionListener
         
         inputManager.addMapping(KeyKeys.fastforward, new KeyTrigger(KeyInput.KEY_F));
         
+        
+        inputManager.addMapping(KeyKeys.load, new KeyTrigger(KeyInput.KEY_O));
+        inputManager.addMapping(KeyKeys.save, new KeyTrigger(KeyInput.KEY_P));
+        
         inputManager.addListener(global, KeyKeys.fastforward);
+        inputManager.addListener(global, KeyKeys.save);
+        inputManager.addListener(global, KeyKeys.load);
     }
 
     public static KeyKeys global = new KeyKeys();
     public static boolean p_fastforward;
+    public static boolean p_save;
+    public static boolean p_load;
     
     public void onAction(String name, boolean isPressed, float tpf)
     {
         if(name.equals(fastforward))
         {
             p_fastforward = isPressed;
+        }
+        if(name.equals(save))
+        {
+            p_save = isPressed;
+        }
+        if(name.equals(load))
+        {
+            p_load = isPressed;
         }
     }
 }

@@ -30,11 +30,15 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import naftoreiclag.villagefive.world.entity.StoolEntity;
 import naftoreiclag.villagefive.world.plot.Plot;
+import org.json.simple.parser.ParseException;
 
 public class OverworldAppState extends AbstractAppState
 {
@@ -81,39 +85,15 @@ public class OverworldAppState extends AbstractAppState
         trueRootNode.attachChild(stateRootNode);
         
         setupUselessAestetics();
+        inputManager.setCursorVisible(true);
         
         rcam = new ReiCamera(cam);
         rcam.mode = ReiCamera.SmoothMode.cubic;
         
-        world = new World(stateRootNode, assetManager);
-        world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         
         
-        
-        player = world.spawnEntity(PlayerEntity.class, new Vec2(256f, 256f));
-        player.attachSpatial(chasePnt);
-        player.attachGround(ground);
-        
-        
-        playCont = new PlayerController();
-        playCont.setEntity(player);
-        playCont.setCamera(rcam);
-        playCont.setGround(ground);
-        playCont.setManager(inputManager);
-        
-        house.setX(266);
-        house.setZ(266);
-        
-        Plot plot = world.spawnPlot(house);
-        
-        world.spawnEntity(DoorEntity.class, new Vec2(256f, 256f));
-        world.spawnEntity(PinguinEntity.class, new Vec2(266f, 266f));
-        world.spawnEntity(StoolEntity.class, new Vec2(246f, 256f));
-        
-        inputManager.setCursorVisible(true);
-
-        SaveLoad.save(world);
-        System.out.println();
+        loadworld();
+        //testworld();
         
     }
     
@@ -124,6 +104,8 @@ public class OverworldAppState extends AbstractAppState
         viewPort.removeProcessor(dlsr);
         
     }
+    
+    boolean keyRel = true;
 
     @Override
     public void update(float tpf)
@@ -131,6 +113,24 @@ public class OverworldAppState extends AbstractAppState
         if(KeyKeys.p_fastforward)
         {
             tpf *= 5;
+        }
+        
+        if(KeyKeys.p_save && keyRel)
+        {
+            try
+            {
+                SaveLoad.save(world);
+            }
+            catch(IOException ex)
+            {
+                Logger.getLogger(OverworldAppState.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            keyRel = false;
+        }
+        if(!KeyKeys.p_save)
+        {
+            keyRel = true;
         }
         
         super.update(tpf);
@@ -181,5 +181,55 @@ public class OverworldAppState extends AbstractAppState
         HorizQuad quad = new HorizQuad(-300, -300, 300, 300);
         ground = new Geometry("", quad);
         
+    }
+
+    private void testworld()
+    {
+        world = new World(stateRootNode, assetManager);
+        world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        
+        player = world.spawnEntity(PlayerEntity.class, new Vec2(256f, 256f));
+        player.attachSpatial(chasePnt);
+        player.attachGround(ground);
+        playCont = new PlayerController();
+        playCont.setEntity(player);
+        playCont.setCamera(rcam);
+        playCont.setGround(ground);
+        playCont.setManager(inputManager);
+        
+        house.setX(266);
+        house.setZ(266);
+        
+        world.spawnPlot(house);
+        
+        world.spawnEntity(DoorEntity.class, new Vec2(256f, 256f));
+        world.spawnEntity(PinguinEntity.class, new Vec2(266f, 266f));
+        world.spawnEntity(StoolEntity.class, new Vec2(246f, 256f));
+    }
+
+    private void loadworld()
+    {
+        
+        try
+        {
+            world = SaveLoad.load(stateRootNode, assetManager);
+        }
+        catch(IOException ex)
+        {
+            Logger.getLogger(OverworldAppState.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch(ParseException ex)
+        {
+            Logger.getLogger(OverworldAppState.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        player = world.spawnEntity(PlayerEntity.class, new Vec2(256f, 256f));
+        player.attachSpatial(chasePnt);
+        player.attachGround(ground);
+        playCont = new PlayerController();
+        playCont.setEntity(player);
+        playCont.setCamera(rcam);
+        playCont.setGround(ground);
+        playCont.setManager(inputManager);
     }
 }
