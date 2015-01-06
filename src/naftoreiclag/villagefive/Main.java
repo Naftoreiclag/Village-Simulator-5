@@ -48,6 +48,9 @@ public class Main extends SimpleApplication implements ActionListener
     @Override
     public void simpleInitApp()
     {
+        SAM.a = this.assetManager;
+        SAM.i = this.inputManager;
+        
         KeyKeys.hookInputs(inputManager);
         
         ModelManipulator.assetManager = this.assetManager;
@@ -65,7 +68,9 @@ public class Main extends SimpleApplication implements ActionListener
         
         tas = new OverworldAppState();
         bas = new PlotEditorAppState();
-        stateManager.attach(bas);
+        stateManager.attach(tas);
+        
+        
     }
 
     @Override

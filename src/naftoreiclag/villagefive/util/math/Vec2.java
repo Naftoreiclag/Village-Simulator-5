@@ -385,6 +385,29 @@ public class Vec2 implements JSONAware
         this.x = (Double) data.get("x");
         this.y = (Double) data.get("y");
     }
+    
+    public void set(float x, float y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void set(double x, double y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    
+    public void set(Vec2 mirror)
+    {
+        this.x = mirror.x;
+        this.y = mirror.y;
+    }
+
+    public void debug()
+    {
+        System.out.println(this);
+    }
 
 
 }

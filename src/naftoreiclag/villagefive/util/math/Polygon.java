@@ -555,7 +555,7 @@ public class Polygon
     public Mesh genFloor(double thickness, double height, double texWidth, double texHeight)
     {
         ModelBuilder mb = new ModelBuilder();
-        mb.setAppendOrigin(0, 0.02f, 0f);
+        mb.setAppendOrigin(0, 0.05f, 0f);
         this.makeFloor(mb, texWidth, texHeight);
         return mb.bake();
     }

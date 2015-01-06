@@ -12,7 +12,7 @@ Oto.*
 *.j30data
 *.material
 *_dni*
-saves\*
+saves/*
 
 lwjgl64.dll
 OpenAL64.dll

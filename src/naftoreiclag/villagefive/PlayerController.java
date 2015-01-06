@@ -12,15 +12,17 @@ import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.SmoothAngle;
+import naftoreiclag.villagefive.util.math.SmoothScalar;
 import naftoreiclag.villagefive.util.math.Vec2;
 
-public class PlayerController extends EntityController implements ActionListener
+public class PlayerController extends EntityController implements ActionListener, AnalogListener
 {
     public PlayerEntity puppet;
     public World world;
@@ -33,18 +35,24 @@ public class PlayerController extends EntityController implements ActionListener
     
     float turnSpd = 3f;
     float speed = 4.5f;
+    private float scrollSpd = 500.0f;
     
-    SmoothAngle lookDir = new SmoothAngle();
-    SmoothAngle camDir = new SmoothAngle();
+    SmoothScalar zoomLevel = new SmoothScalar();
+    SmoothAngle playerLook = new SmoothAngle();
+    SmoothAngle camDispl = new SmoothAngle();
 
     public PlayerController()
     {
-        lookDir.maxSpd *= 4f;
+        playerLook.maxSpd *= 4f;
 
-        camDir.smoothFactor /= 2f;
-        camDir.maxSpd /= 2f;
+        camDispl.smoothFactor /= 2f;
+        camDispl.maxSpd /= 2f;
         
-        camDir.disableSmoothing();
+        camDispl.disableSmoothing();
+        zoomLevel.x = 50;
+        zoomLevel.tx = 50;
+        zoomLevel.maxSpd *= 2;
+        zoomLevel.enableClamp(25, 50);
     }
     
     ReiCamera cam;
@@ -67,7 +75,10 @@ public class PlayerController extends EntityController implements ActionListener
                                  KeyKeys.move_right, 
                                  KeyKeys.rotate_camera_left, 
                                  KeyKeys.rotate_camera_right, 
-                                 KeyKeys.mouse_left);
+                                 KeyKeys.mouse_left,
+                                      KeyKeys.mouse_scroll_up,
+                                      KeyKeys.mouse_scroll_down,
+                                 KeyKeys.openInv);
     }
 
     public Vector3f whereClickingOnGround()
@@ -92,74 +103,31 @@ public class PlayerController extends EntityController implements ActionListener
 
     public void tick(float tpf)
     {
-        if(!enabled)
+
+        updateFrustum(tpf);
+        tickDumbAngles(tpf);
+        tickMovementInput(tpf);
+
+        // Move camera on its track
+        cam.setLocation(OreDict.JmeAngleToVec3((float) camDispl.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));
+        
+        // lookie
+        if(invOpen)
         {
-            return;
-        }
-
-        lookDir.tick(tpf);
-
-        if(rotCamLeft)
-        {
-            camDir.tx -= 2f * tpf;
-        }
-        if(rotCamRight)
-        {
-            camDir.tx += 2f * tpf;
-        }
-        camDir.tick(tpf);
-
-        puppet.setRotation(lookDir);
-
-        Vector3f groundGoto = null;
-        if(leftClick)
-        {
-            groundGoto = whereClickingOnGround();
-        }
-
-        if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null)
-        {
-            if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
-            {
-                puppet.bodyAnimChannel.setAnim("Stand");
-                lookDir.tx = lookDir.getX();
-            }
-
+            cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(5)));
         }
         else
         {
-            if(groundGoto != null)
-            {
-                groundGoto.subtractLocal(puppet.getNode().getLocalTranslation());
-                lookDir.tx = FastMath.atan2(groundGoto.x, groundGoto.z);
-            }
-            else
-            {
-                lookDir.tx = whereDoesThePlayerWantToGo();
-            }
-
-            puppet.applyImpulse(OreDict.JmeAngleToVec2((float) lookDir.getX()).multLocal(tpf * speed));
-
-            if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
-            {
-                puppet.bodyAnimChannel.setAnim("Walk");
-                puppet.bodyAnimChannel.setSpeed(2.0f);
-            }
+            cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
         }
-
-
-        cam.setLocation(OreDict.JmeAngleToVec3((float) camDir.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));
-        cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
     }
+    
+    boolean invOpen = false;
+    boolean isInvOpenKeyPressed = false;
 
     // When a key is pressed
     public void onAction(String key, boolean isPressed, float tpf)
     {
-        if(!enabled)
-        {
-            return;
-        }
-        System.out.println("key " + key + " = " + isPressed + ";");
         if(key.equals(KeyKeys.move_forward))
         {
             movingFwd = isPressed;
@@ -188,6 +156,36 @@ public class PlayerController extends EntityController implements ActionListener
         {
             leftClick = isPressed;
         }
+        if(key.equals(KeyKeys.openInv))
+        {
+            if(!isInvOpenKeyPressed)
+            {
+                invOpen = !invOpen;
+                
+                System.out.println("inventory toggled " + invOpen);
+            }
+            isInvOpenKeyPressed = isPressed;
+        }
+    }
+    
+    
+    public void onAnalog(String key, float value, float tpf)
+    {
+        if(key.equals(KeyKeys.mouse_scroll_up))
+        {
+            zoomLevel.tx -= value * tpf * scrollSpd;
+        }
+        if(key.equals(KeyKeys.mouse_scroll_down))
+        {
+            zoomLevel.tx += value * tpf * scrollSpd;
+        }
+    }
+    
+    private void updateFrustum(float tpf)
+    {
+        zoomLevel.tick(tpf);
+        float aspect = (float) cam.c.getWidth() / cam.c.getHeight();
+        cam.c.setFrustumPerspective(zoomLevel.getXf(), aspect, cam.c.getFrustumNear(), cam.c.getFrustumFar());
     }
 
     void setCamera(ReiCamera cam)
@@ -225,16 +223,62 @@ public class PlayerController extends EntityController implements ActionListener
     {
         this.ground = ground;
     }
-    
-    private boolean enabled = true;
-    
-    void disableInput()
+
+    private void tickDumbAngles(float tpf)
     {
-        this.enabled = false;
+        playerLook.tick(tpf);
+
+        if(rotCamLeft)
+        {
+            camDispl.tx -= 2f * tpf;
+        }
+        if(rotCamRight)
+        {
+            camDispl.tx += 2f * tpf;
+        }
+        camDispl.tick(tpf);
+
+        puppet.applyTorque(-playerLook.calcSignedDiff(puppet.getRotation().getX()));
     }
-    void enable()
+
+    private void tickMovementInput(float tpf)
     {
-        this.enabled = true;
+        Vector3f groundGoto = null;
+        if(leftClick)
+        {
+            groundGoto = whereClickingOnGround();
+        }
+
+        if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null)
+        {
+            if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
+            {
+                puppet.bodyAnimChannel.setAnim("Stand");
+                playerLook.tx = playerLook.getX();
+            }
+
+        }
+        else
+        {
+            if(groundGoto != null)
+            {
+                groundGoto.subtractLocal(puppet.getNode().getLocalTranslation());
+                playerLook.tx = FastMath.atan2(groundGoto.x, groundGoto.z);
+            }
+            else
+            {
+                playerLook.tx = whereDoesThePlayerWantToGo();
+            }
+
+            puppet.applyImpulse(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(tpf * speed));
+
+            if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
+            {
+                puppet.bodyAnimChannel.setAnim("Walk");
+                puppet.bodyAnimChannel.setSpeed(2.0f);
+            }
+        }
     }
+
 
 }

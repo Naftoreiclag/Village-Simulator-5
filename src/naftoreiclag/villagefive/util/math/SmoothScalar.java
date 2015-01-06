@@ -113,5 +113,10 @@ public class SmoothScalar extends Scalarf
     {
         smooth = true;
     }
+
+    public float getXf()
+    {
+        return (float) x;
+    }
     
 }

@@ -6,7 +6,7 @@
 
 package naftoreiclag.villagefive.util.math;
 
-
+// Do not trust any input
 public class Angle
 {
     public static double PI = Math.PI;
@@ -20,7 +20,7 @@ public class Angle
 	
 	public Angle(double x)
 	{
-		this.x = x;
+		this.x = wrap(x);
 	}
     
 	public Angle() {}
@@ -80,6 +80,12 @@ public class Angle
         
         return diff;
 	}
+
+    // Careful when using this, I actually dont know what it does
+    public double calcSignedDiff(double other)
+    {
+        return this.calcDiff(other) * this.calcDir(other);
+    }
     
     // Makes sure that this double is between 0 to tau
     public static double wrap(double a)

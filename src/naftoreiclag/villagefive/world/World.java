@@ -7,7 +7,6 @@
 package naftoreiclag.villagefive.world;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
@@ -82,13 +81,13 @@ public class World implements JSONAware
         }
     }
 
-    public boolean showStuff = true;
+    public boolean showPhysDebug = false;
     public Node last = null;
     public void tick(float tpf)
     {
         physWorld.update(tpf);
         
-        if(showStuff)
+        if(showPhysDebug)
         {
             if(last != null)
             {

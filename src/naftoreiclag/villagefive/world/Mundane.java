@@ -131,6 +131,22 @@ public abstract class Mundane
         
         
     }
+    public final Angle getRotation()
+    {
+        if(this.getBody() != null)
+        {
+            return new Angle(this.getBody().getTransform().getRotation());
+        }
+        else if(this.getNode() != null)
+        {
+            //errr
+            //this.getNode().setLocalRotation(dir.toQuaternion());
+        }
+        
+        return new Angle();
+        
+        
+    }
     
     public final Vec2 getLocation()
     {
