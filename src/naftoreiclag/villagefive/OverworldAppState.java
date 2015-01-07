@@ -25,6 +25,9 @@ import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
+import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -57,13 +60,13 @@ public class OverworldAppState extends AbstractAppState
     private AppStateManager stateManager;
     private AudioRenderer audioRenderer;
     private ViewPort guiViewPort;
-    private ViewPort magicViewPort;
+    private ViewPort invPort;
     private InputManager inputManager;
     private Camera cam;
 	private RenderManager renderManager;
     private ViewPort viewPort;
     private Nifty nifty;
-Camera magicCamera;
+    Camera invCam;
     
     World world;
     Node chasePnt;
@@ -77,6 +80,7 @@ Camera magicCamera;
     ReiCamera rcam;
     
     PlotSerial house;
+    Inventory inv;
     
     public void gimmiePlot(PlotSerial house)
     {
@@ -110,29 +114,26 @@ Camera magicCamera;
         rcam.mode = ReiCamera.SmoothMode.cubic;
         
         
+
+        loadworld();
         
         setupInvScreen();
 
-        loadworld();
-
     }
     
-    Sprite sweetmelon;
     
     private void setupInvScreen()
     {
-        magicCamera = new Camera(cam.getWidth(), cam.getHeight());
-        magicCamera.setParallelProjection(true);
-        magicCamera.setLocation(Vector3f.UNIT_Z);
-        magicCamera.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-        magicCamera.setFrustum(-1000, 1000, (float) -cam.getWidth(), (float) 0, (float) cam.getHeight(), (float) 0);
-        magicViewPort = renderManager.createPostView("baaackground", magicCamera);
-        magicViewPort.setClearFlags(false, true, true);
+        invCam = new Camera(cam.getWidth(), cam.getHeight());
+        invCam.setParallelProjection(true);
+        invCam.setLocation(Vector3f.UNIT_Z);
+        invCam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+        invCam.setFrustum(-1000, 1000, (float) -cam.getWidth(), (float) 0, (float) cam.getHeight(), (float) 0);
+        invPort = renderManager.createPostView("baaackground", invCam);
+        invPort.setClearFlags(false, true, true);
         
-        sweetmelon = new Sprite("Interface/melon.png");
-        SpritePlane plane = new SpritePlane(magicViewPort);
-        
-        plane.add(sweetmelon);
+        inv = new Inventory(new SpritePlane(invPort));
+        playCont.inv = this.inv;
     }
     
     
@@ -179,9 +180,7 @@ Camera magicCamera;
         
         rcam.tick(tpf);
         
-        Vec2 deleteme = new Vec2(inputManager.getCursorPosition());
-        deleteme.debug();
-        sweetmelon.setPos(deleteme);
+        inv.tick(tpf);
     }
 
     @Override
@@ -219,7 +218,8 @@ Camera magicCamera;
         dlsr.setShadowIntensity(0.5f);
         dlsr.setLambda(0.55f);
         dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
-        viewPort.addProcessor(dlsr);
+        //viewPort.addProcessor(dlsr);
+
         
         HorizQuad quad = new HorizQuad(-300, -300, 300, 300);
         ground = new Geometry("", quad);

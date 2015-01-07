@@ -16,7 +16,12 @@ import naftoreiclag.villagefive.util.math.Vec2;
 public final class Sprite
 {
     protected Picture picture;
-    public Vec2 pos = new Vec2(0, 0);
+    private Vec2 loc = new Vec2(0, 0);
+    
+    public final int width;
+    public final int height;
+    
+    private Vec2 origin = new Vec2(0, 0);
     
     public Sprite(String file)
     {
@@ -27,30 +32,58 @@ public final class Sprite
         background.setTexture("ColorMap", texture);
         background.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         picture.setMaterial(background);
-        picture.setWidth(texture.getImage().getWidth());
-        picture.setHeight(texture.getImage().getHeight());
+        
+        this.width = texture.getImage().getWidth();
+        this.height = texture.getImage().getHeight();
+        
+        picture.setWidth(width);
+        picture.setHeight(height);
         picture.setPosition(0, 0);
     }
     
-    public void setPos(double x, double y)
+    public void setOrigin(double x, double y)
     {
-        this.pos.set(x, y);
-        updatePos();
+        this.origin.set(x, y);
+        updateLoc();
     }
-    public void setPos(float x, float y)
+    public void setOrigin(float x, float y)
     {
-        this.pos.set(x, y);
-        updatePos();
+        this.origin.set(x, y);
+        updateLoc();
     }
-    public void setPos(Vec2 newPos)
+    public void setOrigin(Vec2 newLoc)
     {
-        this.pos.set(newPos);
-        updatePos();
+        this.origin.set(newLoc);
+        updateLoc();
+    }
+
+    public void setOriginMid()
+    {
+        this.origin.set(width / 2d, height / 2d);
+        updateLoc();
     }
     
-    private void updatePos()
+    public void setLoc(double x, double y)
     {
-        picture.setPosition(pos.getXF(), pos.getYF());
+        this.loc.set(x, y);
+        updateLoc();
+    }
+    public void setLoc(float x, float y)
+    {
+        this.loc.set(x, y);
+        updateLoc();
+    }
+    public void setLoc(Vec2 newLoc)
+    {
+        this.loc.set(newLoc);
+        updateLoc();
+    }
+    
+    private void updateLoc()
+    {
+        Vec2 fin = loc.subtract(origin);
+        
+        picture.setPosition(fin.getXF(), fin.getYF());
         picture.getParent().updateGeometricState();
     }
 }

@@ -15,6 +15,9 @@ public class SpritePlane
 {
     List<Sprite> sprites = new ArrayList<Sprite>();
     
+    public int width;
+    public int height;
+    
     ViewPort viewPort;
     Node rootNode;
     public SpritePlane(ViewPort viewPort)
@@ -23,6 +26,9 @@ public class SpritePlane
         rootNode = new Node();
         rootNode.updateGeometricState();
         this.viewPort.attachScene(rootNode);
+        
+        this.width = viewPort.getCamera().getWidth();
+        this.height = viewPort.getCamera().getHeight();
     }
     
     public void add(Sprite sprite)

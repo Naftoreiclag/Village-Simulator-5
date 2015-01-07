@@ -49,8 +49,8 @@ public class PlayerController extends EntityController implements ActionListener
         camDispl.maxSpd /= 2f;
         
         camDispl.disableSmoothing();
-        zoomLevel.x = 50;
-        zoomLevel.tx = 50;
+        zoomLevel.x = 35;
+        zoomLevel.tx = 35;
         zoomLevel.maxSpd *= 2;
         zoomLevel.enableClamp(25, 50);
     }
@@ -76,8 +76,8 @@ public class PlayerController extends EntityController implements ActionListener
                                  KeyKeys.rotate_camera_left, 
                                  KeyKeys.rotate_camera_right, 
                                  KeyKeys.mouse_left,
-                                      KeyKeys.mouse_scroll_up,
-                                      KeyKeys.mouse_scroll_down,
+                                    KeyKeys.mouse_scroll_up,
+                                    KeyKeys.mouse_scroll_down,
                                  KeyKeys.openInv);
     }
 
@@ -114,13 +114,19 @@ public class PlayerController extends EntityController implements ActionListener
         // lookie
         if(invOpen)
         {
-            cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(5)));
+            cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(4)));
+            inv.enable();
         }
         else
         {
             cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
+            inv.disable();
         }
+        
+        
     }
+    
+    Inventory inv;
     
     boolean invOpen = false;
     boolean isInvOpenKeyPressed = false;
@@ -179,6 +185,7 @@ public class PlayerController extends EntityController implements ActionListener
         {
             zoomLevel.tx += value * tpf * scrollSpd;
         }
+        System.out.println(zoomLevel.tx);
     }
     
     private void updateFrustum(float tpf)
