@@ -13,15 +13,9 @@ import com.jme3.texture.Texture;
 import com.jme3.ui.Picture;
 import naftoreiclag.villagefive.util.math.Vec2;
 
-public final class Sprite
+public final class Sprite extends Element
 {
     protected Picture picture;
-    private Vec2 loc = new Vec2(0, 0);
-    
-    public final int width;
-    public final int height;
-    
-    private Vec2 origin = new Vec2(0, 0);
     
     public Sprite(String file)
     {
@@ -38,52 +32,18 @@ public final class Sprite
         
         picture.setWidth(width);
         picture.setHeight(height);
-        picture.setPosition(0, 0);
+        this.setOriginMid();
     }
     
-    public void setOrigin(double x, double y)
-    {
-        this.origin.set(x, y);
-        updateLoc();
-    }
-    public void setOrigin(float x, float y)
-    {
-        this.origin.set(x, y);
-        updateLoc();
-    }
-    public void setOrigin(Vec2 newLoc)
-    {
-        this.origin.set(newLoc);
-        updateLoc();
-    }
-
-    public void setOriginMid()
-    {
-        this.origin.set(width / 2d, height / 2d);
-        updateLoc();
-    }
     
-    public void setLoc(double x, double y)
+    @Override
+    public void whereSpatialWouldHaveBeenUpdated()
     {
-        this.loc.set(x, y);
-        updateLoc();
-    }
-    public void setLoc(float x, float y)
-    {
-        this.loc.set(x, y);
-        updateLoc();
-    }
-    public void setLoc(Vec2 newLoc)
-    {
-        this.loc.set(newLoc);
-        updateLoc();
-    }
-    
-    private void updateLoc()
-    {
-        Vec2 fin = loc.subtract(origin);
+        picture.setLocalTranslation(absLoc.getXF() - origin.getXF(), absLoc.getYF() - origin.getYF(), (float) depth);
         
-        picture.setPosition(fin.getXF(), fin.getYF());
-        picture.getParent().updateGeometricState();
+        if(plane != null)
+        {
+            plane.needUpdate();
+        }
     }
 }

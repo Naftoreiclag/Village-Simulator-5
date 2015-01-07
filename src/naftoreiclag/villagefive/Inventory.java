@@ -20,11 +20,16 @@ public class Inventory
     Inventory(SpritePlane plane)
     {
         this.plane = plane;
+        onoff.setTime(0.5d);
         
         box = new Sprite("Interface/inv.png");
-        plane.add(box);
+        plane.attach(box);
         
-        box.setOriginMid();
+        Sprite box2 = new Sprite("Interface/inv.png");
+        plane.attach(box2);
+        box.addFollower(box2);
+        box2.setOrigin(50, 50);
+        
     }
     
     public void enable()
@@ -44,7 +49,7 @@ public class Inventory
     {
         onoff.tick(tpf);
         
-        box.setLoc(plane.width / 2, plane.height - 200 + (onoff.x * 500));
+        box.setLoc(plane.width / 2, plane.height + 200 - (onoff.x * 400));
         
         //System.out.println(onoff.x);
         //System.out.println("aaaa");

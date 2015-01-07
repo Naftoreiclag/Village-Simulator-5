@@ -15,8 +15,8 @@ public class SmoothBoolean
     private double angle = 0;
     private double speed = Math.PI;
     
-    // How many seconds of interp
-    public void setSpeed(double spd)
+    // How many seconds of interpolation
+    public void setTime(double spd)
     {
         if(spd == 0)
         {
@@ -26,14 +26,14 @@ public class SmoothBoolean
         this.speed = Math.PI / spd;
     }
     
-    public double getSpeed()
+    public double getTime()
     {
         return Math.PI / speed;
     }
     
     public void tick(float tpf)
     {
-        if(!gotoOne)
+        if(gotoOne)
         {
             angle -= speed * tpf;
             
