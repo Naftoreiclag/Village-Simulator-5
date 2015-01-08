@@ -185,7 +185,6 @@ public class PlayerController extends EntityController implements ActionListener
         {
             zoomLevel.tx += value * tpf * scrollSpd;
         }
-        System.out.println(zoomLevel.tx);
     }
     
     private void updateFrustum(float tpf)

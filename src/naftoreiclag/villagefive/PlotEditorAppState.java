@@ -424,12 +424,8 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
             frustumSize.tx += value * tpf * scrollSpd;
         }
 
-        if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
-        {
-            updateMouseLoc();
-        }
-
-        if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
+        //if(key.equals(KeyKeys.mouse_move_up) || key.equals(KeyKeys.mouse_move_down) || key.equals(KeyKeys.mouse_move_left) || key.equals(KeyKeys.mouse_move_right))
+        if(key.equals(KeyKeys.mouse_move))
         {
             updateMouseLoc();
             tool.whileMouseMove(tpf);
@@ -485,10 +481,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
         inputManager.addListener(this, KeyKeys.mouse_left);
         inputManager.addListener(this, KeyKeys.mouse_scroll_up);
         inputManager.addListener(this, KeyKeys.mouse_scroll_down);
-        inputManager.addListener(this, KeyKeys.mouse_move_up);
-        inputManager.addListener(this, KeyKeys.mouse_move_down);
-        inputManager.addListener(this, KeyKeys.mouse_move_left);
-        inputManager.addListener(this, KeyKeys.mouse_move_right);
+        inputManager.addListener(this, KeyKeys.mouse_move);
         inputManager.addListener(this, KeyKeys.num_0, KeyKeys.num_1, KeyKeys.num_2, KeyKeys.num_3, KeyKeys.num_4, KeyKeys.num_5, KeyKeys.num_6, KeyKeys.num_7, KeyKeys.num_8, KeyKeys.num_9);
     }
 

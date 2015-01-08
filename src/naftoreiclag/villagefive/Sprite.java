@@ -26,12 +26,11 @@ public final class Sprite extends Element
         background.setTexture("ColorMap", texture);
         background.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         picture.setMaterial(background);
+        picture.setWidth(texture.getImage().getWidth());
+        picture.setHeight(texture.getImage().getHeight());
         
         this.width = texture.getImage().getWidth();
         this.height = texture.getImage().getHeight();
-        
-        picture.setWidth(width);
-        picture.setHeight(height);
         this.setOriginMid();
     }
     
@@ -45,5 +44,11 @@ public final class Sprite extends Element
         {
             plane.needUpdate();
         }
+    }
+
+    @Override
+    public boolean collides(Vec2 absPoint)
+    {
+        return false;
     }
 }

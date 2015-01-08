@@ -6,9 +6,14 @@
 
 package naftoreiclag.villagefive;
 
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
+import java.util.Iterator;
+import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.SmoothBoolean;
+import naftoreiclag.villagefive.util.math.Vec2;
 
-public class Inventory
+public class Inventory implements ActionListener, AnalogListener
 {
     SpritePlane plane;
     
@@ -23,13 +28,13 @@ public class Inventory
         onoff.setTime(0.5d);
         
         box = new Sprite("Interface/inv.png");
-        plane.attach(box);
+        plane.attachElement(box);
         
-        Sprite box2 = new Sprite("Interface/inv.png");
-        plane.attach(box2);
-        box.addFollower(box2);
-        box2.setOrigin(50, 50);
+        ClickBox box2 = new ClickBox(box.width, box.height);
+        plane.attachElement(box2);
+        //box.addFollower(box2);
         
+        SAM.i.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
     }
     
     public void enable()
@@ -50,10 +55,34 @@ public class Inventory
         onoff.tick(tpf);
         
         box.setLoc(plane.width / 2, plane.height + 200 - (onoff.x * 400));
-        
-        //System.out.println(onoff.x);
-        //System.out.println("aaaa");
-        
     }
 
+    Vec2 mouseLoc = new Vec2();
+    
+    public void onAction(String name, boolean isPressed, float tpf)
+    {
+        if(name.equals(KeyKeys.mouse_left))
+        {
+            Element e = plane.rayCast(mouseLoc);
+            
+            System.out.println(e);
+        }
+    }
+
+    public void onAnalog(String name, float value, float tpf)
+    {
+        if(name.equals(KeyKeys.mouse_move))
+        {
+            mouseLoc.set(SAM.i.getCursorPosition());
+            
+            //mouseLoc.debug();
+            
+            Element e = plane.rayCast(mouseLoc);
+            
+            if(e != null)
+            {
+                //System.out.println(e);
+            }
+        }
+    }
 }

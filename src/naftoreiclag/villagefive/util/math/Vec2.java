@@ -403,6 +403,11 @@ public class Vec2 implements JSONAware
         this.x = mirror.x;
         this.y = mirror.y;
     }
+    public void set(com.jme3.math.Vector2f mirror)
+    {
+        this.x = mirror.x;
+        this.y = mirror.y;
+    }
 
     public void debug()
     {

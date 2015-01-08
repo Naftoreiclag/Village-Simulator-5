@@ -7,6 +7,7 @@
 package naftoreiclag.villagefive;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import naftoreiclag.villagefive.util.math.Vec2;
 
@@ -21,17 +22,45 @@ public abstract class Element
     {
         this.depth = x;
         
+        // Re-sort
+        if(this.plane.elements.contains(this))
+        {
+            this.plane.elements.remove(this);
+        }
+        this.plane.elements.add(this);
         
         whereSpatialWouldHaveBeenUpdated();
     }
+    
+    public abstract boolean collides(Vec2 absPoint);
+    
+    public static Comparator<Element> depthCompare = new Comparator<Element>()
+    {
+        @Override
+        public int compare(Element right, Element left)
+        {
+            if(right.depth == left.depth)
+            {
+                return 0;
+            }
+            else if(right.depth > left.depth)
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+    };
     
     protected double depth;
     protected Vec2 absLoc = new Vec2(0, 0);
     protected Vec2 origin = new Vec2(0, 0);
     public SpritePlane plane;
     
-    public int width;
-    public int height;
+    public double width;
+    public double height;
     
     public void addFollower(Element glue)
     {

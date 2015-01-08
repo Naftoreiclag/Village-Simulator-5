@@ -32,10 +32,15 @@ public class KeyKeys implements ActionListener
     public static final String mouse_scroll_up = "Mouse Scroll Up";
     public static final String mouse_scroll_down = "Mouse Scroll Down";
     
+    /*
     public static final String mouse_move_up = "Mouse Move U";
     public static final String mouse_move_down = "Mouse Move D";
     public static final String mouse_move_left = "Mouse Move L";
     public static final String mouse_move_right = "Mouse Move R";
+    public static final String[] mouse_move = {mouse_move_up, mouse_move_down, mouse_move_left, mouse_move_right};
+    */
+    
+    public static final String mouse_move = "Mouse Move";
     
     public static final String save = "save";
     public static final String load = "load";
@@ -69,10 +74,10 @@ public class KeyKeys implements ActionListener
         inputManager.addMapping(KeyKeys.mouse_scroll_up, new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
         inputManager.addMapping(KeyKeys.mouse_scroll_down, new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true));
         
-        inputManager.addMapping(KeyKeys.mouse_move_up, new MouseAxisTrigger(MouseInput.AXIS_Y, true));
-        inputManager.addMapping(KeyKeys.mouse_move_down, new MouseAxisTrigger(MouseInput.AXIS_Y, false));
-        inputManager.addMapping(KeyKeys.mouse_move_left, new MouseAxisTrigger(MouseInput.AXIS_X, false));
-        inputManager.addMapping(KeyKeys.mouse_move_right, new MouseAxisTrigger(MouseInput.AXIS_X, true));
+        inputManager.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_Y, true));
+        inputManager.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_Y, false));
+        inputManager.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_X, false));
+        inputManager.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_X, true));
         
         inputManager.addMapping(KeyKeys.num_0, new KeyTrigger(KeyInput.KEY_0));
         inputManager.addMapping(KeyKeys.num_1, new KeyTrigger(KeyInput.KEY_1));
