@@ -4,7 +4,7 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.gui;
 
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;

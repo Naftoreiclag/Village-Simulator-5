@@ -5,6 +5,7 @@
  */
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.gui.SpritePlane;
 import naftoreiclag.villagefive.util.ReiCamera;
 import naftoreiclag.villagefive.util.serializable.PlotSerial;
 import naftoreiclag.villagefive.world.entity.PinguinEntity;

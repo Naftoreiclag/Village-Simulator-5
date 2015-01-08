@@ -6,6 +6,10 @@
 
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.gui.Element;
+import naftoreiclag.villagefive.gui.Sprite;
+import naftoreiclag.villagefive.gui.Collision;
+import naftoreiclag.villagefive.gui.SpritePlane;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import java.util.Iterator;
@@ -30,9 +34,9 @@ public class Inventory implements ActionListener, AnalogListener
         box = new Sprite("Interface/inv.png");
         plane.attachElement(box);
         
-        ClickBox box2 = new ClickBox(box.width, box.height);
+        Collision box2 = new Collision(box.width, box.height);
         plane.attachElement(box2);
-        //box.addFollower(box2);
+        box.addFollower(box2);
         
         SAM.i.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
     }

@@ -4,7 +4,7 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.gui;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -132,6 +132,12 @@ public abstract class Element
     {
         this.localLoc.set(newLoc);
         updateLoc();
+    }
+    
+    // Get the given point's coordinates as expressed as an offset from my origin
+    public Vec2 transLocal(Vec2 abs)
+    {
+        return abs.subtract(absLoc.subtract(origin));
     }
     
     

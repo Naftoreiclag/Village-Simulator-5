@@ -4,13 +4,14 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.gui;
 
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.scene.Geometry;
 import com.jme3.texture.Texture;
 import com.jme3.ui.Picture;
+import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.util.math.Vec2;
 
 public final class Sprite extends Element

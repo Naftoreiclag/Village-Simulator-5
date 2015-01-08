@@ -4,13 +4,13 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.gui;
 
 import naftoreiclag.villagefive.util.math.Vec2;
 
-public class ClickBox extends Element
+public class Collision extends Element
 {
-    public ClickBox(double width, double height)
+    public Collision(double width, double height)
     {
         this.width = width;
         this.height = height;
@@ -25,8 +25,7 @@ public class ClickBox extends Element
     @Override
     public boolean collides(Vec2 absPoint)
     {
-        Vec2 foo = absPoint.subtract(absLoc.subtract(origin));
-        
+        Vec2 foo = this.transLocal(absPoint);
         
         return foo.getX() >= 0 && foo.getX() < width && foo.getY() >= 0 && foo.getY() < height;
     }
