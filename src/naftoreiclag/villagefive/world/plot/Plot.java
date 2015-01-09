@@ -6,34 +6,54 @@
 
 package naftoreiclag.villagefive.world.plot;
 
-import com.jme3.math.Vector2f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
-import naftoreiclag.villagefive.world.World;
 import com.jme3.scene.Node;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import naftoreiclag.villagefive.Main;
+import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.OreDict;
-import naftoreiclag.villagefive.util.serializable.PlotSerial;
+import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.math.Polygon;
-import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
+import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.Mundane;
+import naftoreiclag.villagefive.world.World;
+import naftoreiclag.villagefive.world.entity.DoorEntity;
 import org.dyn4j.dynamics.Body;
 import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 public class Plot extends Mundane implements JSONAware
 {
-    public PlotSerial data;
+    public Blueprint blueprint = new Blueprint();
+    public Map<Integer, Node> roomNodes = new HashMap<Integer, Node>();
     protected Node node;
     protected Body body;
     
-    public Map<Integer, Node> wholeRooms = new HashMap<Integer, Node>();
+    public Vec2 loc = new Vec2();
+    public double angle;
     
-    public Plot(PlotSerial data)
+    public long owner;
+    
+    public Plot() {}
+    
+    public void setBlueprint(Blueprint data)
     {
-        this.data = data;
+        this.blueprint = data;
+    }
+    
+    @Override
+    public Vec2 getLocation()
+    {
+        return loc.clone();
+    }
+    @Override
+    public void setLocation(Vec2 loc)
+    {
+        super.setLocation(loc);
+        
+        this.loc.set(loc);
     }
     
     @Override
@@ -42,35 +62,35 @@ public class Plot extends Mundane implements JSONAware
         this.node = new Node();
         
         // For each room
-        for(PlotSerial.Face room : data.getFaces())
+        for(Blueprint.Face room : blueprint.getFaces())
         {
-            Polygon polygon = OreDict.roomToPoly(data, room);
-            
+            Polygon polygon = OreDict.roomToPoly(blueprint, room);
+
             Node roomNode = new Node();
-            
+
             Mesh floorM = polygon.genFloor(0.2f, 7f, 3f, 3f);
             Geometry floorG = new Geometry("Floor", floorM);
             floorG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(floorG);
-            
+
             Mesh outM = polygon.genOutsideWall(0.2f, 7f, 3f, 3f);
             Geometry outG = new Geometry("Outside", outM);
             outG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(outG);
-            
+
             Mesh inM = polygon.genInsideWall(0.2f, 7f, 3f, 3f);
             Geometry inG = new Geometry("Inside", inM);
             inG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(inG);
-            
+
             Mesh rM = polygon.genRoof(3f, 3f);
             Geometry rG = new Geometry("Roof", rM);
             rG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(rG);
-            
-            wholeRooms.put(room.getId(), roomNode);
+
+            roomNodes.put(room.getId(), roomNode);
             System.out.println("loaded: " + room.getId());
-            
+
             node.attachChild(roomNode);
         }
     }
@@ -84,24 +104,22 @@ public class Plot extends Mundane implements JSONAware
     @Override
     public void createBody()
     {
-        if(data.getFaces().length == 0)
+        if(blueprint.getFaces().length == 0)
         {
             this.body = null;
             return;
         }
-        
+
         Body newBod = new Body();
-        
+
         // For each room
-        for(PlotSerial.Face room : data.getFaces())
+        for(Blueprint.Face room : blueprint.getFaces())
         {
-            Polygon polygon = OreDict.roomToPoly(data, room);
-            
+            Polygon polygon = OreDict.roomToPoly(blueprint, room);
+
             polygon.makeBody(newBod, 0.4);
         }
-        
-        
-        
+
         this.body = newBod;
     }
 
@@ -110,10 +128,48 @@ public class Plot extends Mundane implements JSONAware
     {
         return this.body;
     }
+    
+    public Plot(JSONObject data)
+    {
+        this.loc = new Vec2((JSONObject) data.get("location"));
+        this.blueprint = new Blueprint((JSONObject) data.get("blueprint"));
+    }
 
     public String toJSONString()
     {
-        return this.data.toJSONString();
+        JSONObject obj = new JSONObject();
+        
+        obj.put("location", loc);
+        obj.put("blueprint", blueprint);
+        
+        return obj.toJSONString();
+    }
+
+    public void spawnAttachedEntities(World aThis)
+    {
+        // Spawn attached entities
+        for(Blueprint.Decal d : blueprint.getDecals())
+        {
+            DoorEntity doorEnt = new DoorEntity();
+            aThis.materializeEntity(doorEnt);
+
+            Blueprint.Vert a = blueprint.getVerts()[d.getVertA()];
+            Blueprint.Vert b = blueprint.getVerts()[d.getVertB()];
+
+            Vec2 A = new Vec2((float) a.getX(), (float) a.getZ());
+            Vec2 B = new Vec2((float) b.getX(), (float) b.getZ());
+
+            Vec2 AB = B.subtract(A).normalizeLocal().multLocal((float) d.getDistance());
+
+            Angle angle = AB.getAngle();
+
+            System.out.println("angle = " + angle);
+
+            doorEnt.setLocation(A.add(AB));
+            doorEnt.setRotation(angle.inverse()); // what
+
+            this.getNode().attachChild(doorEnt.getNode());
+        }
     }
 
 }

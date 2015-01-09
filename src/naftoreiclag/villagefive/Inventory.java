@@ -21,7 +21,7 @@ public class Inventory implements ActionListener, AnalogListener
 {
     SpritePlane plane;
     
-    Sprite box;
+    Sprite mainInventory;
     
     boolean enabled;
     SmoothBoolean onoff = new SmoothBoolean();
@@ -31,12 +31,12 @@ public class Inventory implements ActionListener, AnalogListener
         this.plane = plane;
         onoff.setTime(0.5d);
         
-        box = new Sprite("Interface/inv.png");
-        plane.attachElement(box);
+        mainInventory = new Sprite("Interface/inv.png");
+        plane.attachElement(mainInventory);
         
-        Collision box2 = new Collision(box.width, box.height);
+        Collision box2 = new Collision(mainInventory.width, mainInventory.height);
         plane.attachElement(box2);
-        box.addFollower(box2);
+        mainInventory.addFollower(box2);
         
         SAM.i.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
     }
@@ -58,7 +58,7 @@ public class Inventory implements ActionListener, AnalogListener
     {
         onoff.tick(tpf);
         
-        box.setLoc(plane.width / 2, plane.height + 200 - (onoff.x * 400));
+        mainInventory.setLoc(plane.width / 2, plane.height + 200 - (onoff.x * 400));
     }
 
     Vec2 mouseLoc = new Vec2();

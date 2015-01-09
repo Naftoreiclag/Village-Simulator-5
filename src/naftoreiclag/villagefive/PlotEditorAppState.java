@@ -6,7 +6,7 @@
 
 package naftoreiclag.villagefive;
 
-import naftoreiclag.villagefive.util.serializable.PlotSerial;
+import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -43,9 +43,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import naftoreiclag.villagefive.util.serializable.PlotSerial.Decal;
-import naftoreiclag.villagefive.util.serializable.PlotSerial.Face;
-import naftoreiclag.villagefive.util.serializable.PlotSerial.Vert;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Decal;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Face;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Vert;
 
 import naftoreiclag.villagefive.util.scenegraph.BlueprintGeoGen;
 import naftoreiclag.villagefive.util.math.SmoothAngle;
@@ -74,7 +74,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     private ViewPort viewPort;
 	private RenderManager renderManager;
     
-    PlotSerial plotData = new PlotSerial();
+    Blueprint plotData = new Blueprint();
 
     Material strokeMat;
     

@@ -7,7 +7,7 @@ package naftoreiclag.villagefive;
 
 import naftoreiclag.villagefive.gui.SpritePlane;
 import naftoreiclag.villagefive.util.ReiCamera;
-import naftoreiclag.villagefive.util.serializable.PlotSerial;
+import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.world.entity.PinguinEntity;
 import naftoreiclag.villagefive.world.entity.PlayerEntity;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
@@ -44,6 +44,7 @@ import com.jme3.texture.Texture;
 import com.jme3.ui.Picture;
 import de.lessvoid.nifty.Nifty;
 import java.io.IOException;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import naftoreiclag.villagefive.util.KeyKeys;
@@ -80,10 +81,10 @@ public class OverworldAppState extends AbstractAppState
     
     ReiCamera rcam;
     
-    PlotSerial house;
+    Blueprint house;
     Inventory inv;
     
-    public void gimmiePlot(PlotSerial house)
+    public void gimmiePlot(Blueprint house)
     {
         this.house = house;
     }
@@ -115,8 +116,8 @@ public class OverworldAppState extends AbstractAppState
         rcam.mode = ReiCamera.SmoothMode.cubic;
         
         
-
-        loadworld();
+        genworld();
+        // loadworld();
         
         setupInvScreen();
 
@@ -227,12 +228,14 @@ public class OverworldAppState extends AbstractAppState
         
     }
 
-    private void testworld()
+    private void genworld()
     {
         world = new World(stateRootNode, assetManager);
         world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         
-        player = world.spawnEntity(PlayerEntity.class, new Vec2(256f, 256f));
+        player = new PlayerEntity();
+        world.materializeEntity(player);
+        player.setLocation(new Vec2(256, 256));
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
         playCont = new PlayerController();
@@ -241,14 +244,15 @@ public class OverworldAppState extends AbstractAppState
         playCont.setGround(ground);
         playCont.setManager(inputManager);
         
-        house.setX(266);
-        house.setZ(266);
+        Random rand = new Random(1337);
         
-        world.spawnPlot(house);
-        
-        world.spawnEntity(DoorEntity.class, new Vec2(256f, 256f));
-        world.spawnEntity(PinguinEntity.class, new Vec2(266f, 266f));
-        world.spawnEntity(StoolEntity.class, new Vec2(246f, 256f));
+        for(int i = 0; i < 10; ++ i)
+        {
+            Plot newPlot = new Plot();
+            newPlot.setLocation(new Vec2(rand.nextDouble() * 512, rand.nextDouble() * 512));
+            
+            world.materializePlot(newPlot);
+        }
     }
 
     private void loadworld()
@@ -268,7 +272,9 @@ public class OverworldAppState extends AbstractAppState
         }
         //world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         
-        player = world.spawnEntity(PlayerEntity.class, new Vec2(256f, 256f));
+        player = new PlayerEntity();
+        world.materializeEntity(player);
+        player.setLocation(new Vec2(256, 256));
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
         playCont = new PlayerController();

@@ -167,8 +167,6 @@ public class PlayerController extends EntityController implements ActionListener
             if(!isInvOpenKeyPressed)
             {
                 invOpen = !invOpen;
-                
-                System.out.println("inventory toggled " + invOpen);
             }
             isInvOpenKeyPressed = isPressed;
         }

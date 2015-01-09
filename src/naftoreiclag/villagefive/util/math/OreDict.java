@@ -9,7 +9,7 @@ package naftoreiclag.villagefive.util.math;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
-import naftoreiclag.villagefive.util.serializable.PlotSerial;
+import naftoreiclag.villagefive.util.serializable.Blueprint;
 
 public class OreDict
 {
@@ -33,7 +33,7 @@ public class OreDict
         return new Vec2(vec.x, vec.z);
     }
     
-    public static Polygon roomToPoly(PlotSerial data, PlotSerial.Face room)
+    public static Polygon roomToPoly(Blueprint data, Blueprint.Face room)
     {
         // Create a new polygon to represent it
         Polygon polygon = new Polygon();
@@ -41,13 +41,13 @@ public class OreDict
         for(int i = 0; i < room.getVerts().length; ++ i)
         {
             // Get the vertex by its id
-            PlotSerial.Vert vert = data.getVerts()[room.getVerts()[i]];
+            Blueprint.Vert vert = data.getVerts()[room.getVerts()[i]];
             
             // Copy it over
             polygon.vecs.add(new Vec2((float) vert.getX(), (float) vert.getZ()));
             
             // Copy over decal (hole) data
-            for(PlotSerial.Decal decal : data.getDecals())
+            for(Blueprint.Decal decal : data.getDecals())
             {
                 // If this decal does not apply
                 if(decal.getVertA() != vert.getId())

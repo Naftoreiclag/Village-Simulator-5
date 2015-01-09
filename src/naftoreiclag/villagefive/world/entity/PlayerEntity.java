@@ -163,7 +163,6 @@ public class PlayerEntity extends Entity
     
     public void blink()
     {
-        System.out.println("ello");
         
         faceMat.setTexture("ColorMap", eyeCloseTex);
         

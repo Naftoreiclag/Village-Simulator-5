@@ -37,7 +37,7 @@ public final class Sprite extends Element
     
     
     @Override
-    public void whereSpatialWouldHaveBeenUpdated()
+    public void updateSpatial()
     {
         picture.setLocalTranslation(absLoc.getXF() - origin.getXF(), absLoc.getYF() - origin.getYF(), (float) depth);
         

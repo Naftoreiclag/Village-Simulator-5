@@ -4,10 +4,8 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.world;
 
-// dont delete me yet
-public abstract class EntityController
-{
+public class Resident {
 
 }

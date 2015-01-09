@@ -261,11 +261,6 @@ public class ModelBuilder
                     i.put(tri.a).put(tri.c).put(tri.b);
         }
         
-        System.out.println("Model Built!");
-        System.out.println("Polys: " + triangles.size());
-        System.out.println("Vertices: " + (triangles.size() * 3));
-        System.out.println("Output Verts: " + vertices.size());
-        
                 
         Mesh mesh = new Mesh();
 

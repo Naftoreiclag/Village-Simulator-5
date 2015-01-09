@@ -15,16 +15,18 @@ import com.jme3.scene.control.Control;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
-import naftoreiclag.villagefive.util.serializable.PlotSerial;
-import naftoreiclag.villagefive.util.serializable.PlotSerial.Decal;
-import naftoreiclag.villagefive.util.serializable.PlotSerial.Face;
-import naftoreiclag.villagefive.util.serializable.PlotSerial.Vert;
+import naftoreiclag.villagefive.util.serializable.Blueprint;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Decal;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Face;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Vert;
 import naftoreiclag.villagefive.world.chunk.Chunk;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
 import naftoreiclag.villagefive.world.entity.EntityRegistry;
@@ -52,6 +54,7 @@ public class World implements JSONAware
     
     public List<Entity> entities = new ArrayList<Entity>();
     public List<Plot> plots = new ArrayList<Plot>();
+    public List<Resident> residents = new ArrayList<Resident>();
     
     public World(Node rootNode, AssetManager assetManager)
     {
@@ -72,7 +75,6 @@ public class World implements JSONAware
                 chunk.x = x;
                 chunk.z = z;
                 
-                System.out.println(x + ", " + z);
                 chunk.createNode();
                 this.rootNode.attachChild(chunk.getNode());
                 
@@ -80,9 +82,15 @@ public class World implements JSONAware
             }
         }
     }
+    
+    public void materializeEnvironment()
+    {
+        
+    }
 
     public boolean showPhysDebug = false;
     public Node last = null;
+
     public void tick(float tpf)
     {
         physWorld.update(tpf);
@@ -107,54 +115,21 @@ public class World implements JSONAware
         
     }
     
-    /*
-     * Spawn methods accept a "static" set of data (class, serializables...) which is then translated to physical
-     * world-elements.
-     * 
-     * 
-     */
-    
-    public Plot spawnPlot(PlotSerial plotType)
+    public Plot materializePlot(Plot plot)
     {
-        // Create the thing
-        if(plotType == null)
-        {
-            return null;
-        }
-        Plot plot = new Plot(plotType);
         plot.assertWorld(this);
         
         // Load the node
         plot.createNode();
         rootNode.attachChild(plot.getNode());
         
-        // Spawn attached entities
-        for(Decal d : plotType.getDecals())
-        {
-            DoorEntity doorEnt = this.spawnEntity(DoorEntity.class);
-            
-            Vert a = plotType.getVerts()[d.getVertA()];
-            Vert b = plotType.getVerts()[d.getVertB()];
-            
-            Vec2 A = new Vec2((float) a.getX(), (float) a.getZ());
-            Vec2 B = new Vec2((float) b.getX(), (float) b.getZ());
-            
-            Vec2 AB = B.subtract(A).normalizeLocal().multLocal((float) d.getDistance());
-            
-            Angle angle = AB.getAngle();
-            
-            System.out.println("angle = " + angle);
-            
-            doorEnt.setLocation(A.add(AB));
-            doorEnt.setRotation(angle.inverse()); // what
-            
-            plot.getNode().attachChild(doorEnt.getNode());
-        }
+        // 
+        plot.spawnAttachedEntities(this);
+        
         
         // Body
         plot.createBody();
         if(plot.getBody() != null) { physWorld.addBody(plot.getBody()); }
-        plot.setLocation(new Vec2((float) plotType.getX(), (float) plotType.getZ()));
         
         // Keep track of it
         plots.add(plot);
@@ -163,21 +138,8 @@ public class World implements JSONAware
         return plot;
     }
     
-    public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType)
+    public void materializeEntity(Entity entity)
     {
-        // Create the thing
-        SomeEntity entity;
-        try
-        {
-            entity = entityType.getConstructor().newInstance();
-            
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
-            
-            return null;
-        }
         entity.assertWorld(this);
         
         // Load the node
@@ -190,26 +152,6 @@ public class World implements JSONAware
         
         // Keep track of it
         entities.add(entity);
-        
-        // Return it
-        return entity;
-    }
-    
-    public <SomeEntity extends Entity> SomeEntity spawnEntity(Class<SomeEntity> entityType, Vec2 vector2f)
-    {
-        // Create the thing
-        SomeEntity entity = spawnEntity(entityType);
-        
-        if(entity == null)
-        {
-            return null;
-        }
-        
-        // Move it into position
-        entity.setLocation(vector2f);
-        
-        // Return it
-        return entity;
     }
 
     
@@ -224,9 +166,9 @@ public class World implements JSONAware
             Vector3f relPos3 = plot.getNode().worldToLocal(loc3, null);
             Vec2 relPos2 = OreDict.vec3ToVec2(relPos3);
             
-            for(Face f : plot.data.getFaces())
+            for(Face f : plot.blueprint.getFaces())
             {
-                Polygon p = OreDict.roomToPoly(plot.data, f);
+                Polygon p = OreDict.roomToPoly(plot.blueprint, f);
                 
                 if(p.inside(relPos2))
                 {
@@ -257,13 +199,13 @@ public class World implements JSONAware
             Vector3f relPos3 = plot.getNode().worldToLocal(loc3, null);
             Vec2 relPos2 = OreDict.vec3ToVec2(relPos3);
             
-            for(Face f : plot.data.getFaces())
+            for(Face f : plot.blueprint.getFaces())
             {
-                Polygon p = OreDict.roomToPoly(plot.data, f);
+                Polygon p = OreDict.roomToPoly(plot.blueprint, f);
                 
                 if(p.inside(relPos2))
                 {
-                    Node n = plot.wholeRooms.get(f.getId());
+                    Node n = plot.roomNodes.get(f.getId());
                     
                     Spatial o = n.getChild("Outside");
                     o.removeFromParent();
@@ -307,21 +249,34 @@ public class World implements JSONAware
         for(Object obj : plotList)
         {
             JSONObject plotData = (JSONObject) obj;
-            PlotSerial data = new PlotSerial(plotData);
+            Plot plot = new Plot(plotData);
             
-            this.spawnPlot(data);
+            this.materializePlot(plot);
         }
         
         for(Object obj : entityList)
         {
             JSONObject entityData = (JSONObject) obj;
             
-            Class<? extends Entity> ddd = EntityRegistry.entities.get((String) entityData.get("instanceof"));
+            Entity ddd = null;
+            try
+            {
+                ddd = EntityRegistry.entities.get((String) entityData.get("instanceof")).newInstance();
+            }
+            catch(InstantiationException ex)
+            {
+                Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch(IllegalAccessException ex)
+            {
+                Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
-            Vec2 loc = new Vec2((JSONObject) entityData.get("location"));
+            ddd.setLocation(new Vec2((JSONObject) entityData.get("location")));
             
-            this.spawnEntity(ddd, loc);
+            this.materializeEntity(ddd);
             
         }
     }
+
 }

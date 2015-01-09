@@ -66,25 +66,25 @@ public abstract class Mundane
         this.getBody().setLinearVelocity(velocity.mult(this.velocityCoeff).toDyn4j());
     }
     
-    public final void applyImpulse(Vec2 impulse)
+    public void applyImpulse(Vec2 impulse)
     {
         if(this.getBody() == null) { return; }
         
         this.getBody().applyImpulse(impulse.mult(this.impulseCoeff * this.linearFrictionCoeff).toDyn4j());
     }
-    public final void applyImpulse(Vec2 impulse, Vec2 point)
+    public void applyImpulse(Vec2 impulse, Vec2 point)
     {
         if(this.getBody() == null) { return; }
         
         this.getBody().applyImpulse(impulse.mult(this.impulseCoeff * this.linearFrictionCoeff).toDyn4j(), point.toDyn4j());
     }
-    public final void applyTorque(double torque)
+    public void applyTorque(double torque)
     {
         if(this.getBody() == null) { return; }
         
         this.getBody().applyTorque(torque * this.torqueCoeff * this.angularFrictionCoeff);
     }
-    public final void applyFriction()
+    public void applyFriction()
     {
         if(this.getBody() == null) { return; }
         
@@ -97,7 +97,7 @@ public abstract class Mundane
     }
     
     // Be careful when using this on physics objects!
-    public final void setLocation(Vec2 loc)
+    public void setLocation(Vec2 loc)
     {
         if(this.getBody() != null)
         {
@@ -112,11 +112,11 @@ public abstract class Mundane
         
         onLocationChange(loc);
     }
-    public final void setLocationRelative(Vec2 loc)
+    public void setLocationRelative(Vec2 loc)
     {
         this.setLocation(this.getLocation().add(loc));
     }
-    public final void setRotation(Angle dir)
+    public void setRotation(Angle dir)
     {
         if(this.getBody() != null)
         {
@@ -131,7 +131,7 @@ public abstract class Mundane
         
         
     }
-    public final Angle getRotation()
+    public Angle getRotation()
     {
         if(this.getBody() != null)
         {
@@ -148,7 +148,7 @@ public abstract class Mundane
         
     }
     
-    public final Vec2 getLocation()
+    public Vec2 getLocation()
     {
         if(this.getNode() == null) { return new Vec2(); }
         
@@ -157,5 +157,6 @@ public abstract class Mundane
         return new Vec2(loc3f.x, loc3f.z);
     }
     
+    // Overridable things
     public void onLocationChange(Vec2 loc) {};
 }

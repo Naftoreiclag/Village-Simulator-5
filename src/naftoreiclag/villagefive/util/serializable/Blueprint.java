@@ -16,15 +16,12 @@ import org.json.simple.JSONObject;
 
 
 // Serializable format
-public class PlotSerial implements JSONAware
+public class Blueprint implements JSONAware
 {
     // Subclass ids are not saved because their index in the containing array determines that.
 
     private long id = 1337L;
     private String name = "Bakery";
-    
-    private double x, z;
-    private double angle;
     
     private int width, height;
     
@@ -40,31 +37,29 @@ public class PlotSerial implements JSONAware
     public void setDecals(Decal[] decals) { this.decals = decals; }
     public void setFaces(Face[] faces) { this.faces = faces; }
 
-    public PlotSerial() {}
+    public Blueprint()
+    {
+        verts = new Vert[0];
+        decals = new Decal[0];
+        faces = new Face[0];
+    }
     
     @Override
     public String toJSONString()
     {
         JSONObject obj = new JSONObject();
-        
         obj.put("id", this.getId());
         obj.put("name", this.getName());
-        obj.put("x", x);
-        obj.put("z", z);
         obj.put("vertexes", Arrays.asList(verts));
         obj.put("decals", Arrays.asList(decals));
         obj.put("faces", Arrays.asList(faces));
-        
-        
         return obj.toJSONString();
     }
     
-    public PlotSerial(JSONObject data)
+    public Blueprint(JSONObject data)
     {
         id = (Long) data.get("id");
         name = (String) data.get("name");
-        x = (Double) data.get("x");
-        z = (Double) data.get("z");
         JSONArray rawVerts = (JSONArray) data.get("vertexes");
         JSONArray rawDecals = (JSONArray) data.get("decals");
         JSONArray rawFaces = (JSONArray) data.get("faces");
@@ -241,15 +236,9 @@ public class PlotSerial implements JSONAware
         }
     }
 
-    public double getX() { return x; }
-    public double getZ() { return z; }
-    public double getAngle() { return angle; }
     public int getWidth() { return width; }
     public int getHeight() { return height; }
     
-    public void setX(double x) { this.x = x; }
-    public void setZ(double z) { this.z = z; }
-    public void setAngle(double angle) { this.angle = angle; }
     public void setWidth(int width) { this.width = width; }
     public void setHeight(int height) { this.height = height; }
 }

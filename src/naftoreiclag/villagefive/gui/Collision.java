@@ -18,7 +18,7 @@ public class Collision extends Element
     }
 
     @Override
-    public void whereSpatialWouldHaveBeenUpdated()
+    public void updateSpatial()
     {
     }
 
