@@ -17,13 +17,14 @@ import org.json.simple.JSONObject;
 // Keeps track of those pesky indexes for you!
 public class JSONUtil
 {
-    public static <SomeJSONThingy extends JSONThingy> JSONArray convertToArray(List<SomeJSONThingy> j)
+    // Turn your list into a JSONArray, also generating the indexes.
+    public static <SomeJSONThingy extends JSONThingy> JSONArray encodeList(List<SomeJSONThingy> list)
     {
         JSONArray conv = new JSONArray();
         
-        for(int i = 0; i < j.size(); ++ i)
+        for(int i = 0; i < list.size(); ++ i)
         {
-            SomeJSONThingy thing = j.get(i);
+            SomeJSONThingy thing = list.get(i);
             
             thing.setJsonIndex(i);
             conv.add(thing);
@@ -32,7 +33,28 @@ public class JSONUtil
         return conv;
     }
     
-    public static <ConcreteJSONThingy extends JSONThingy> List<ConcreteJSONThingy> decodeArray(JSONArray array, Class<ConcreteJSONThingy> type)
+    // Turn your list into a JSONArray, but instead of storing the actual object data, store the pointers to the data.
+    // In other words, make a JSONArray of indexes of some other JSONArray (that you define) that has the actual object data.
+    public static <SomeJSONThingy extends JSONThingy> JSONArray encodePntrList(List<SomeJSONThingy> list)
+    {
+        JSONArray conv = new JSONArray();
+        
+        for(int i = 0; i < list.size(); ++ i)
+        {
+            conv.add(list.get(i).getJsonIndex());
+        }
+        
+        return conv;
+    }
+    
+    // Optional form that makes the code look a little cleaner.
+    public static <ConcreteJSONThingy extends JSONThingy> List<ConcreteJSONThingy> readList(JSONObject data, String key, Class<ConcreteJSONThingy> expectedType)
+    {
+        return readList((JSONArray) data.get(key), expectedType);
+    }
+    
+    // Read a List from a JSONArray, given the expectedType.
+    public static <ConcreteJSONThingy extends JSONThingy> List<ConcreteJSONThingy> readList(JSONArray array, Class<ConcreteJSONThingy> expectedType)
     {
         List<ConcreteJSONThingy> newList = new ArrayList<ConcreteJSONThingy>();
         
@@ -41,7 +63,7 @@ public class JSONUtil
             ConcreteJSONThingy thing = null;
             try
             {
-                thing = type.getConstructor(JSONObject.class).newInstance(array.get(i));
+                thing = expectedType.getConstructor(JSONObject.class).newInstance(array.get(i));
             }
             catch(Exception ex)
             {

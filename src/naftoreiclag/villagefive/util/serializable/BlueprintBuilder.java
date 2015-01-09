@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import naftoreiclag.villagefive.util.json.AbstractJSONThingy;
 import naftoreiclag.villagefive.util.json.JSONThingy;
+import naftoreiclag.villagefive.util.json.JSONUtil;
 import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.util.math.Vec2;
 import org.json.simple.JSONArray;
@@ -18,91 +19,34 @@ import org.json.simple.JSONObject;
 
 public class BlueprintBuilder extends AbstractJSONThingy
 {
-    // Used only for preserving object references when saving/loading with JSON.
-    // Specifically, it refers to the index of this object in a JSONArray and therefore does not require saving.
-    public long jsonIndex;
-    
     // Name, duh
     public String name;
     
     public List<Room> rooms = new ArrayList<Room>();
     public List<Vert> verts = new ArrayList<Vert>();
     public List<Door> doors = new ArrayList<Door>();
-
-    public String toJSONString()
-    {
-        JSONObject obj = new JSONObject();
-        
-        obj.put("name", name);
-        
-        /*
-        JSONArray jsonVerts = new JSONArray();
-        for(int i = 0; i < verts.size(); ++ i)
-        {
-            Vert vert = verts.get(i);
-            vert.jsonIndex = indexKeeper;
-            jsonVerts.add(vert);
-        }
-        obj.put("vertexes", JSONThingy.something(verts));
-        */
-        obj.put("vertexes", JSONThingy.convertToArray(verts));
-        
-        JSONArray jsonDoors = new JSONArray();
-        for(int i = 0; i < verts.size(); ++ i)
-        {
-            Vert vert = verts.get(i);
-            vert.jsonIndex = indexKeeper;
-            jsonVerts.add(vert);
-        }
-        obj.put("vertexes", jsonVerts);
-        
-        JSONArray jsonRooms = new JSONArray();
-        for(int i = 0; i < rooms.size(); ++ i)
-        {
-            Room room = rooms.get(i);
-            room.jsonIndex = indexKeeper;
-            jsonRooms.add(jsonRooms);
-        }
-        obj.put("rooms", jsonRooms);
-        
-        
-        return obj.toJSONString();
-    }
     
     public BlueprintBuilder(JSONObject obj)
     {
         name = (String) obj.get("name");
         
-        JSONArray jsonVerts = (JSONArray) obj.get("vertexes");
-        for(int i = 0; i < jsonVerts.size(); ++ i)
-        {
-            Vert vert = new Vert((JSONObject) jsonVerts.get(i));
-            verts.add(vert);
-        }
-        
-        JSONArray jsonDoors = (JSONArray) obj.get("doors");
-        for(int i = 0; i < jsonDoors.size(); ++ i)
-        {
-            Door door = new Door((JSONObject) jsonDoors.get(i));
-            doors.add(door);
-        }
-        
-        JSONArray jsonRooms = (JSONArray) obj.get("rooms");
-        for(int i = 0; i < jsonRooms.size(); ++ i)
-        {
-            Room room = new Room((JSONObject) jsonRooms.get(i));
-            rooms.add(room);
-        }
+        verts = JSONUtil.readList(obj, "vertexes", Vert.class);
+        doors = JSONUtil.readList(obj, "doors", Door.class);
+        rooms = JSONUtil.readList(obj, "rooms", Room.class);
     }
 
-    public void dopeJsonObject(JSONObject json)
+    @Override
+    public void dopeJsonObject(JSONObject obj)
     {
+        obj.put("name", name);
+        
+        obj.put("vertexes", JSONUtil.encodeList(verts));
+        obj.put("doors", JSONUtil.encodeList(doors));
+        obj.put("rooms", JSONUtil.encodeList(rooms));
     }
     
     public class Vert extends AbstractJSONThingy
     {
-        public long jsonIndex;
-    
         public Vec2 loc;
 
         public Vert(JSONObject data)
@@ -110,18 +54,14 @@ public class BlueprintBuilder extends AbstractJSONThingy
             this.loc = new Vec2((JSONObject) data.get("location"));
         }
 
-        public String toJSONString()
+
+        public void dopeJsonObject(JSONObject obj)
         {
-            JSONObject obj = new JSONObject();
-            
             obj.put("location", loc);
-            
-            return obj.toJSONString();
         }
     }
     public class Door extends AbstractJSONThingy
     {
-        public long jsonIndex;
         public WallLoc loc;
         
         public Door(JSONObject data)
@@ -129,13 +69,9 @@ public class BlueprintBuilder extends AbstractJSONThingy
             loc = new WallLoc((JSONObject) data.get("location"));
         }
 
-        public String toJSONString()
+        public void dopeJsonObject(JSONObject obj)
         {
-            JSONObject obj = new JSONObject();
-            
             obj.put("location", loc);
-            
-            return obj.toJSONString();
         }
     }
     public class WallLoc extends AbstractJSONThingy
@@ -151,21 +87,15 @@ public class BlueprintBuilder extends AbstractJSONThingy
             x = (Double) data.get("x");
         }
 
-        public String toJSONString()
+        public void dopeJsonObject(JSONObject obj)
         {
-            JSONObject obj = new JSONObject();
-            
-            obj.put("a", a.jsonIndex);
-            obj.put("b", b.jsonIndex);
+            obj.put("a", a.getJsonIndex());
+            obj.put("b", b.getJsonIndex());
             obj.put("x", x);
-            
-            return obj.toJSONString();
         }
     }
     public class Room extends AbstractJSONThingy
     {
-        public long jsonIndex;
-        
         public WallType wallType;
         public List<Vert> vertPntrs;
         
@@ -197,19 +127,10 @@ public class BlueprintBuilder extends AbstractJSONThingy
             }
         }
 
-        public String toJSONString()
+        public void dopeJsonObject(JSONObject obj)
         {
-            JSONObject obj = new JSONObject();
-            
             obj.put("name", name);
-            JSONArray jsonVertPntrs = new JSONArray();
-            for(int i = 0; i < vertPntrs.size(); ++ i)
-            {
-                jsonVertPntrs.add(vertPntrs.get(i).jsonIndex);
-            }
-            obj.put("vertexPointers", jsonVertPntrs);
-            
-            return obj.toJSONString();
+            obj.put("vertexPointers", JSONUtil.encodePntrList(vertPntrs));
         }
     }
 }
