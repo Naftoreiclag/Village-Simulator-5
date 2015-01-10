@@ -9,6 +9,7 @@ package naftoreiclag.villagefive.util.serializable;
 import java.util.ArrayList;
 import java.util.List;
 import naftoreiclag.villagefive.util.json.AbstractJSONThingy;
+import naftoreiclag.villagefive.util.json.JSONThingy;
 import naftoreiclag.villagefive.util.json.JSONUtil;
 import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.util.math.Vec2;
@@ -29,7 +30,6 @@ public class Blueprint extends AbstractJSONThingy
     
     public Blueprint()
     {
-        
     }
     
     public Blueprint(JSONObject obj)
@@ -39,9 +39,9 @@ public class Blueprint extends AbstractJSONThingy
         width = ((Long) obj.get("width")).intValue();
         height = ((Long) obj.get("height")).intValue();
         
-        verts = JSONUtil.readList(obj, "vertexes", Vert.class);
-        doors = JSONUtil.readList(obj, "doors", Door.class);
-        rooms = JSONUtil.readList(obj, "rooms", Room.class);
+        verts = JSONUtil.readList(obj, "vertexes", new Vert());
+        doors = JSONUtil.readList(obj, "doors", new Door());
+        rooms = JSONUtil.readList(obj, "rooms", new Room());
     }
 
     @Override
@@ -55,6 +55,13 @@ public class Blueprint extends AbstractJSONThingy
         obj.put("vertexes", JSONUtil.encodeList(verts));
         obj.put("doors", JSONUtil.encodeList(doors));
         obj.put("rooms", JSONUtil.encodeList(rooms));
+    }
+
+    
+    
+    public JSONThingy createFromJson(JSONObject data)
+    {
+        return new Blueprint(data);
     }
     
     public class Vert extends AbstractJSONThingy
@@ -76,6 +83,11 @@ public class Blueprint extends AbstractJSONThingy
         {
             obj.put("location", loc);
         }
+
+        public JSONThingy createFromJson(JSONObject data)
+        {
+            return new Vert(data);
+        }
     }
     public class Door extends AbstractJSONThingy
     {
@@ -95,6 +107,11 @@ public class Blueprint extends AbstractJSONThingy
         public void populateJson(JSONObject obj)
         {
             obj.put("location", loc);
+        }
+
+        public JSONThingy createFromJson(JSONObject data)
+        {
+            return new Door(data);
         }
     }
     public class WallLoc extends AbstractJSONThingy
@@ -144,6 +161,11 @@ public class Blueprint extends AbstractJSONThingy
             
             obj.put("x", x);
         }
+
+        public JSONThingy createFromJson(JSONObject data)
+        {
+            return new WallLoc(data);
+        }
     }
     public class Room extends AbstractJSONThingy
     {
@@ -174,7 +196,7 @@ public class Blueprint extends AbstractJSONThingy
 
         private Room(JSONObject data)
         {
-            name = data.get("name").toString();
+            name = (String) data.get("name");
             
             JSONArray jsonVertPntrs = (JSONArray) data.get("vertexPointers");
             for(int i = 0; i < jsonVertPntrs.size(); ++ i)
@@ -187,6 +209,11 @@ public class Blueprint extends AbstractJSONThingy
         {
             obj.put("name", name);
             obj.put("vertexPointers", JSONUtil.encodePntrList(vertPntrs));
+        }
+
+        public JSONThingy createFromJson(JSONObject data)
+        {
+            return new Room(data);
         }
     }
 }

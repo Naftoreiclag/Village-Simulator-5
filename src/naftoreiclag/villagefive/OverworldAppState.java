@@ -103,8 +103,8 @@ public class OverworldAppState extends AbstractAppState
         rcam.mode = ReiCamera.SmoothMode.cubic;
         
         
-        genworld();
-        // loadworld();
+        // genworld();
+        loadworld();
         
         setupInvScreen();
 
@@ -236,6 +236,7 @@ public class OverworldAppState extends AbstractAppState
         plot.setLocation(new Vec2(260, 260));
         world.materializePlot(plot);
         
+        /*
         Random rand = new Random(1337);
         
         for(int i = 0; i < 10; ++ i)
@@ -245,6 +246,7 @@ public class OverworldAppState extends AbstractAppState
             
             world.materializePlot(newPlot);
         }
+        */
     }
 
     private void loadworld()

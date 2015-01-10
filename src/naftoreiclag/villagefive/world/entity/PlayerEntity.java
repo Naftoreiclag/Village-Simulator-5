@@ -123,7 +123,7 @@ public class PlayerEntity extends Entity
     @Override
     public void onLocationChange(Vec2 loc)
     {
-        world.something(loc);
+        if(world != null) {world.something(loc);}
         
         
         if(ground != null) { ground.setLocalTranslation(loc.toJmeVec3()); }

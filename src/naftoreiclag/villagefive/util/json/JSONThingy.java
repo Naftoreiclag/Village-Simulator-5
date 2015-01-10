@@ -20,4 +20,5 @@ public interface JSONThingy extends JSONAware
     public abstract long getJsonIndex();
     public abstract void setJsonIndex(long index);
     public abstract void populateJson(JSONObject obj);
+    public abstract JSONThingy createFromJson(JSONObject data);
 }

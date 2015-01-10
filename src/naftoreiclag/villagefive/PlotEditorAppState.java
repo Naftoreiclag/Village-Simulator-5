@@ -58,11 +58,6 @@ import org.lwjgl.BufferUtils;
 // Locations of flags, rooms, and stuff are stored as doubles
 public class PlotEditorAppState extends AbstractAppState implements ActionListener, AnalogListener
 {
-    public PlotEditorAppState()
-	{
-	    plotData.width = 15;
-	    plotData.height = 20;
-	}
 
 	private Main app;
     private Node trueRootNode;
@@ -75,6 +70,13 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
 	private RenderManager renderManager;
     
     Blueprint plotData = new Blueprint();
+    
+    
+    public PlotEditorAppState()
+	{
+	    plotData.width = 15;
+	    plotData.height = 20;
+	}
 
     Material strokeMat;
     

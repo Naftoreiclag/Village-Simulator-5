@@ -48,13 +48,13 @@ public class JSONUtil
     }
     
     // Optional form that makes the code look a little cleaner.
-    public static <ConcreteJSONThingy extends JSONThingy> List<ConcreteJSONThingy> readList(JSONObject data, String key, Class<ConcreteJSONThingy> expectedType)
+    public static <ConcreteJSONThingy extends JSONThingy> List<ConcreteJSONThingy> readList(JSONObject data, String key, ConcreteJSONThingy expectedType)
     {
         return readList((JSONArray) data.get(key), expectedType);
     }
     
     // Read a List from a JSONArray, given the expectedType.
-    public static <ConcreteJSONThingy extends JSONThingy> List<ConcreteJSONThingy> readList(JSONArray array, Class<ConcreteJSONThingy> expectedType)
+    public static <ConcreteJSONThingy extends JSONThingy> List<ConcreteJSONThingy> readList(JSONArray array, ConcreteJSONThingy expectedType)
     {
         List<ConcreteJSONThingy> newList = new ArrayList<ConcreteJSONThingy>();
         
@@ -63,7 +63,9 @@ public class JSONUtil
             ConcreteJSONThingy thing = null;
             try
             {
-                thing = expectedType.getConstructor(JSONObject.class).newInstance(array.get(i));
+                //thing = (ConcreteJSONThingy) expectedType.getClass().getMethod("createFromJson", JSONObject.class).invoke(expectedType, array.get(i));
+                thing = (ConcreteJSONThingy) expectedType.createFromJson((JSONObject) array.get(i));
+                //thing = expectedType.getConstructor(JSONObject.class).newInstance(array.get(i));
             }
             catch(Exception ex)
             {

@@ -14,11 +14,12 @@ public abstract class WallType
 {
     public static WallType from(JSONObject obj)
     {
-        
+        return null;
     }
     
     public Geometry produce(Polygon polygon)
     {
+        return null;
         
     }
 }

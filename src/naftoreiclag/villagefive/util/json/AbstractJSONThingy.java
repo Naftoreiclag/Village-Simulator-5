@@ -28,4 +28,6 @@ public abstract class AbstractJSONThingy implements JSONThingy
         this.populateJson(dummy);
         return dummy.toJSONString();
     }
+    // what the
+    public abstract JSONThingy createFromJson(JSONObject data);
 }
