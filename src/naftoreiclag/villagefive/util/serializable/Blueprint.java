@@ -169,7 +169,7 @@ public class Blueprint extends AbstractJSONThingy
     }
     public class Room extends AbstractJSONThingy
     {
-        public WallType wallType;
+        public WallType wallType = new BasicWall();
         public List<Vert> vertPntrs = new ArrayList<Vert>();
         
         public String name;

@@ -74,13 +74,11 @@ public class Plot extends Mundane implements JSONAware
             floorG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(floorG);
 
-            Mesh outM = polygon.genOutsideWall(0.2f, 7f, 3f, 3f);
-            Geometry outG = new Geometry("Outside", outM);
+            Geometry outG = room.wallType.makeOutside(polygon);
             outG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(outG);
 
-            Mesh inM = polygon.genInsideWall(0.2f, 7f, 3f, 3f);
-            Geometry inG = new Geometry("Inside", inM);
+            Geometry inG = room.wallType.makeInside(polygon);
             inG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(inG);
 

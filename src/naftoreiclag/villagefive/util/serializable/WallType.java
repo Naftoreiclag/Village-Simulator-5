@@ -12,14 +12,7 @@ import org.json.simple.JSONObject;
 
 public abstract class WallType
 {
-    public static WallType from(JSONObject obj)
-    {
-        return null;
-    }
+    public abstract Geometry makeInside(Polygon polygon);
     
-    public Geometry produce(Polygon polygon)
-    {
-        return null;
-        
-    }
+    public abstract Geometry makeOutside(Polygon polygon);
 }

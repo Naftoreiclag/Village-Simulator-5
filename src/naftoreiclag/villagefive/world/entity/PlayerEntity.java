@@ -108,10 +108,6 @@ public class PlayerEntity extends Entity
         mask.setShadowMode(RenderQueue.ShadowMode.Receive);
         
         head.attachChild(mask);
-        
-        // gold, just for fun
-        // Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
-        // node.setMaterial(mat);
     }
     
     Spatial ground;
