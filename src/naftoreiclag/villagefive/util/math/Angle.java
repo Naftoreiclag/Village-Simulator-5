@@ -116,5 +116,10 @@ public class Angle
         return this.clone().inverseLocal();
     }
 
+    public Vec2 toNormalVec()
+    {
+        return new Vec2(Math.sin(this.x), Math.cos(this.x));
+    }
+
 }
 

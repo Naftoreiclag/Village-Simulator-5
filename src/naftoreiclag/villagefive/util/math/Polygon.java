@@ -6,19 +6,15 @@
 
 package naftoreiclag.villagefive.util.math;
 
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import naftoreiclag.villagefive.util.math.Vec2;
-import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder.Vertex;
 import org.dyn4j.dynamics.Body;
-import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Rectangle;
 import org.poly2tri.Poly2Tri;
 import org.poly2tri.geometry.polygon.PolygonPoint;
@@ -39,7 +35,16 @@ import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
  */
 public class Polygon
 {
-    public List<Vec2> vecs = new ArrayList<Vec2>();
+    private List<Vec2> vecs = new ArrayList<Vec2>();
+    
+    public void addVec(Vec2 nu)
+    {
+        vecs.add(nu);
+    }
+    public int size()
+    {
+        return vecs.size();
+    }
     
     public Map<Integer, ArrayList<Hole>> holesPerEdge = new HashMap<Integer, ArrayList<Hole>>();
     
@@ -69,7 +74,7 @@ public class Polygon
         
         /*
          * Process:
-         * 1. Duplicate all the edges and expand them by a given amount
+         * 1. Duplicate all the edges individually (x2 vertexes afterward) and expand outward them by a given amount
          * 2. "Diminish" the resulting polygon by removing any unusual geometry
          * 3. Copy over the hole data
          * 
@@ -83,16 +88,15 @@ public class Polygon
              *  
              *   [inside]
              * 
-             *   D-------C
-             *   ^       ^
-             *   |       |
              *   A-------B
+             *   |       |
+             *   v       v
+             *   D-------C
              * 
              * A: you are here
              * B: next vertex
              * 
              */
-            
             Vec2 a = get(i);
             Vec2 b = get(i + 1);
             
@@ -121,13 +125,13 @@ public class Polygon
                  *  
                  *      C
                  *     /
-                 *    /
+                 *    /      [inside]
                  *   /
                  *  A------------B
                  * 
                  *  A: you are here (original polygon)
                  *  B: next vertex on this polygon
-                 *  C: the new position for A after margining/padding
+                 *  C: the new position for A after padding
                  * 
                  */
                 
@@ -250,7 +254,7 @@ public class Polygon
                );
     }
     
-    // Even-odd thing
+    // Check if a point is inside or outside the polygon (works in all cases)
     public boolean inside(Vec2 test)
 	{
 		Vec2 prevPoint = this.get(-1);
@@ -269,7 +273,8 @@ public class Polygon
         return even;
     }
     
-    // lol bodybuilder
+    
+    // 
     public void makeBody(Body body, double thickness)
     {
         for(int i = 0; i < vecs.size(); ++ i)
@@ -288,13 +293,9 @@ public class Polygon
                 for(int j = 0; j < holes.size(); j ++)
                 {
                     /*
-                     *    D   -T-----P-     -T-----P-    tall       C
-                     *    |    |     |       |     |                |
-                     *    |   -R-----Y-     -R-----Y-    r          |
-                     *    |    |     |       |     |                |
-                     *    |   -G-----J-     -G-----J-    g          |
-                     *    |    |     |       |     |                |
-                     *    A   -V-----N- ... -V-----N-    0f         B
+                     *          Holes
+                     *            v
+                     *    A----V     N--...--V     N-------B
                      *             
                      *            1    ->    q  2  z
                      */
@@ -349,7 +350,7 @@ public class Polygon
     }
 
             
-    // Make into a floor
+    // Make into a roolf
     public void makeRoof(ModelBuilder mb, double thickness, double height, double textureWidth, double textureHeight)
     {
         Polygon out = this.margin(thickness);
