@@ -20,6 +20,8 @@ import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
 import naftoreiclag.villagefive.world.chunk.Chunk;
 import naftoreiclag.villagefive.world.entity.EntityRegistry;
+import naftoreiclag.villagefive.world.rays.DebugRayRenderer;
+import naftoreiclag.villagefive.world.rays.InteractRay;
 import org.dyn4j.collision.AxisAlignedBounds;
 import org.dyn4j.collision.Bounds;
 import org.json.simple.JSONArray;
@@ -39,7 +41,7 @@ public class World implements JSONAware
     public Node rootNode;
     public AssetManager assetManager;
     
-    public PhysWorld physWorld = new PhysWorld();
+    public PhysWorld physics = new PhysWorld();
     public Bounds physBounds = new AxisAlignedBounds(width * Chunk.width * 2, height * Chunk.height * 2);
     
     public List<Entity> entities = new ArrayList<Entity>();
@@ -53,8 +55,16 @@ public class World implements JSONAware
         this.trueRootNode.attachChild(this.rootNode);
         this.assetManager = assetManager;
         
-        physWorld.setBounds(physBounds);
-        physWorld.setGravity(Vec2.ZERO_DYN4J);
+        physics.setBounds(physBounds);
+        physics.setGravity(Vec2.ZERO_DYN4J);
+        
+        physics.addListener(new InteractRay.RaycastInteractFilter());
+        
+        if(showPhysDebug)
+        {
+            physics.addListener(new DebugRayRenderer());
+            DebugRayRenderer.rootNode = this.rootNode;
+        }
         
         for(int x = 0; x < width; ++ x)
         {
@@ -78,12 +88,12 @@ public class World implements JSONAware
         
     }
 
-    public boolean showPhysDebug = false;
+    public boolean showPhysDebug = true;
     public Node last = null;
 
     public void tick(float tpf)
     {
-        physWorld.update(tpf);
+        physics.update(tpf);
         
         if(showPhysDebug)
         {
@@ -92,7 +102,7 @@ public class World implements JSONAware
                 last.removeFromParent();
             }
             
-            last = physWorld.debugShow();
+            last = physics.debugShow();
             last.setLocalTranslation(0, 0.1f, 0);
             rootNode.attachChild(last);
         }
@@ -116,13 +126,15 @@ public class World implements JSONAware
         // 
         plot.spawnAttachedEntities(this);
         
-        
         // Body
         plot.createBody();
-        if(plot.getBody() != null) { physWorld.addBody(plot.getBody()); }
+        if(plot.getBody() != null) { physics.addBody(plot.getBody()); }
         
         // Keep track of it
         plots.add(plot);
+        
+        //
+        plot.updateLoc();
         
         // Return it
         return plot;
@@ -138,7 +150,7 @@ public class World implements JSONAware
         
         // Body
         entity.createBody();
-        if(entity.getBody() != null) { physWorld.addBody(entity.getBody()); }
+        if(entity.getBody() != null) { physics.addBody(entity.getBody()); }
         
         // Keep track of it
         entities.add(entity);
