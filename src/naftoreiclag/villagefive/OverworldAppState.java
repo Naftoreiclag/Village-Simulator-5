@@ -231,6 +231,11 @@ public class OverworldAppState extends AbstractAppState
         playCont.setGround(ground);
         playCont.setManager(inputManager);
         
+        Plot plot = new Plot();
+        plot.setBlueprint(house);
+        plot.setLocation(new Vec2(260, 260));
+        world.materializePlot(plot);
+        
         Random rand = new Random(1337);
         
         for(int i = 0; i < 10; ++ i)
