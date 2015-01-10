@@ -9,10 +9,12 @@ package naftoreiclag.villagefive.util.scenegraph;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
+import com.jme3.scene.shape.Box;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import naftoreiclag.villagefive.util.math.Vec2;
 import org.lwjgl.BufferUtils;
 
 public class ModelBuilder
@@ -165,6 +167,39 @@ public class ModelBuilder
         
         this.addTriangle(a, b, c);
         this.addTriangle(a, c, d);
+    }
+    
+    public void addDebugCube(Vector3f sp)
+    {
+        float r = 0.1f;
+        
+        Vertex a = new Vertex(sp.x - r, sp.y - r, sp.z - r, Vector3f.UNIT_Y, 0f, 0f);
+        Vertex b = new Vertex(sp.x + r, sp.y - r, sp.z - r, Vector3f.UNIT_Y, 1f, 0f);
+        Vertex c = new Vertex(sp.x - r, sp.y + r, sp.z - r, Vector3f.UNIT_Y, 0f, 1f);
+        Vertex d = new Vertex(sp.x + r, sp.y + r, sp.z - r, Vector3f.UNIT_Y, 1f, 1f);
+        Vertex e = new Vertex(sp.x - r, sp.y - r, sp.z + r, Vector3f.UNIT_Y, 0f, 0f);
+        Vertex f = new Vertex(sp.x + r, sp.y - r, sp.z + r, Vector3f.UNIT_Y, 1f, 0f);
+        Vertex g = new Vertex(sp.x - r, sp.y + r, sp.z + r, Vector3f.UNIT_Y, 0f, 1f);
+        Vertex h = new Vertex(sp.x + r, sp.y + r, sp.z + r, Vector3f.UNIT_Y, 1f, 1f);
+        
+        /*
+         * 
+         *     G        H
+         * 
+         * C        D
+         * 
+         *     E        F
+         * 
+         * A        B
+         * 
+         */
+        
+        this.addQuad(b, d, c, a);
+        this.addQuad(f, h, d, b);
+        this.addQuad(e, g, h, f);
+        this.addQuad(a, c, g, e);
+        this.addQuad(d, h, g, c);
+        this.addQuad(e, a, b, f);
     }
     
     // Add a quad with Vertor3f. Note: this is mainly used for debugging
