@@ -73,6 +73,12 @@ public class Blueprint extends AbstractJSONThingy
             
         }
         
+        // optional
+        public Vert(double x, double y)
+        {
+            this.loc.set(x, y);
+        }
+        
         public Vert(JSONObject data)
         {
             this.loc = new Vec2((JSONObject) data.get("location"));
@@ -169,7 +175,7 @@ public class Blueprint extends AbstractJSONThingy
     }
     public class Room extends AbstractJSONThingy
     {
-        public WallType wallType = new BasicWall();
+        public WallType wallType = new Fence();
         public List<Vert> vertPntrs = new ArrayList<Vert>();
         
         public String name;
@@ -188,7 +194,7 @@ public class Blueprint extends AbstractJSONThingy
             for(int i = 0; i < vertPntrs.size(); ++ i)
             {
                 Vert vert = vertPntrs.get(i);
-                polygon.vecs.add(vert.loc);
+                polygon.addVec(vert.loc);
             }
             
             return polygon;

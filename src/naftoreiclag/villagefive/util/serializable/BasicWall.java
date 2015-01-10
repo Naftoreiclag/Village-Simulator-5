@@ -8,20 +8,21 @@ package naftoreiclag.villagefive.util.serializable;
 
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.math.Polygon;
 
 public class BasicWall extends WallType
 {
 
     @Override
-    public Geometry makeInside(Polygon polygon)
+    public Spatial makeInside(Polygon polygon)
     {
         Mesh inM = polygon.genInsideWall(0.2f, 7f, 3f, 3f);
         return new Geometry("Inside", inM);
     }
 
     @Override
-    public Geometry makeOutside(Polygon polygon)
+    public Spatial makeOutside(Polygon polygon)
     {
         Mesh outM = polygon.genOutsideWall(0.2f, 7f, 3f, 3f);
         return new Geometry("Outside", outM);

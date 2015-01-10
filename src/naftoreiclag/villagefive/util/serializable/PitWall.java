@@ -7,12 +7,26 @@
 package naftoreiclag.villagefive.util.serializable;
 
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.math.Polygon;
 
-public abstract class WallType
+public class PitWall extends WallType
 {
-    public abstract Spatial makeInside(Polygon polygon);
-    
-    public abstract Spatial makeOutside(Polygon polygon);
+
+    @Override
+    public Spatial makeInside(Polygon polygon)
+    {
+        Node node = new Node();
+        
+        
+        
+        return node;
+    }
+
+    @Override
+    public Spatial makeOutside(Polygon polygon)
+    {
+        return null;
+    }
 }
