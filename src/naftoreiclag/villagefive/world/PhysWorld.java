@@ -69,17 +69,17 @@ public class PhysWorld extends org.dyn4j.dynamics.World
     {
         if(shape instanceof Circle)
         {
-            return this.makeGeoCircle((Circle) shape);
+            return makeGeoCircle((Circle) shape);
         }
         else if(shape instanceof Polygon)
         {
-            return this.makeGeoPoly((Polygon) shape);
+            return makeGeoPoly((Polygon) shape);
         }
         
         return null;
     }
 
-    private Mesh makeGeoCircle(Circle circle)
+    public static Mesh makeGeoCircle(Circle circle)
     {
         int num = 16;
         
@@ -106,7 +106,7 @@ public class PhysWorld extends org.dyn4j.dynamics.World
         return mesh;
     }
 
-    private Mesh makeGeoPoly(Polygon polygon)
+    public static Mesh makeGeoPoly(Polygon polygon)
     {
         
         
@@ -121,6 +121,21 @@ public class PhysWorld extends org.dyn4j.dynamics.World
             
             v.put(loc.getXF()).put(0f).put(loc.getYF());
         }
+        
+        mesh.setBuffer(VertexBuffer.Type.Position, 3, v);
+
+        mesh.updateBound();
+        return mesh;
+    }
+    public static Mesh makeGeoLine(Vec2 a, Vec2 b)
+    {
+        
+        
+        Mesh mesh = new Mesh();
+        mesh.setMode(Mesh.Mode.LineLoop);
+        FloatBuffer v = BufferUtils.createFloatBuffer(2 * 3);
+        v.put(a.getXF()).put(0f).put(a.getYF());
+        v.put(b.getXF()).put(0f).put(b.getYF());
         
         mesh.setBuffer(VertexBuffer.Type.Position, 3, v);
 

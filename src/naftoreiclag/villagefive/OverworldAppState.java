@@ -38,6 +38,7 @@ import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import naftoreiclag.villagefive.util.serializable.Blueprint;
+import naftoreiclag.villagefive.util.serializable.BlueprintUtil;
 import naftoreiclag.villagefive.world.plot.Plot;
 import org.json.simple.parser.ParseException;
 
@@ -236,17 +237,16 @@ public class OverworldAppState extends AbstractAppState
         plot.setLocation(new Vec2(260, 260));
         world.materializePlot(plot);
         
-        /*
         Random rand = new Random(1337);
         
         for(int i = 0; i < 10; ++ i)
         {
             Plot newPlot = new Plot();
+            newPlot.setBlueprint(BlueprintUtil.makeSimple(30, 30));
             newPlot.setLocation(new Vec2(rand.nextDouble() * 512, rand.nextDouble() * 512));
             
             world.materializePlot(newPlot);
         }
-        */
     }
 
     private void loadworld()

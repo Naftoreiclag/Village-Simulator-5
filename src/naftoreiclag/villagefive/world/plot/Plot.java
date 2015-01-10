@@ -9,6 +9,7 @@ package naftoreiclag.villagefive.world.plot;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import java.util.HashMap;
 import java.util.Map;
 import naftoreiclag.villagefive.Main;
@@ -25,6 +26,7 @@ import org.dyn4j.dynamics.Body;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
+// Unlike the entities (which stores location), this stores its location separately as a Vec2
 public class Plot extends Mundane implements JSONAware
 {
     public Blueprint blueprint = new Blueprint();
@@ -66,30 +68,34 @@ public class Plot extends Mundane implements JSONAware
         for(Blueprint.Room room : blueprint.rooms)
         {
             Polygon polygon = room.toPolygon();
-
             Node roomNode = new Node();
-
+            
             Mesh floorM = polygon.genFloor(0.2f, 7f, 3f, 3f);
             Geometry floorG = new Geometry("Floor", floorM);
             floorG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(floorG);
 
-            Geometry outG = room.wallType.makeOutside(polygon);
-            outG.setMaterial(Main.mat_debug_bricks);
-            roomNode.attachChild(outG);
+            Spatial outG = room.wallType.makeOutside(polygon);
+            if(outG != null)
+            {
+                outG.setName("Outside");
+                outG.setMaterial(Main.mat_debug_bricks);
+                roomNode.attachChild(outG);
+            }
 
-            Geometry inG = room.wallType.makeInside(polygon);
-            inG.setMaterial(Main.mat_debug_bricks);
-            roomNode.attachChild(inG);
+            Spatial inG = room.wallType.makeInside(polygon);
+            if(inG != null)
+            {
+                inG.setName("Inside");
+                inG.setMaterial(Main.mat_debug_bricks);
+                roomNode.attachChild(inG);
+            }
 
+            /*
             Mesh rM = polygon.genRoof(3f, 3f);
             Geometry rG = new Geometry("Roof", rM);
             rG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(rG);
-
-            /*
-            roomNodes.put(room.getJsonIndex(), roomNode);
-            System.out.println("loaded: " + room.getId());
             */
 
             node.attachChild(roomNode);
@@ -173,6 +179,12 @@ public class Plot extends Mundane implements JSONAware
             this.getNode().attachChild(doorEnt.getNode());
         }
         */
+    }
+
+    // Updates the body/node
+    public void updateLoc()
+    {
+        this.setLocation(loc);
     }
 
 }

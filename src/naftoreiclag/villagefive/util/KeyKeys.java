@@ -45,6 +45,8 @@ public class KeyKeys implements ActionListener
     public static final String save = "save";
     public static final String load = "load";
     
+    public static final String interact = "interact";
+    
     public static final String openInv = "toggle inventory";
     
     public static final String fastforward = "Fast Forward";
@@ -89,6 +91,8 @@ public class KeyKeys implements ActionListener
         inputManager.addMapping(KeyKeys.num_7, new KeyTrigger(KeyInput.KEY_7));
         inputManager.addMapping(KeyKeys.num_8, new KeyTrigger(KeyInput.KEY_8));
         inputManager.addMapping(KeyKeys.num_9, new KeyTrigger(KeyInput.KEY_9));
+        
+        inputManager.addMapping(KeyKeys.interact, new KeyTrigger(KeyInput.KEY_R));
         
         inputManager.addMapping(KeyKeys.openInv, new KeyTrigger(KeyInput.KEY_X));
         

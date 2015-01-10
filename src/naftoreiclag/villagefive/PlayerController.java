@@ -17,10 +17,15 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
+import java.util.List;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.SmoothAngle;
 import naftoreiclag.villagefive.util.math.SmoothScalar;
 import naftoreiclag.villagefive.util.math.Vec2;
+import naftoreiclag.villagefive.world.PhysWorld;
+import naftoreiclag.villagefive.world.rays.InteractRay;
+import org.dyn4j.dynamics.RaycastResult;
 
 public class PlayerController extends EntityController implements ActionListener, AnalogListener
 {
@@ -55,6 +60,25 @@ public class PlayerController extends EntityController implements ActionListener
         zoomLevel.enableClamp(25, 50);
     }
     
+    public void interact()
+    {
+        InteractRay ray = new InteractRay(puppet, puppet.getRotation().toNormalVec());
+
+        List<RaycastResult> results = new ArrayList<RaycastResult>();
+
+        world.physics.raycast(ray, 5.0f, false, false, results);
+        
+        if(!results.isEmpty())
+        {
+            System.out.println("interacted!");
+        }
+        else
+        {
+            System.out.println("fail");
+        }
+        
+    }
+    
     ReiCamera cam;
     Spatial ground;
     boolean turningLeft = false;
@@ -69,16 +93,17 @@ public class PlayerController extends EntityController implements ActionListener
     public void setManager(InputManager inputManager)
     {
         this.inputManager = inputManager;
-        this.inputManager.addListener(this, KeyKeys.move_backward, 
-                                 KeyKeys.move_forward, 
-                                 KeyKeys.move_left, 
-                                 KeyKeys.move_right, 
-                                 KeyKeys.rotate_camera_left, 
-                                 KeyKeys.rotate_camera_right, 
-                                 KeyKeys.mouse_left,
-                                    KeyKeys.mouse_scroll_up,
-                                    KeyKeys.mouse_scroll_down,
-                                 KeyKeys.openInv);
+        this.inputManager.addListener(this, KeyKeys.move_backward,
+                                      KeyKeys.move_forward,
+                                      KeyKeys.move_left,
+                                      KeyKeys.move_right,
+                                      KeyKeys.rotate_camera_left,
+                                      KeyKeys.rotate_camera_right,
+                                      KeyKeys.mouse_left,
+                                      KeyKeys.mouse_scroll_up,
+                                      KeyKeys.mouse_scroll_down,
+                                      KeyKeys.openInv,
+                                      KeyKeys.interact);
     }
 
     public Vector3f whereClickingOnGround()
@@ -161,6 +186,10 @@ public class PlayerController extends EntityController implements ActionListener
         if(key.equals(KeyKeys.mouse_left))
         {
             leftClick = isPressed;
+        }
+        if(key.equals(KeyKeys.interact))
+        {
+            this.interact();
         }
         if(key.equals(KeyKeys.openInv))
         {
