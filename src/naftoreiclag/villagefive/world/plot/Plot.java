@@ -14,7 +14,6 @@ import java.util.Map;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.OreDict;
-import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.serializable.BlueprintBuilder;
