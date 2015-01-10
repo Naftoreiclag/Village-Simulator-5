@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
-import naftoreiclag.villagefive.util.serializable.BlueprintBuilder;
+import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.world.plot.Plot;
 import org.json.simple.parser.ParseException;
 
@@ -68,10 +68,10 @@ public class OverworldAppState extends AbstractAppState
     
     ReiCamera rcam;
     
-    BlueprintBuilder house;
+    Blueprint house;
     Inventory inv;
     
-    public void gimmiePlot(BlueprintBuilder house)
+    public void gimmiePlot(Blueprint house)
     {
         this.house = house;
     }

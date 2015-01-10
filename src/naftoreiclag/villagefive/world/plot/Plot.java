@@ -16,8 +16,8 @@ import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.util.math.Vec2;
-import naftoreiclag.villagefive.util.serializable.BlueprintBuilder;
-import naftoreiclag.villagefive.util.serializable.BlueprintBuilder.Room;
+import naftoreiclag.villagefive.util.serializable.Blueprint;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Room;
 import naftoreiclag.villagefive.world.Mundane;
 import naftoreiclag.villagefive.world.World;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
@@ -27,7 +27,7 @@ import org.json.simple.JSONObject;
 
 public class Plot extends Mundane implements JSONAware
 {
-    public BlueprintBuilder blueprint = new BlueprintBuilder();
+    public Blueprint blueprint = new Blueprint();
     private Map<Integer, Node> roomNodes = new HashMap<Integer, Node>();
     protected Node node;
     protected Body body;
@@ -39,7 +39,7 @@ public class Plot extends Mundane implements JSONAware
     
     public Plot() {}
     
-    public void setBlueprint(BlueprintBuilder data)
+    public void setBlueprint(Blueprint data)
     {
         this.blueprint = data;
     }
@@ -63,7 +63,7 @@ public class Plot extends Mundane implements JSONAware
         this.node = new Node();
         
         // For each room
-        for(BlueprintBuilder.Room room : blueprint.rooms)
+        for(Blueprint.Room room : blueprint.rooms)
         {
             Polygon polygon = room.toPolygon();
 
@@ -135,7 +135,7 @@ public class Plot extends Mundane implements JSONAware
     public Plot(JSONObject data)
     {
         this.loc = new Vec2((JSONObject) data.get("location"));
-        this.blueprint = new BlueprintBuilder((JSONObject) data.get("blueprint"));
+        this.blueprint = new Blueprint((JSONObject) data.get("blueprint"));
     }
 
     public String toJSONString()

@@ -15,7 +15,7 @@ import naftoreiclag.villagefive.util.math.Vec2;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class BlueprintBuilder extends AbstractJSONThingy
+public class Blueprint extends AbstractJSONThingy
 {
     // Name, duh
     public String name;
@@ -27,12 +27,12 @@ public class BlueprintBuilder extends AbstractJSONThingy
     public List<Vert> verts = new ArrayList<Vert>();
     public List<Door> doors = new ArrayList<Door>();
     
-    public BlueprintBuilder()
+    public Blueprint()
     {
         
     }
     
-    public BlueprintBuilder(JSONObject obj)
+    public Blueprint(JSONObject obj)
     {
         name = (String) obj.get("name");
         

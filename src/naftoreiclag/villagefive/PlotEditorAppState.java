@@ -47,10 +47,10 @@ import naftoreiclag.villagefive.util.scenegraph.BlueprintGeoGen;
 import naftoreiclag.villagefive.util.math.SmoothAngle;
 import naftoreiclag.villagefive.util.math.SmoothScalar;
 import naftoreiclag.villagefive.util.math.Vec2;
-import naftoreiclag.villagefive.util.serializable.BlueprintBuilder;
-import naftoreiclag.villagefive.util.serializable.BlueprintBuilder.Door;
-import naftoreiclag.villagefive.util.serializable.BlueprintBuilder.Room;
-import naftoreiclag.villagefive.util.serializable.BlueprintBuilder.Vert;
+import naftoreiclag.villagefive.util.serializable.Blueprint;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Door;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Room;
+import naftoreiclag.villagefive.util.serializable.Blueprint.Vert;
 
 import org.lwjgl.BufferUtils;
 
@@ -74,7 +74,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     private ViewPort viewPort;
 	private RenderManager renderManager;
     
-    BlueprintBuilder plotData = new BlueprintBuilder();
+    Blueprint plotData = new Blueprint();
 
     Material strokeMat;
     
