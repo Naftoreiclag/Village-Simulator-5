@@ -8,27 +8,17 @@ package naftoreiclag.villagefive.world;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.Control;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.Vec2;
-import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
-import naftoreiclag.villagefive.util.serializable.Blueprint;
-import naftoreiclag.villagefive.util.serializable.Blueprint.Decal;
-import naftoreiclag.villagefive.util.serializable.Blueprint.Face;
-import naftoreiclag.villagefive.util.serializable.Blueprint.Vert;
 import naftoreiclag.villagefive.world.chunk.Chunk;
-import naftoreiclag.villagefive.world.entity.DoorEntity;
 import naftoreiclag.villagefive.world.entity.EntityRegistry;
 import org.dyn4j.collision.AxisAlignedBounds;
 import org.dyn4j.collision.Bounds;
@@ -159,6 +149,7 @@ public class World implements JSONAware
     // Are you in room
     public boolean insideRoom(Vec2 loc2)
     {
+        /*
         Vector3f loc3 = OreDict.Vec2ToVec3(loc2);
         
         for(Plot plot : plots)
@@ -176,6 +167,7 @@ public class World implements JSONAware
                 }
             }
         }
+        */
         
         return false;
     }
@@ -194,6 +186,7 @@ public class World implements JSONAware
         
         Vector3f loc3 = OreDict.Vec2ToVec3(loc2);
         
+        /*
         for(Plot plot : plots)
         {
             Vector3f relPos3 = plot.getNode().worldToLocal(loc3, null);
@@ -217,6 +210,7 @@ public class World implements JSONAware
                 }
             }
         }
+        */
 
 
         

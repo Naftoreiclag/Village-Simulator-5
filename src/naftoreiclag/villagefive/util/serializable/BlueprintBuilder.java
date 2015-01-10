@@ -9,12 +9,10 @@ package naftoreiclag.villagefive.util.serializable;
 import java.util.ArrayList;
 import java.util.List;
 import naftoreiclag.villagefive.util.json.AbstractJSONThingy;
-import naftoreiclag.villagefive.util.json.JSONThingy;
 import naftoreiclag.villagefive.util.json.JSONUtil;
 import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.util.math.Vec2;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 public class BlueprintBuilder extends AbstractJSONThingy
@@ -22,13 +20,24 @@ public class BlueprintBuilder extends AbstractJSONThingy
     // Name, duh
     public String name;
     
+    public int width;
+    public int height;
+    
     public List<Room> rooms = new ArrayList<Room>();
     public List<Vert> verts = new ArrayList<Vert>();
     public List<Door> doors = new ArrayList<Door>();
     
+    public BlueprintBuilder()
+    {
+        
+    }
+    
     public BlueprintBuilder(JSONObject obj)
     {
         name = (String) obj.get("name");
+        
+        width = ((Long) obj.get("width")).intValue();
+        height = ((Long) obj.get("height")).intValue();
         
         verts = JSONUtil.readList(obj, "vertexes", Vert.class);
         doors = JSONUtil.readList(obj, "doors", Door.class);
@@ -36,9 +45,12 @@ public class BlueprintBuilder extends AbstractJSONThingy
     }
 
     @Override
-    public void dopeJsonObject(JSONObject obj)
+    public void populateJson(JSONObject obj)
     {
         obj.put("name", name);
+        
+        obj.put("width", width);
+        obj.put("height", height);
         
         obj.put("vertexes", JSONUtil.encodeList(verts));
         obj.put("doors", JSONUtil.encodeList(doors));
@@ -47,15 +59,20 @@ public class BlueprintBuilder extends AbstractJSONThingy
     
     public class Vert extends AbstractJSONThingy
     {
-        public Vec2 loc;
+        public Vec2 loc = new Vec2();
 
+        public Vert()
+        {
+            
+        }
+        
         public Vert(JSONObject data)
         {
             this.loc = new Vec2((JSONObject) data.get("location"));
         }
 
-
-        public void dopeJsonObject(JSONObject obj)
+        @Override
+        public void populateJson(JSONObject obj)
         {
             obj.put("location", loc);
         }
@@ -64,12 +81,18 @@ public class BlueprintBuilder extends AbstractJSONThingy
     {
         public WallLoc loc;
         
+        public Door()
+        {
+            loc = new WallLoc();
+        }
+        
         public Door(JSONObject data)
         {
             loc = new WallLoc((JSONObject) data.get("location"));
         }
 
-        public void dopeJsonObject(JSONObject obj)
+        @Override
+        public void populateJson(JSONObject obj)
         {
             obj.put("location", loc);
         }
@@ -79,27 +102,60 @@ public class BlueprintBuilder extends AbstractJSONThingy
         public Vert a;
         public Vert b;
         public double x;
+
+        private WallLoc()
+        {
+            a = null;
+            b = null;
+            x = 0;
+        }
         
         public WallLoc(JSONObject data)
         {
-            a = verts.get(((Long) data.get("a")).intValue());
-            b = verts.get(((Long) data.get("b")).intValue());
+            int ai = ((Long) data.get("a")).intValue();
+            int bi = ((Long) data.get("b")).intValue();
+            
+            if(ai < 0 || bi < 0)
+            {
+                a = verts.get(0);
+                b = verts.get(0);
+            }
+            else
+            {
+                a = verts.get(ai);
+                b = verts.get(bi);
+            }
             x = (Double) data.get("x");
+            
         }
 
-        public void dopeJsonObject(JSONObject obj)
+        public void populateJson(JSONObject obj)
         {
-            obj.put("a", a.getJsonIndex());
-            obj.put("b", b.getJsonIndex());
+            if(a == null || b == null)
+            {
+                obj.put("a", -1);
+                obj.put("b", -1);
+            }
+            else
+            {
+                obj.put("a", a.getJsonIndex());
+                obj.put("b", b.getJsonIndex());
+            }
+            
             obj.put("x", x);
         }
     }
     public class Room extends AbstractJSONThingy
     {
         public WallType wallType;
-        public List<Vert> vertPntrs;
+        public List<Vert> vertPntrs = new ArrayList<Vert>();
         
         public String name;
+        
+        public Room()
+        {
+            
+        }
         
         public Polygon toPolygon()
         {
@@ -127,7 +183,7 @@ public class BlueprintBuilder extends AbstractJSONThingy
             }
         }
 
-        public void dopeJsonObject(JSONObject obj)
+        public void populateJson(JSONObject obj)
         {
             obj.put("name", name);
             obj.put("vertexPointers", JSONUtil.encodePntrList(vertPntrs));

@@ -7,10 +7,7 @@ package naftoreiclag.villagefive;
 
 import naftoreiclag.villagefive.gui.SpritePlane;
 import naftoreiclag.villagefive.util.ReiCamera;
-import naftoreiclag.villagefive.util.serializable.Blueprint;
-import naftoreiclag.villagefive.world.entity.PinguinEntity;
 import naftoreiclag.villagefive.world.entity.PlayerEntity;
-import naftoreiclag.villagefive.world.entity.DoorEntity;
 import naftoreiclag.villagefive.world.World;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -21,14 +18,8 @@ import com.jme3.input.ChaseCamera;
 import com.jme3.input.InputManager;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
-import com.jme3.material.Material;
-import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.niftygui.NiftyJmeDisplay;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.BloomFilter;
-import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -36,12 +27,8 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.VertexBuffer;
-import com.jme3.scene.shape.Quad;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
-import com.jme3.texture.Texture;
-import com.jme3.ui.Picture;
 import de.lessvoid.nifty.Nifty;
 import java.io.IOException;
 import java.util.Random;
@@ -50,7 +37,7 @@ import java.util.logging.Logger;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
-import naftoreiclag.villagefive.world.entity.StoolEntity;
+import naftoreiclag.villagefive.util.serializable.BlueprintBuilder;
 import naftoreiclag.villagefive.world.plot.Plot;
 import org.json.simple.parser.ParseException;
 
@@ -81,10 +68,10 @@ public class OverworldAppState extends AbstractAppState
     
     ReiCamera rcam;
     
-    Blueprint house;
+    BlueprintBuilder house;
     Inventory inv;
     
-    public void gimmiePlot(Blueprint house)
+    public void gimmiePlot(BlueprintBuilder house)
     {
         this.house = house;
     }

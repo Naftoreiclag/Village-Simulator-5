@@ -25,7 +25,7 @@ public abstract class AbstractJSONThingy implements JSONThingy
     public String toJSONString()
     {
         JSONObject dummy = new JSONObject();
-        this.dopeJsonObject(dummy);
+        this.populateJson(dummy);
         return dummy.toJSONString();
     }
 }

@@ -17,6 +17,8 @@ import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.math.Polygon;
 import naftoreiclag.villagefive.util.math.Vec2;
+import naftoreiclag.villagefive.util.serializable.BlueprintBuilder;
+import naftoreiclag.villagefive.util.serializable.BlueprintBuilder.Room;
 import naftoreiclag.villagefive.world.Mundane;
 import naftoreiclag.villagefive.world.World;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
@@ -26,8 +28,8 @@ import org.json.simple.JSONObject;
 
 public class Plot extends Mundane implements JSONAware
 {
-    public Blueprint blueprint = new Blueprint();
-    public Map<Integer, Node> roomNodes = new HashMap<Integer, Node>();
+    public BlueprintBuilder blueprint = new BlueprintBuilder();
+    private Map<Integer, Node> roomNodes = new HashMap<Integer, Node>();
     protected Node node;
     protected Body body;
     
@@ -38,7 +40,7 @@ public class Plot extends Mundane implements JSONAware
     
     public Plot() {}
     
-    public void setBlueprint(Blueprint data)
+    public void setBlueprint(BlueprintBuilder data)
     {
         this.blueprint = data;
     }
@@ -62,9 +64,9 @@ public class Plot extends Mundane implements JSONAware
         this.node = new Node();
         
         // For each room
-        for(Blueprint.Face room : blueprint.getFaces())
+        for(BlueprintBuilder.Room room : blueprint.rooms)
         {
-            Polygon polygon = OreDict.roomToPoly(blueprint, room);
+            Polygon polygon = room.toPolygon();
 
             Node roomNode = new Node();
 
@@ -88,8 +90,10 @@ public class Plot extends Mundane implements JSONAware
             rG.setMaterial(Main.mat_debug_bricks);
             roomNode.attachChild(rG);
 
-            roomNodes.put(room.getId(), roomNode);
+            /*
+            roomNodes.put(room.getJsonIndex(), roomNode);
             System.out.println("loaded: " + room.getId());
+            */
 
             node.attachChild(roomNode);
         }
@@ -104,7 +108,7 @@ public class Plot extends Mundane implements JSONAware
     @Override
     public void createBody()
     {
-        if(blueprint.getFaces().length == 0)
+        if(blueprint.rooms.isEmpty())
         {
             this.body = null;
             return;
@@ -113,9 +117,9 @@ public class Plot extends Mundane implements JSONAware
         Body newBod = new Body();
 
         // For each room
-        for(Blueprint.Face room : blueprint.getFaces())
+        for(Room room : blueprint.rooms)
         {
-            Polygon polygon = OreDict.roomToPoly(blueprint, room);
+            Polygon polygon = room.toPolygon();
 
             polygon.makeBody(newBod, 0.4);
         }
@@ -132,7 +136,7 @@ public class Plot extends Mundane implements JSONAware
     public Plot(JSONObject data)
     {
         this.loc = new Vec2((JSONObject) data.get("location"));
-        this.blueprint = new Blueprint((JSONObject) data.get("blueprint"));
+        this.blueprint = new BlueprintBuilder((JSONObject) data.get("blueprint"));
     }
 
     public String toJSONString()
@@ -148,6 +152,7 @@ public class Plot extends Mundane implements JSONAware
     public void spawnAttachedEntities(World aThis)
     {
         // Spawn attached entities
+        /*
         for(Blueprint.Decal d : blueprint.getDecals())
         {
             DoorEntity doorEnt = new DoorEntity();
@@ -170,6 +175,7 @@ public class Plot extends Mundane implements JSONAware
 
             this.getNode().attachChild(doorEnt.getNode());
         }
+        */
     }
 
 }

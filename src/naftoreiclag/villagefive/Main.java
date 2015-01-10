@@ -68,7 +68,7 @@ public class Main extends SimpleApplication implements ActionListener
         
         tas = new OverworldAppState();
         bas = new PlotEditorAppState();
-        stateManager.attach(tas);
+        stateManager.attach(bas);
         
         
     }

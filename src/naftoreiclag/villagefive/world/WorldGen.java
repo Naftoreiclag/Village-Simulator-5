@@ -12,7 +12,7 @@ public class WorldGen
 {
     public static World generate(Random rand)
     {
-        World ret = new World();
+        World ret = null;
         
         return ret;
     }

@@ -9,7 +9,6 @@ package naftoreiclag.villagefive.util.math;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import java.util.ArrayList;
-import naftoreiclag.villagefive.util.serializable.Blueprint;
 
 public class OreDict
 {
@@ -33,6 +32,7 @@ public class OreDict
         return new Vec2(vec.x, vec.z);
     }
     
+    /*
     public static Polygon roomToPoly(Blueprint data, Blueprint.Face room)
     {
         // Create a new polygon to represent it
@@ -72,4 +72,5 @@ public class OreDict
         }
         return polygon;
     }
+    */
 }

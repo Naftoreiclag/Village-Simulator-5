@@ -6,7 +6,6 @@
 
 package naftoreiclag.villagefive;
 
-import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -43,14 +42,15 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import naftoreiclag.villagefive.util.serializable.Blueprint.Decal;
-import naftoreiclag.villagefive.util.serializable.Blueprint.Face;
-import naftoreiclag.villagefive.util.serializable.Blueprint.Vert;
 
 import naftoreiclag.villagefive.util.scenegraph.BlueprintGeoGen;
 import naftoreiclag.villagefive.util.math.SmoothAngle;
 import naftoreiclag.villagefive.util.math.SmoothScalar;
 import naftoreiclag.villagefive.util.math.Vec2;
+import naftoreiclag.villagefive.util.serializable.BlueprintBuilder;
+import naftoreiclag.villagefive.util.serializable.BlueprintBuilder.Door;
+import naftoreiclag.villagefive.util.serializable.BlueprintBuilder.Room;
+import naftoreiclag.villagefive.util.serializable.BlueprintBuilder.Vert;
 
 import org.lwjgl.BufferUtils;
 
@@ -60,8 +60,8 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
 {
     public PlotEditorAppState()
 	{
-	    plotData.setWidth(15);
-	    plotData.setHeight(20);
+	    plotData.width = 15;
+	    plotData.height = 20;
 	}
 
 	private Main app;
@@ -74,7 +74,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     private ViewPort viewPort;
 	private RenderManager renderManager;
     
-    Blueprint plotData = new Blueprint();
+    BlueprintBuilder plotData = new BlueprintBuilder();
 
     Material strokeMat;
     
@@ -552,28 +552,28 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
         Material halfMat = wholeMat.clone();
         halfMat.setColor("Color", new ColorRGBA(1.0f, 1.0f, 1.0f, 0.2f));
         
-        int wid = plotData.getWidth();
+        int wid = plotData.width;
         wid /= 2;
-        int hei = plotData.getHeight();
+        int hei = plotData.height;
         hei /= 2;
         
         BlueprintGeoGen evenLines = new BlueprintGeoGen();
         for(float x = 0; x <= wid; ++ x)
         {
-            evenLines.addLine(x * 2, 0, x * 2, plotData.getHeight());
+            evenLines.addLine(x * 2, 0, x * 2, plotData.height);
         }
         for(float y = 0; y <= hei; ++ y)
         {
-            evenLines.addLine(0, y * 2, plotData.getWidth(), y * 2);
+            evenLines.addLine(0, y * 2, plotData.width, y * 2);
         }
         
         if(wid % 2 == 1)
         {
-            evenLines.addLine(plotData.getWidth(), 0, plotData.getWidth(), plotData.getHeight());
+            evenLines.addLine(plotData.width, 0, plotData.width, plotData.height);
         }
         if(hei % 2 == 1)
         {
-            evenLines.addLine(0, plotData.getHeight(), plotData.getWidth(), plotData.getHeight());
+            evenLines.addLine(0, plotData.height, plotData.width, plotData.height);
         }
         Mesh wholeMesh = evenLines.bake(0.04f, 10.0f, 1.0f, 1.0f);
         
@@ -584,11 +584,11 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
         BlueprintGeoGen oddLines = new BlueprintGeoGen();
         for(float x = 0; x < wid; ++ x)
         {
-            oddLines.addLine((x * 2) + 1, 0, (x * 2) + 1, plotData.getHeight());
+            oddLines.addLine((x * 2) + 1, 0, (x * 2) + 1, plotData.height);
         }
         for(float y = 0; y < hei; ++ y)
         {
-            oddLines.addLine(0, (y * 2) + 1, plotData.getWidth(), (y * 2) + 1);
+            oddLines.addLine(0, (y * 2) + 1, plotData.width, (y * 2) + 1);
         }
         Mesh halfMesh = oddLines.bake(0.04f, 10.0f, 1.0f, 1.0f);
         
@@ -606,7 +606,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     private Geometry makeFreeformGridNode()
     {
         BlueprintGeoGen maker = new BlueprintGeoGen();
-        maker.addRect(0, 0, plotData.getWidth(), plotData.getHeight());
+        maker.addRect(0, 0, plotData.width, plotData.height);
         Mesh mesh = maker.bake(0.02f, 20.0f, 1.0f, 1.0f);
         
         Geometry geo = new Geometry("Empty Grid", mesh);
@@ -622,8 +622,8 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
         IntBuffer i = BufferUtils.createIntBuffer(6);
         
         float b = 2;
-        float w = plotData.getWidth() + b;
-        float h = plotData.getHeight() + b;
+        float w = plotData.width + b;
+        float h = plotData.height + b;
         
         float tw = w + (2 * b);
         float th = h + (2 * b);
@@ -668,58 +668,39 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
     // 
     private void storePlotData()
     {
-        Vert[] verts = new Vert[flags.size()];
+        
+        
         for(int i = 0; i < flags.size(); ++ i)
         {
             MVert orig = flags.get(i);
-            
-            // Give every flag its id // This is a genius idea
             orig.id = i;
-            
-            Vert trans = new Vert();
-            trans.setX(orig.getLoc().getX());
-            trans.setZ(orig.getLoc().getY());
-            trans.setId(orig.id);
-            
-            verts[i] = trans;
+            Vert trans = plotData.new Vert();
+            trans.loc.set(orig.loc);
+            plotData.verts.add(trans);
         }
-        plotData.setVerts(verts);
         
-        Face[] faces = new Face[rooms.size()];
         for(int i = 0; i < rooms.size(); ++ i)
         {
             MRoom orig = rooms.get(i);
             
-            orig.id = i;
-            
-            Face trans = new Face();
-            
-            trans.setId(orig.id);
-            int[] vertices = new int[orig.flags.size()];
+            Room trans = plotData.new Room();
             for(int j = 0; j < orig.flags.size(); ++ j)
             {
-                vertices[j] = orig.flags.get(j).id;
+                trans.vertPntrs.add(plotData.verts.get(orig.flags.get(j).id));
             }
-            trans.setVerts(vertices);
-            
-            faces[i] = trans;
+            plotData.rooms.add(trans);
         }
-        plotData.setFaces(faces);
         
-        Decal[] decals = new Decal[doors.size()];
         for(int i = 0; i < doors.size(); ++ i)
         {
-            MDecal door = doors.get(i);
-            Decal trans = new Decal();
+            MDecal orig = doors.get(i);
+            Door trans = plotData.new Door();
+            trans.loc.a = plotData.verts.get(orig.loc.a.id);
+            trans.loc.b = plotData.verts.get(orig.loc.b.id);
+            trans.loc.x = orig.loc.distance;
             
-            trans.setVertA(door.loc.a.id);
-            trans.setVertB(door.loc.b.id);
-            trans.setDistance(door.loc.distance);
-            trans.width = door.width;
-            
-            decals[i] = trans;
+            plotData.doors.add(trans);
         }
-        plotData.setDecals(decals);
         
     }
     
