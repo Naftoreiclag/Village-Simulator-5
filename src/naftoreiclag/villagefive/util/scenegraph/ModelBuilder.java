@@ -9,12 +9,10 @@ package naftoreiclag.villagefive.util.scenegraph;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer.Type;
-import com.jme3.scene.shape.Box;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import naftoreiclag.villagefive.util.math.Vec2;
 import org.lwjgl.BufferUtils;
 
 public class ModelBuilder
@@ -171,7 +169,7 @@ public class ModelBuilder
     
     public void addDebugCube(Vector3f sp)
     {
-        float r = 0.1f;
+        float r = 0.3f;
         
         Vertex a = new Vertex(sp.x - r, sp.y - r, sp.z - r, Vector3f.UNIT_Y, 0f, 0f);
         Vertex b = new Vertex(sp.x + r, sp.y - r, sp.z - r, Vector3f.UNIT_Y, 1f, 0f);

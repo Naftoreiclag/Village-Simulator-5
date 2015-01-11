@@ -13,13 +13,10 @@ import naftoreiclag.villagefive.util.math.Polygon;
 
 public class PitWall extends WallType
 {
-
     @Override
     public Spatial makeInside(Polygon polygon)
     {
         Node node = new Node();
-        
-        
         
         return node;
     }

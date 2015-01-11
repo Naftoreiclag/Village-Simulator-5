@@ -6,15 +6,12 @@
 
 package naftoreiclag.villagefive.world.entity;
 
-import naftoreiclag.villagefive.world.World;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.Mundane;
 import org.dyn4j.dynamics.Body;
-import org.dyn4j.geometry.Circle;
-import org.dyn4j.geometry.Transform;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
