@@ -31,6 +31,13 @@ import org.json.simple.JSONObject;
 // Thingy that handles pretty much anything that can be considered a part of the world
 public class World implements JSONAware
 {
+    private static long globalId = 0;
+
+    public static long nextSid()
+    {
+        return globalId ++;
+    }
+    
     // Size in chunks
     public int width = 5;
     public int height = 5;
@@ -81,6 +88,25 @@ public class World implements JSONAware
                 chunks[x][z] = chunk;
             }
         }
+    }
+    
+    public World(JSONObject data)
+    {
+        globalId = (Long) data.get("nextId");
+    }
+
+    @Override
+    public String toJSONString()
+    {
+        JSONObject json = new JSONObject();
+        
+        json.put("nextId", globalId);
+        json.put("name", "swagland");
+        json.put("residents", residents);
+        json.put("entities", entities);
+        json.put("plots", plots);
+        
+        return json.toJSONString();
     }
     
     public void materializeEnvironment()
@@ -232,18 +258,6 @@ public class World implements JSONAware
     public void destroyEntity(Entity aThis)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String toJSONString()
-    {
-        JSONObject json = new JSONObject();
-        
-        json.put("name", "swagland");
-        json.put("entities", entities);
-        json.put("plots", plots);
-        
-        return json.toJSONString();
     }
 
     public void spawnFromJson(JSONObject worldj)

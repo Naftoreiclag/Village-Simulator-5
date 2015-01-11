@@ -24,7 +24,10 @@ import naftoreiclag.villagefive.util.math.SmoothAngle;
 import naftoreiclag.villagefive.util.math.SmoothScalar;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.PhysWorld;
+import naftoreiclag.villagefive.world.Resident;
+import naftoreiclag.villagefive.world.body.EntityBody;
 import naftoreiclag.villagefive.world.rays.InteractRay;
+import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.RaycastResult;
 
 public class PlayerController extends EntityController implements ActionListener, AnalogListener
@@ -68,14 +71,25 @@ public class PlayerController extends EntityController implements ActionListener
 
         world.physics.raycast(ray, 5.0f, false, false, results);
         
-        if(!results.isEmpty())
+        if(results.isEmpty())
         {
-            System.out.println("interacted!");
+            return;
         }
-        else
+        
+        RaycastResult hit = results.get(0);
+        Body bod = hit.getBody();
+        
+        if(!(bod instanceof EntityBody))
         {
-            System.out.println("fail");
+            return;
+            
         }
+
+        EntityBody oth = (EntityBody) bod;
+
+        System.out.println("hit " + oth.owner.getTypeName());
+        
+        
         
     }
     
@@ -311,6 +325,12 @@ public class PlayerController extends EntityController implements ActionListener
                 puppet.bodyAnimChannel.setSpeed(2.0f);
             }
         }
+    }
+
+    Resident resid;
+    void setResidence(Resident resid)
+    {
+        this.resid = resid;
     }
 
 

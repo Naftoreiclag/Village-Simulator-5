@@ -9,6 +9,7 @@ package naftoreiclag.villagefive.world.entity;
 import com.jme3.material.Material;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
+import naftoreiclag.villagefive.world.body.EntityBody;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Transform;
@@ -27,7 +28,7 @@ public class PinguinEntity extends Entity
     public void createBody()
     {
         Vec2 location = this.getLocation();
-        body = new Body();
+        body = new EntityBody(this);
         body.addFixture(new Circle(1), 5);
         body.setMass();
         this.setLocation(location);

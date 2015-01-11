@@ -11,6 +11,7 @@ import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.Mundane;
+import naftoreiclag.villagefive.world.World;
 import org.dyn4j.dynamics.Body;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
@@ -20,14 +21,20 @@ import org.json.simple.JSONObject;
 // Position and rotation are stored in the node
 public abstract class Entity extends Mundane implements JSONAware
 {
+    public long SID;
+    
     protected Body body = null;
     protected Node node = null;
+    
+    public Entity()
+    {
+        this.SID = World.nextSid();
+    }
     
     public void destroySelf()
     {
         this.world.destroyEntity(this);
     }
-    
     
     @Override
     public final Body getBody()
@@ -70,6 +77,7 @@ public abstract class Entity extends Mundane implements JSONAware
         
         obj.put("instanceof", this.getTypeName());
         obj.put("location", new Vec2(this.node.getLocalTranslation()));
+        
         this.addAdditionalData(obj);
         
         return obj.toJSONString();

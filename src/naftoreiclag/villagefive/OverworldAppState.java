@@ -39,6 +39,9 @@ import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.serializable.BlueprintUtil;
+import naftoreiclag.villagefive.world.Resident;
+import naftoreiclag.villagefive.world.entity.Entity;
+import naftoreiclag.villagefive.world.entity.StoolEntity;
 import naftoreiclag.villagefive.world.plot.Plot;
 import org.json.simple.parser.ParseException;
 
@@ -104,8 +107,8 @@ public class OverworldAppState extends AbstractAppState
         rcam.mode = ReiCamera.SmoothMode.cubic;
         
         
-        // genworld();
-        loadworld();
+        genworld();
+        // loadworld();
         
         setupInvScreen();
 
@@ -216,17 +219,25 @@ public class OverworldAppState extends AbstractAppState
         
     }
 
+    // its as dirty as possible
     private void genworld()
     {
         world = new World(stateRootNode, assetManager);
         world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        
+        Resident resid = new Resident();
+        world.residents.add(resid);
         
         player = new PlayerEntity();
         world.materializeEntity(player);
         player.setLocation(new Vec2(256, 256));
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
+        
+        resid.SID = player.SID;
+        
         playCont = new PlayerController();
+        playCont.setResidence(resid);
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
@@ -236,6 +247,10 @@ public class OverworldAppState extends AbstractAppState
         plot.setBlueprint(house);
         plot.setLocation(new Vec2(260, 260));
         world.materializePlot(plot);
+        
+        Entity stool = new StoolEntity();
+        world.materializeEntity(stool);
+        stool.setLocation(new Vec2(280, 280));
         
         Random rand = new Random(1337);
         

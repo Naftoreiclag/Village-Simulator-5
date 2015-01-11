@@ -6,32 +6,44 @@
 
 package naftoreiclag.villagefive.world;
 
-import naftoreiclag.villagefive.util.json.AbstractJSONThingy;
-import naftoreiclag.villagefive.util.json.JSONThingy;
+import java.util.ArrayList;
+import java.util.List;
+import naftoreiclag.villagefive.S;
+import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 // Hold information about a particular person
-public class Resident extends AbstractJSONThingy
+public class Resident implements JSONAware
 {
-    String name;
+    public long SID;
     
+    String name;
+    List<Long> propertySIDs = new ArrayList<Long>();
+    long entitySID;
 
-    public Resident() {}
+    public Resident()
+    {
+        SID = World.nextSid();
+    }
     
     public Resident(JSONObject data)
     {
+        this.SID = (Long) data.get("SID");
         this.name = (String) data.get("name");
+        this.entitySID = (Long) data.get("entitySID");
+        this.propertySIDs = (List<Long>) data.get("propertySIDs");
     }
     
-    @Override
-    public JSONThingy createFromJson(JSONObject data)
+    public String toJSONString()
     {
-        return new Resident(data);
-    }
-
-    public void populateJson(JSONObject obj)
-    {
+        JSONObject obj = new JSONObject();
+        
+        obj.put("SID", SID);
         obj.put("name", name);
+        obj.put("entitySID", entitySID);
+        obj.put("propertySIDs", propertySIDs);
+        
+        return obj.toJSONString();
     }
 
 }

@@ -20,6 +20,7 @@ public class EntityRegistry
         register(PinguinEntity.class);
         register(PlayerEntity.class);
         register(StoolEntity.class);
+        register(ForSaleEntity.class);
         //register(.class);
     }
     

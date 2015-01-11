@@ -29,6 +29,8 @@ import org.json.simple.JSONObject;
 // Unlike the entities (which stores location), this stores its location separately as a Vec2
 public class Plot extends Mundane implements JSONAware
 {
+    public long id;
+    
     public Blueprint blueprint = new Blueprint();
     private Map<Integer, Node> roomNodes = new HashMap<Integer, Node>();
     protected Node node;
@@ -37,9 +39,12 @@ public class Plot extends Mundane implements JSONAware
     public Vec2 loc = new Vec2();
     public double angle;
     
-    public long owner;
+    public long ownerId;
     
-    public Plot() {}
+    public Plot()
+    {
+        id = World.nextSid();
+    }
     
     public void setBlueprint(Blueprint data)
     {
@@ -138,6 +143,7 @@ public class Plot extends Mundane implements JSONAware
     
     public Plot(JSONObject data)
     {
+        this.id = (Long) data.get("id");
         this.loc = new Vec2((JSONObject) data.get("location"));
         this.blueprint = new Blueprint((JSONObject) data.get("blueprint"));
     }
@@ -146,6 +152,7 @@ public class Plot extends Mundane implements JSONAware
     {
         JSONObject obj = new JSONObject();
         
+        obj.put("id", id);
         obj.put("location", loc);
         obj.put("blueprint", blueprint);
         
