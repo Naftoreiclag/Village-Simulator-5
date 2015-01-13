@@ -14,12 +14,10 @@ import org.dyn4j.geometry.Circle;
 
 public class StoolEntity extends Entity
 {
-    
     @Override
     public void createNode()
     {
         node = ModelManipulator.loadNode("Models/stool/Stool.j3o");
-        
     }
     
 
