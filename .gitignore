@@ -16,3 +16,4 @@ saves/*
 
 lwjgl64.dll
 OpenAL64.dll
+plugins/

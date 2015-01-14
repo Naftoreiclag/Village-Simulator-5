@@ -41,6 +41,7 @@ import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.serializable.BlueprintUtil;
 import naftoreiclag.villagefive.world.Resident;
 import naftoreiclag.villagefive.world.entity.Entity;
+import naftoreiclag.villagefive.world.entity.ForSaleEntity;
 import naftoreiclag.villagefive.world.entity.StoolEntity;
 import naftoreiclag.villagefive.world.plot.Plot;
 import org.json.simple.parser.ParseException;
@@ -252,6 +253,7 @@ public class OverworldAppState extends AbstractAppState
         world.materializeEntity(stool);
         stool.setLocation(new Vec2(280, 280));
         
+        
         Random rand = new Random(1337);
         
         for(int i = 0; i < 10; ++ i)
@@ -261,6 +263,12 @@ public class OverworldAppState extends AbstractAppState
             newPlot.setLocation(new Vec2(rand.nextDouble() * 512, rand.nextDouble() * 512));
             
             world.materializePlot(newPlot);
+            
+            
+            ForSaleEntity sale = new ForSaleEntity();
+            sale.thingy = newPlot;
+            world.materializeEntity(sale);
+            sale.setLocation(newPlot.getLocation());
         }
     }
 

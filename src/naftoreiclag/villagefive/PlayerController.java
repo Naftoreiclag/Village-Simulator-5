@@ -26,6 +26,7 @@ import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.Resident;
 import naftoreiclag.villagefive.world.body.EntityBody;
+import naftoreiclag.villagefive.world.plot.Plot;
 import naftoreiclag.villagefive.world.rays.InteractRay;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.RaycastResult;
@@ -34,6 +35,8 @@ public class PlayerController extends EntityController implements ActionListener
 {
     public PlayerEntity puppet;
     public World world;
+    
+    public List<Plot> property;
 
     public void setEntity(PlayerEntity entity)
     {
@@ -89,7 +92,7 @@ public class PlayerController extends EntityController implements ActionListener
 
         System.out.println("hit " + oth.owner.getTypeName());
         
-        
+        oth.owner.onInteract(this);
         
     }
     

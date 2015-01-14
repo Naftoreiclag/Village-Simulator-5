@@ -255,9 +255,18 @@ public class World implements JSONAware
         return false;
     }
     
-    public void destroyEntity(Entity aThis)
+    public void destroyEntity(Entity ent)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.entities.remove(ent);
+        
+        if(ent.getNode() != null)
+        {
+            ent.getNode().removeFromParent();
+        }
+        if(ent.getBody() != null)
+        {
+            this.physics.removeBody(ent.getBody());
+        }
     }
 
     public void spawnFromJson(JSONObject worldj)
