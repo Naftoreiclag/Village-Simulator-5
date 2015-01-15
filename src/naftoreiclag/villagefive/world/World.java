@@ -141,6 +141,7 @@ public class World implements JSONAware
         
     }
     
+    @Deprecated
     public Plot materializePlot(Plot plot)
     {
         plot.assertWorld(this);
@@ -166,6 +167,7 @@ public class World implements JSONAware
         return plot;
     }
     
+    @Deprecated
     public void materializeEntity(Entity entity)
     {
         entity.assertWorld(this);
@@ -180,6 +182,26 @@ public class World implements JSONAware
         
         // Keep track of it
         entities.add(entity);
+    }
+    
+    public Entity materializeEntityByName(String name)
+    {
+        Entity entity = EntityRegistry.newInstance(name);
+        
+        entity.assertWorld(this);
+        
+        // Load the node
+        entity.createNode();
+        rootNode.attachChild(entity.getNode());
+        
+        // Body
+        entity.createBody();
+        if(entity.getBody() != null) { physics.addBody(entity.getBody()); }
+        
+        // Keep track of it
+        entities.add(entity);
+        
+        return entity;
     }
 
     
@@ -287,19 +309,7 @@ public class World implements JSONAware
         {
             JSONObject entityData = (JSONObject) obj;
             
-            Entity ddd = null;
-            try
-            {
-                ddd = EntityRegistry.entities.get((String) entityData.get("instanceof")).newInstance();
-            }
-            catch(InstantiationException ex)
-            {
-                Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch(IllegalAccessException ex)
-            {
-                Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Entity ddd = EntityRegistry.newInstance((String) entityData.get("isntanceof"));
             
             ddd.setLocation(new Vec2((JSONObject) entityData.get("location")));
             

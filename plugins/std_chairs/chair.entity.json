@@ -1,5 +1,5 @@
 {
-	"name":"chair",
+	"name":"eggchair",
 	"model":"chair.mesh.j3o",
 	"weight":5.0,
 	"physics":

@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Plugin {
@@ -14,7 +15,7 @@ public class Plugin {
     public final String namespace;
     public final String description;
     
-    public List<PluginEntity> entities;
+    public List<PluginEntity> entities = new ArrayList<PluginEntity>();
     
     Plugin(String name, String namespace, String description)
     {

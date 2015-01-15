@@ -8,10 +8,15 @@ package naftoreiclag.villagefive.world.entity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import naftoreiclag.villagefive.PluginEntity;
+import naftoreiclag.villagefive.world.World;
 
 public class EntityRegistry 
 {
     public static Map<String, Class<? extends Entity>> entities = new HashMap<String, Class<? extends Entity>>();
+    public static Map<String, ModEntity> modEntities = new HashMap<String, ModEntity>();
     
     static
     {
@@ -40,5 +45,39 @@ public class EntityRegistry
         }
 
         entities.put(entity.getTypeName(), gg);
+    }
+
+    public static void register(PluginEntity entity)
+    {
+        modEntities.put(entity.name, new ModEntity(entity));
+    }
+
+    public static Entity newInstance(String string)
+    {
+        
+        
+        Entity ddd = null;
+        
+        if(entities.containsKey(string))
+        {
+
+            try
+            {
+                ddd = entities.get(string).newInstance();
+            }
+            catch(InstantiationException ex)
+            {
+                Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch(IllegalAccessException ex)
+            {
+                Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else if(modEntities.containsKey(string))
+        {
+            ddd = modEntities.get(string).duplicate();
+        }
+        return ddd;
     }
 }
