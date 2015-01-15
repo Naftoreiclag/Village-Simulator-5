@@ -1,0 +1,10 @@
+{
+	"name":"chair",
+	"model":"chair.mesh.j3o",
+	"weight":5.0,
+	"physics":
+	{
+		"type":"circle",
+		"radius":1.0
+	}
+}

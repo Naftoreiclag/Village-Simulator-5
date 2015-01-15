@@ -51,6 +51,15 @@ public class Main extends SimpleApplication implements ActionListener
         SAM.a = this.assetManager;
         SAM.i = this.inputManager;
         
+        try
+        {
+        PluginLoader.loadPlugs();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        
         KeyKeys.hookInputs(inputManager);
         
         ModelManipulator.assetManager = this.assetManager;
@@ -69,8 +78,6 @@ public class Main extends SimpleApplication implements ActionListener
         tas = new OverworldAppState();
         bas = new PlotEditorAppState();
         stateManager.attach(bas);
-        
-        
     }
 
     @Override
