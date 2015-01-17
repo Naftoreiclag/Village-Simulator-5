@@ -1,5 +1,5 @@
 {
-	"name":"standard_chairs",
-	"namespace":"standard",
+	"name":"std_chairs",
+	"namespace":"std",
 	"description":"really cool plugin"
 }
