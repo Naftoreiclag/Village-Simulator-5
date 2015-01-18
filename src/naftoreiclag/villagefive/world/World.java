@@ -114,7 +114,7 @@ public class World implements JSONAware
         
     }
 
-    public boolean showPhysDebug = true;
+    public boolean showPhysDebug = false;
     public Node last = null;
 
     public void tick(float tpf)

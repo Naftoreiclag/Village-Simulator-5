@@ -20,6 +20,8 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -213,6 +215,11 @@ public class OverworldAppState extends AbstractAppState
         dlsr.setLambda(0.55f);
         dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
         //viewPort.addProcessor(dlsr);
+        
+        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+        BloomFilter bf = new BloomFilter(BloomFilter.GlowMode.Objects);
+        fpp.addFilter(bf);
+        viewPort.addProcessor(fpp);
 
         
         HorizQuad quad = new HorizQuad(-300, -300, 300, 300);

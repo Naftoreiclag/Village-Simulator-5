@@ -6,20 +6,17 @@
 
 package naftoreiclag.villagefive;
 
+import com.jme3.asset.TextureKey;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.FilenameUtils;
@@ -27,7 +24,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class Models
+public class PluginResourceManager
 {
     static
     {
@@ -35,6 +32,22 @@ public class Models
     }
     
     public static Map<String, ArrayList<File>> map = new HashMap<String, ArrayList<File>>();
+    
+    public static String relativize(File absName)
+    {
+        String work = System.getProperty("user.dir") + "\\" + PluginLoader.pluginDir + "\\";
+        String foo = absName.getAbsolutePath();
+        
+        System.out.println("Working Directory = " + foo);
+        System.out.println("Working Directory = " + work);
+        
+        if(foo.startsWith(work))
+        {
+            return foo.substring(work.length());
+        }
+        
+        return foo;
+    }
     
     public static void debug()
     {
@@ -124,7 +137,7 @@ public class Models
         else if(ext.equalsIgnoreCase("j3o"))
         {
             System.out.println("loading j3o model");
-            return SAM.a.loadModel(realLoc.getAbsolutePath().substring(65));
+            return SAM.a.loadModel(relativize(realLoc));
         }
         
         return null;
@@ -147,11 +160,12 @@ public class Models
             JSONObject data = (JSONObject) parser.parse(new FileReader(realLoc));
             
             Material mat = new Material(SAM.a, "Common/MatDefs/Light/Lighting.j3md");
-            
-            mat.setTexture("DiffuseMap", loadTexture((String) data.get("diffuse")));
             mat.setColor("Ambient", ColorRGBA.White);
             mat.setColor("Diffuse", ColorRGBA.White);
             mat.setBoolean("UseMaterialColors", true);
+            
+            mat.setTexture("DiffuseMap", loadTexture((String) data.get("diffuse")));
+            mat.setTexture("GlowMap", loadTexture((String) data.get("glow")));
             
             return mat;
         }
@@ -168,8 +182,9 @@ public class Models
     
     public static Texture loadTexture(File realLoc) throws IOException, ParseException
     {
-        System.out.println(realLoc.getAbsolutePath().substring(65));
+        TextureKey key = new TextureKey(relativize(realLoc));
+        key.setFlipY(false);
         
-        return SAM.a.loadTexture(realLoc.getAbsolutePath().substring(65));
+        return SAM.a.loadTexture(key);
     }
 }

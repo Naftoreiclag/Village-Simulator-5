@@ -1,4 +1,9 @@
 {
 	"name":"streetlamp",
 	"model":"streetlamp1.model.json"
+	"collision":
+	{
+		"type":"circle"
+		"radius":0.5
+	}
 }

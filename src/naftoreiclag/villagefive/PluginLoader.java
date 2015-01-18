@@ -28,17 +28,16 @@ class PluginLoader
 
     static void loadPlugs() throws FileNotFoundException, IOException, ParseException
     {
-        List<File> dirs = (List<File>) FileUtils.listFilesAndDirs(new File(pluginDir), FalseFileFilter.FALSE, TrueFileFilter.TRUE);
+        List<File> pluginRoots = (List<File>) FileUtils.listFilesAndDirs(new File(pluginDir), FalseFileFilter.FALSE, TrueFileFilter.TRUE);
         
-        // remove the base plugin directory
-        dirs.remove(0);
+        // Remove the plugins folder, not sure why its even included.
+        pluginRoots.remove(0);
         
         JSONParser parser = new JSONParser();
         
-        for(File dir : dirs)
+        for(File pluginRoot : pluginRoots)
         {
-                System.out.println(dir.getAbsolutePath());
-            File metaF = FileUtils.getFile(dir, "plugin.json");
+            File metaF = FileUtils.getFile(pluginRoot, "plugin.json");
             FileReader metaR = new FileReader(metaF);
             JSONObject meta = (JSONObject) parser.parse(metaR);
             
@@ -48,16 +47,16 @@ class PluginLoader
             
             Plugin plugin = new Plugin(pName, pSpace, pDesc);
             
-            if(!Models.map.containsKey(pSpace))
+            if(!PluginResourceManager.map.containsKey(pSpace))
             {
-                Models.map.put(pSpace, new ArrayList<File>());
+                PluginResourceManager.map.put(pSpace, new ArrayList<File>());
             }
-            Models.map.get(pSpace).add(dir);
+            PluginResourceManager.map.get(pSpace).add(pluginRoot);
             
             System.out.println(meta);
             
             
-            List<File> ents = (List<File>) FileUtils.listFiles(dir, new String[]{"entity.json", "ent.json"}, true);
+            List<File> ents = (List<File>) FileUtils.listFiles(pluginRoot, new String[]{"entity.json", "ent.json"}, true);
             
             System.out.println(ents);
             

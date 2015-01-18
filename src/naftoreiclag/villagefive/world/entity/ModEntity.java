@@ -13,7 +13,7 @@ import com.jme3.scene.Spatial;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import naftoreiclag.villagefive.Models;
+import naftoreiclag.villagefive.PluginResourceManager;
 import naftoreiclag.villagefive.PluginEntity;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
@@ -48,7 +48,7 @@ public class ModEntity extends Entity
         try
         {
             System.out.println(this.data.model);
-            Spatial geo = Models.loadModel("std:" + this.data.model);
+            Spatial geo = PluginResourceManager.loadModel("std:" + this.data.model);
             
             System.out.println(geo);
             

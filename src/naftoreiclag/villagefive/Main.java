@@ -55,7 +55,7 @@ public class Main extends SimpleApplication implements ActionListener
         try
         {
         PluginLoader.loadPlugs();
-        Models.debug();
+        PluginResourceManager.debug();
         System.out.println(FilenameUtils.getExtension("/test/test.foo.bar"));
         }
         catch(Exception e)
