@@ -1,0 +1,9 @@
+{
+	"name":"chair1",
+	"model":"chair1.model.json"
+	"collision":
+	{
+		"type":"circle"
+		"radius":0.5
+	}
+}

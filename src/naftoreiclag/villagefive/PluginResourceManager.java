@@ -59,6 +59,15 @@ public class PluginResourceManager
     
     public static File getRealLocation(String input)
     {
+        if(input == null)
+        {
+            return null;
+        }
+        if("null".equals(input))
+        {
+            return null;
+        }
+        
         String[] inputs = input.split(":");
         
         String namespace;

@@ -265,6 +265,8 @@ public class OverworldAppState extends AbstractAppState
             egg.setLocation(new Vec2(280, 280));
         // end test
         
+            Entity egg2 = world.materializeEntityByName("chair1");
+            egg2.setLocation(new Vec2(280, 280));
         
         Random rand = new Random(1337);
         
