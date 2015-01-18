@@ -10,10 +10,12 @@ public class PluginEntity
 {
     public final Plugin parent;
     public final String name;
+    public final String model;
     
-    public PluginEntity(Plugin parent, String name)
+    public PluginEntity(Plugin parent, String name, String model)
     {
         this.parent = parent;
         this.name = name;
+        this.model = model;
     }
 }

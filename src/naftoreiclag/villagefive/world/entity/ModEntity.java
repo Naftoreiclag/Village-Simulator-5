@@ -7,11 +7,19 @@
 package naftoreiclag.villagefive.world.entity;
 
 import com.jme3.material.Material;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import naftoreiclag.villagefive.Models;
 import naftoreiclag.villagefive.PluginEntity;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import naftoreiclag.villagefive.world.body.EntityBody;
 import org.dyn4j.geometry.Circle;
+import org.json.simple.parser.ParseException;
 
 public class ModEntity extends Entity
 {
@@ -36,9 +44,24 @@ public class ModEntity extends Entity
     @Override
     public void createNode()
     {
-        node = ModelManipulator.loadNode("Models/Knight.mesh.j3o");
-        Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
-        node.setMaterial(mat);
+        node = new Node();
+        try
+        {
+            System.out.println(this.data.model);
+            Spatial geo = Models.loadModel("std:" + this.data.model);
+            
+            System.out.println(geo);
+            
+            node.attachChild(geo);
+        }
+        catch(IOException ex)
+        {
+            Logger.getLogger(ModEntity.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch(ParseException ex)
+        {
+            Logger.getLogger(ModEntity.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override

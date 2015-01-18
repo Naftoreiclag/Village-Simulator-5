@@ -16,6 +16,7 @@ public class Plugin {
     public final String description;
     
     public List<PluginEntity> entities = new ArrayList<PluginEntity>();
+    public List<PluginModel> models = new ArrayList<PluginModel>();
     
     Plugin(String name, String namespace, String description)
     {

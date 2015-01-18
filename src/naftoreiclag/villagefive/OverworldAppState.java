@@ -254,7 +254,7 @@ public class OverworldAppState extends AbstractAppState
         stool.setLocation(new Vec2(280, 280));
         
         // try load modded stuff
-            Entity egg = world.materializeEntityByName("eggchair");
+            Entity egg = world.materializeEntityByName("streetlamp");
             egg.setLocation(new Vec2(280, 280));
         // end test
         

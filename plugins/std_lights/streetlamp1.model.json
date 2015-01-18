@@ -1,0 +1,5 @@
+{
+	"mesh":"streetlamp1.mesh.j3o"
+	"diffuse":"std:streetlamp1.diffuse.png"
+	"glow":"std:streetlamp1.glow.png"
+}

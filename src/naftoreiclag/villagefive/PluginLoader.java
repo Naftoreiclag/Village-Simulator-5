@@ -37,6 +37,7 @@ class PluginLoader
         
         for(File dir : dirs)
         {
+                System.out.println(dir.getAbsolutePath());
             File metaF = FileUtils.getFile(dir, "plugin.json");
             FileReader metaR = new FileReader(metaF);
             JSONObject meta = (JSONObject) parser.parse(metaR);
@@ -47,7 +48,14 @@ class PluginLoader
             
             Plugin plugin = new Plugin(pName, pSpace, pDesc);
             
+            if(!Models.map.containsKey(pSpace))
+            {
+                Models.map.put(pSpace, new ArrayList<File>());
+            }
+            Models.map.get(pSpace).add(dir);
+            
             System.out.println(meta);
+            
             
             List<File> ents = (List<File>) FileUtils.listFiles(dir, new String[]{"entity.json", "ent.json"}, true);
             
@@ -60,8 +68,9 @@ class PluginLoader
                 JSONObject data = (JSONObject) parser.parse(entR);
                 
                 String name = (String) data.get("name");
+                String model = (String) data.get("model");
                 
-                PluginEntity entity = new PluginEntity(plugin, name);
+                PluginEntity entity = new PluginEntity(plugin, name, model);
                 plugin.entities.add(entity);
                 
             }
