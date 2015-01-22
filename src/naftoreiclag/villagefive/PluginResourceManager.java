@@ -19,7 +19,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import naftoreiclag.villagefive.world.body.EntityBody;
+import naftoreiclag.villagefive.world.entity.Entity;
 import org.apache.commons.io.FilenameUtils;
+import org.dyn4j.dynamics.Body;
+import org.dyn4j.geometry.Circle;
+import org.dyn4j.geometry.Mass;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -37,9 +43,6 @@ public class PluginResourceManager
     {
         String work = System.getProperty("user.dir") + "\\" + PluginLoader.pluginDir + "\\";
         String foo = absName.getAbsolutePath();
-        
-        System.out.println("Working Directory = " + foo);
-        System.out.println("Working Directory = " + work);
         
         if(foo.startsWith(work))
         {
@@ -168,13 +171,29 @@ public class PluginResourceManager
             JSONParser parser = new JSONParser();
             JSONObject data = (JSONObject) parser.parse(new FileReader(realLoc));
             
-            Material mat = new Material(SAM.a, "Common/MatDefs/Light/Lighting.j3md");
+            Material mat;
+            if(usesShaderBlow(data))
+            {
+                mat = new Material(SAM.a, "ShaderBlow/MatDefs/LightBlow/LightBlow.j3md");
+                
+                if(data.containsKey("rim_lighting"))
+                {
+                    mat.setColor("RimLighting", getRGBA((JSONArray) data.get("rim_lighting")));
+                }
+            }
+            else
+            {
+                mat = new Material(SAM.a, "Common/MatDefs/Light/Lighting.j3md");
+            }
+            
             mat.setColor("Ambient", ColorRGBA.White);
             mat.setColor("Diffuse", ColorRGBA.White);
             mat.setBoolean("UseMaterialColors", true);
-            
+
             mat.setTexture("DiffuseMap", loadTexture((String) data.get("diffuse")));
             mat.setTexture("GlowMap", loadTexture((String) data.get("glow")));
+            
+            
             
             return mat;
         }
@@ -195,5 +214,64 @@ public class PluginResourceManager
         key.setFlipY(false);
         
         return SAM.a.loadTexture(key);
+    }
+    
+    public static Body loadBody(Entity owner, String input) throws IOException, ParseException
+    {
+        File realLoc = getRealLocation(input); if(realLoc == null) { return null; }
+        
+        return loadBody(owner, realLoc);
+    }
+    
+    public static Body loadBody(Entity owner, File realLoc) throws IOException, ParseException
+    {
+        Body body = new EntityBody(owner);
+        
+        JSONParser parser = new JSONParser();
+        JSONObject data = (JSONObject) ((JSONObject) parser.parse(new FileReader(realLoc))).get("collision");
+        
+        String type = (String) data.get("type");
+        
+        if(type.equalsIgnoreCase("circle"))
+        {
+            double radius = (Double) data.get("radius");
+            
+            System.out.println("aaaaa=" + radius);
+            
+            body.addFixture(new Circle(radius), 5);
+        }
+        
+        boolean immobile = false;
+        if(data.containsKey("immobile"))
+        {
+            immobile = (Boolean) data.get("immobile");
+        }
+        
+        if(immobile)
+        {
+            body.setMass(new Mass());
+        }
+        else
+        {
+            
+        body.setMass();
+        }
+        
+        
+        return body;
+    }
+
+    private static boolean usesShaderBlow(JSONObject data)
+    {
+        return data.containsKey("rim_lighting") || data.containsKey("matcap");
+    }
+
+    private static ColorRGBA getRGBA(JSONArray jsonArray)
+    {
+        double r = (Double) jsonArray.get(0);
+        double g = (Double) jsonArray.get(1);
+        double b = (Double) jsonArray.get(2);
+        
+        return new ColorRGBA((float) r, (float) g, (float) b, 1f);
     }
 }

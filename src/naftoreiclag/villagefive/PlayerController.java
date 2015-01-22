@@ -288,7 +288,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
         camDispl.tick(tpf);
 
-        puppet.applyTorque(-playerLook.calcSignedDiff(puppet.getRotation().getX()));
+        puppet.applyTorque(-playerLook.calcSignedDiff(puppet.getRotation().getX()), tpf);
     }
 
     private void tickMovementInput(float tpf)
@@ -320,7 +320,9 @@ public class PlayerController extends EntityController implements ActionListener
                 playerLook.tx = whereDoesThePlayerWantToGo();
             }
 
-            puppet.applyImpulse(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(tpf * speed));
+            //puppet.applyImpulse(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
+            puppet.applyForce(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
+            //puppet.setVelocity(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
 
             if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
             {

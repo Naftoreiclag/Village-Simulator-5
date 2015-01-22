@@ -143,12 +143,24 @@ public class OverworldAppState extends AbstractAppState
     
     boolean keyRel = true;
 
+    float seconds = 0f;
+    
     @Override
     public void update(float tpf)
     {
+        super.update(tpf);
+        
         if(KeyKeys.p_fastforward)
         {
             tpf *= 5;
+        }
+        
+        seconds += tpf;
+        
+        if(seconds > 1)
+        {
+            System.out.println("second");
+            seconds -= 1;
         }
         
         if(KeyKeys.p_save && keyRel)
@@ -169,7 +181,6 @@ public class OverworldAppState extends AbstractAppState
             keyRel = true;
         }
         
-        super.update(tpf);
         
         playCont.tick(tpf);
         world.tick(tpf);
@@ -268,6 +279,8 @@ public class OverworldAppState extends AbstractAppState
             Entity egg2 = world.materializeEntityByName("chair1");
             egg2.setLocation(new Vec2(280, 280));
         
+            world.materializeEntityByName("MarshmallowSeat").setLocation(new Vec2(280, 280));
+            
         Random rand = new Random(1337);
         
         for(int i = 0; i < 10; ++ i)

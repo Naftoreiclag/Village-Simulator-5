@@ -11,11 +11,13 @@ public class PluginEntity
     public final Plugin parent;
     public final String name;
     public final String model;
+    public final String filename;
     
-    public PluginEntity(Plugin parent, String name, String model)
+    public PluginEntity(Plugin parent, String name, String model, String filename)
     {
         this.parent = parent;
         this.name = name;
         this.model = model;
+        this.filename = filename;
     }
 }

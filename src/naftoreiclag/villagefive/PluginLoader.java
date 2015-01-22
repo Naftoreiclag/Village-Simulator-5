@@ -69,7 +69,7 @@ class PluginLoader
                 String name = (String) data.get("name");
                 String model = (String) data.get("model");
                 
-                PluginEntity entity = new PluginEntity(plugin, name, model);
+                PluginEntity entity = new PluginEntity(plugin, name, model, plugin.namespace + ":" + entF.getName());
                 plugin.entities.add(entity);
                 
             }
