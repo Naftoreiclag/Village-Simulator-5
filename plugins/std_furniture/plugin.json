@@ -1,5 +1,9 @@
 {
 	"name":"std_furniture",
 	"namespace":"std",
-	"description":"really cool plugin"
+	"description":"really cool plugin",
+	"advanced_settings": {
+		"automatic_entity_indexing":true
+	}
+	
 }

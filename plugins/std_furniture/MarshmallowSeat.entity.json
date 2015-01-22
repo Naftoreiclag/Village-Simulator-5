@@ -1,0 +1,9 @@
+{
+	"name":"MarshmallowSeat",
+	"model":"MarshmallowSeat.model.json"
+	"collision":
+	{
+		"type":"circle"
+		"radius":0.7
+	}
+}
