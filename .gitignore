@@ -2,7 +2,7 @@ nbproject/private/
 build/
 dist/
 donotinclude/
-assets/Models/_originalBlends/*
+assets/Models/_originalBlends/
 dni_*
 FourHills.java
 Main_*

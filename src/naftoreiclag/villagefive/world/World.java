@@ -20,6 +20,7 @@ import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
 import naftoreiclag.villagefive.world.chunk.Chunk;
 import naftoreiclag.villagefive.world.entity.EntityRegistry;
+import naftoreiclag.villagefive.world.rays.ControllerFilter;
 import naftoreiclag.villagefive.world.rays.DebugRayRenderer;
 import naftoreiclag.villagefive.world.rays.InteractRay;
 import org.dyn4j.collision.AxisAlignedBounds;
@@ -66,6 +67,7 @@ public class World implements JSONAware
         physics.setGravity(Vec2.ZERO_DYN4J);
         
         physics.addListener(new InteractRay.RaycastInteractFilter());
+        physics.addListener(new ControllerFilter());
         
         if(showPhysDebug)
         {
@@ -114,12 +116,13 @@ public class World implements JSONAware
         
     }
 
-    public boolean showPhysDebug = false;
+    public boolean showPhysDebug = true;
     public Node last = null;
 
     public void tick(float tpf)
     {
         physics.update(tpf);
+        
         
         if(showPhysDebug)
         {

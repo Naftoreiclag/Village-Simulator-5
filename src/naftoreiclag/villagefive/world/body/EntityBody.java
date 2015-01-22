@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive.world.body;
 
+import naftoreiclag.villagefive.PluginResourceManager;
 import naftoreiclag.villagefive.world.entity.Entity;
 import org.dyn4j.dynamics.Body;
 

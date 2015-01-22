@@ -12,6 +12,7 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.RaycastAdapter;
 import org.dyn4j.geometry.Ray;
 
+// Allows for an entity to try to "interact" with another body.
 public class InteractRay extends Ray
 {
     Entity whois;
@@ -28,6 +29,7 @@ public class InteractRay extends Ray
         this.whois = entity;
     }
     
+    // This is what listens for interaction of an InteractRay with an EntityBody and fires the appropriate events.
     public static class RaycastInteractFilter extends RaycastAdapter
     {
         @Override

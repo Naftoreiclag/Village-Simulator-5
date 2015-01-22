@@ -60,7 +60,7 @@ public abstract class Entity extends Mundane implements JSONAware
             this.node.setLocalTranslation(loc.getXF(), 0f, loc.getYF());
             this.node.setLocalRotation(rot.toQuaternion());
             
-            this.applyFriction();
+            this.applyFriction(tpf);
             
             this.onLocationChange(loc);
         }

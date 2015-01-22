@@ -67,12 +67,23 @@ public class ModEntity extends Entity
     @Override
     public void createBody()
     {
-        Vec2 location = this.getLocation();
-        body = new EntityBody(this);
-        body.addFixture(new Circle(1), 5);
-        body.setMass();
-       
-        this.setLocation(location);
+        try
+        {
+            Vec2 location = this.getLocation();
+            
+            body = PluginResourceManager.loadBody(this, data.filename);
+            
+           
+            this.setLocation(location);
+        }
+        catch(IOException ex)
+        {
+            Logger.getLogger(ModEntity.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch(ParseException ex)
+        {
+            Logger.getLogger(ModEntity.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

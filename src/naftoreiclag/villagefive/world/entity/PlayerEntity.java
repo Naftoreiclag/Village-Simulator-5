@@ -28,10 +28,7 @@ import naftoreiclag.villagefive.util.math.GR;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import naftoreiclag.villagefive.world.body.EntityBody;
-import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Circle;
-import org.dyn4j.geometry.Mass;
-import org.dyn4j.geometry.Transform;
 
 public class PlayerEntity extends Entity
 {
@@ -131,7 +128,7 @@ public class PlayerEntity extends Entity
     {
         Vec2 location = this.getLocation();
         body = new EntityBody(this);
-        body.addFixture(new Circle(1), 5);
+        body.addFixture(new Circle(0.7), 14);
         body.setMass();
         this.setLocation(location);
     }

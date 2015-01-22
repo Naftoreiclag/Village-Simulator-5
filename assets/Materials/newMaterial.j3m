@@ -1,0 +1,13 @@
+Material My Material : ShaderBlow/MatDefs/LightBlow/LightBlow.j3md {
+     MaterialParameters {
+        RimLighting2 : 0.0 0.0 0.0 1.0
+        Diffuse : 1.0 1.0 1.0 1.0
+        Ambient : 1.0 1.0 1.0 1.0
+        UseMaterialColors : true
+        UseVertexColor : false
+        DiffuseMap : Textures/debug.png
+        RimLighting : 1.0 0.0 0.0 1.0
+     }
+    AdditionalRenderState {
+    }
+}

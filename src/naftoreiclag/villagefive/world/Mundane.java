@@ -32,8 +32,9 @@ import org.dyn4j.geometry.Transform;
  */
 public abstract class Mundane
 {
-    private double linearFrictionCoeff = 5;
-    private double angularFrictionCoeff = 5;
+    private double linearFrictionCoeff = 0;
+    private double angularFrictionCoeff = 0;
+    private double forceCoeff = 2000;
     private double impulseCoeff = 20;
     private double torqueCoeff = 20;
     private double velocityCoeff = 50;
@@ -58,42 +59,55 @@ public abstract class Mundane
     public abstract void createBody();
     protected abstract Body getBody();
     
-    @Deprecated
-    public void setVelocity(Vec2 velocity)
+    public void setVelocity(Vec2 velocity, float tpf)
     {
         if(this.getBody() == null) { return; }
         
-        this.getBody().setLinearVelocity(velocity.mult(this.velocityCoeff).toDyn4j());
+        this.getBody().setLinearVelocity(velocity.mult(this.velocityCoeff * tpf).toDyn4j());
+    }
+
+    public void applyForce(Vec2 force, float tpf)
+    {
+        if(this.getBody() == null) { return; }
+        
+        this.getBody().applyForce(force.mult(this.forceCoeff * tpf).toDyn4j());
     }
     
-    public void applyImpulse(Vec2 impulse)
+    @Deprecated
+    public void applyImpulse(Vec2 force, float tpf)
     {
         if(this.getBody() == null) { return; }
         
-        this.getBody().applyImpulse(impulse.mult(this.impulseCoeff * this.linearFrictionCoeff).toDyn4j());
+        this.getBody().applyImpulse(force.mult(this.impulseCoeff * tpf).toDyn4j());
     }
-    public void applyImpulse(Vec2 impulse, Vec2 point)
+    @Deprecated
+    public void applyImpulse(Vec2 impulse, Vec2 point, float tpf)
     {
         if(this.getBody() == null) { return; }
         
-        this.getBody().applyImpulse(impulse.mult(this.impulseCoeff * this.linearFrictionCoeff).toDyn4j(), point.toDyn4j());
+        this.getBody().applyImpulse(impulse.mult(this.impulseCoeff * tpf).toDyn4j(), point.toDyn4j());
     }
-    public void applyTorque(double torque)
+    @Deprecated
+    public void applyTorque(double torque, float tpf)
     {
         if(this.getBody() == null) { return; }
         
-        this.getBody().applyTorque(torque * this.torqueCoeff * this.angularFrictionCoeff);
+        this.getBody().applyTorque(torque * this.torqueCoeff * tpf);
     }
-    public void applyFriction()
+    
+    
+    
+    // ???
+    public void applyFriction(float tpf)
     {
         if(this.getBody() == null) { return; }
         
         double angVel = this.getBody().getAngularVelocity();
-        this.getBody().applyTorque(angVel * -angularFrictionCoeff);
+        this.getBody().applyTorque(angVel * -angularFrictionCoeff * tpf);
         
         Vec2 currLinVel = new Vec2(this.getBody().getLinearVelocity());
-        currLinVel.multLocal(-linearFrictionCoeff);
-        this.getBody().applyForce(currLinVel.toDyn4j());
+        currLinVel.multLocal(-linearFrictionCoeff).multLocal(tpf);
+        this.getBody().applyImpulse(currLinVel.toDyn4j());
     }
     
     // Be careful when using this on physics objects!
