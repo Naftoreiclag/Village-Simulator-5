@@ -20,6 +20,7 @@ import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.serializable.Blueprint.Room;
 import naftoreiclag.villagefive.world.Mundane;
+import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.World;
 import naftoreiclag.villagefive.world.entity.DoorEntity;
 import org.dyn4j.dynamics.Body;
@@ -114,7 +115,7 @@ public class Plot extends Mundane implements JSONAware
     }
 
     @Override
-    public void createBody()
+    public void createBody(PhysWorld world)
     {
         if(blueprint.rooms.isEmpty())
         {
@@ -133,6 +134,8 @@ public class Plot extends Mundane implements JSONAware
         }
 
         this.body = newBod;
+        
+        world.addBody(body);
     }
 
     @Override

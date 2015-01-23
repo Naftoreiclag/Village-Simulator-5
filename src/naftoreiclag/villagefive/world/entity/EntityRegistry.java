@@ -20,13 +20,34 @@ public class EntityRegistry
     
     static
     {
+        try
+        {
+            System.out.println("bbbb");
         register(DoorEntity.class);
-        register(FlowerEntity.class);
+            System.out.println("bbbb");
         register(PinguinEntity.class);
+            System.out.println("bbbb");
         register(PlayerEntity.class);
+            System.out.println("bbbb");
         register(StoolEntity.class);
+            System.out.println("bbbb");
         register(ForSaleEntity.class);
+            System.out.println("bbbb");
+        }
+        catch(Exception e)
+        {
+            System.out.println("dddd");
+            printErrors(e);
+        }
         //register(.class);
+    }
+
+    static void printErrors(Throwable t)
+    {
+        for(StackTraceElement e : t.getStackTrace())
+        {
+            System.out.println(e);
+        }
     }
     
     public static <SomeEntity extends Entity> void register(Class<SomeEntity> gg)
@@ -39,7 +60,7 @@ public class EntityRegistry
         }
         catch(Exception ex)
         {
-            ex.printStackTrace();
+            printErrors(ex);
 
             return;
         }

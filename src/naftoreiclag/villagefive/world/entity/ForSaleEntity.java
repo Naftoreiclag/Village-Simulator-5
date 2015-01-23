@@ -10,6 +10,7 @@ import com.jme3.material.Material;
 import naftoreiclag.villagefive.PlayerController;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
+import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.body.EntityBody;
 import naftoreiclag.villagefive.world.plot.Plot;
 import org.dyn4j.geometry.Circle;
@@ -33,7 +34,7 @@ public class ForSaleEntity extends Entity
     }
 
     @Override
-    public void createBody()
+    public void createBody(PhysWorld world)
     {
         Vec2 location = this.getLocation();
         body = new EntityBody(this);
@@ -41,6 +42,8 @@ public class ForSaleEntity extends Entity
         body.setMass();
        
         this.setLocation(location);
+        
+        world.addBody(body);
     }
     
     @Override

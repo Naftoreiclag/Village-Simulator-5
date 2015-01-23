@@ -56,7 +56,7 @@ public abstract class Mundane
     public abstract void createNode();
     protected abstract Node getNode();
     
-    public abstract void createBody();
+    public abstract void createBody(PhysWorld world);
     protected abstract Body getBody();
     
     public void setVelocity(Vec2 velocity, float tpf)

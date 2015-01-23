@@ -8,6 +8,7 @@ package naftoreiclag.villagefive.world.entity;
 
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
+import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.body.EntityBody;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Circle;
@@ -22,13 +23,15 @@ public class StoolEntity extends Entity
     
 
     @Override
-    public void createBody()
+    public void createBody(PhysWorld world)
     {
         Vec2 location = this.getLocation();
         body = new EntityBody(this);
         body.addFixture(new Circle(1), 5);
         body.setMass();
         this.setLocation(location);
+        
+        world.addBody(body);
     }
     
     @Override

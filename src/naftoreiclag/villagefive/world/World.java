@@ -157,8 +157,7 @@ public class World implements JSONAware
         plot.spawnAttachedEntities(this);
         
         // Body
-        plot.createBody();
-        if(plot.getBody() != null) { physics.addBody(plot.getBody()); }
+        plot.createBody(this.physics);
         
         // Keep track of it
         plots.add(plot);
@@ -180,8 +179,7 @@ public class World implements JSONAware
         rootNode.attachChild(entity.getNode());
         
         // Body
-        entity.createBody();
-        if(entity.getBody() != null) { physics.addBody(entity.getBody()); }
+        entity.createBody(this.physics);
         
         // Keep track of it
         entities.add(entity);
@@ -198,8 +196,7 @@ public class World implements JSONAware
         rootNode.attachChild(entity.getNode());
         
         // Body
-        entity.createBody();
-        if(entity.getBody() != null) { physics.addBody(entity.getBody()); }
+        entity.createBody(this.physics);
         
         // Keep track of it
         entities.add(entity);

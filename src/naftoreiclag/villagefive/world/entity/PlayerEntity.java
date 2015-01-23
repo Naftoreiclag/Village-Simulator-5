@@ -27,11 +27,17 @@ import javax.imageio.ImageIO;
 import naftoreiclag.villagefive.util.math.GR;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
+import naftoreiclag.villagefive.world.PhysWorld;
+import naftoreiclag.villagefive.world.body.ControllerBody;
 import naftoreiclag.villagefive.world.body.EntityBody;
+import org.dyn4j.dynamics.joint.MotorJoint;
 import org.dyn4j.geometry.Circle;
+import org.dyn4j.geometry.Mass;
 
 public class PlayerEntity extends Entity
 {
+    public ControllerBody rotationControl;
+    
     public Node head;
     public Node tail;
     public Node ears;
@@ -124,13 +130,36 @@ public class PlayerEntity extends Entity
     }
 
     @Override
-    public void createBody()
+    public void createBody(PhysWorld world)
     {
+        rotationControl = new ControllerBody();
+        rotationControl.addFixture(new Circle(0.7), 14);
+        rotationControl.setMass(Mass.Type.INFINITE);
+        
+        world.addBody(rotationControl);
+        
         Vec2 location = this.getLocation();
         body = new EntityBody(this);
         body.addFixture(new Circle(0.7), 14);
         body.setMass();
         this.setLocation(location);
+        
+        world.addBody(body);
+        
+        MotorJoint rotJoint = new MotorJoint(rotationControl, body);
+	    rotJoint.setLinearTarget(Vec2.ZERO_DYN4J);
+	    rotJoint.setAngularTarget(0d);
+        
+        // ???
+	    rotJoint.setCorrectionFactor(0.3);
+        
+	    // Use torque only (i.e. rotation not location)
+	    rotJoint.setMaximumForce(0.0);
+	    rotJoint.setMaximumTorque(5.0);
+        
+	    rotJoint.setCollisionAllowed(false);
+	    world.addJoint(rotJoint);
+        
     }
     
     @Override

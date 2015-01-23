@@ -17,6 +17,7 @@ import naftoreiclag.villagefive.PluginResourceManager;
 import naftoreiclag.villagefive.PluginEntity;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
+import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.body.EntityBody;
 import org.dyn4j.geometry.Circle;
 import org.json.simple.parser.ParseException;
@@ -65,7 +66,7 @@ public class ModEntity extends Entity
     }
 
     @Override
-    public void createBody()
+    public void createBody(PhysWorld world)
     {
         try
         {
@@ -75,6 +76,7 @@ public class ModEntity extends Entity
             
            
             this.setLocation(location);
+            world.addBody(body);
         }
         catch(IOException ex)
         {

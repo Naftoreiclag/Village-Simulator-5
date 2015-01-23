@@ -7,29 +7,32 @@
 package naftoreiclag.villagefive.world.entity;
 
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
-import naftoreiclag.villagefive.world.entity.Entity;
+import naftoreiclag.villagefive.world.PhysWorld;
 
 public class FlowerEntity extends Entity
 {
+    
     @Override
     public void tick(float tpf)
-    {
-    }
+    {}
 
     @Override
     public void createNode()
     {
-        node = ModelManipulator.loadNode("Models/Flower.mesh.j3o");
+        node = ModelManipulator.loadNode("Models/Frame.mesh.j3o");
     }
 
-    @Override
-    public void createBody()
-    {
-    }
+
     @Override
     public String getTypeName()
     {
         return "Flower";
     }
+
+    @Override
+    public void createBody(PhysWorld world)
+    {
+    }
+
 
 }

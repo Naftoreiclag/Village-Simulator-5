@@ -7,11 +7,14 @@
 package naftoreiclag.villagefive.world.entity;
 
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
+import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.entity.Entity;
 import org.dyn4j.dynamics.Body;
 
 public class DoorEntity extends Entity
 {
+    public DoorEntity() {}
+    
     @Override
     public void tick(float tpf)
     {}
@@ -23,7 +26,7 @@ public class DoorEntity extends Entity
     }
 
     @Override
-    public void createBody()
+    public void createBody(PhysWorld world)
     {
     }
 
