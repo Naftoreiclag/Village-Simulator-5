@@ -49,7 +49,7 @@ public abstract class Entity extends Mundane implements JSONAware
         return node;
     }
     
-    // Make sure you call the super!
+    // Make sure you call the super when overriding this!
     public void tick(float tpf)
     {
         if(body != null)
@@ -64,7 +64,6 @@ public abstract class Entity extends Mundane implements JSONAware
             
             this.onLocationChange(loc);
         }
-        
     }
     
     public void attachSpatial(Spatial spatial)

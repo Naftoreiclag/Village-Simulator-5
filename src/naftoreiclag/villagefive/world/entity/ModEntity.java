@@ -6,8 +6,6 @@
 
 package naftoreiclag.villagefive.world.entity;
 
-import com.jme3.material.Material;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.io.IOException;
@@ -16,10 +14,7 @@ import java.util.logging.Logger;
 import naftoreiclag.villagefive.PluginResourceManager;
 import naftoreiclag.villagefive.PluginEntity;
 import naftoreiclag.villagefive.util.math.Vec2;
-import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import naftoreiclag.villagefive.world.PhysWorld;
-import naftoreiclag.villagefive.world.body.EntityBody;
-import org.dyn4j.geometry.Circle;
 import org.json.simple.parser.ParseException;
 
 public class ModEntity extends Entity

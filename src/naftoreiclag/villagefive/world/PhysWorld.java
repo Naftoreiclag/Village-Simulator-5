@@ -17,6 +17,7 @@ import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.Vec2;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.dynamics.joint.Joint;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.Shape;
 import org.dyn4j.geometry.Capsule;
@@ -34,6 +35,25 @@ public class PhysWorld extends org.dyn4j.dynamics.World
     public Node debugShow()
     {
         Node node = new Node();
+        
+        for(Joint joint : this.joints)
+        {
+            Mesh mesh = this.makeGeo(joint);
+
+            if(mesh == null)
+            {
+                continue;
+            }
+
+            Geometry geo = new Geometry("", mesh);
+            geo.setMaterial(Main.mat_debug_wireframe);
+                
+            Vec2 loc = new Vec2(joint.getAnchor1());
+
+            geo.setLocalTranslation(loc.getXF(), 0f, loc.getYF());
+
+            node.attachChild(geo);
+        }
         
         for(Body body : this.bodies)
         {
@@ -141,6 +161,11 @@ public class PhysWorld extends org.dyn4j.dynamics.World
 
         mesh.updateBound();
         return mesh;
+    }
+
+    private Mesh makeGeo(Joint joint)
+    {
+        return makeGeoCircle(new Circle(0.2));
     }
     
     

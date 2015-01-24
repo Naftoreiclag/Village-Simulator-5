@@ -19,6 +19,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
+import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.SmoothAngle;
 import naftoreiclag.villagefive.util.math.SmoothScalar;
@@ -49,12 +50,12 @@ public class PlayerController extends EntityController implements ActionListener
     private float scrollSpd = 500.0f;
     
     SmoothScalar zoomLevel = new SmoothScalar();
-    SmoothAngle playerLook = new SmoothAngle();
+    Angle playerLook = new SmoothAngle();
     SmoothAngle camDispl = new SmoothAngle();
 
     public PlayerController()
     {
-        playerLook.maxSpd *= 4f;
+        //playerLook.maxSpd *= 4f;
 
         camDispl.smoothFactor /= 2f;
         camDispl.maxSpd /= 2f;
@@ -276,7 +277,7 @@ public class PlayerController extends EntityController implements ActionListener
 
     private void tickDumbAngles(float tpf)
     {
-        playerLook.tick(tpf);
+        //playerLook.tick(tpf);
 
         if(rotCamLeft)
         {
@@ -288,7 +289,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
         camDispl.tick(tpf);
 
-        puppet.applyTorque(-playerLook.calcSignedDiff(puppet.getRotation().getX()), tpf);
+        puppet.turnTo(playerLook.getX(), tpf);
     }
 
     private void tickMovementInput(float tpf)
@@ -304,7 +305,7 @@ public class PlayerController extends EntityController implements ActionListener
             if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
                 puppet.bodyAnimChannel.setAnim("Stand");
-                playerLook.tx = playerLook.getX();
+                //playerLook.tx = playerLook.getX();
             }
 
         }
@@ -313,16 +314,15 @@ public class PlayerController extends EntityController implements ActionListener
             if(groundGoto != null)
             {
                 groundGoto.subtractLocal(puppet.getNode().getLocalTranslation());
-                playerLook.tx = FastMath.atan2(groundGoto.x, groundGoto.z);
+                playerLook.setX(FastMath.atan2(groundGoto.x, groundGoto.z));
             }
             else
             {
-                playerLook.tx = whereDoesThePlayerWantToGo();
+                playerLook.setX(whereDoesThePlayerWantToGo());
             }
 
-            //puppet.applyImpulse(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
-            puppet.applyForce(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
-            //puppet.setVelocity(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
+            //puppet.travel(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
+            puppet.setVelocity(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
 
             if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
             {

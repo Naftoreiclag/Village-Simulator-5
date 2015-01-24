@@ -30,13 +30,20 @@ import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.body.ControllerBody;
 import naftoreiclag.villagefive.world.body.EntityBody;
+import org.dyn4j.dynamics.joint.DistanceJoint;
 import org.dyn4j.dynamics.joint.MotorJoint;
+import org.dyn4j.dynamics.joint.MouseJoint;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Mass;
+import org.dyn4j.geometry.Transform;
 
 public class PlayerEntity extends Entity
 {
-    public ControllerBody rotationControl;
+    private ControllerBody rotControl;
+    private MouseJoint locControl;
+    
+    public double maxTravelDist = 1d;
+    public double physGiveupRate = 1d;
     
     public Node head;
     public Node tail;
@@ -125,41 +132,59 @@ public class PlayerEntity extends Entity
     {
         if(world != null) {world.something(loc);}
         
-        
         if(ground != null) { ground.setLocalTranslation(loc.toJmeVec3()); }
+    }
+    
+    @Override
+    public void setLocation(Vec2 loc)
+    {
+        super.setLocation(loc);
+        
+        locControl.setTarget(loc.toDyn4j());
+    }
+    
+    public void travel(Vec2 dir, float tpf)
+    {
+        locControl.getTarget().add(dir.mult(tpf).toDyn4j());
+    }
+    
+    public void turn(double angle, float tpf)
+    {
+        Transform trans = rotControl.getTransform();
+        trans.setRotation(trans.getRotation() + angle);
+    }
+    public void turnTo(double angle, float tpf)
+    {
+        Transform trans = rotControl.getTransform();
+        trans.setRotation(angle);
     }
 
     @Override
     public void createBody(PhysWorld world)
     {
-        rotationControl = new ControllerBody();
-        rotationControl.addFixture(new Circle(0.7), 14);
-        rotationControl.setMass(Mass.Type.INFINITE);
-        
-        world.addBody(rotationControl);
-        
-        Vec2 location = this.getLocation();
         body = new EntityBody(this);
         body.addFixture(new Circle(0.7), 14);
         body.setMass();
-        this.setLocation(location);
-        
         world.addBody(body);
         
-        MotorJoint rotJoint = new MotorJoint(rotationControl, body);
+        rotControl = new ControllerBody();
+        rotControl.addFixture(new Circle(0.7), 14);
+        rotControl.setMass(Mass.Type.INFINITE);
+        world.addBody(rotControl);
+        
+        MotorJoint rotJoint = new MotorJoint(rotControl, body);
 	    rotJoint.setLinearTarget(Vec2.ZERO_DYN4J);
 	    rotJoint.setAngularTarget(0d);
-        
-        // ???
 	    rotJoint.setCorrectionFactor(0.3);
-        
-	    // Use torque only (i.e. rotation not location)
 	    rotJoint.setMaximumForce(0.0);
-	    rotJoint.setMaximumTorque(5.0);
-        
-	    rotJoint.setCollisionAllowed(false);
+	    rotJoint.setMaximumTorque(500.0);
 	    world.addJoint(rotJoint);
         
+        // frequency = "acceleration toward point"
+        // ratio = 
+        
+        locControl = new MouseJoint(body, Vec2.ZERO_DYN4J, 5, 0.7, 999);
+        //world.addJoint(locControl);
     }
     
     @Override
@@ -171,6 +196,19 @@ public class PlayerEntity extends Entity
         {
             blink();
         }
+        
+        Vec2 move = new Vec2(locControl.getTarget());
+        move.subtractLocal(this.getLocation());
+        if(move.lenSq() > this.maxTravelDist * this.maxTravelDist)
+        {
+            move.normalizeLocal().multLocal(this.maxTravelDist);
+        }
+        else
+        {
+            move.subtractLocal(move.normalize().multLocal(physGiveupRate * tpf));
+        }
+        move.addLocal(this.getLocation());
+        locControl.setTarget(move.toDyn4j());
         
         if(currBlinkTime > 0)
         {

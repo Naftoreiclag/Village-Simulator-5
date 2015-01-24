@@ -301,7 +301,6 @@ public class OverworldAppState extends AbstractAppState
 
     private void loadworld()
     {
-        
         try
         {
             world = SaveLoad.load(stateRootNode, assetManager);

@@ -329,6 +329,11 @@ public class Vec2 implements JSONAware
 
 	public Vec2 normalizeLocal()
 	{
+        if(x == 0 && y == 0)
+        {
+            return Vec2.ZERO.clone();
+        }
+        
 		return this.divideLocal(Math.sqrt(this.lenSqF()));
 	}
 
