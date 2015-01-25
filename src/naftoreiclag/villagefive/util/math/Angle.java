@@ -125,9 +125,21 @@ public class Angle
         return this.clone().inverseLocal();
     }
 
+    /*
+     * Cos is used for x.
+     * Sin is used for y.
+     * 
+     * This is to match the way Math.atan2(y, x); works.
+     * 
+     * double a = Math.rand();
+     * double b = Math.atan2(Math.sin(a), Math.cos(b));
+     * 
+     * a == b
+     * 
+     */
     public Vec2 toNormalVec()
     {
-        return new Vec2(Math.sin(this.x), Math.cos(this.x));
+        return new Vec2(Math.cos(this.x), Math.sin(this.x));
     }
 
     public double toDyn4j()
