@@ -55,12 +55,13 @@ public abstract class Entity extends Mundane implements JSONAware
         if(body != null)
         {
             Vec2 loc = new Vec2(this.body.getTransform().getTranslation());
-            Angle rot = new Angle(this.body.getTransform().getRotation());
+            Angle rot = new Angle(this.body.getTransform());
 
             this.node.setLocalTranslation(loc.getXF(), 0f, loc.getYF());
             this.node.setLocalRotation(rot.toQuaternion());
             
             this.applyFriction(tpf);
+            this.applyAngularFriction(tpf);
             
             this.onLocationChange(loc);
         }

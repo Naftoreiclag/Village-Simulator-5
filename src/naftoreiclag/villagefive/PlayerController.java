@@ -27,10 +27,13 @@ import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.Resident;
 import naftoreiclag.villagefive.world.body.EntityBody;
+import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
 import naftoreiclag.villagefive.world.rays.InteractRay;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.RaycastResult;
+import org.dyn4j.dynamics.joint.WeldJoint;
+import org.dyn4j.geometry.Mass;
 
 public class PlayerController extends EntityController implements ActionListener, AnalogListener
 {
@@ -96,6 +99,47 @@ public class PlayerController extends EntityController implements ActionListener
         oth.owner.onInteract(this);
         
     }
+    
+    public void grab()
+    {
+        InteractRay ray = new InteractRay(puppet, puppet.getRotation().toNormalVec());
+
+        List<RaycastResult> results = new ArrayList<RaycastResult>();
+
+        world.physics.raycast(ray, 5.0f, false, false, results);
+        
+        if(results.isEmpty())
+        {
+            return;
+        }
+        
+        RaycastResult hit = results.get(0);
+        Body bod = hit.getBody();
+        
+        if(!(bod instanceof EntityBody))
+        {
+            return;
+        }
+
+        EntityBody oth = (EntityBody) bod;
+
+        System.out.println("hit " + oth.owner.getTypeName());
+        
+        this.grabbedEnt = oth.owner;
+        
+        grab = new WeldJoint(this.puppet.getBody(), this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
+        this.grabbedEnt.getBody().setMass(Mass.Type.NORMAL);
+        this.puppet.getBody().getWorld().addJoint(grab);
+        
+        if(testPrev == null)
+        {
+            testPrev = oth;
+            
+        }
+        
+    }
+    
+    public EntityBody testPrev = null;
     
     ReiCamera cam;
     Spatial ground;
@@ -173,6 +217,11 @@ public class PlayerController extends EntityController implements ActionListener
     
     boolean invOpen = false;
     boolean isInvOpenKeyPressed = false;
+    
+    boolean grabbing = false;
+    
+    Entity grabbedEnt;
+    WeldJoint grab;
 
     // When a key is pressed
     public void onAction(String key, boolean isPressed, float tpf)
@@ -207,7 +256,33 @@ public class PlayerController extends EntityController implements ActionListener
         }
         if(key.equals(KeyKeys.interact))
         {
-            this.interact();
+            if(isPressed)
+            {
+                grabbing = !grabbing;
+            
+                if(grabbing)
+                {
+                    this.grab();
+                    System.out.println("grab");
+                }
+                else
+                {
+                    this.puppet.getBody().getWorld().removeJoint(grab);
+                    System.out.println("ungrab");
+                    
+                    if(testPrev != null)
+                    {
+                        if(this.grabbedEnt.getBody() != testPrev)
+                        {
+                            
+                        WeldJoint jo = new WeldJoint(testPrev, this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
+                        
+                        testPrev.getWorld().addJoint(jo);
+                        }
+                        
+                    }
+                }
+            }
         }
         if(key.equals(KeyKeys.openInv))
         {
@@ -289,7 +364,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
         camDispl.tick(tpf);
 
-        puppet.turnTo(playerLook.getX(), tpf);
+        puppet.turnTo(playerLook, tpf);
     }
 
     private void tickMovementInput(float tpf)

@@ -7,6 +7,9 @@
 package naftoreiclag.villagefive.util.math;
 
 // Do not trust any input
+
+import org.dyn4j.geometry.Transform;
+
 public class Angle
 {
     public static double PI = Math.PI;
@@ -22,6 +25,12 @@ public class Angle
 	{
 		this.x = wrap(x);
 	}
+    
+    public Angle(Transform x)
+    {
+		this.x = wrap(-x.getRotation());
+    }
+    
     
 	public Angle() {}
     
@@ -119,6 +128,11 @@ public class Angle
     public Vec2 toNormalVec()
     {
         return new Vec2(Math.sin(this.x), Math.cos(this.x));
+    }
+
+    public double toDyn4j()
+    {
+        return -this.getX();
     }
 
 }

@@ -11,10 +11,13 @@ import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.body.EntityBody;
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.joint.WeldJoint;
 import org.dyn4j.geometry.Circle;
 
 public class StoolEntity extends Entity
 {
+    EntityBody body2;
+    
     @Override
     public void createNode()
     {
@@ -26,12 +29,23 @@ public class StoolEntity extends Entity
     public void createBody(PhysWorld world)
     {
         Vec2 location = this.getLocation();
+        
         body = new EntityBody(this);
         body.addFixture(new Circle(1), 5);
         body.setMass();
+        world.addBody(body);
+        
+        body2 = new EntityBody(this);
+        body2.addFixture(new Circle(1), 5);
+        body2.translate(new Vec2(0, 1).toDyn4j());
+        body2.setMass();
+        
+        WeldJoint joint = new WeldJoint(body, body2, Vec2.ZERO_DYN4J);
+        world.addJoint(joint);
+        
         this.setLocation(location);
         
-        world.addBody(body);
+        world.addBody(body2);
     }
     
     @Override

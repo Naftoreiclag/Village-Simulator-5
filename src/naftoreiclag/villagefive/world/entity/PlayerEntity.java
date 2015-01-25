@@ -24,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
+import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.GR;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
@@ -35,6 +36,7 @@ import org.dyn4j.dynamics.joint.MotorJoint;
 import org.dyn4j.dynamics.joint.MouseJoint;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Mass;
+import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Transform;
 
 public class PlayerEntity extends Entity
@@ -148,15 +150,15 @@ public class PlayerEntity extends Entity
         locControl.getTarget().add(dir.mult(tpf).toDyn4j());
     }
     
-    public void turn(double angle, float tpf)
+    public void turn(Angle angle, float tpf)
     {
         Transform trans = rotControl.getTransform();
-        trans.setRotation(trans.getRotation() + angle);
+        trans.setRotation(trans.getRotation() + angle.toDyn4j());
     }
-    public void turnTo(double angle, float tpf)
+    public void turnTo(Angle angle, float tpf)
     {
         Transform trans = rotControl.getTransform();
-        trans.setRotation(angle);
+        trans.setRotation(angle.toDyn4j());
     }
 
     @Override
@@ -164,6 +166,7 @@ public class PlayerEntity extends Entity
     {
         body = new EntityBody(this);
         body.addFixture(new Circle(0.7), 14);
+        body.addFixture(new Rectangle(1, 1), 14);
         body.setMass();
         world.addBody(body);
         
@@ -175,9 +178,9 @@ public class PlayerEntity extends Entity
         MotorJoint rotJoint = new MotorJoint(rotControl, body);
 	    rotJoint.setLinearTarget(Vec2.ZERO_DYN4J);
 	    rotJoint.setAngularTarget(0d);
-	    rotJoint.setCorrectionFactor(0.3);
+	    rotJoint.setCorrectionFactor(0.1);
 	    rotJoint.setMaximumForce(0.0);
-	    rotJoint.setMaximumTorque(500.0);
+	    rotJoint.setMaximumTorque(100.0);
 	    world.addJoint(rotJoint);
         
         // frequency = "acceleration toward point"
@@ -185,6 +188,12 @@ public class PlayerEntity extends Entity
         
         locControl = new MouseJoint(body, Vec2.ZERO_DYN4J, 5, 0.7, 999);
         //world.addJoint(locControl);
+    }
+    
+    @Override
+    public void applyAngularFriction(float tpf)
+    {
+        
     }
     
     @Override

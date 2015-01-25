@@ -11,7 +11,6 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.VertexBuffer;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.Vec2;
@@ -20,14 +19,8 @@ import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.joint.Joint;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.Shape;
-import org.dyn4j.geometry.Capsule;
 import org.dyn4j.geometry.Circle;
-import org.dyn4j.geometry.Ellipse;
-import org.dyn4j.geometry.HalfEllipse;
 import org.dyn4j.geometry.Polygon;
-import org.dyn4j.geometry.Segment;
-import org.dyn4j.geometry.Slice;
-import org.dyn4j.geometry.Vector2;
 import org.lwjgl.BufferUtils;
 
 public class PhysWorld extends org.dyn4j.dynamics.World
@@ -72,7 +65,7 @@ public class PhysWorld extends org.dyn4j.dynamics.World
                 geo.setMaterial(Main.mat_debug_wireframe);
                 
                 Vec2 loc = new Vec2(body.getTransform().getTranslation());
-                Angle rot = new Angle(body.getTransform().getRotation());
+                Angle rot = new Angle(body.getTransform());
                 
                 geo.setLocalTranslation(loc.getXF(), 0f, loc.getYF());
                 geo.setLocalRotation(rot.toQuaternion());

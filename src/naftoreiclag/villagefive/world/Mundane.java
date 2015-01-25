@@ -101,15 +101,13 @@ public abstract class Mundane
         if(this.getBody() == null) { return; }
         
         this.getBody().setLinearVelocity(Vec2.ZERO_DYN4J);
-        this.getBody().setAngularVelocity(0);
-        /*
-        double angVel = this.getBody().getAngularVelocity();
-        this.getBody().applyTorque(angVel * -angularFrictionCoeff * tpf);
+    }
+
+    public void applyAngularFriction(float tpf)
+    {
+        if(this.getBody() == null) { return; }
         
-        Vec2 currLinVel = new Vec2(this.getBody().getLinearVelocity());
-        currLinVel.multLocal(-linearFrictionCoeff).multLocal(tpf);
-        this.getBody().applyImpulse(currLinVel.toDyn4j());
-        */
+        this.getBody().setAngularVelocity(0);
     }
     
     public void setLocation(Vec2 loc)
@@ -150,7 +148,7 @@ public abstract class Mundane
     {
         if(this.getBody() != null)
         {
-            return new Angle(this.getBody().getTransform().getRotation());
+            return new Angle(this.getBody().getTransform());
         }
         else if(this.getNode() != null)
         {
