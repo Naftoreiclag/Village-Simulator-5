@@ -168,6 +168,7 @@ public class PlayerController extends EntityController implements ActionListener
                                       KeyKeys.interact);
     }
 
+    // correct
     public Vector3f whereClickingOnGround()
     {
         Vector3f origin = cam.c.getWorldCoordinates(inputManager.getCursorPosition(), 0.0f);
@@ -319,9 +320,13 @@ public class PlayerController extends EntityController implements ActionListener
         this.cam = cam;
     }
 
-    private float whereDoesThePlayerWantToGo()
+    private Angle whereDoesThePlayerWantToGo()
     {
-        Vec2 fwd = new Vec2(cam.c.getDirection().x, cam.c.getDirection().z);
+        /*
+        //Vec2 fwd = new Vec2(cam.c.getDirection().x, cam.c.getDirection().z);
+        Vec2 fwd = this.camDispl.toNormalVec();
+        fwd.inverseLocal();
+        fwd.normalizeLocal();
         Vec2 dir = new Vec2();
         if(movingFwd)
         {
@@ -341,8 +346,29 @@ public class PlayerController extends EntityController implements ActionListener
         }
         
         
-        float targAngle = FastMath.HALF_PI - dir.getAngle().getXF();
-        return targAngle;
+        return dir.getAngle().getXF();
+        */
+        
+        Vec2 fwd = new Vec2(0, -1);
+        Vec2 dir = new Vec2();
+        
+        if(movingFwd)
+        {
+            dir.addLocal(fwd);
+        }
+        if(movingBwd)
+        {
+            dir.subtractLocal(fwd);
+        }
+        if(turningLeft)
+        {
+            dir.addLocal(fwd.getY(), -fwd.getX());
+        }
+        if(turningRight)
+        {
+            dir.addLocal(-fwd.getY(), fwd.getX());
+        }
+        return dir.getAngle();
     }
 
     void setGround(Spatial ground)
@@ -350,21 +376,25 @@ public class PlayerController extends EntityController implements ActionListener
         this.ground = ground;
     }
 
+    // correct
     private void tickDumbAngles(float tpf)
     {
         //playerLook.tick(tpf);
 
         if(rotCamLeft)
         {
-            camDispl.tx -= 2f * tpf;
+            camDispl.tx += 2f * tpf;
         }
         if(rotCamRight)
         {
-            camDispl.tx += 2f * tpf;
+            camDispl.tx -= 2f * tpf;
         }
         camDispl.tick(tpf);
 
         puppet.turnTo(playerLook, tpf);
+        
+        System.out.println("player: " + Math.round(playerLook.getXF() * FastMath.RAD_TO_DEG));
+        //System.out.println(this.camDispl);
     }
 
     private void tickMovementInput(float tpf)
@@ -380,7 +410,6 @@ public class PlayerController extends EntityController implements ActionListener
             if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
                 puppet.bodyAnimChannel.setAnim("Stand");
-                //playerLook.tx = playerLook.getX();
             }
 
         }
@@ -389,15 +418,14 @@ public class PlayerController extends EntityController implements ActionListener
             if(groundGoto != null)
             {
                 groundGoto.subtractLocal(puppet.getNode().getLocalTranslation());
-                playerLook.setX(FastMath.atan2(groundGoto.x, groundGoto.z));
+                playerLook.setX(FastMath.atan2(groundGoto.z, groundGoto.x));
             }
             else
             {
                 playerLook.setX(whereDoesThePlayerWantToGo());
             }
 
-            //puppet.travel(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
-            puppet.setVelocity(OreDict.JmeAngleToVec2((float) playerLook.getX()).multLocal(speed), tpf);
+            puppet.setVelocity(playerLook.toNormalVec().multLocal(speed), tpf);
 
             if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
             {

@@ -12,6 +12,7 @@ import com.jme3.animation.LoopMode;
 import com.jme3.animation.SkeletonControl;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
+import com.jme3.math.FastMath;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Node;
@@ -159,6 +160,7 @@ public class PlayerEntity extends Entity
     {
         Transform trans = rotControl.getTransform();
         trans.setRotation(angle.toDyn4j());
+        System.out.println("trans: " + Math.round(trans.getRotation() * FastMath.RAD_TO_DEG));
     }
 
     @Override

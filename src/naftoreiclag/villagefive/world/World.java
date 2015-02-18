@@ -110,11 +110,6 @@ public class World implements JSONAware
         
         return json.toJSONString();
     }
-    
-    public void materializeEnvironment()
-    {
-        
-    }
 
     public boolean showPhysDebug = true;
     public Node last = null;

@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.Vec2;
+import naftoreiclag.villagefive.util.scenegraph.AxesMaker;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.serializable.BlueprintUtil;
@@ -100,20 +101,24 @@ public class OverworldAppState extends AbstractAppState
         this.cam = this.app.getCamera();
         this.viewPort = this.app.getViewPort();
         
-        Vec2 egg = new Vec2(Math.random(), Math.random());
-        egg.normalizeLocal();
-        Angle egga = egg.getAngle();
-        Vec2 eggf = egga.toNormalVec();
+        Vec2 testVec = new Vec2(Math.random(), Math.random());
+        testVec.normalizeLocal();
+        Angle derivedAngle = testVec.getAngle();
+        Vec2 derivedVec = derivedAngle.toNormalVec();
+        Angle derivedAngle2 = derivedVec.getAngle();
         
         System.out.println("==============");
-        System.out.println(egg);
-        System.out.println(eggf);
+        System.out.println(testVec);
+        System.out.println(derivedVec);
+        System.out.println(derivedAngle);
+        System.out.println(derivedAngle2);
         
         double rand = Math.random();
         double randy = Math.atan2(Math.sin(rand), Math.cos(rand));
         
         System.out.println(rand);
         System.out.println(randy);
+        
         
         
         
@@ -126,6 +131,9 @@ public class OverworldAppState extends AbstractAppState
         rcam = new ReiCamera(cam);
         rcam.mode = ReiCamera.SmoothMode.cubic;
         
+        Node debugArrows = AxesMaker.make();
+        debugArrows.move(256f, 0.1f, 256f);
+        this.stateRootNode.attachChild(debugArrows);
         
         genworld();
         // loadworld();

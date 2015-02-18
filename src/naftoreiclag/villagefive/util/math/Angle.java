@@ -8,6 +8,7 @@ package naftoreiclag.villagefive.util.math;
 
 // Do not trust any input
 
+import com.jme3.math.FastMath;
 import org.dyn4j.geometry.Transform;
 
 public class Angle
@@ -16,10 +17,17 @@ public class Angle
     public static double TWO_PI = PI * 2d;
     public static double HALF_PI = PI / 2d;
     
+    @Override
+    public String toString()
+    {
+        return this.getX() + "";
+    }
+    
 	private double x;
     public double getX() { return this.x; }
     public float getXF() { return (float) this.getX(); }
-    public void setX(double x) { this.x = x; }
+    public void setX(double x) { this.x = wrap(x); }
+    public void setX(Angle x) { this.x = wrap(x.x); }
 	
 	public Angle(double x)
 	{
@@ -28,16 +36,11 @@ public class Angle
     
     public Angle(Transform x)
     {
-		this.x = wrap(-x.getRotation());
+		this.x = wrap(x.getRotation());
     }
     
     
 	public Angle() {}
-    
-    public com.jme3.math.Quaternion toQuaternion()
-    {
-        return (new com.jme3.math.Quaternion()).fromAngleAxis((float) this.getX(), com.jme3.math.Vector3f.UNIT_Y);
-    }
     
     // Interpolate between two values linearly
 	public void lerpLocal(double other, double amount)
@@ -141,10 +144,26 @@ public class Angle
     {
         return new Vec2(Math.cos(this.x), Math.sin(this.x));
     }
+    
+    // This will correctly give the quaternion to rotate a model toward a given angle.
+    // This assumes that the model's "front" is toward positive z.
+    // Warning: there is even more confusion when exporting from blender, since positive z in this game is shown as negative y in blender.
+    //          regardless, when editing the model, the "front view" should always face the front of the model.
+    //          therefore, I am going against the jme standard by considering z+ the front. This output is perfect for that purpose.
+    //
+    // The only time that I "correct" tbe output, (i.e. subtract 90 degrees to make x+ the front) is in the debug code for dyn4j rendering (which is messy anyway so who cares).
+    // 99% of the time, the unaltered output of this is what I want.
+    public com.jme3.math.Quaternion toQuaternion()
+    {
+        //                                                    Jme's angles are inverted.
+        //                                                    |                positive z is what I (and dyn4j) consider the front, so I rotate it -90 degrees.
+        //                                                    v                v
+        return (new com.jme3.math.Quaternion()).fromAngleAxis(-(this.getXF() - FastMath.HALF_PI), com.jme3.math.Vector3f.UNIT_Y);
+    }
 
     public double toDyn4j()
     {
-        return -this.getX();
+        return this.getX();
     }
 
 }

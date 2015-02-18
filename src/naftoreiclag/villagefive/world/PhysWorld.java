@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive.world;
 
+import com.jme3.math.FastMath;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -68,6 +69,9 @@ public class PhysWorld extends org.dyn4j.dynamics.World
                 Angle rot = new Angle(body.getTransform());
                 
                 geo.setLocalTranslation(loc.getXF(), 0f, loc.getYF());
+                
+                // See? this is what I was talking about.
+                rot.setX(rot.getX() + FastMath.HALF_PI);
                 geo.setLocalRotation(rot.toQuaternion());
                 
                 node.attachChild(geo);
