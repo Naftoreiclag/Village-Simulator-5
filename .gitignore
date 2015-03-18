@@ -7,7 +7,8 @@ dni_*
 FourHills.java
 Main_*
 Oto.*
-*.blend*
+assets/Models/*.blend*
+*.blend1
 *.mesh.xml
 *.skeleton.xml
 *.j3odata
