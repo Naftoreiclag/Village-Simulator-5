@@ -407,7 +407,7 @@ public class PlayerController extends EntityController implements ActionListener
 
         if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null)
         {
-            if("Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
+            if("Legs_Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
                 puppet.bodyAnimChannel.setAnim("Stand");
             }
@@ -429,7 +429,7 @@ public class PlayerController extends EntityController implements ActionListener
 
             if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
             {
-                puppet.bodyAnimChannel.setAnim("Walk");
+                puppet.bodyAnimChannel.setAnim("Legs_Walk");
                 puppet.bodyAnimChannel.setSpeed(2.0f);
             }
         }

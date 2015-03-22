@@ -25,6 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
+import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.GR;
 import naftoreiclag.villagefive.util.math.Vec2;
@@ -48,80 +49,45 @@ public class PlayerEntity extends Entity
     public double maxTravelDist = 1d;
     public double physGiveupRate = 1d;
     
-    public Node head;
-    public Node tail;
-    public Node ears;
-    
-    public Node footL;
-    public Node footR;
-    public Node handL;
-    public Node handR;
-    public Node mask;
-    
     public SkeletonControl skele;
     public AnimControl bodyAnimControl;
-    public AnimControl tailAnimControl;
-    
     public AnimChannel bodyAnimChannel;
-    public AnimChannel tailAnimChannel;
     
     public Texture eyeOpenTex;
     public Texture eyeCloseTex;
     public Material faceMat;
+    public Node face;
+    
+    public Material fur;
     
     private float currBlinkTime;
     
     @Override
     public void createNode()
     {
-        node = ModelManipulator.loadNode("Models/katty/KattyBody.mesh.j3o");
+        node = ModelManipulator.loadNode("Models/anthro/Anthro.mesh.j3o");
+        fur = SAM.a.loadMaterial("Materials/Michelle.j3m");
+        node.setMaterial(fur);
         
         bodyAnimControl = node.getControl(AnimControl.class);
         bodyAnimChannel = bodyAnimControl.createChannel();
-        bodyAnimChannel.setAnim("Walk");
+        bodyAnimChannel.setAnim("Legs_Walk");
         bodyAnimChannel.setLoopMode(LoopMode.Loop);
         
         skele = node.getControl(SkeletonControl.class);
-        
-        head = ModelManipulator.loadNode("Models/katty/Katty.mesh.j3o");
-        skele.getAttachmentsNode("Head").attachChild(head);
-        
-        ears = ModelManipulator.loadNode("Models/katty/KattyEars.mesh.j3o");
-        head.attachChild(ears);
-        
-        tail = ModelManipulator.loadNode("Models/katty/KattyTail.mesh.j3o");
-        skele.getAttachmentsNode("Tail").attachChild(tail);
-        
-        tailAnimControl = tail.getControl(AnimControl.class);
-        tailAnimChannel = tailAnimControl.createChannel();
-        tailAnimChannel.setAnim("Happy");
-        tailAnimChannel.setLoopMode(LoopMode.Loop);
-        
-        footL = ModelManipulator.loadNode("Models/katty/KattyFoot.mesh.j3o");
-        skele.getAttachmentsNode("Foot.L").attachChild(footL);
-        footR = ModelManipulator.loadNode("Models/katty/KattyFoot.mesh.j3o");
-        skele.getAttachmentsNode("Foot.R").attachChild(footR);
-        
-        handL = ModelManipulator.loadNode("Models/katty/KattyHand.mesh.j3o");
-        skele.getAttachmentsNode("Hand.L").attachChild(handL);
-        handR = ModelManipulator.loadNode("Models/katty/KattyHand.mesh.j3o");
-        skele.getAttachmentsNode("Hand.R").attachChild(handR);
-        
-        
-        mask = ModelManipulator.loadNode("Models/katty/Face.mesh.j3o");
         
         eyeOpenTex = generateEyeOpenTexture();
         eyeCloseTex = generateEyeClosedTexture();
 
         faceMat = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         faceMat.setTexture("ColorMap", eyeOpenTex);
-        
         faceMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        mask.setQueueBucket(Bucket.Transparent);
-        mask.setMaterial(faceMat);
-        mask.setShadowMode(RenderQueue.ShadowMode.Receive);
         
-        head.attachChild(mask);
+        face = ModelManipulator.loadNode("Models/anthro/Face.mesh.j3o");
+        face.setQueueBucket(Bucket.Translucent);
+        face.setMaterial(faceMat);
+        face.setShadowMode(RenderQueue.ShadowMode.Receive);
+        skele.getAttachmentsNode("Head").attachChild(face);
     }
     
     Spatial ground;
@@ -185,9 +151,6 @@ public class PlayerEntity extends Entity
 	    rotJoint.setMaximumTorque(100.0);
 	    world.addJoint(rotJoint);
         
-        // frequency = "acceleration toward point"
-        // ratio = 
-        
         locControl = new MouseJoint(body, Vec2.ZERO_DYN4J, 5, 0.7, 999);
         //world.addJoint(locControl);
     }
@@ -250,11 +213,11 @@ public class PlayerEntity extends Entity
             Graphics2D gg = bi.createGraphics();
 
             BufferedImage eye = ImageIO.read(new File("assets/Textures/eye2.png"));
-            BufferedImage m = ImageIO.read(new File("assets/Textures/debugChin.png"));
+            BufferedImage mouth = ImageIO.read(new File("assets/Textures/debugChin.png"));
 
-            gg.drawImage(eye, 145, 70, null);
-            gg.drawImage(m, 29, 140, null);
-            gg.drawImage(eye, 110, 70, -eye.getWidth(), eye.getHeight(), null);
+            gg.drawImage(eye, 145, 94, null);
+            gg.drawImage(mouth, 29, 164, null);
+            gg.drawImage(eye, 110, 94, -eye.getWidth(), eye.getHeight(), null);
             
             Image image = new AWTLoader().load(bi, false);
             Texture2D tex = new Texture2D(image);
@@ -277,11 +240,11 @@ public class PlayerEntity extends Entity
             Graphics2D gg = bi.createGraphics();
 
             BufferedImage eye = ImageIO.read(new File("assets/Textures/eye3.png"));
-            BufferedImage m = ImageIO.read(new File("assets/Textures/debugChin.png"));
+            BufferedImage mouth = ImageIO.read(new File("assets/Textures/debugChin.png"));
 
-            gg.drawImage(eye, 145, 70, null);
-            gg.drawImage(m, 29, 140, null);
-            gg.drawImage(eye, 110, 70, -eye.getWidth(), eye.getHeight(), null);
+            gg.drawImage(eye, 145, 94, null);
+            gg.drawImage(mouth, 29, 164, null);
+            gg.drawImage(eye, 110, 94, -eye.getWidth(), eye.getHeight(), null);
             
             Image image = new AWTLoader().load(bi, false);
             Texture2D tex = new Texture2D(image);

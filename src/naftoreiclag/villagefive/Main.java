@@ -32,7 +32,7 @@ public class Main extends SimpleApplication implements ActionListener
         
         Main main = new Main();
         main.setSettings(displ);
-        main.showSettings = false;
+        //main.showSettings = false;
         
         main.setDisplayFps(false);
         main.setDisplayStatView(false);
