@@ -41,7 +41,7 @@ public class CatModel implements PlayerModel
     
     public void load()
     {
-        body = ModelManipulator.loadNode("Models/anthro/Anthro.mesh.j3o");
+        body = ModelManipulator.loadNode("Models/anthro/Anthro_Feline.mesh.j3o");
         Material fur = SAM.a.loadMaterial("Materials/Michelle.j3m");
         body.setMaterial(fur);
         

@@ -1,0 +1,10 @@
+Material My Material : ShaderBlow/MatDefs/LightBlow/LightBlow.j3md {
+     MaterialParameters {
+        DiffuseMap : Textures/characters/Michelle.png
+        Diffuse : 1.0 1.0 1.0 1.0
+        Ambient : 1.0 1.0 1.0 1.0
+        RimLighting : 0.2 0.2 0.2 1.0
+     }
+    AdditionalRenderState {
+    }
+}
