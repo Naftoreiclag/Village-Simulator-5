@@ -9,6 +9,8 @@ Main_*
 Oto.*
 assets/Models/*.blend*
 *.blend1
+*.blend2
+*.blend3
 *.mesh.xml
 *.skeleton.xml
 *.j3odata
