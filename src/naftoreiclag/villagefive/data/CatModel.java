@@ -77,7 +77,9 @@ public class CatModel implements PlayerModel
         if(name.equals(PlayerModel.anim_walk))
         {
             LegChannel.setAnim("Legs_Walk");
+            LegChannel.setSpeed(2.0f);
             ArmChannel.setAnim("Arms_Walk");
+            ArmChannel.setSpeed(2.0f);
         }
         else if(name.equals(PlayerModel.anim_standstill))
         {

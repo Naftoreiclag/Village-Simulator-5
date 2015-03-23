@@ -26,6 +26,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 import naftoreiclag.villagefive.SAM;
+import naftoreiclag.villagefive.data.CatModel;
+import naftoreiclag.villagefive.data.PlayerModel;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.GR;
 import naftoreiclag.villagefive.util.math.Vec2;
@@ -49,45 +51,16 @@ public class PlayerEntity extends Entity
     public double maxTravelDist = 1d;
     public double physGiveupRate = 1d;
     
-    public SkeletonControl skele;
-    public AnimControl bodyAnimControl;
-    public AnimChannel bodyAnimChannel;
-    
-    public Texture eyeOpenTex;
-    public Texture eyeCloseTex;
-    public Material faceMat;
-    public Node face;
-    
-    public Material fur;
-    
     private float currBlinkTime;
+    
+    public PlayerModel model;
     
     @Override
     public void createNode()
     {
-        node = ModelManipulator.loadNode("Models/anthro/Anthro.mesh.j3o");
-        fur = SAM.a.loadMaterial("Materials/Michelle.j3m");
-        node.setMaterial(fur);
-        
-        bodyAnimControl = node.getControl(AnimControl.class);
-        bodyAnimChannel = bodyAnimControl.createChannel();
-        bodyAnimChannel.setAnim("Legs_Walk");
-        bodyAnimChannel.setLoopMode(LoopMode.Loop);
-        
-        skele = node.getControl(SkeletonControl.class);
-        
-        eyeOpenTex = generateEyeOpenTexture();
-        eyeCloseTex = generateEyeClosedTexture();
-
-        faceMat = new Material(world.assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        faceMat.setTexture("ColorMap", eyeOpenTex);
-        faceMat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-        
-        face = ModelManipulator.loadNode("Models/anthro/Face.mesh.j3o");
-        face.setQueueBucket(Bucket.Translucent);
-        face.setMaterial(faceMat);
-        face.setShadowMode(RenderQueue.ShadowMode.Receive);
-        skele.getAttachmentsNode("Head").attachChild(face);
+        model = new CatModel();
+        model.load();
+        node = model.getNode();
     }
     
     Spatial ground;
@@ -152,7 +125,6 @@ public class PlayerEntity extends Entity
 	    world.addJoint(rotJoint);
         
         locControl = new MouseJoint(body, Vec2.ZERO_DYN4J, 5, 0.7, 999);
-        //world.addJoint(locControl);
     }
     
     @Override
@@ -183,83 +155,23 @@ public class PlayerEntity extends Entity
         }
         move.addLocal(this.getLocation());
         locControl.setTarget(move.toDyn4j());
-        
+
         if(currBlinkTime > 0)
         {
-
             currBlinkTime -= tpf;
             if(currBlinkTime < 0)
             {
-                faceMat.setTexture("ColorMap", eyeOpenTex);
-
+                model.playAnimation(PlayerModel.anim_openEye);
             }
         }
     }
     
     public void blink()
     {
-        
-        faceMat.setTexture("ColorMap", eyeCloseTex);
+        model.playAnimation(PlayerModel.anim_closeEye);
         
         currBlinkTime = 0.1f;
     }
-
-    //
-    public static Texture2D generateEyeOpenTexture()
-    {
-        try
-        {
-            BufferedImage bi = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D gg = bi.createGraphics();
-
-            BufferedImage eye = ImageIO.read(new File("assets/Textures/eye2.png"));
-            BufferedImage mouth = ImageIO.read(new File("assets/Textures/debugChin.png"));
-
-            gg.drawImage(eye, 145, 94, null);
-            gg.drawImage(mouth, 29, 164, null);
-            gg.drawImage(eye, 110, 94, -eye.getWidth(), eye.getHeight(), null);
-            
-            Image image = new AWTLoader().load(bi, false);
-            Texture2D tex = new Texture2D(image);
-            tex.setMinFilter(Texture.MinFilter.BilinearNearestMipMap);
-            tex.setMagFilter(Texture.MagFilter.Bilinear);
-
-            return tex;
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public static Texture2D generateEyeClosedTexture()
-    {
-        try
-        {
-            BufferedImage bi = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D gg = bi.createGraphics();
-
-            BufferedImage eye = ImageIO.read(new File("assets/Textures/eye3.png"));
-            BufferedImage mouth = ImageIO.read(new File("assets/Textures/debugChin.png"));
-
-            gg.drawImage(eye, 145, 94, null);
-            gg.drawImage(mouth, 29, 164, null);
-            gg.drawImage(eye, 110, 94, -eye.getWidth(), eye.getHeight(), null);
-            
-            Image image = new AWTLoader().load(bi, false);
-            Texture2D tex = new Texture2D(image);
-            tex.setMinFilter(Texture.MinFilter.BilinearNearestMipMap);
-            tex.setMagFilter(Texture.MagFilter.Bilinear);
-
-            return tex;
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
     
     @Override
     public String getTypeName()

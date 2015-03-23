@@ -19,6 +19,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
+import naftoreiclag.villagefive.data.PlayerModel;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.SmoothAngle;
@@ -397,6 +398,8 @@ public class PlayerController extends EntityController implements ActionListener
         //System.out.println(this.camDispl);
     }
 
+    public boolean walking = true;
+    
     private void tickMovementInput(float tpf)
     {
         Vector3f groundGoto = null;
@@ -407,9 +410,10 @@ public class PlayerController extends EntityController implements ActionListener
 
         if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null)
         {
-            if("Legs_Walk".equals(puppet.bodyAnimChannel.getAnimationName()))
+            if(walking)
             {
-                puppet.bodyAnimChannel.setAnim("Stand");
+                puppet.model.playAnimation(PlayerModel.anim_standstill);
+                walking = false;
             }
 
         }
@@ -427,10 +431,10 @@ public class PlayerController extends EntityController implements ActionListener
 
             puppet.setVelocity(playerLook.toNormalVec().multLocal(speed), tpf);
 
-            if("Stand".equals(puppet.bodyAnimChannel.getAnimationName()))
+            if(!walking)
             {
-                puppet.bodyAnimChannel.setAnim("Legs_Walk");
-                puppet.bodyAnimChannel.setSpeed(2.0f);
+                puppet.model.playAnimation(PlayerModel.anim_walk);
+                walking = true;
             }
         }
     }

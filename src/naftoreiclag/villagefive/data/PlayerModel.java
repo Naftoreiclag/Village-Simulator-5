@@ -18,4 +18,6 @@ public interface PlayerModel
     public static final String anim_openEye = "grahfdgfdWEhhrtgdffgrwehr";
     
     public abstract void playAnimation(String name);
+    public abstract void load();
+    public abstract Node getNode();
 }
