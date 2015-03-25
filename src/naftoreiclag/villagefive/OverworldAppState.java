@@ -26,6 +26,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -250,7 +251,8 @@ public class OverworldAppState extends AbstractAppState
         dlsr.setShadowIntensity(0.5f);
         dlsr.setLambda(0.55f);
         dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
-        //viewPort.addProcessor(dlsr);
+        viewPort.addProcessor(dlsr);
+        
         
         FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
         BloomFilter bf = new BloomFilter(BloomFilter.GlowMode.Objects);
@@ -267,7 +269,9 @@ public class OverworldAppState extends AbstractAppState
     private void genworld()
     {
         world = new World(stateRootNode, assetManager);
-        world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        
+        // By default, nothing has influence on shadow rendering.
+        world.rootNode.setShadowMode(RenderQueue.ShadowMode.Off);
         
         Resident resid = new Resident();
         world.residents.add(resid);

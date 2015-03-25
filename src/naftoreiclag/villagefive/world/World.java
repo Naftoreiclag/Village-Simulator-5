@@ -8,6 +8,7 @@ package naftoreiclag.villagefive.world;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
@@ -47,6 +48,10 @@ public class World implements JSONAware
     
     public Node trueRootNode;
     public Node rootNode;
+    
+    private Node entityRoot;
+    private Node chunkRoot;
+    
     public AssetManager assetManager;
     
     public PhysWorld physics = new PhysWorld();
@@ -56,11 +61,24 @@ public class World implements JSONAware
     public List<Plot> plots = new ArrayList<Plot>();
     public List<Resident> residents = new ArrayList<Resident>();
     
-    public World(Node rootNode, AssetManager assetManager)
+    public World(Node theRootNode, AssetManager assetManager)
     {
+        this.trueRootNode = theRootNode;
+        
+        // Establish some holding nodes.
         this.rootNode = new Node();
-        this.trueRootNode = rootNode;
         this.trueRootNode.attachChild(this.rootNode);
+        this.entityRoot = new Node();
+        this.rootNode.attachChild(this.entityRoot);
+        this.chunkRoot = new Node();
+        this.rootNode.attachChild(this.chunkRoot);
+        
+        // Entities should cast but not receive shadows.
+        this.entityRoot.setShadowMode(RenderQueue.ShadowMode.Cast);
+        
+        // Chunks should receive but not cast shadows.
+        this.chunkRoot.setShadowMode(RenderQueue.ShadowMode.Receive);
+        
         this.assetManager = assetManager;
         
         physics.setBounds(physBounds);
@@ -85,7 +103,7 @@ public class World implements JSONAware
                 chunk.z = z;
                 
                 chunk.createNode();
-                this.rootNode.attachChild(chunk.getNode());
+                chunkRoot.attachChild(chunk.getNode());
                 
                 chunks[x][z] = chunk;
             }
@@ -111,7 +129,7 @@ public class World implements JSONAware
         return json.toJSONString();
     }
 
-    public boolean showPhysDebug = true;
+    public boolean showPhysDebug = false;
     public Node last = null;
 
     public void tick(float tpf)
@@ -171,7 +189,7 @@ public class World implements JSONAware
         
         // Load the node
         entity.createNode();
-        rootNode.attachChild(entity.getNode());
+        entityRoot.attachChild(entity.getNode());
         
         // Body
         entity.createBody(this.physics);
@@ -188,7 +206,7 @@ public class World implements JSONAware
         
         // Load the node
         entity.createNode();
-        rootNode.attachChild(entity.getNode());
+        entityRoot.attachChild(entity.getNode());
         
         // Body
         entity.createBody(this.physics);

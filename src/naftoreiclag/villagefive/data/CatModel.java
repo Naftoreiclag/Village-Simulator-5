@@ -63,7 +63,7 @@ public class CatModel implements PlayerModel
         face = ModelManipulator.loadNode("Models/anthro/Face.mesh.j3o");
         face.setQueueBucket(RenderQueue.Bucket.Translucent);
         face.setMaterial(faceMat);
-        face.setShadowMode(RenderQueue.ShadowMode.Receive);
+        face.setShadowMode(RenderQueue.ShadowMode.Off);
         bodySkele.getAttachmentsNode("Head").attachChild(face);
     }
     

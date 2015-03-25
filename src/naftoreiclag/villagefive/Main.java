@@ -80,7 +80,7 @@ public class Main extends SimpleApplication implements ActionListener
         mat_debug_lighting = assetManager.loadMaterial("Materials/debugLighting.j3m");
         mat_debug_bricks = assetManager.loadMaterial("Materials/Bricks.j3m");
         mat_debug_gold = assetManager.loadMaterial("Materials/TestMaterial.j3m");
-        mat_grass = assetManager.loadMaterial("Materials/camograss.j3m");
+        mat_grass = assetManager.loadMaterial("Materials/SpringGrass.j3m");
         
         flyCam.setEnabled(false);
         

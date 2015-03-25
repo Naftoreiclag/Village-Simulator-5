@@ -32,9 +32,9 @@ public class Chunk extends Mundane
         ModelBuilder mb = new ModelBuilder();
         
         mb.addQuad(0, 0, 0, Vector3f.UNIT_Y, 0, 0, 
-                   width, 0, 0, Vector3f.UNIT_Y, 1, 0, 
-                   width, 0, height, Vector3f.UNIT_Y, 1, 1, 
-                   0, 0, height, Vector3f.UNIT_Y, 0, 1);
+                   width, 0, 0, Vector3f.UNIT_Y, 4, 0, 
+                   width, 0, height, Vector3f.UNIT_Y, 4, 4, 
+                   0, 0, height, Vector3f.UNIT_Y, 0, 4);
 
         Mesh evenCells = mb.bake();
         Geometry geo = new Geometry("", evenCells);
