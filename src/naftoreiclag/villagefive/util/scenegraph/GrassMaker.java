@@ -39,7 +39,97 @@ public class GrassMaker
     
     public static Mesh makeGrass(double radius, int amount, double height, double grassRadius, boolean cullHack)
     {
-        return makeGrass(radius, amount, height, grassRadius, cullHack, new Random());
+        return makeGrass2(radius, amount, height, grassRadius, cullHack, new Random());
+    }
+    
+    public static Mesh makeGrass2(double radius, int amount, double height, double grassRadius, boolean cullHack, Random seed)
+    {
+        FloatBuffer v = BufferUtils.createFloatBuffer(amount * 4 * 3);
+        FloatBuffer n = BufferUtils.createFloatBuffer(amount * 4 * 3);
+        FloatBuffer t = BufferUtils.createFloatBuffer(amount * 4 * 2);
+        IntBuffer indicies;
+        
+        if(cullHack)
+        {
+            indicies = BufferUtils.createIntBuffer(amount * 4 * 3);
+        }
+        else
+        {
+            indicies = BufferUtils.createIntBuffer(amount * 2 * 3);
+        }
+        
+        /*
+         *  really bad hexagon ascii art
+         * 
+         *   5    6
+         * 
+         * 4         1
+         *       
+         *   3    2
+         */
+        
+        int currentIndex = 0;
+        
+        for(int i = 0; i < amount; ++ i)
+        {
+            double angle = seed.nextDouble() * Math.PI * 2d;
+            double distance = seed.nextDouble() * radius;
+            
+            float x = (float) (Math.cos(angle) * distance);
+            float z = (float) (Math.sin(angle) * distance);
+            
+            double direction = seed.nextDouble() * Math.PI * 2d;
+            
+            float cos = (float) (Math.cos(direction) * grassRadius);
+            float sin = (float) (Math.cos(direction) * grassRadius);
+            
+            /*
+             *  1-----2
+             *  |     |
+             *  |     |
+             *  0-----3
+             */
+            
+            float heightf = (float) height;
+            
+            v.put(x - cos).put(0f).put(z - sin);
+            v.put(x - cos).put(heightf).put(z - sin);
+            v.put(x + cos).put(heightf).put(z + sin);
+            v.put(x + cos).put(0f).put(z + sin);
+
+            n.put(0).put(1).put(0);
+            n.put(0).put(1).put(0);
+            n.put(0).put(1).put(0);
+            n.put(0).put(1).put(0);
+
+            t.put(0).put(0);
+            t.put(0).put(1);
+            t.put(1).put(1);
+            t.put(1).put(0);
+
+            indicies.put(currentIndex    ).put(currentIndex + 1).put(currentIndex + 3);
+            indicies.put(currentIndex + 1).put(currentIndex + 2).put(currentIndex + 3);
+
+            currentIndex += 4;
+
+            if(cullHack)
+            {
+                indicies.put(currentIndex + 1).put(currentIndex    ).put(currentIndex + 3);
+                indicies.put(currentIndex + 2).put(currentIndex + 1).put(currentIndex + 3);
+            }
+            
+        }
+                
+        Mesh mesh = new Mesh();
+
+        mesh.setBuffer(VertexBuffer.Type.Position, 3, v);
+        mesh.setBuffer(VertexBuffer.Type.Normal,   3, n);
+        mesh.setBuffer(VertexBuffer.Type.TexCoord, 2, t);
+        mesh.setBuffer(VertexBuffer.Type.Index,    3, indicies);
+
+        mesh.updateBound();
+                
+        return mesh;
     }
 
     public static Mesh makeGrass(double radius, int amount, double height, double grassRadius, boolean cullHack, Random seed)

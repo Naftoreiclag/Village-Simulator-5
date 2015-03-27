@@ -40,9 +40,9 @@ public class ForSaleEntity extends Entity
         Mesh m = GrassMaker.makeGrass(10, 50, 1, 0.5, true);
         Geometry geo = new Geometry("", m);
         Material mat2 = world.assetManager.loadMaterial("Materials/tallGrass.j3m");
-        mat2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        //mat2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         geo.setMaterial(mat2);
-        geo.setQueueBucket(RenderQueue.Bucket.Translucent);
+        //geo.setQueueBucket(RenderQueue.Bucket.Translucent);
         node.setShadowMode(RenderQueue.ShadowMode.Receive);
         
         node.attachChild(geo);
