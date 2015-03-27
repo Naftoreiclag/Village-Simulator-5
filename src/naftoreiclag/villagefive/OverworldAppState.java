@@ -246,11 +246,12 @@ public class OverworldAppState extends AbstractAppState
         sun.setDirection(new Vector3f(0.96f, -2.69f, -0.69f).normalizeLocal());
         stateRootNode.addLight(sun);
         
-        dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
+        dlsr = new DirectionalLightShadowRenderer(assetManager, 4096, 3);
         dlsr.setLight(sun);
         dlsr.setShadowIntensity(0.5f);
         dlsr.setLambda(0.55f);
-        dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
+        dlsr.setEdgesThickness(10);
+        dlsr.setEdgeFilteringMode(EdgeFilteringMode.Dither);
         viewPort.addProcessor(dlsr);
         
         
@@ -310,6 +311,11 @@ public class OverworldAppState extends AbstractAppState
         
             world.materializeEntityByName("MarshmallowSeat").setLocation(new Vec2(280, 280));
             
+            
+            
+            ForSaleEntity sale2 = new ForSaleEntity();
+            world.materializeEntity(sale2);
+            sale2.setLocation(new Vec2(280, 280));
         Random rand = new Random(1337);
         
         for(int i = 0; i < 10; ++ i)

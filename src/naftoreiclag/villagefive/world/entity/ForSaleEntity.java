@@ -7,8 +7,13 @@
 package naftoreiclag.villagefive.world.entity;
 
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
+import com.jme3.renderer.queue.RenderQueue;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import naftoreiclag.villagefive.PlayerController;
 import naftoreiclag.villagefive.util.math.Vec2;
+import naftoreiclag.villagefive.util.scenegraph.GrassMaker;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import naftoreiclag.villagefive.world.PhysWorld;
 import naftoreiclag.villagefive.world.body.EntityBody;
@@ -31,6 +36,18 @@ public class ForSaleEntity extends Entity
         node = ModelManipulator.loadNode("Models/Knight.mesh.j3o");
         Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
         node.setMaterial(mat);
+        
+        Mesh m = GrassMaker.makeGrass(10, 50, 1, 0.5, true);
+        Geometry geo = new Geometry("", m);
+        Material mat2 = world.assetManager.loadMaterial("Materials/tallGrass.j3m");
+        mat2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        geo.setMaterial(mat2);
+        geo.setQueueBucket(RenderQueue.Bucket.Translucent);
+        node.setShadowMode(RenderQueue.ShadowMode.Receive);
+        
+        node.attachChild(geo);
+        
+        
     }
 
     @Override
