@@ -255,6 +255,7 @@ public class OverworldAppState extends AbstractAppState
         viewPort.addProcessor(dlsr);
         
         
+        
         FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
         BloomFilter bf = new BloomFilter(BloomFilter.GlowMode.Objects);
         fpp.addFilter(bf);

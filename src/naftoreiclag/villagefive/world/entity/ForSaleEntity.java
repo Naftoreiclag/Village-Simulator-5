@@ -11,6 +11,7 @@ import com.jme3.material.RenderState;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import naftoreiclag.villagefive.PlayerController;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.GrassMaker;
@@ -37,15 +38,20 @@ public class ForSaleEntity extends Entity
         Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
         node.setMaterial(mat);
         
-        Mesh m = GrassMaker.makeGrass(10, 50, 1, 0.5, true);
+        /*
+        node = new Node();
+        
+        Mesh m = GrassMaker.makeGrass(20, 900, 2, 1, true);
         Geometry geo = new Geometry("", m);
         Material mat2 = world.assetManager.loadMaterial("Materials/tallGrass.j3m");
         //mat2.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         geo.setMaterial(mat2);
-        //geo.setQueueBucket(RenderQueue.Bucket.Translucent);
+        geo.setQueueBucket(RenderQueue.Bucket.Transparent);
         node.setShadowMode(RenderQueue.ShadowMode.Receive);
         
         node.attachChild(geo);
+        */
+        
         
         
     }

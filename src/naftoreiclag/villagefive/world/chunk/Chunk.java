@@ -7,6 +7,7 @@
 package naftoreiclag.villagefive.world.chunk;
 
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
@@ -40,9 +41,15 @@ public class Chunk extends Mundane
         Geometry geo = new Geometry("", evenCells);
         geo.setMaterial(Main.mat_grass);
         
+        Geometry geo2 = new Geometry("", evenCells);
+        geo2.setMaterial(Main.mat_grass_tufts);
+        geo2.setQueueBucket(RenderQueue.Bucket.Transparent);
+        geo2.setShadowMode(RenderQueue.ShadowMode.Receive);
         
         node = new Node();
         node.attachChild(geo);
+        node.attachChild(geo2);
+        geo2.move(0, 0.1f, 0);
         node.move(x * width, 0, z * height);
     }
 

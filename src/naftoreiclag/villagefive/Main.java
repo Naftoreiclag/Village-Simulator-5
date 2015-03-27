@@ -45,6 +45,7 @@ public class Main extends SimpleApplication implements ActionListener
     public static Material mat_debug_wireframe;
     public static Material mat_debug;
     public static Material mat_grass;
+    public static Material mat_grass_tufts;
     public static Material mat_debug_lighting;
     public static Material mat_debug_bricks;
     public static Material mat_debug_gold;
@@ -81,6 +82,7 @@ public class Main extends SimpleApplication implements ActionListener
         mat_debug_bricks = assetManager.loadMaterial("Materials/Bricks.j3m");
         mat_debug_gold = assetManager.loadMaterial("Materials/TestMaterial.j3m");
         mat_grass = assetManager.loadMaterial("Materials/SpringGrass.j3m");
+        mat_grass_tufts = assetManager.loadMaterial("Materials/SpringGrassTufts.j3m");
         
         flyCam.setEnabled(false);
         
