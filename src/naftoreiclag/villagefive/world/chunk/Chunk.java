@@ -41,15 +41,21 @@ public class Chunk extends Mundane
         Geometry geo = new Geometry("", evenCells);
         geo.setMaterial(Main.mat_grass);
         
-        Geometry geo2 = new Geometry("", evenCells);
-        geo2.setMaterial(Main.mat_grass_tufts);
-        geo2.setQueueBucket(RenderQueue.Bucket.Transparent);
-        geo2.setShadowMode(RenderQueue.ShadowMode.Receive);
-        
         node = new Node();
+        
+        float floaty = 0.02f;
+        for(int i = 1; i <= 3; ++ i)
+        {
+            Geometry geo2 = new Geometry("", evenCells);
+            geo2.setMaterial(Main.mat_grass_tufts);
+            geo2.setShadowMode(RenderQueue.ShadowMode.Receive);
+            geo2.move(0, floaty * ((float) i), 0);
+            node.attachChild(geo2);
+        }
+        
+        
+        
         node.attachChild(geo);
-        node.attachChild(geo2);
-        geo2.move(0, 0.1f, 0);
         node.move(x * width, 0, z * height);
     }
 

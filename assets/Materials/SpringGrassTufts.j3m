@@ -3,7 +3,7 @@ Material My Material : Common/MatDefs/Light/Lighting.j3md {
      MaterialParameters {
         DiffuseMap : Repeat Textures/SpringGrassTufts.png
         UseAlpha : true
-        AlphaDiscardThreshold : 0.5
+        AlphaDiscardThreshold : 0.6
         UseMaterialColors : true
         Ambient : 1.0 1.0 1.0 1.0
         Diffuse : 1.0 1.0 1.0 1.0
