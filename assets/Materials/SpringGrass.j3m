@@ -4,6 +4,7 @@ Material My Material : Common/MatDefs/Light/Lighting.j3md {
         UseMaterialColors : true
         Ambient : 1.0 1.0 1.0 1.0
         Diffuse : 1.0 1.0 1.0 1.0
+        SteepParallax : false
      }
     AdditionalRenderState {
     }

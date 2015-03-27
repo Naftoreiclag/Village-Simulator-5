@@ -1,7 +1,13 @@
 Material My Material : Common/MatDefs/Light/Lighting.j3md {
      MaterialParameters {
-        DiffuseMap : Flip Textures/leaf.png
+        DiffuseMap : Textures/tallgrass.png
      }
     AdditionalRenderState {
+      DepthTest On
+      Blend Alpha
+      Wireframe Off
+      DepthWrite On
+      AlphaTestFalloff 0.0
+      PointSprite Off
     }
 }
