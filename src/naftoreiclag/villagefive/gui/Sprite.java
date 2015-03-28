@@ -21,8 +21,8 @@ public final class Sprite extends Element
     public Sprite(String file)
     {
         picture = new Picture(file);
-        Material background = new Material(SAM.a, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture texture = SAM.a.loadTexture(file);
+        Material background = new Material(SAM.ASSETS, "Common/MatDefs/Misc/Unshaded.j3md");
+        Texture texture = SAM.ASSETS.loadTexture(file);
         texture.setWrap(Texture.WrapMode.Repeat);
         background.setTexture("ColorMap", texture);
         background.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);

@@ -99,7 +99,7 @@ public class Chunk extends Mundane
         {
             // TODO: make textures static
             Texture tex = makeLevel(i * (1d / numLayers), 4, new Random(1337));
-            Material mat = SAM.a.loadMaterial("Materials/SpringGrassTufts.j3m");
+            Material mat = SAM.ASSETS.loadMaterial("Materials/SpringGrassTufts.j3m");
             mat.setTexture("DiffuseMap", tex);
             
             textures[i] = mat;

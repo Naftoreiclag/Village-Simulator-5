@@ -11,9 +11,9 @@ import com.jme3.input.InputManager;
 
 public class SAM
 {
-    public static AssetManager a;
-    public static InputManager i;
+    public static AssetManager ASSETS;
+    public static InputManager INPUT;
     
-    public static final String addonDir = "addons/";
+    public static final String ADDON_DIR = "addons/";
     
 }

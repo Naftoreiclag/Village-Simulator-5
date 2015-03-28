@@ -29,7 +29,7 @@ public class AddonManager
         addonCollection.clear();
         
         // List all of the folders located in pluginRoots
-        List<File> pluginRoots = (List<File>) FileUtils.listFilesAndDirs(new File(SAM.addonDir), FalseFileFilter.FALSE, TrueFileFilter.TRUE);
+        List<File> pluginRoots = (List<File>) FileUtils.listFilesAndDirs(new File(SAM.ADDON_DIR), FalseFileFilter.FALSE, TrueFileFilter.TRUE);
         
         // Remove the plugins folder, not sure why its even included.
         pluginRoots.remove(0);

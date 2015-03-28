@@ -22,7 +22,7 @@ public class AxesMaker
     
     static
     {
-        xm = new Material(SAM.a, "Common/MatDefs/Misc/Unshaded.j3md");
+        xm = new Material(SAM.ASSETS, "Common/MatDefs/Misc/Unshaded.j3md");
         ym = xm.clone();
         zm = xm.clone();
         

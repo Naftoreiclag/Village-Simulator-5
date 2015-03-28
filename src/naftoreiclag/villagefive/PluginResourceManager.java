@@ -34,7 +34,7 @@ public class PluginResourceManager
 {
     static
     {
-        SAM.a.registerLocator("plugins", FileLocator.class);
+        SAM.ASSETS.registerLocator("plugins", FileLocator.class);
     }
     
     public static Map<String, ArrayList<File>> map = new HashMap<String, ArrayList<File>>();
@@ -149,7 +149,7 @@ public class PluginResourceManager
         else if(ext.equalsIgnoreCase("j3o"))
         {
             System.out.println("loading j3o model");
-            return SAM.a.loadModel(relativize(realLoc));
+            return SAM.ASSETS.loadModel(relativize(realLoc));
         }
         
         return null;
@@ -174,7 +174,7 @@ public class PluginResourceManager
             Material mat;
             if(usesShaderBlow(data))
             {
-                mat = new Material(SAM.a, "ShaderBlow/MatDefs/LightBlow/LightBlow.j3md");
+                mat = new Material(SAM.ASSETS, "ShaderBlow/MatDefs/LightBlow/LightBlow.j3md");
                 
                 if(data.containsKey("rim_lighting"))
                 {
@@ -183,7 +183,7 @@ public class PluginResourceManager
             }
             else
             {
-                mat = new Material(SAM.a, "Common/MatDefs/Light/Lighting.j3md");
+                mat = new Material(SAM.ASSETS, "Common/MatDefs/Light/Lighting.j3md");
             }
             
             mat.setColor("Ambient", ColorRGBA.White);
@@ -213,7 +213,7 @@ public class PluginResourceManager
         TextureKey key = new TextureKey(relativize(realLoc));
         key.setFlipY(false);
         
-        return SAM.a.loadTexture(key);
+        return SAM.ASSETS.loadTexture(key);
     }
     
     public static Body loadBody(Entity owner, String input) throws IOException, ParseException

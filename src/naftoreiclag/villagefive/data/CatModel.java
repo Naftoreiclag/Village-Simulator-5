@@ -42,7 +42,7 @@ public class CatModel implements PlayerModel
     public void load()
     {
         body = ModelManipulator.loadNode("Models/anthro/Anthro_Feline.mesh.j3o");
-        Material fur = SAM.a.loadMaterial("Materials/Michelle.j3m");
+        Material fur = SAM.ASSETS.loadMaterial("Materials/Michelle.j3m");
         body.setMaterial(fur);
         
         bodyAnim = body.getControl(AnimControl.class);
@@ -56,7 +56,7 @@ public class CatModel implements PlayerModel
         eyeOpenTex = generateEyeOpenTexture();
         eyeCloseTex = generateEyeClosedTexture();
 
-        faceMat = new Material(SAM.a, "Common/MatDefs/Misc/Unshaded.j3md");
+        faceMat = new Material(SAM.ASSETS, "Common/MatDefs/Misc/Unshaded.j3md");
         faceMat.setTexture("ColorMap", eyeOpenTex);
         faceMat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         

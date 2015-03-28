@@ -38,7 +38,7 @@ public class Inventory implements ActionListener, AnalogListener
         plane.attachElement(box2);
         mainInventory.addFollower(box2);
         
-        SAM.i.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
+        SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
     }
     
     public void enable()
@@ -77,7 +77,7 @@ public class Inventory implements ActionListener, AnalogListener
     {
         if(name.equals(KeyKeys.mouse_move))
         {
-            mouseLoc.set(SAM.i.getCursorPosition());
+            mouseLoc.set(SAM.INPUT.getCursorPosition());
             
             //mouseLoc.debug();
             

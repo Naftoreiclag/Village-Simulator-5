@@ -61,8 +61,8 @@ public class Main extends SimpleApplication implements ActionListener
     @Override
     public void simpleInitApp()
     {
-        SAM.a = this.assetManager;
-        SAM.i = this.inputManager;
+        SAM.ASSETS = this.assetManager;
+        SAM.INPUT = this.inputManager;
         
         try
         {
