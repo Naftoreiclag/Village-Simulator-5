@@ -34,7 +34,7 @@ public class Main extends SimpleApplication implements ActionListener
         main.setSettings(displ);
         //main.showSettings = false;
         
-        main.setDisplayFps(false);
+        main.setDisplayFps(true);
         main.setDisplayStatView(false);
         
         width =  main.settings.getWidth();

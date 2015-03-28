@@ -22,10 +22,12 @@ public class Vec2 implements JSONAware
 
     public double getX() { return this.x; }
     public float getXF() { return (float) this.getX(); }
+    public int getXI() { return (int) this.getX(); }
     public void setX(double x) { this.x = x; }
     
     public double getY() { return this.y; }
     public float getYF() { return (float) this.getY(); }
+    public int getYI() { return (int) this.getY(); }
     public void setY(double y) { this.y = y; }
 	
     // Adaptions
@@ -265,6 +267,67 @@ public class Vec2 implements JSONAware
 		return this.clone().divideLocal(a);
 	}
     
+    // Chunk stuff
+    
+    public Vec2 gridLocal(double width, double height)
+    {
+        this.x = x / width;
+        this.y = y / height;
+        
+        if(this.x < 0)
+        {
+            -- this.x;
+        }
+        if(this.y < 0)
+        {
+            -- this.y;
+        }
+        
+        this.floorLocal();
+        
+        return this;
+    }
+    
+    public Vec2 grid(double width, double height)
+    {
+        return this.clone().gridLocal(width, height);
+    }
+    
+    // Rounding
+    public Vec2 floorLocal()
+    {
+        this.x = Math.floor(this.x);
+        this.y = Math.floor(this.y);
+        
+        return this;
+    }
+    public Vec2 floor()
+    {
+        return this.clone().floorLocal();
+    }
+    public Vec2 ceilLocal()
+    {
+        this.x = Math.ceil(this.x);
+        this.y = Math.ceil(this.y);
+        
+        return this;
+    }
+    public Vec2 ceil()
+    {
+        return this.clone().ceilLocal();
+    }
+    public Vec2 roundLocal()
+    {
+        this.x = Math.round(this.x);
+        this.y = Math.round(this.y);
+        
+        return this;
+    }
+    public Vec2 round()
+    {
+        return this.clone().roundLocal();
+    }
+    
     // Other
 	
 	public Vec2 inverseLocal()
@@ -310,23 +373,18 @@ public class Vec2 implements JSONAware
 	{
 		return (float) this.len();
 	}
-	
-	
 	public double dotd(Vec2 other)
 	{
 		return (this.getX() * other.getX()) + (this.getY() * other.getY());
 	}
-	
 	public float dot(Vec2 other)
 	{
 		return (float) this.dotd(other);
 	}
-	
 	public double crossProduct(Vec2 other)
 	{
 		return (this.getX() * other.getY()) - (this.getY() * other.getX());
 	}
-
 	public Vec2 normalizeLocal()
 	{
         if(x == 0 && y == 0)
@@ -336,7 +394,6 @@ public class Vec2 implements JSONAware
         
 		return this.divideLocal(Math.sqrt(this.lenSqF()));
 	}
-
 	public Vec2 normalize()
 	{
 		return this.clone().normalizeLocal();
@@ -351,12 +408,12 @@ public class Vec2 implements JSONAware
 		
 		return this;
 	}
-	
 	public Vec2 perpendicular()
 	{
 		return this.clone().perpendicularLocal();
 	}
 
+    @Deprecated
 	public double angleTo(Vec2 loc)
 	{
 		double ang = Math.atan2(loc.getY() - this.getY(), loc.getX() - this.getX());
@@ -396,13 +453,11 @@ public class Vec2 implements JSONAware
         this.x = x;
         this.y = y;
     }
-
     public void set(double x, double y)
     {
         this.x = x;
         this.y = y;
     }
-    
     public void set(Vec2 mirror)
     {
         this.x = mirror.x;
@@ -413,11 +468,8 @@ public class Vec2 implements JSONAware
         this.x = mirror.x;
         this.y = mirror.y;
     }
-
     public void debug()
     {
         System.out.println(this);
     }
-
-
 }

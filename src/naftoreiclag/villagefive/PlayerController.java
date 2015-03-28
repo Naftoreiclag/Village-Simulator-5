@@ -196,6 +196,8 @@ public class PlayerController extends EntityController implements ActionListener
         updateFrustum(tpf);
         tickDumbAngles(tpf);
         tickMovementInput(tpf);
+        
+        world.updateChunkLODs(this.puppet.getLocation());
 
         // Move camera on its track
         cam.setLocation(OreDict.JmeAngleToVec3((float) camDispl.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));

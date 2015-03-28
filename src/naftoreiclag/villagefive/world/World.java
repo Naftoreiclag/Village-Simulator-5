@@ -41,8 +41,8 @@ public class World implements JSONAware
     }
     
     // Size in chunks
-    public int width = 5;
-    public int height = 5;
+    public int width = 20;
+    public int height = 20;
     
     public Chunk[][] chunks = new Chunk[width][height];
     
@@ -218,6 +218,48 @@ public class World implements JSONAware
     }
 
     
+    public void updateChunkLODs(Vec2 loc2)
+    {
+        Vec2 chunkLoc = loc2.grid(Chunk.width, Chunk.height);
+        
+        int cx = chunkLoc.getXI();
+        int cy = chunkLoc.getYI();
+        
+        int lodHighRad = 2;
+        int lodMidRad = 4;
+        
+        for(int x = 0; x < width; ++ x)
+        {
+            for(int y = 0; y < height; ++ y)
+            {
+                if(Math.abs(x - cx) < lodHighRad && Math.abs(y - cy) < lodHighRad)
+                {
+                    this.chunks[x][y].setLOD(Chunk.HIGH_LOD);
+                    continue;
+                }
+                if(Math.abs(x - cx) < lodMidRad && Math.abs(y - cy) < lodMidRad)
+                {
+                    this.chunks[x][y].setLOD(Chunk.MID_LOD);
+                    continue;
+                }
+                this.chunks[x][y].setLOD(Chunk.LOW_LOD);
+            }
+        }
+        
+        
+    }
+    
+    public Chunk getChunk(int x, int y)
+    {
+        if(x < 0 || x >= width || y < 0 || y >= height)
+        {
+            return null;
+        }
+        else
+        {
+            return this.chunks[x][y];
+        }
+    }
     
     // Are you in room
     public boolean insideRoom(Vec2 loc2)

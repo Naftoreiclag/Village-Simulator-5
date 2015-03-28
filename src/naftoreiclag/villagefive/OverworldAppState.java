@@ -226,8 +226,6 @@ public class OverworldAppState extends AbstractAppState
     DirectionalLightShadowRenderer dlsr;
     private void setupUselessAestetics()
     {
-        
-        
         chasePnt = new Node();
         chasePnt.setLocalTranslation(0, 3.5f, 0);
         stateRootNode.attachChild(chasePnt);
@@ -246,12 +244,12 @@ public class OverworldAppState extends AbstractAppState
         sun.setDirection(new Vector3f(0.96f, -2.69f, -0.69f).normalizeLocal());
         stateRootNode.addLight(sun);
         
-        dlsr = new DirectionalLightShadowRenderer(assetManager, 4096, 3);
+        dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
         dlsr.setLight(sun);
         dlsr.setShadowIntensity(0.5f);
         dlsr.setLambda(0.55f);
         dlsr.setEdgesThickness(10);
-        dlsr.setEdgeFilteringMode(EdgeFilteringMode.Dither);
+        dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCFPOISSON);
         viewPort.addProcessor(dlsr);
         
         
@@ -306,17 +304,17 @@ public class OverworldAppState extends AbstractAppState
             Entity egg = world.materializeEntityByName("streetlamp");
             egg.setLocation(new Vec2(280, 280));
         // end test
-        
-            Entity egg2 = world.materializeEntityByName("chair1");
-            egg2.setLocation(new Vec2(280, 280));
-        
-            world.materializeEntityByName("MarshmallowSeat").setLocation(new Vec2(280, 280));
-            
-            
-            
-            ForSaleEntity sale2 = new ForSaleEntity();
-            world.materializeEntity(sale2);
-            sale2.setLocation(new Vec2(280, 280));
+
+        Entity egg2 = world.materializeEntityByName("chair1");
+        egg2.setLocation(new Vec2(280, 280));
+
+        world.materializeEntityByName("MarshmallowSeat").setLocation(new Vec2(280, 280));
+
+
+
+        ForSaleEntity sale2 = new ForSaleEntity();
+        world.materializeEntity(sale2);
+        sale2.setLocation(new Vec2(280, 280));
         Random rand = new Random(1337);
         
         for(int i = 0; i < 10; ++ i)
