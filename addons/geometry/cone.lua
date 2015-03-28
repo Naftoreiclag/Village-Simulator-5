@@ -4,5 +4,7 @@ return {
 	id = Addon.id .. "cone",
 
 	model = "cone.j3o",
-	material = "cone.mat.lua"
+	material = {
+		diffuse = "orange.jpg"
+	}
 }

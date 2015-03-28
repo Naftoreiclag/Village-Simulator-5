@@ -23,10 +23,10 @@ Addon = {
 
 -- List all of your entities here.
 Addon.Entities = {
-	dofile("addons/geometry/cone.lua"),
-	"cylinder.lua",
-	"sphere.lua",
-	"pyramid.lua"
+	dofile("cone.lua")
 }
 
 print "Addon successfully parsed"
+
+return Addon
+
