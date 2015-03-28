@@ -28,7 +28,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 // Some worlds that you download may specify that certain addons need to be present in the collection.
 public class AddonManager
 {
-    public static List<AddonData> addonCollection = new ArrayList<AddonData>();
+    public static List<AddonInfo> addonCollection = new ArrayList<AddonInfo>();
     public static Map<String, File> addonDirectories = new HashMap<String, File>();
     
     
@@ -54,16 +54,16 @@ public class AddonManager
             LuaValue rawAddon = globals.loadfile(addon_root + "addon.lua").call();
             LuaTable data = rawAddon.checktable();
 
-            AddonData addon = new AddonData(data);
+            AddonInfo addon = new AddonInfo(data);
             
             addonCollection.add(addon);
             addonDirectories.put(addon.id, pluginRoot);
         }
         
         
-        for(AddonData addon : addonCollection)
+        for(AddonInfo addon : addonCollection)
         {
-            for(AddonEntityData entity : addon.entities)
+            for(AddonEntityInfo entity : addon.entities)
             {
                 EntityRegistry.register(entity);
             }

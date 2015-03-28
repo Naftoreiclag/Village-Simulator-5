@@ -13,7 +13,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
-public class AddonData
+public class AddonInfo
 {
     public String id;
     public String version;
@@ -23,9 +23,9 @@ public class AddonData
     public String author;
     
     public List<String> downgrades = new ArrayList<String>();
-    public List<AddonEntityData> entities = new ArrayList<AddonEntityData>();
+    public List<AddonEntityInfo> entities = new ArrayList<AddonEntityInfo>();
 
-    public AddonData(LuaTable data)
+    public AddonInfo(LuaTable data)
     {
         id = data.get("id").checkjstring();
         version = data.get("version").checkjstring();
@@ -47,7 +47,7 @@ public class AddonData
             {
                 LuaTable entityData = entityDataList.get(i).checktable();
                 
-                entities.add(new AddonEntityData(this, entityData));
+                entities.add(new AddonEntityInfo(this, entityData));
             }
             catch(LuaError error)
             {

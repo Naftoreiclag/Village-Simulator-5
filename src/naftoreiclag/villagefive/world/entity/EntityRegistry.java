@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import naftoreiclag.villagefive.PluginEntity;
-import naftoreiclag.villagefive.addon.AddonEntityData;
+import naftoreiclag.villagefive.addon.AddonEntityInfo;
 import naftoreiclag.villagefive.world.World;
 
 public class EntityRegistry 
@@ -74,7 +74,7 @@ public class EntityRegistry
     {
         modEntities.put(entity.name, new ModEntity(entity));
     }
-    public static void register(AddonEntityData entity)
+    public static void register(AddonEntityInfo entity)
     {
         AddonEntity e = new AddonEntity(entity);
         
