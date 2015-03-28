@@ -68,6 +68,8 @@ public class Main extends SimpleApplication implements ActionListener
         {
             PluginLoader.loadPlugs();
             PluginResourceManager.debug();
+            
+            AddonManager.reloadAddons();
         }
         catch(Exception e)
         {

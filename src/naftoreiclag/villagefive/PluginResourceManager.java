@@ -44,10 +44,18 @@ public class PluginResourceManager
         String work = System.getProperty("user.dir") + "\\" + PluginLoader.pluginDir + "\\";
         String foo = absName.getAbsolutePath();
         
+        
+        System.out.println(work);
+        System.out.println(foo);
+        System.out.println("===");
+        
         if(foo.startsWith(work))
         {
+        System.out.println(foo);
             return foo.substring(work.length());
         }
+        
+        System.out.println(foo);
         
         return foo;
     }
@@ -149,6 +157,7 @@ public class PluginResourceManager
         else if(ext.equalsIgnoreCase("j3o"))
         {
             System.out.println("loading j3o model");
+            System.out.println(realLoc);
             return SAM.ASSETS.loadModel(relativize(realLoc));
         }
         

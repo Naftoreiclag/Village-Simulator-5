@@ -8,8 +8,13 @@ package naftoreiclag.villagefive.addon;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import naftoreiclag.villagefive.Plugin;
+import naftoreiclag.villagefive.PluginEntity;
 import naftoreiclag.villagefive.SAM;
+import naftoreiclag.villagefive.world.entity.EntityRegistry;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -18,11 +23,12 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
-// Addons can be applied on world creation
-// Some worlds that you download may specify that certain addons need to be 
+// Addons can be applied upon world creation.
+// Some worlds that you download may specify that certain addons need to be present in the collection.
 public class AddonManager
 {
-    public static List<Addon> addonCollection = new ArrayList<Addon>();
+    public static List<AddonData> addonCollection = new ArrayList<AddonData>();
+    public static Map<String, File> addonDirectories = new HashMap<String, File>();
     
     public static void reloadAddons()
     {
@@ -37,19 +43,28 @@ public class AddonManager
         // 
         for(File pluginRoot : pluginRoots)
         {
-            String addon_root = pluginRoot.getPath() + "/";
+            String addon_root = pluginRoot.getPath().replace('\\', '/') + "/";
             
             Globals globals = JsePlatform.standardGlobals();
             globals.set("ADDON_ROOT", addon_root);
             globals.loadfile("addons/globals.lua").call();
 
             LuaValue rawAddon = globals.loadfile(addon_root + "addon.lua").call();
+            LuaTable data = rawAddon.checktable();
 
-            LuaTable addonTable = rawAddon.checktable();
-
-            Addon addon = new Addon(addonTable);
+            AddonData addon = new AddonData(data);
             
             addonCollection.add(addon);
+            addonDirectories.put(addon.id, pluginRoot);
+        }
+        
+        
+        for(AddonData addon : addonCollection)
+        {
+            for(AddonEntityData entity : addon.entities)
+            {
+                EntityRegistry.register(entity);
+            }
         }
     }
 }

@@ -11,12 +11,14 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import naftoreiclag.villagefive.PluginEntity;
+import naftoreiclag.villagefive.addon.AddonEntityData;
 import naftoreiclag.villagefive.world.World;
 
 public class EntityRegistry 
 {
     public static Map<String, Class<? extends Entity>> entities = new HashMap<String, Class<? extends Entity>>();
     public static Map<String, ModEntity> modEntities = new HashMap<String, ModEntity>();
+    public static Map<String, AddonEntity> addonEntities = new HashMap<String, AddonEntity>();
     
     static
     {
@@ -72,6 +74,12 @@ public class EntityRegistry
     {
         modEntities.put(entity.name, new ModEntity(entity));
     }
+    public static void register(AddonEntityData entity)
+    {
+        AddonEntity e = new AddonEntity(entity);
+        
+        addonEntities.put(e.getTypeName(), e);
+    }
 
     public static Entity newInstance(String string)
     {
@@ -92,6 +100,10 @@ public class EntityRegistry
             {
                 Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+        else if(addonEntities.containsKey(string))
+        {
+            returnVal = addonEntities.get(string).duplicate();
         }
         else if(modEntities.containsKey(string))
         {

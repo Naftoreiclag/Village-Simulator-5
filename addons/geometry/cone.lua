@@ -1,8 +1,10 @@
 return {
 	name = "Cone",
 	description = "One third of a cylinder.",
-	id = Addon.id .. "cone",
-
+	id = "cone",
+	
+	radius = 1;
+	
 	model = "cone.j3o",
 	material = {
 		diffuse = "orange.jpg"

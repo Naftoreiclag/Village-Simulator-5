@@ -22,7 +22,7 @@ Addon = {
 }
 
 -- List all of your entities here.
-Addon.Entities = {
+Addon.entities = {
 	dofile("cone.lua")
 }
 

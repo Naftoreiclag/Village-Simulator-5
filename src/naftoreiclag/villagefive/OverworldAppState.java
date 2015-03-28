@@ -102,27 +102,6 @@ public class OverworldAppState extends AbstractAppState
         this.cam = this.app.getCamera();
         this.viewPort = this.app.getViewPort();
         
-        Vec2 testVec = new Vec2(Math.random(), Math.random());
-        testVec.normalizeLocal();
-        Angle derivedAngle = testVec.getAngle();
-        Vec2 derivedVec = derivedAngle.toNormalVec();
-        Angle derivedAngle2 = derivedVec.getAngle();
-        
-        System.out.println("==============");
-        System.out.println(testVec);
-        System.out.println(derivedVec);
-        System.out.println(derivedAngle);
-        System.out.println(derivedAngle2);
-        
-        double rand = Math.random();
-        double randy = Math.atan2(Math.sin(rand), Math.cos(rand));
-        
-        System.out.println(rand);
-        System.out.println(randy);
-        
-        
-        
-        
         this.stateRootNode = new Node();
         trueRootNode.attachChild(stateRootNode);
         
@@ -303,6 +282,9 @@ public class OverworldAppState extends AbstractAppState
         // try load modded stuff
             Entity egg = world.materializeEntityByName("streetlamp");
             egg.setLocation(new Vec2(280, 280));
+            
+            Entity cone = world.materializeEntityByName("naftogeometry:cone");
+            cone.setLocation(new Vec2(230, 230));
         // end test
 
         Entity egg2 = world.materializeEntityByName("chair1");
