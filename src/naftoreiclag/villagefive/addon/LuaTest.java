@@ -14,14 +14,9 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 public class LuaTest {
     public static void main(String[] args) {
         Globals globals = JsePlatform.standardGlobals();
+        System.out.println(globals.get("PATH"));
         LuaValue chunk = globals.loadfile("addons/geometry/addon.lua");
         chunk.call();
         
-        System.out.println(globals.get("name"));
-        
-        LuaTable t = globals.get("downgrades").checktable();
-        
-        System.out.println(t.get(1));
-        System.out.println(globals.get("version"));
     }
 }

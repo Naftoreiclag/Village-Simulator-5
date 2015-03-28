@@ -1,4 +1,4 @@
-return  {
+return {
 	name = "Cone",
 	description = "One third of a cylinder.",
 	id = Addon.id .. "cone",
