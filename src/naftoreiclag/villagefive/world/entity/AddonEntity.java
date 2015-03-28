@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive.world.entity;
 
+import com.jme3.asset.plugins.FileLocator;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.io.File;
@@ -19,6 +20,11 @@ import org.dyn4j.geometry.Circle;
 
 public class AddonEntity extends Entity
 {
+    static
+    {
+        SAM.ASSETS.registerLocator("addons", FileLocator.class);
+    }
+    
     public final AddonEntityData data;
 
     AddonEntity(AddonEntityData entity)
@@ -53,9 +59,7 @@ public class AddonEntity extends Entity
     
     public String relativize(String modelName)
     {
-        String foo = AddonManager.addonDirectories.get(data.parent.id).getAbsolutePath() + "\\" + modelName;
-        
-        return "Models/Flower.mesh.j3o";
+        return AddonManager.addonDirectories.get(data.parent.id).getName() + "\\" + modelName;
     }
 
     @Override

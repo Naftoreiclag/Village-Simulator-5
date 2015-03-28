@@ -51,7 +51,7 @@ public class PluginResourceManager
         
         if(foo.startsWith(work))
         {
-        System.out.println(foo);
+            System.out.println(foo.substring(work.length()));
             return foo.substring(work.length());
         }
         

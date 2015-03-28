@@ -23,9 +23,6 @@ public class Main extends SimpleApplication implements ActionListener
     static int height;
     public static void main(String[] args)
     {
-        //LuaTest.main(args);
-        AddonManager.reloadAddons();
-        
         AppSettings displ = new AppSettings(true);
         displ.setSettingsDialogImage("interface/splash.png");
         //displ.setResolution(1280, 720);
@@ -63,6 +60,8 @@ public class Main extends SimpleApplication implements ActionListener
     {
         SAM.ASSETS = this.assetManager;
         SAM.INPUT = this.inputManager;
+        
+        AddonManager.reloadAddons();
         
         try
         {

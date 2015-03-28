@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive.addon;
 
+import com.jme3.asset.plugins.FileLocator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ public class AddonManager
 {
     public static List<AddonData> addonCollection = new ArrayList<AddonData>();
     public static Map<String, File> addonDirectories = new HashMap<String, File>();
+    
     
     public static void reloadAddons()
     {
