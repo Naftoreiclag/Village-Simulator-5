@@ -1,6 +1,8 @@
+return  {
+	name = "Cone",
+	description = "One third of a cylinder.",
+	id = Addon.id .. "cone",
 
-name = "Cone"
-description = "One third of a cylinder."
-
-model = "cone.j3o"
-material = "cone.mat.lua"
+	model = "cone.j3o",
+	material = "cone.mat.lua"
+}
