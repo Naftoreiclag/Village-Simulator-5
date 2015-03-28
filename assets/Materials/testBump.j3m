@@ -1,8 +1,0 @@
-Material My Material : Common/MatDefs/Light/Lighting.j3md {
-     MaterialParameters {
-        NormalMap : Textures/dni_othernormals.png
-        DiffuseMap : Textures/debug.png
-     }
-    AdditionalRenderState {
-    }
-}

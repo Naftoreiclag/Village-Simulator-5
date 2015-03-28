@@ -192,7 +192,6 @@ public class PlayerController extends EntityController implements ActionListener
 
     public void tick(float tpf)
     {
-
         updateFrustum(tpf);
         tickDumbAngles(tpf);
         tickMovementInput(tpf);
