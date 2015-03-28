@@ -9,7 +9,8 @@ package naftoreiclag.villagefive;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Plugin {
+public class Plugin
+{
 
     public final String name;
     public final String namespace;

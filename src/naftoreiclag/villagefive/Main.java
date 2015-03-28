@@ -12,6 +12,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.material.Material;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
+import naftoreiclag.villagefive.addon.LuaTest;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import org.apache.commons.io.FilenameUtils;
 
@@ -21,6 +22,8 @@ public class Main extends SimpleApplication implements ActionListener
     static int height;
     public static void main(String[] args)
     {
+        LuaTest.main(args);
+        
         AppSettings displ = new AppSettings(true);
         displ.setSettingsDialogImage("interface/splash.png");
         //displ.setResolution(1280, 720);
@@ -61,9 +64,8 @@ public class Main extends SimpleApplication implements ActionListener
         
         try
         {
-        PluginLoader.loadPlugs();
-        PluginResourceManager.debug();
-        System.out.println(FilenameUtils.getExtension("/test/test.foo.bar"));
+            PluginLoader.loadPlugs();
+            PluginResourceManager.debug();
         }
         catch(Exception e)
         {

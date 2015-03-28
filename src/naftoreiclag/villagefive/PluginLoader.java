@@ -25,16 +25,19 @@ class PluginLoader
     public final static String pluginDir = "plugins";
     
     public static List<Plugin> plugins = new ArrayList<Plugin>();
-
+    
     static void loadPlugs() throws FileNotFoundException, IOException, ParseException
     {
+        // List all of the folders located in pluginRoots
         List<File> pluginRoots = (List<File>) FileUtils.listFilesAndDirs(new File(pluginDir), FalseFileFilter.FALSE, TrueFileFilter.TRUE);
         
         // Remove the plugins folder, not sure why its even included.
         pluginRoots.remove(0);
         
+        // JSON aware
         JSONParser parser = new JSONParser();
         
+        // 
         for(File pluginRoot : pluginRoots)
         {
             File metaF = FileUtils.getFile(pluginRoot, "plugin.json");
@@ -84,7 +87,5 @@ class PluginLoader
                 EntityRegistry.register(entity);
             }
         }
-        
     }
-
 }

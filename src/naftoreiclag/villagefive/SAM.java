@@ -13,4 +13,6 @@ public class SAM
 {
     public static AssetManager a;
     public static InputManager i;
+    
+    
 }

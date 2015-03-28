@@ -75,16 +75,14 @@ public class EntityRegistry
 
     public static Entity newInstance(String string)
     {
+        Entity returnVal = null;
         
-        
-        Entity ddd = null;
-        
+        // Try find that in the entity registry
         if(entities.containsKey(string))
         {
-
             try
             {
-                ddd = entities.get(string).newInstance();
+                returnVal = entities.get(string).newInstance();
             }
             catch(InstantiationException ex)
             {
@@ -97,8 +95,8 @@ public class EntityRegistry
         }
         else if(modEntities.containsKey(string))
         {
-            ddd = modEntities.get(string).duplicate();
+            returnVal = modEntities.get(string).duplicate();
         }
-        return ddd;
+        return returnVal;
     }
 }

@@ -8,7 +8,6 @@ package naftoreiclag.villagefive.world;
 
 import java.util.ArrayList;
 import java.util.List;
-import naftoreiclag.villagefive.S;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
