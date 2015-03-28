@@ -35,7 +35,5 @@ public class LuaTest {
         LuaTable addonTable = rawAddon.checktable();
         
         Addon addon = new Addon(addonTable);
-        
-        
     }
 }

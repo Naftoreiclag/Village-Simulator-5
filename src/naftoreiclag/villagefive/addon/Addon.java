@@ -11,6 +11,7 @@ import java.util.List;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 public class Addon
 {
@@ -28,22 +29,29 @@ public class Addon
         id = table.get("id").checkjstring();
         version = table.get("version").checkjstring();
         
-        name = table.get("id").optjstring(id);
+        name = table.get("name").optjstring(id);
         desc = table.get("description").optjstring("No description available.");
         author = table.get("author").optjstring("Anonymous");
         
         try {
             LuaTable downgradeTable = table.get("downgrades").checktable();
             
-            LuaValue value;
-            for(int i = 1; !downgradeTable.get(i).isnil(); ++ i)
+            for(Varargs pair = downgradeTable.next(LuaValue.NIL); !pair.isnil(2); pair = downgradeTable.next(pair.arg(1)))
             {
-                value = downgradeTable.get(i);
+                LuaValue value = pair.arg(2);
                 
                 downgrades.add(value.checkjstring());
             }
         }
         catch(LuaError error) {}
+        
+        System.out.println(this);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "Addon: [" + id + "|" + version + "]" + ",name=" + name + ",author=" + author;
     }
 
 }
