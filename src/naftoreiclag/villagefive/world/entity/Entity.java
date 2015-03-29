@@ -76,7 +76,7 @@ public abstract class Entity extends Mundane implements JSONAware
     {
         JSONObject obj = new JSONObject();
         
-        obj.put("instanceof", this.getTypeName());
+        obj.put("instanceof", this.getEntityId());
         obj.put("location", new Vec2(this.node.getLocalTranslation()));
         
         this.addAdditionalData(obj);
@@ -84,7 +84,7 @@ public abstract class Entity extends Mundane implements JSONAware
         return obj.toJSONString();
     }
     
-    public abstract String getTypeName();
+    public abstract String getEntityId();
     
     public void addAdditionalData(JSONObject data)
     {

@@ -38,7 +38,7 @@ public class AddonEntity extends Entity
     }
     
     @Override
-    public String getTypeName()
+    public String getEntityId()
     {
         return data.parent.id + ":" + data.id;
     }
@@ -47,19 +47,10 @@ public class AddonEntity extends Entity
     public void createNode()
     {
         node = new Node();
-        System.out.println(this.data.model);
-        System.out.println(relativize(data.model));
-        
-        Spatial geo = SAM.ASSETS.loadModel(relativize(data.model));
-
-        System.out.println(geo);
+        Spatial geo = SAM.ASSETS.loadModel(data.dir + "\\" + data.model.meshFile);
+        data.model.materialOverride.modify(geo);
 
         node.attachChild(geo);
-    }
-    
-    public String relativize(String modelName)
-    {
-        return AddonManager.addonDirectories.get(data.parent.id).getName() + "\\" + modelName;
     }
 
     @Override

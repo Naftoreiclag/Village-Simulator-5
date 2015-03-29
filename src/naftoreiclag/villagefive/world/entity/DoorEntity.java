@@ -31,7 +31,7 @@ public class DoorEntity extends Entity
     }
 
     @Override
-    public String getTypeName()
+    public String getEntityId()
     {
         return "Door";
     }

@@ -38,7 +38,7 @@ public class PinguinEntity extends Entity
     }
 
     @Override
-    public String getTypeName()
+    public String getEntityId()
     {
         return "Pinguin";
     }

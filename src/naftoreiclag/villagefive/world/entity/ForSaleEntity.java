@@ -26,7 +26,7 @@ public class ForSaleEntity extends Entity
     public Plot thingy;
     
     @Override
-    public String getTypeName()
+    public String getEntityId()
     {
         return "forsale";
     }

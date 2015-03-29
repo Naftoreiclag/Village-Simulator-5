@@ -95,7 +95,7 @@ public class PlayerController extends EntityController implements ActionListener
 
         EntityBody oth = (EntityBody) bod;
 
-        System.out.println("hit " + oth.owner.getTypeName());
+        System.out.println("hit " + oth.owner.getEntityId());
         
         oth.owner.onInteract(this);
         
@@ -124,7 +124,7 @@ public class PlayerController extends EntityController implements ActionListener
 
         EntityBody oth = (EntityBody) bod;
 
-        System.out.println("hit " + oth.owner.getTypeName());
+        System.out.println("hit " + oth.owner.getEntityId());
         
         this.grabbedEnt = oth.owner;
         
@@ -395,7 +395,6 @@ public class PlayerController extends EntityController implements ActionListener
 
         puppet.turnTo(playerLook, tpf);
         
-        System.out.println("player: " + Math.round(playerLook.getXF() * FastMath.RAD_TO_DEG));
         //System.out.println(this.camDispl);
     }
 

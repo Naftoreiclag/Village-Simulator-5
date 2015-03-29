@@ -6,14 +6,11 @@
 
 package naftoreiclag.villagefive.addon;
 
-import com.jme3.asset.plugins.FileLocator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import naftoreiclag.villagefive.Plugin;
-import naftoreiclag.villagefive.PluginEntity;
 import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.world.entity.EntityRegistry;
 import org.apache.commons.io.FileUtils;
@@ -28,8 +25,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 // Some worlds that you download may specify that certain addons need to be present in the collection.
 public class AddonManager
 {
-    public static List<AddonInfo> addonCollection = new ArrayList<AddonInfo>();
-    public static Map<String, File> addonDirectories = new HashMap<String, File>();
+    public static Map<String, AddonInfo> addonCollection = new HashMap<String, AddonInfo>();
     
     
     public static void reloadAddons()
@@ -51,22 +47,25 @@ public class AddonManager
             globals.set("ADDON_ROOT", addon_root);
             globals.loadfile("addons/globals.lua").call();
 
-            LuaValue rawAddon = globals.loadfile(addon_root + "addon.lua").call();
-            LuaTable data = rawAddon.checktable();
+            LuaTable data = globals.loadfile(addon_root + "addon.lua").call().checktable();
 
-            AddonInfo addon = new AddonInfo(data);
+            AddonInfo addon = new AddonInfo(pluginRoot.getName() + "\\", data);
             
-            addonCollection.add(addon);
-            addonDirectories.put(addon.id, pluginRoot);
+            addonCollection.put(addon.id, addon);
         }
         
-        
-        for(AddonInfo addon : addonCollection)
+        for(Map.Entry<String, AddonInfo> pair : addonCollection.entrySet())
         {
+            AddonInfo addon = pair.getValue();
+            
+            System.out.println(addon.id);
             for(AddonEntityInfo entity : addon.entities)
             {
+                System.out.println(entity.parent.id + ":" + entity.id);
                 EntityRegistry.register(entity);
             }
         }
+        
+        EntityRegistry.debug();
     }
 }

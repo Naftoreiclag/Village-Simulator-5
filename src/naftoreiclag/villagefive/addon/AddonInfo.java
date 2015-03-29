@@ -15,6 +15,8 @@ import org.luaj.vm2.Varargs;
 
 public class AddonInfo
 {
+    public final String dir;
+    
     public String id;
     public String version;
     
@@ -25,8 +27,10 @@ public class AddonInfo
     public List<String> downgrades = new ArrayList<String>();
     public List<AddonEntityInfo> entities = new ArrayList<AddonEntityInfo>();
 
-    public AddonInfo(LuaTable data)
+    public AddonInfo(String dir, LuaTable data)
     {
+        this.dir = dir;
+        
         id = data.get("id").checkjstring();
         version = data.get("version").checkjstring();
         
@@ -43,16 +47,19 @@ public class AddonInfo
         List<LuaValue> entityDataList = LuaUtils.getValues(data.get("entities").checktable());
         for(int i = 0; i < entityDataList.size(); ++ i)
         {
+            LuaTable entityData = null;
             try
             {
-                LuaTable entityData = entityDataList.get(i).checktable();
+                entityData = entityDataList.get(i).checktable();
                 
-                entities.add(new AddonEntityInfo(this, entityData));
             }
             catch(LuaError error)
             {
+                error.printStackTrace();
+                System.out.println("error, entity is not table");
                 // Entry is not a table
             }
+            entities.add(new AddonEntityInfo(this, entityData));
         }
     }
     

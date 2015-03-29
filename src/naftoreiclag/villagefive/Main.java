@@ -59,13 +59,8 @@ public class Main extends SimpleApplication implements ActionListener
         SAM.ASSETS = this.assetManager;
         SAM.INPUT = this.inputManager;
         
-        AddonManager.reloadAddons();
-        
         try
         {
-            PluginLoader.loadPlugs();
-            PluginResourceManager.debug();
-            
             AddonManager.reloadAddons();
         }
         catch(Exception e)

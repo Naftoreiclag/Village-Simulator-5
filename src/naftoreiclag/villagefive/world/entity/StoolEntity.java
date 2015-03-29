@@ -49,7 +49,7 @@ public class StoolEntity extends Entity
     }
     
     @Override
-    public String getTypeName()
+    public String getEntityId()
     {
         return "Stool";
     }

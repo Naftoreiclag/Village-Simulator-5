@@ -10,31 +10,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import naftoreiclag.villagefive.PluginEntity;
 import naftoreiclag.villagefive.addon.AddonEntityInfo;
+import naftoreiclag.villagefive.addon.AddonInfo;
+import static naftoreiclag.villagefive.addon.AddonManager.addonCollection;
 import naftoreiclag.villagefive.world.World;
 
 public class EntityRegistry 
 {
     public static Map<String, Class<? extends Entity>> entities = new HashMap<String, Class<? extends Entity>>();
-    public static Map<String, ModEntity> modEntities = new HashMap<String, ModEntity>();
     public static Map<String, AddonEntity> addonEntities = new HashMap<String, AddonEntity>();
     
     static
     {
         try
         {
-            System.out.println("bbbb");
-        register(DoorEntity.class);
-            System.out.println("bbbb");
-        register(PinguinEntity.class);
-            System.out.println("bbbb");
-        register(PlayerEntity.class);
-            System.out.println("bbbb");
-        register(StoolEntity.class);
-            System.out.println("bbbb");
-        register(ForSaleEntity.class);
-            System.out.println("bbbb");
+            register(DoorEntity.class);
+            register(PinguinEntity.class);
+            register(PlayerEntity.class);
+            register(StoolEntity.class);
+            register(ForSaleEntity.class);
         }
         catch(Exception e)
         {
@@ -67,18 +61,14 @@ public class EntityRegistry
             return;
         }
 
-        entities.put(entity.getTypeName(), gg);
+        entities.put(entity.getEntityId(), gg);
     }
 
-    public static void register(PluginEntity entity)
-    {
-        modEntities.put(entity.name, new ModEntity(entity));
-    }
     public static void register(AddonEntityInfo entity)
     {
         AddonEntity e = new AddonEntity(entity);
         
-        addonEntities.put(e.getTypeName(), e);
+        addonEntities.put(e.getEntityId(), e);
     }
 
     public static Entity newInstance(String string)
@@ -105,10 +95,16 @@ public class EntityRegistry
         {
             returnVal = addonEntities.get(string).duplicate();
         }
-        else if(modEntities.containsKey(string))
-        {
-            returnVal = modEntities.get(string).duplicate();
-        }
         return returnVal;
+    }
+    
+    public static void debug()
+    {
+        for(Map.Entry<String, AddonEntity> pair : addonEntities.entrySet())
+        {
+            AddonEntity addon = pair.getValue();
+            
+            System.out.println(addon.getEntityId());
+        }
     }
 }

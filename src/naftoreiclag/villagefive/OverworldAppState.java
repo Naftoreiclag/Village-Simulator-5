@@ -275,28 +275,9 @@ public class OverworldAppState extends AbstractAppState
         plot.setLocation(new Vec2(260, 260));
         world.materializePlot(plot);
         
-        Entity stool = new StoolEntity();
-        world.materializeEntity(stool);
-        stool.setLocation(new Vec2(280, 280));
         
-        // try load modded stuff
-        Entity egg = world.materializeEntityByName("streetlamp");
-        egg.setLocation(new Vec2(280, 280));
+        world.materializeEntityByName("naftogeometry:cone").setLocation(new Vec2(280, 280));
 
-        Entity cone = world.materializeEntityByName("naftogeometry:cone");
-        cone.setLocation(new Vec2(230, 230));
-        // end test
-
-        Entity egg2 = world.materializeEntityByName("chair1");
-        egg2.setLocation(new Vec2(280, 280));
-
-        world.materializeEntityByName("MarshmallowSeat").setLocation(new Vec2(280, 280));
-
-
-
-        ForSaleEntity sale2 = new ForSaleEntity();
-        world.materializeEntity(sale2);
-        sale2.setLocation(new Vec2(280, 280));
         Random rand = new Random(1337);
         
         for(int i = 0; i < 10; ++ i)

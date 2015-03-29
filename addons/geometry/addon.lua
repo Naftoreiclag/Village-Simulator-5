@@ -1,3 +1,7 @@
+-- This script is called once during initialization of the addon.
+-- Lua is being treated here like a config file that you can add functionality to.
+-- It must return a table containing all of the addon's information.
+
 Addon = {
 	-- User-friendly readable information. Can change between releases.
 	name = "Geometry Addon",
@@ -19,14 +23,16 @@ Addon = {
 		"2",
 		"beta"
 	},
+	
+	-- You can also store some custom data here.
+	isAnExample = true
 }
 
 -- List all of your entities here.
 Addon.entities = {
-	dofile("cone.lua")
+	fromFile("cone.lua")
 }
 
-print "Addon successfully parsed"
+print (Addon.entities[1].name)
 
 return Addon
-

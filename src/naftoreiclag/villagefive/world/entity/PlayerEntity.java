@@ -99,7 +99,6 @@ public class PlayerEntity extends Entity
     {
         Transform trans = rotControl.getTransform();
         trans.setRotation(angle.toDyn4j());
-        System.out.println("trans: " + Math.round(trans.getRotation() * FastMath.RAD_TO_DEG));
     }
 
     @Override
@@ -174,7 +173,7 @@ public class PlayerEntity extends Entity
     }
     
     @Override
-    public String getTypeName()
+    public String getEntityId()
     {
         return "Player";
     }
