@@ -5,8 +5,10 @@
  */
 package naftoreiclag.villagefive.addon;
 
+import com.jme3.material.MatParam;
 import com.jme3.material.MatParamTexture;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -20,6 +22,7 @@ public class LuaMaterial {
     public LuaTexture glow;
     public LuaTexture bump;
     public LuaTexture specular;
+    public LuaTexture matcap;
     public LuaColor rim;
     
     // If "changeShading" is false, then "shadingEnable" will have no effect.
@@ -44,7 +47,9 @@ public class LuaMaterial {
         glow = new LuaTexture(dir, data.get("glow"));
         bump = new LuaTexture(dir, data.get("bump"));
         specular = new LuaTexture(dir, data.get("specular"));
-        rim = new LuaColor(data.get("rimLighting"));
+        matcap = new LuaTexture(dir, data.get("matcap"));
+        
+        rim = new LuaColor(data.get("rimColor"));
         
         try {
             shadingEnable = data.get("shading").checkboolean();
@@ -55,11 +60,12 @@ public class LuaMaterial {
         
     }
 
+    // Modify this spatial and all its children to use this material. Performs a pre-order search.
     public void modify(Spatial spatial) {
         if(spatial instanceof Geometry) {
             Geometry geo = (Geometry) spatial;
 
-            geo.setMaterial(getModifiedVersion(geo.getMaterial()));
+            geo.setMaterial(modifyAndReturn(geo.getMaterial()));
         }
 
         if(spatial instanceof Node) {
@@ -78,7 +84,10 @@ public class LuaMaterial {
     public static final int LIGHTING = 2;
     public static final int BLOW = 3;
 
-    public Material getModifiedVersion(Material material) {
+    // Modify this material and return the new version.
+    // Returned value can be a completely different object, so be sure to do
+    // yourMaterial = luaMat.modifyAndReturn(yourMaterial);
+    public Material modifyAndReturn(Material material) {
         /*
          * Shading levels:
          * -1: Weird
@@ -119,7 +128,7 @@ public class LuaMaterial {
                     if(diffuseMap != null) {
                         newMaterial.setTexture("ColorMap", diffuseMap.getTextureValue());
                     }
-                    
+// LB -> U
                     // GlowMap -> GlowMap
                     MatParamTexture glowMap = material.getTextureParam("GlowMap");
                     if(glowMap != null) {
@@ -140,6 +149,11 @@ public class LuaMaterial {
                 // Make a new material to replace the current one with
                 Material newMaterial = new Material(SAM.ASSETS, "Common/MatDefs/Light/Lighting.j3md");
                 
+                // Some default color values
+                newMaterial.setBoolean("UseMaterialColors", true);
+                newMaterial.setColor("Ambient", ColorRGBA.White);
+                newMaterial.setColor("Diffuse", ColorRGBA.White);
+                
                 // If there is a recipe for converting from Type X to LIGHTING, then use that
                 if(currentShadingLevel == UNSHADED) {
                     // ColorMap -> DiffuseMap
@@ -151,7 +165,7 @@ public class LuaMaterial {
                     {
                         // TODO: support for solid colors
                     }
-                    
+// U -> L
                     // GlowMap -> GlowMap
                     MatParamTexture glowMap = material.getTextureParam("GlowMap");
                     if(glowMap != null) {
@@ -170,16 +184,34 @@ public class LuaMaterial {
         // If we currently have a LIGHTING material, and BLOW features are needed, then upgrade.
         if(currentShadingLevel == LIGHTING) {
             // If blow features are needed, then upgrade
-            if(!rim.isNil() || !rim.isNil()) {
+            if(!rim.isNil() || 
+               !matcap.isNil()) {
                 // Make a new material to replace the current one with
                 Material newMaterial = new Material(SAM.ASSETS, "ShaderBlow/MatDefs/LightBlow/LightBlow.j3md");
+                
+                // Inherit color values
+                newMaterial.setBoolean("UseMaterialColors", true);
+                MatParam ambientColorGand = material.getParam("Ambient");
+                if(ambientColorGand != null) {
+                    Object ambientColor = ambientColorGand.getValue();
+                    if(ambientColor instanceof ColorRGBA) {
+                        newMaterial.setColor("Ambient", (ColorRGBA) ambientColor);
+                    }
+                }
+                MatParam diffuseColorGand = material.getParam("Diffuse");
+                if(diffuseColorGand != null) {
+                    Object diffuseColor = diffuseColorGand.getValue();
+                    if(diffuseColor instanceof ColorRGBA) {
+                        newMaterial.setColor("Diffuse", (ColorRGBA) diffuseColor);
+                    }
+                }
                 
                 // DiffuseMap -> DiffuseMap
                 MatParamTexture diffuseMap = material.getTextureParam("DiffuseMap");
                 if(diffuseMap != null) {
                     newMaterial.setTexture("DiffuseMap", diffuseMap.getTextureValue());
                 }
-
+// L -> B
                 // GlowMap -> GlowMap
                 MatParamTexture glowMap = material.getTextureParam("GlowMap");
                 if(glowMap != null) {
@@ -202,12 +234,14 @@ public class LuaMaterial {
         }
         // Works with lighting and blow
         if(currentShadingLevel == LIGHTING || currentShadingLevel == BLOW) {
-            if(!diffuse.isNil()) { material.setTexture("Diffuse", diffuse.getTexture()); }
+            if(!diffuse.isNil()) { material.setTexture("DiffuseMap", diffuse.getTexture()); }
         }
         // Works with any
         if(currentShadingLevel == UNSHADED || currentShadingLevel == LIGHTING || currentShadingLevel == BLOW) {
             if(!glow.isNil()) { material.setTexture("GlowMap", glow.getTexture()); }
         }
+        
+        System.out.println("fewafdsgerfsdh:" + currentShadingLevel);
         
         return material;
     }

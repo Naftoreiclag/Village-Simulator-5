@@ -82,6 +82,8 @@ public class Main extends SimpleApplication implements ActionListener
         mat_grass = assetManager.loadMaterial("Materials/SpringGrass.j3m");
         mat_grass_tufts = assetManager.loadMaterial("Materials/SpringGrassTufts.j3m");
         
+        System.out.println(mat_debug_wireframe.getParam("Color").getValue());
+        
         flyCam.setEnabled(false);
         
         tas = new OverworldAppState();

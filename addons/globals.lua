@@ -1,5 +1,9 @@
 -- Aaahhh (screams of terror, not a yawn)
 
+function color (r, g, b)
+	return {r, g, b}
+end
+
 function fromFile (filename)
 
 	-- file extensions of different length

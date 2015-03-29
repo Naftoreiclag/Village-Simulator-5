@@ -164,7 +164,7 @@ public class OverworldAppState extends AbstractAppState
         
         if(seconds > 1)
         {
-            System.out.println("second");
+            //System.out.println("second");
             seconds -= 1;
         }
         

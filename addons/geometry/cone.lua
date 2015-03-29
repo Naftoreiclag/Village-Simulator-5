@@ -8,6 +8,9 @@ entityCone = {
 	model = fromFile("cone.j3o")
 }
 
-entityCone.model.material.texture = fromFile("orange.jpg")
+local mat = entityCone.model.material
+
+mat.shading = true
+mat.texture = fromFile("orange.jpg")
 
 return entityCone;
