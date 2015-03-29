@@ -1,5 +1,5 @@
 entityTorus = {
-	name = "Frosted Doughnut",
+	name = "Gross Doughnut",
 	description = "You can't eat the middle.",
 	id = "torus",
 	
@@ -11,8 +11,7 @@ entityTorus = {
 local mat = entityTorus.model.material
 
 mat.shading = true
-mat.texture = fromFile("quartz.jpg")
-mat.matcap = true
+mat.texture = fromFile("bird.jpg")
 mat.ambientColor = color(1, 1, 1)
 mat.diffuseColor = color(1, 1, 1)
 

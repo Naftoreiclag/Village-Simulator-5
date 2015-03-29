@@ -94,6 +94,7 @@ public class LuaMaterial {
     public static final int UNSHADED = 1;
     public static final int LIGHTING = 2;
     public static final int BLOW = 3;
+    public static final int MATCAP = 4;
 
     // Modify this material and return the new version.
     // Returned value can be a completely different object, so be sure to do
@@ -116,6 +117,8 @@ public class LuaMaterial {
             currentShadingLevel = LIGHTING;
         } else if (matDef.equals("ShaderBlow/MatDefs/LightBlow/LightBlow.j3md")) {
             currentShadingLevel = BLOW;
+        } else if (matDef.equals("ShaderBlow/MatDefs/MatCap/MatCap.j3md")) {
+            currentShadingLevel = MATCAP;
         } else {
             currentShadingLevel = WEIRD;
         }
@@ -155,38 +158,45 @@ public class LuaMaterial {
         
         // If the user explicitly wants shading to be on
         else if(changeShading && shadingEnable) {
-            // If the current level is WEIRD or UNSHADED, then convert it to LIGHTING
-            if(currentShadingLevel == WEIRD || currentShadingLevel == UNSHADED) {
-                // Make a new material to replace the current one with
-                Material newMaterial = new Material(SAM.ASSETS, "Common/MatDefs/Light/Lighting.j3md");
-                
-                // Some default color values
-                newMaterial.setBoolean("UseMaterialColors", true);
-                newMaterial.setColor("Ambient", ColorRGBA.White);
-                newMaterial.setColor("Diffuse", ColorRGBA.White);
-                
-                // If there is a recipe for converting from Type X to LIGHTING, then use that
-                if(currentShadingLevel == UNSHADED) {
-                    // ColorMap -> DiffuseMap
-                    MatParamTexture colorMap = material.getTextureParam("ColorMap");
-                    if(colorMap != null) {
-                        newMaterial.setTexture("DiffuseMap", colorMap.getTextureValue());
-                    }
-                    else
-                    {
-                        // TODO: support for solid colors
-                    }
+            // If isMatcap is true, then use matcap instead
+            if(isMatcap) {
+                material = new Material(SAM.ASSETS, "ShaderBlow/MatDefs/MatCap/MatCap.j3md");
+                currentShadingLevel = MATCAP;
+// -> M
+            } else {
+                // If the current level is WEIRD or UNSHADED, then convert it to LIGHTING
+                if(currentShadingLevel == WEIRD || currentShadingLevel == UNSHADED) {
+                    // Make a new material to replace the current one with
+                    Material newMaterial = new Material(SAM.ASSETS, "Common/MatDefs/Light/Lighting.j3md");
+
+                    // Some default color values
+                    newMaterial.setBoolean("UseMaterialColors", true);
+                    newMaterial.setColor("Ambient", ColorRGBA.White);
+                    newMaterial.setColor("Diffuse", ColorRGBA.White);
+
+                    // If there is a recipe for converting from Type X to LIGHTING, then use that
+                    if(currentShadingLevel == UNSHADED) {
+                        // ColorMap -> DiffuseMap
+                        MatParamTexture colorMap = material.getTextureParam("ColorMap");
+                        if(colorMap != null) {
+                            newMaterial.setTexture("DiffuseMap", colorMap.getTextureValue());
+                        }
+                        else
+                        {
+                            // TODO: support for solid colors
+                        }
 // U -> L
-                    // GlowMap -> GlowMap
-                    MatParamTexture glowMap = material.getTextureParam("GlowMap");
-                    if(glowMap != null) {
-                        newMaterial.setTexture("GlowMap", glowMap.getTextureValue());
+                        // GlowMap -> GlowMap
+                        MatParamTexture glowMap = material.getTextureParam("GlowMap");
+                        if(glowMap != null) {
+                            newMaterial.setTexture("GlowMap", glowMap.getTextureValue());
+                        }
                     }
+
+                    // Replace it
+                    material = newMaterial;
+                    currentShadingLevel = LIGHTING;
                 }
-                
-                // Replace it
-                material = newMaterial;
-                currentShadingLevel = LIGHTING;
             }
             
             // This means that if the current level is BLOW, then don't do anything.
@@ -239,20 +249,25 @@ public class LuaMaterial {
          * NOW THAT THE PROPER MATERIAL TYPE HAS BEEN SETTLED, APPLY ANY TEXTURE OR COLOR CHANGES.
          *****/
         
-        // Works with unshaded
         if(currentShadingLevel == UNSHADED) {
             if(!diffuse.isNil()) { material.setTexture("ColorMap", diffuse.getTexture()); }
             if(!diffuseColor.isNil()) { material.setColor("Color", diffuseColor.toColor()); }
         }
-        // Works with lighting and blow
         if(currentShadingLevel == LIGHTING || currentShadingLevel == BLOW) {
             if(!diffuse.isNil()) { material.setTexture("DiffuseMap", diffuse.getTexture()); }
             if(!diffuseColor.isNil()) { material.setColor("Diffuse", diffuseColor.toColor()); }
             if(!ambientColor.isNil()) { material.setColor("Ambient", ambientColor.toColor()); }
+            
+            // Of course, if any color is defined then it should be used
+            if(!diffuseColor.isNil() || !ambientColor.isNil()) {
+                material.setBoolean("UseMaterialColors", true);
+            }
         }
-        // Works with any
         if(currentShadingLevel == UNSHADED || currentShadingLevel == LIGHTING || currentShadingLevel == BLOW) {
             if(!glow.isNil()) { material.setTexture("GlowMap", glow.getTexture()); }
+        }
+        if(currentShadingLevel == MATCAP) {
+            if(!diffuse.isNil()) { material.setTexture("DiffuseMap", diffuse.getTexture()); }
         }
         
         System.out.println("fewafdsgerfsdh:" + currentShadingLevel);

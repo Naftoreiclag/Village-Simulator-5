@@ -6,8 +6,6 @@ end
 
 function fromFile (filename)
 
-	print("Loading " .. filename)
-
 	-- file extensions of different length
 	filetype3 = string.sub(filename, -4)
 	filetype4 = string.sub(filename, -5)
@@ -48,8 +46,4 @@ function fromFile (filename)
 	if filetype3 == ".lua" then
 		return dofile(ADDON_ROOT .. filename)
 	end
-	
-	print("unknown file")
 end
-
-print("globals")
