@@ -275,10 +275,11 @@ public class OverworldAppState extends AbstractAppState
         plot.setLocation(new Vec2(260, 260));
         world.materializePlot(plot);
         
-        
         world.materializeEntityByName("naftogeometry:cone").setLocation(new Vec2(280, 280));
         world.materializeEntityByName("naftogeometry:torus").setLocation(new Vec2(275, 280));
         world.materializeEntityByName("naftogeometry:shiny").setLocation(new Vec2(270, 280));
+        world.materializeEntityByName("naftogeometry:futbol").setLocation(new Vec2(265, 280));
+        world.materializeEntityByName("naftogeometry:basketball").setLocation(new Vec2(260, 280));
 
         Random rand = new Random(1337);
         

@@ -32,7 +32,9 @@ Addon = {
 Addon.entities = {
 	fromFile("cone.lua"),
 	fromFile("torus.lua"),
-	fromFile("reallyShinyTorus.lua")
+	fromFile("reallyShinyTorus.lua"),
+	fromFile("basketball.lua"),
+	fromFile("soccerball.lua")
 }
 
 return Addon
