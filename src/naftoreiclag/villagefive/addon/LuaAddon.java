@@ -13,7 +13,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
-public class AddonInfo
+public class LuaAddon
 {
     public final String dir;
     
@@ -25,9 +25,9 @@ public class AddonInfo
     public String author;
     
     public List<String> downgrades = new ArrayList<String>();
-    public List<AddonEntityInfo> entities = new ArrayList<AddonEntityInfo>();
+    public List<LuaEntity> entities = new ArrayList<LuaEntity>();
 
-    public AddonInfo(String dir, LuaTable data)
+    public LuaAddon(String dir, LuaTable data)
     {
         this.dir = dir;
         
@@ -59,7 +59,7 @@ public class AddonInfo
                 System.out.println("error, entity is not table");
                 // Entry is not a table
             }
-            entities.add(new AddonEntityInfo(this, entityData));
+            entities.add(new LuaEntity(this, entityData));
         }
     }
     

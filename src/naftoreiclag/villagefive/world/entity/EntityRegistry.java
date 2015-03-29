@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import naftoreiclag.villagefive.addon.AddonEntityInfo;
-import naftoreiclag.villagefive.addon.AddonInfo;
+import naftoreiclag.villagefive.addon.LuaEntity;
+import naftoreiclag.villagefive.addon.LuaAddon;
 import static naftoreiclag.villagefive.addon.AddonManager.addonCollection;
 import naftoreiclag.villagefive.world.World;
 
@@ -64,7 +64,7 @@ public class EntityRegistry
         entities.put(entity.getEntityId(), gg);
     }
 
-    public static void register(AddonEntityInfo entity)
+    public static void register(LuaEntity entity)
     {
         AddonEntity e = new AddonEntity(entity);
         

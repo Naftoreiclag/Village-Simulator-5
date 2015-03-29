@@ -30,9 +30,8 @@ Addon = {
 
 -- List all of your entities here.
 Addon.entities = {
-	fromFile("cone.lua")
+	fromFile("cone.lua"),
+	fromFile("torus.lua")
 }
-
-print (Addon.entities[1].name)
 
 return Addon

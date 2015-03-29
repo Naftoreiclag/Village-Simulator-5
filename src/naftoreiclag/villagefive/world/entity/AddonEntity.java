@@ -11,7 +11,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.io.File;
 import naftoreiclag.villagefive.SAM;
-import naftoreiclag.villagefive.addon.AddonEntityInfo;
+import naftoreiclag.villagefive.addon.LuaEntity;
 import naftoreiclag.villagefive.addon.AddonManager;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.PhysWorld;
@@ -25,9 +25,9 @@ public class AddonEntity extends Entity
         SAM.ASSETS.registerLocator("addons", FileLocator.class);
     }
     
-    public final AddonEntityInfo data;
+    public final LuaEntity data;
 
-    AddonEntity(AddonEntityInfo entity)
+    AddonEntity(LuaEntity entity)
     {
         this.data = entity;
     }

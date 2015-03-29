@@ -277,6 +277,7 @@ public class OverworldAppState extends AbstractAppState
         
         
         world.materializeEntityByName("naftogeometry:cone").setLocation(new Vec2(280, 280));
+        world.materializeEntityByName("naftogeometry:torus").setLocation(new Vec2(260, 280));
 
         Random rand = new Random(1337);
         

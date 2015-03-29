@@ -22,13 +22,17 @@ public class LuaMaterial {
     public LuaTexture glow;
     public LuaTexture bump;
     public LuaTexture specular;
-    public LuaTexture matcap;
-    public LuaColor rim;
+    
+    public LuaColor diffuseColor;
+    public LuaColor ambientColor;
+    public LuaColor rimColor;
     
     // If "changeShading" is false, then "shadingEnable" will have no effect.
     // This way, the default action for a LuaMaterial is to just inherit whatever shading is set.
     public boolean changeShading;
     public boolean shadingEnable;
+    
+    public boolean isMatcap;
     
     public final String dir;
 
@@ -47,9 +51,16 @@ public class LuaMaterial {
         glow = new LuaTexture(dir, data.get("glow"));
         bump = new LuaTexture(dir, data.get("bump"));
         specular = new LuaTexture(dir, data.get("specular"));
-        matcap = new LuaTexture(dir, data.get("matcap"));
         
-        rim = new LuaColor(data.get("rimColor"));
+        try {
+            isMatcap = data.get("matcap").checkboolean();
+        } catch(LuaError error) {
+            isMatcap = false;
+        }
+        
+        rimColor = new LuaColor(data.get("rimColor"));
+        diffuseColor = new LuaColor(data.get("diffuseColor"));
+        ambientColor = new LuaColor(data.get("ambientColor"));
         
         try {
             shadingEnable = data.get("shading").checkboolean();
@@ -184,8 +195,8 @@ public class LuaMaterial {
         // If we currently have a LIGHTING material, and BLOW features are needed, then upgrade.
         if(currentShadingLevel == LIGHTING) {
             // If blow features are needed, then upgrade
-            if(!rim.isNil() || 
-               !matcap.isNil()) {
+            if(!rimColor.isNil() || 
+               isMatcap) {
                 // Make a new material to replace the current one with
                 Material newMaterial = new Material(SAM.ASSETS, "ShaderBlow/MatDefs/LightBlow/LightBlow.j3md");
                 
@@ -193,16 +204,16 @@ public class LuaMaterial {
                 newMaterial.setBoolean("UseMaterialColors", true);
                 MatParam ambientColorGand = material.getParam("Ambient");
                 if(ambientColorGand != null) {
-                    Object ambientColor = ambientColorGand.getValue();
-                    if(ambientColor instanceof ColorRGBA) {
-                        newMaterial.setColor("Ambient", (ColorRGBA) ambientColor);
+                    Object ambientColorData = ambientColorGand.getValue();
+                    if(ambientColorData instanceof ColorRGBA) {
+                        newMaterial.setColor("Ambient", (ColorRGBA) ambientColorData);
                     }
                 }
                 MatParam diffuseColorGand = material.getParam("Diffuse");
                 if(diffuseColorGand != null) {
-                    Object diffuseColor = diffuseColorGand.getValue();
-                    if(diffuseColor instanceof ColorRGBA) {
-                        newMaterial.setColor("Diffuse", (ColorRGBA) diffuseColor);
+                    Object diffuseColorData = diffuseColorGand.getValue();
+                    if(diffuseColorData instanceof ColorRGBA) {
+                        newMaterial.setColor("Diffuse", (ColorRGBA) diffuseColorData);
                     }
                 }
                 
@@ -231,10 +242,13 @@ public class LuaMaterial {
         // Works with unshaded
         if(currentShadingLevel == UNSHADED) {
             if(!diffuse.isNil()) { material.setTexture("ColorMap", diffuse.getTexture()); }
+            if(!diffuseColor.isNil()) { material.setColor("Color", diffuseColor.toColor()); }
         }
         // Works with lighting and blow
         if(currentShadingLevel == LIGHTING || currentShadingLevel == BLOW) {
             if(!diffuse.isNil()) { material.setTexture("DiffuseMap", diffuse.getTexture()); }
+            if(!diffuseColor.isNil()) { material.setColor("Diffuse", diffuseColor.toColor()); }
+            if(!ambientColor.isNil()) { material.setColor("Ambient", ambientColor.toColor()); }
         }
         // Works with any
         if(currentShadingLevel == UNSHADED || currentShadingLevel == LIGHTING || currentShadingLevel == BLOW) {

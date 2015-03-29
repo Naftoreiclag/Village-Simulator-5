@@ -8,9 +8,9 @@ package naftoreiclag.villagefive.addon;
 
 import org.luaj.vm2.LuaTable;
 
-public class AddonEntityInfo {
+public class LuaEntity {
 
-    public AddonInfo parent;
+    public LuaAddon parent;
     public final String dir;
     
     public String id;
@@ -22,7 +22,7 @@ public class AddonEntityInfo {
     
     public double radius;
     
-    AddonEntityInfo(AddonInfo parent, LuaTable data)
+    LuaEntity(LuaAddon parent, LuaTable data)
     {
         this.parent = parent;
         this.dir = parent.dir;
