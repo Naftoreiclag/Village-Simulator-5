@@ -12,7 +12,6 @@ local mat = futbol.model.material
 
 mat.shading = true
 mat.texture = fromFile("soccerball.jpg")
-mat.ambientColor = color(1, 1, 1)
-mat.diffuseColor = color(1, 1, 1)
+mat.matcap = true
 
 return futbol;

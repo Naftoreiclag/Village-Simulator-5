@@ -5,7 +5,7 @@
 Addon = {
 	-- User-friendly readable information. Can change between releases.
 	name = "Geometry Addon",
-	description = "A really cool addon that adds some basic shapes as furniture.",
+	description = "A really cool addon that adds some basic shapes.",
 
 	-- What the game and all other addons will know this project as.
 	-- This should not vary between releases.
