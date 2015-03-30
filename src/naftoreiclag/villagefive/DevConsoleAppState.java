@@ -81,7 +81,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         screen.addPreKeyboardInputHandler(mapping, this);
         this.screen = screen;
         textField = screen.findNiftyControl("input", TextField.class);
-        //outputPanel = screen.findElementByName("output");
+        outputPanel = screen.findElementByName("output");
     }
     
     private void sendInput() {
