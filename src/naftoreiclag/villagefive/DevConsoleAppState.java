@@ -88,16 +88,29 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         if(input.equals("") || input == null) { return; }
 
         
-        new PanelBuilder() {{
-            childLayoutHorizontal();
-            control(new LabelBuilder() {{
-                label(input);
-            }});
-        }}.build(nifty, screen, outputBox);
-        
+        new ConsoleOutputEntry(input);
         
         textField.setText("");
         input = "";
+    }
+    
+    private class ConsoleOutputEntry
+    {
+        final Element associatedPanel;
+        final String message;
+        
+        ConsoleOutputEntry(String text) {
+            this.message = text;
+            
+            associatedPanel = new PanelBuilder() {{
+                childLayoutHorizontal();
+                control(new LabelBuilder() {{
+                    label(message);
+                }});
+            }}.build(nifty, screen, outputBox);
+            
+            
+        }
     }
     
     @Override
