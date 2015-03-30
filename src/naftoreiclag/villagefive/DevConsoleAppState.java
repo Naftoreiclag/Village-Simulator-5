@@ -14,6 +14,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.Label;
+import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.TextFieldChangedEvent;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
@@ -33,7 +34,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     Nifty nifty;
     
     TextField textField;
-    Element outputPanel;
+    Element outputBox;
     
     String input;
     Screen screen;
@@ -80,7 +81,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         screen.addPreKeyboardInputHandler(mapping, this);
         this.screen = screen;
         textField = screen.findNiftyControl("input", TextField.class);
-        outputPanel = screen.findElementByName("output");
+        outputBox = screen.findElementByName("output");
     }
     
     private void sendInput() {
@@ -92,7 +93,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
             control(new LabelBuilder() {{
                 label(input);
             }});
-        }}.build(nifty, screen, outputPanel);
+        }}.build(nifty, screen, outputBox);
         
         
         textField.setText("");

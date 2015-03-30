@@ -15,12 +15,14 @@
                     <text name="textbox" font="aurulent-sans-16.fnt" text="Developer Console" />
                 </panel>
                 
-                <panel id="output" childLayout="vertical" paddingLeft="5px" paddingTop="5px" paddingRight="5px">
-                    <!--This is where stuff is populated-->
+                <panel childLayout="horizontal" paddingLeft="5px" paddingTop="5px" paddingRight="5px">
+                    <panel id="output" childLayout="vertical">
+                        <!--populated-->
+                    </panel>
+                    <control name="verticalScrollbar" align="right"/>
                 </panel>
                 
-                
-                <panel childLayout="horizontal" valign="bottom" paddingLeft="5px" paddingTop="5px" paddingBottom="5px" paddingRight="5px">
+                <panel childLayout="horizontal" valign="bottom" paddingLeft="5px" paddingTop="10px" paddingBottom="5px" paddingRight="5px">
                     <control id="input" name="textfield" valight="bottom"/>
                 </panel>
                 
