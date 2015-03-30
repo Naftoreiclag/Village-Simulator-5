@@ -12,6 +12,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.TextFieldChangedEvent;
@@ -84,13 +85,14 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     
     private void sendInput() {
         if(input.equals("") || input == null) { return; }
-        
-        
-        //outputPanel.add(outputPanel);
     
         LabelBuilder labelMaker = new LabelBuilder();
         labelMaker.set("text", input);
         labelMaker.build(nifty, screen, outputPanel);
+        
+        //new PanelBuilder() {{
+        
+        //}}.build(nifty, screen, outputPanel);
         
         textField.setText("");
         input = "";
