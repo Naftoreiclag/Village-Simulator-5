@@ -34,8 +34,6 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     TextField textField;
     Element outputPanel;
     
-    LabelBuilder labelMaker;
-    
     String input;
     Screen screen;
     
@@ -89,10 +87,13 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         
         
         //outputPanel.add(outputPanel);
-        //labelMaker.set("text", input);
-        //labelMaker.build(nifty, screen, outputPanel);
+    
+        LabelBuilder labelMaker = new LabelBuilder();
+        labelMaker.set("text", input);
+        labelMaker.build(nifty, screen, outputPanel);
         
         textField.setText("");
+        input = "";
     }
     
     @Override
