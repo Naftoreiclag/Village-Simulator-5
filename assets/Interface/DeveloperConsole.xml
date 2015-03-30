@@ -5,7 +5,7 @@
 
     <screen id="show" controller="naftoreiclag.villagefive.DevConsoleAppState">
         <layer childLayout="center" paddingLeft="10px" paddingTop="10px" paddingBottom="10px" paddingRight="10px" >
-            <panel childLayout="vertical" width="80%" height="40%" backgroundColor="#f008" align="left" valign="top">
+            <panel childLayout="vertical" width="80%" height="40%" backgroundColor="#f006" align="left" valign="top">
                 <effect>
                     <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
                     <onEndScreen name="move" mode="out" direction="top" length="300" startDelay="0" inherit="true"/>
@@ -16,9 +16,11 @@
                 </panel>
                 
                 <panel childLayout="horizontal" paddingLeft="5px" paddingTop="5px" paddingRight="5px">
-                    <panel id="output" childLayout="vertical">
-                        <!--populated-->
+                    <panel id="spacer1" width="10px" backgroundColor="#0008"/>
+                    <panel id="output" childLayout="vertical" align="left" backgroundColor="#0008" height="100%">
+                        <!--populate me-->
                     </panel>
+                    <panel id="spacer2" backgroundColor="#0008"/>
                     <control name="verticalScrollbar" align="right"/>
                 </panel>
                 

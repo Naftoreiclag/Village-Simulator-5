@@ -89,7 +89,7 @@ public class KeyKeys implements ActionListener
         
         SAM.INPUT.addMapping(KeyKeys.interact, new KeyTrigger(KeyInput.KEY_R));
         
-        SAM.INPUT.addMapping(KeyKeys.openInv, new KeyTrigger(KeyInput.KEY_X));
+        SAM.INPUT.addMapping(KeyKeys.openInv, new KeyTrigger(KeyInput.KEY_APOSTROPHE));
         
         SAM.INPUT.addMapping(KeyKeys.fastforward, new KeyTrigger(KeyInput.KEY_F));
         
