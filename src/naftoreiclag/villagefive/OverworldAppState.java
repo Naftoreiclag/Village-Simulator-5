@@ -165,7 +165,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     {
         super.update(tpf);
         
-        System.out.println(KeyKeys.p_console);
         
         if(KeyKeys.p_console && consoleRelease)
         {

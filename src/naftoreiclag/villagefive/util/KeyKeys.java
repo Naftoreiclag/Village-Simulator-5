@@ -29,6 +29,7 @@ public class KeyKeys implements ActionListener
     
     public static final String mouse_left = "Left Mouse Button";
     public static final String console = "Developer Console";
+    public static final int consoleKey = KeyInput.KEY_GRAVE;
     
     public static final String mouse_scroll_up = "Mouse Scroll Up";
     public static final String mouse_scroll_down = "Mouse Scroll Down";
@@ -57,7 +58,7 @@ public class KeyKeys implements ActionListener
     
     public static void setupInputManager()
     {
-        SAM.INPUT.addMapping(KeyKeys.console, new KeyTrigger(KeyInput.KEY_GRAVE));
+        SAM.INPUT.addMapping(KeyKeys.console, new KeyTrigger(consoleKey));
         
         SAM.INPUT.addMapping(KeyKeys.move_left, new KeyTrigger(KeyInput.KEY_A));
         SAM.INPUT.addMapping(KeyKeys.move_right, new KeyTrigger(KeyInput.KEY_D));

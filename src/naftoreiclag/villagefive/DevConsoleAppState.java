@@ -9,25 +9,48 @@ package naftoreiclag.villagefive;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
-import com.jme3.renderer.Camera;
-import com.jme3.renderer.ViewPort;
-import com.jme3.scene.Node;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.input.NiftyInputMapping;
+import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
+import de.lessvoid.nifty.screen.KeyInputHandler;
+import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.screen.ScreenController;
+import naftoreiclag.villagefive.util.KeyKeys;
 
-public class DevConsoleAppState extends AbstractAppState {
+public class DevConsoleAppState extends AbstractAppState implements ScreenController, KeyInputHandler {
     
     private Main app;
-    
-    private Camera mainCam;
-    
-    private Camera cam;
-    private ViewPort viewPort;
-    
-    private Node rootNode;
-    
+    NiftyJmeDisplay niftyDisplay;
     Nifty nifty;
+    
+    NiftyInputMapping mapping = new NiftyInputMapping() {
+        @Override
+        public NiftyInputEvent convert(KeyboardInputEvent inputEvent) {
+            
+            boolean pressed = inputEvent.isKeyDown();
+            int key = inputEvent.getKey();
+            
+            if(pressed) {
+                if(key == KeyKeys.consoleKey) {
+                    return NiftyInputEvent.ConsoleToggle;
+                } else if(key == KeyboardInputEvent.KEY_RETURN) {
+                    return NiftyInputEvent.Activate;
+                } else if(key == KeyboardInputEvent.KEY_SPACE) {
+                    return NiftyInputEvent.Activate;
+                } else if(key == KeyboardInputEvent.KEY_TAB) {
+                    if(inputEvent.isShiftDown()) {
+                        return NiftyInputEvent.PrevInputElement;
+                    } else {
+                        return NiftyInputEvent.NextInputElement;
+                    }
+                }
+            }
+            
+            return null;
+        }
+    };
     
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
@@ -35,26 +58,10 @@ public class DevConsoleAppState extends AbstractAppState {
         
         app = (Main) application;
         
-        mainCam = app.getCamera();
-        
-        NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(app.getAssetManager(), app.getInputManager(), app.getAudioRenderer(), app.getGuiViewPort());
+        niftyDisplay = new NiftyJmeDisplay(app.getAssetManager(), app.getInputManager(), app.getAudioRenderer(), app.getGuiViewPort());
         nifty = niftyDisplay.getNifty();
-        nifty.fromXml("Interface/DeveloperConsole.xml", "hide");
+        nifty.fromXml("Interface/DeveloperConsole.xml", "hide", this);
         app.getGuiViewPort().addProcessor(niftyDisplay);
-
-        /*
-        viewPort = SAM.RENDER.createPostView(SAM.CONSOLE_VIEWPORT_NAME, cam);
-        viewPort.setClearFlags(false, true, true);
-        
-        rootNode = new Node();
-        viewPort.attachScene(rootNode);
-        
-        cam = new Camera(mainCam.getWidth(), mainCam.getHeight());
-        cam.setParallelProjection(true);
-        cam.setLocation(Vector3f.UNIT_Z);
-        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-        cam.setFrustum(-1000, 1000, (float) -mainCam.getWidth(), (float) 0, (float) mainCam.getHeight(), (float) 0);
-        */
     }
     
     @Override
@@ -80,4 +87,27 @@ public class DevConsoleAppState extends AbstractAppState {
     public void cleanup() {
         
     }
+
+    @Override
+    public boolean keyEvent(NiftyInputEvent inputEvent) {
+        if(inputEvent == NiftyInputEvent.ConsoleToggle) {
+            this.setEnabled(false);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void bind(Nifty nifty, Screen screen) {
+        screen.addPreKeyboardInputHandler(mapping, this);
+    }
+
+    @Override
+    public void onStartScreen() {
+    }
+
+    @Override
+    public void onEndScreen() {
+    }
+
 }

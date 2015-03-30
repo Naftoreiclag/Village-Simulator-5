@@ -3,9 +3,9 @@
     <useStyles filename="nifty-default-styles.xml" />
     <useControls filename="nifty-default-controls.xml" />
 
-    <screen id="show">
+    <screen id="show" controller="naftoreiclag.villagefive.DevConsoleAppState">
         <layer childLayout="center" paddingLeft="10px" paddingTop="10px" paddingBottom="10px" paddingRight="10px" >
-            <panel childLayout="vertical" width="80%" height="50%" backgroundColor="#f008" align="left" valign="top">
+            <panel childLayout="vertical" width="80%" height="40%" backgroundColor="#f008" align="left" valign="top">
                 <effect>
                     <onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/>
                     <onEndScreen name="move" mode="out" direction="top" length="300" startDelay="0" inherit="true"/>
@@ -13,8 +13,6 @@
                 
                 <panel childLayout="horizontal" paddingLeft="5px" paddingTop="5px" paddingRight="5px">
                     <text name="textbox" font="aurulent-sans-16.fnt" text="Developer Console" />
-                    <panel id="spacer" width="100%" />
-                    <control id="buttonClose" name="button" label="X" align="right" />
                 </panel>
                 <panel childLayout="horizontal" paddingLeft="5px" paddingTop="5px" paddingRight="5px">
                     <control name="textbox" height="100%"/>
