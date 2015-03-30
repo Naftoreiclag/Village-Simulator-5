@@ -16,6 +16,8 @@ import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioRenderer;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.InputManager;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.InputListener;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
@@ -51,21 +53,21 @@ import naftoreiclag.villagefive.world.entity.StoolEntity;
 import naftoreiclag.villagefive.world.plot.Plot;
 import org.json.simple.parser.ParseException;
 
-public class OverworldAppState extends AbstractAppState
+public class OverworldAppState extends AbstractAppState implements ActionListener
 {
     private Main app;
     private Node trueRootNode;
-    private AssetManager assetManager;
     private AppStateManager stateManager;
     private AudioRenderer audioRenderer;
     private ViewPort guiViewPort;
     private ViewPort invPort;
-    private InputManager inputManager;
     private Camera cam;
 	private RenderManager renderManager;
     private ViewPort viewPort;
     private Nifty nifty;
     Camera invCam;
+    
+    DevConsoleAppState devConsole;
     
     World world;
     Node chasePnt;
@@ -93,9 +95,7 @@ public class OverworldAppState extends AbstractAppState
         
         this.app = (Main) app;
         this.trueRootNode = this.app.getRootNode();
-        this.assetManager = this.app.getAssetManager();
         this.stateManager = this.app.getStateManager();
-        this.inputManager = this.app.getInputManager();
         this.audioRenderer = this.app.getAudioRenderer();
         this.guiViewPort = this.app.getGuiViewPort();
         this.renderManager = this.app.getRenderManager();
@@ -106,7 +106,7 @@ public class OverworldAppState extends AbstractAppState
         trueRootNode.attachChild(stateRootNode);
         
         setupUselessAestetics();
-        inputManager.setCursorVisible(true);
+        SAM.INPUT.setCursorVisible(true);
         
         rcam = new ReiCamera(cam);
         rcam.mode = ReiCamera.SmoothMode.cubic;
@@ -115,11 +115,21 @@ public class OverworldAppState extends AbstractAppState
         debugArrows.move(256f, 0.1f, 256f);
         this.stateRootNode.attachChild(debugArrows);
         
+        devConsole = new DevConsoleAppState();
+        devConsole.setEnabled(false);
+        stateManager.attach(devConsole);
+        SAM.INPUT.addListener(this, KeyKeys.console);
+        
         genworld();
         // loadworld();
         
         setupInvScreen();
 
+    }
+    
+    @Override
+    public void onAction(String name, boolean isPressed, float tpf)
+    {
     }
     
     
@@ -147,25 +157,32 @@ public class OverworldAppState extends AbstractAppState
     }
     
     boolean keyRel = true;
-
-    float seconds = 0f;
+    
+    boolean consoleRelease = true;
     
     @Override
     public void update(float tpf)
     {
         super.update(tpf);
         
+        System.out.println(KeyKeys.p_console);
+        
+        if(KeyKeys.p_console && consoleRelease)
+        {
+            System.out.println("press console");
+
+            this.devConsole.setEnabled(!this.devConsole.isEnabled());
+            
+            consoleRelease = false;
+        }
+        if(!KeyKeys.p_console)
+        {
+            consoleRelease = true;
+        }
+        
         if(KeyKeys.p_fastforward)
         {
             tpf *= 5;
-        }
-        
-        seconds += tpf;
-        
-        if(seconds > 1)
-        {
-            //System.out.println("second");
-            seconds -= 1;
         }
         
         if(KeyKeys.p_save && keyRel)
@@ -223,7 +240,7 @@ public class OverworldAppState extends AbstractAppState
         sun.setDirection(new Vector3f(0.96f, -2.69f, -0.69f).normalizeLocal());
         stateRootNode.addLight(sun);
         
-        dlsr = new DirectionalLightShadowRenderer(assetManager, 2048, 3);
+        dlsr = new DirectionalLightShadowRenderer(SAM.ASSETS, 2048, 3);
         dlsr.setLight(sun);
         dlsr.setShadowIntensity(0.5f);
         dlsr.setLambda(0.55f);
@@ -233,7 +250,7 @@ public class OverworldAppState extends AbstractAppState
         
         
         
-        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+        FilterPostProcessor fpp = new FilterPostProcessor(SAM.ASSETS);
         BloomFilter bf = new BloomFilter(BloomFilter.GlowMode.Objects);
         fpp.addFilter(bf);
         viewPort.addProcessor(fpp);
@@ -247,7 +264,7 @@ public class OverworldAppState extends AbstractAppState
     // its as dirty as possible
     private void genworld()
     {
-        world = new World(stateRootNode, assetManager);
+        world = new World(stateRootNode, SAM.ASSETS);
         
         // By default, nothing has influence on shadow rendering.
         world.rootNode.setShadowMode(RenderQueue.ShadowMode.Off);
@@ -268,12 +285,14 @@ public class OverworldAppState extends AbstractAppState
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
-        playCont.setManager(inputManager);
+        playCont.setManager(SAM.INPUT);
         
+        /*
         Plot plot = new Plot();
         plot.setBlueprint(house);
         plot.setLocation(new Vec2(260, 260));
         world.materializePlot(plot);
+        */
         
         world.materializeEntityByName("naftogeometry:cone").setLocation(new Vec2(280, 280));
         world.materializeEntityByName("naftogeometry:torus").setLocation(new Vec2(275, 280));
@@ -303,7 +322,7 @@ public class OverworldAppState extends AbstractAppState
     {
         try
         {
-            world = SaveLoad.load(stateRootNode, assetManager);
+            world = SaveLoad.load(stateRootNode, SAM.ASSETS);
         }
         catch(IOException ex)
         {
@@ -324,6 +343,6 @@ public class OverworldAppState extends AbstractAppState
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
-        playCont.setManager(inputManager);
+        playCont.setManager(SAM.INPUT);
     }
 }

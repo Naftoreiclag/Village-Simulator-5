@@ -9,11 +9,10 @@ package naftoreiclag.villagefive.util.scenegraph;
 import com.jme3.asset.AssetManager;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.Control;
+import naftoreiclag.villagefive.SAM;
 
 public class ModelManipulator
 {
-    public static AssetManager assetManager;
-
     public static Node loadNode(String modelName)
     {
         if(modelName == null)
@@ -22,7 +21,7 @@ public class ModelManipulator
             return node;
         }
         
-        Node node = (Node) assetManager.loadModel(modelName);
+        Node node = (Node) SAM.ASSETS.loadModel(modelName);
         return node;
     }
     

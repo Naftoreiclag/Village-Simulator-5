@@ -50,29 +50,20 @@ public class Main extends SimpleApplication implements ActionListener
     public static Material mat_debug_bricks;
     public static Material mat_debug_gold;
     
-    OverworldAppState tas;
-    PlotEditorAppState bas;
+    OverworldAppState overworldAppState;
+    PlotEditorAppState editorAppState;
     
     @Override
     public void simpleInitApp()
     {
         SAM.ASSETS = this.assetManager;
         SAM.INPUT = this.inputManager;
+        SAM.RENDER = this.renderManager;
+        KeyKeys.setupInputManager();
         
-        try
-        {
-            AddonManager.reloadAddons();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+        AddonManager.reloadAddons();
         
-        KeyKeys.hookInputs(inputManager);
-        
-        ModelManipulator.assetManager = this.assetManager;
-        
-        inputManager.addListener(this, KeyKeys.num_9, KeyKeys.num_8);
+        SAM.INPUT.addListener(this, KeyKeys.num_9, KeyKeys.num_8);
         
         mat_debug_wireframe = assetManager.loadMaterial("Materials/wiremesh.j3m");
         mat_debug = assetManager.loadMaterial("Materials/debug.j3m");
@@ -86,9 +77,10 @@ public class Main extends SimpleApplication implements ActionListener
         
         flyCam.setEnabled(false);
         
-        tas = new OverworldAppState();
-        bas = new PlotEditorAppState();
-        stateManager.attach(bas);
+        overworldAppState = new OverworldAppState();
+        editorAppState = new PlotEditorAppState();
+        
+        stateManager.attach(overworldAppState);
     }
 
     @Override
@@ -105,14 +97,14 @@ public class Main extends SimpleApplication implements ActionListener
     {
         if(name.equals(KeyKeys.num_9))
         {
-            stateManager.detach(bas);
-            tas.gimmiePlot(bas.plotData);
-            stateManager.attach(tas);
+            stateManager.detach(editorAppState);
+            overworldAppState.gimmiePlot(editorAppState.plotData);
+            stateManager.attach(overworldAppState);
         }
         if(name.equals(KeyKeys.num_8))
         {
-            stateManager.detach(tas);
-            stateManager.attach(bas);
+            stateManager.detach(overworldAppState);
+            stateManager.attach(editorAppState);
         }
     }
 

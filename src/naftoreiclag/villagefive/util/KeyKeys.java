@@ -15,6 +15,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
+import naftoreiclag.villagefive.SAM;
 
 public class KeyKeys implements ActionListener
 {
@@ -27,18 +28,10 @@ public class KeyKeys implements ActionListener
     public static final String rotate_camera_right = "Rotate The Camera Rightwards";
     
     public static final String mouse_left = "Left Mouse Button";
-    public static final String debug = "Debugg";
+    public static final String console = "Developer Console";
     
     public static final String mouse_scroll_up = "Mouse Scroll Up";
     public static final String mouse_scroll_down = "Mouse Scroll Down";
-    
-    /*
-    public static final String mouse_move_up = "Mouse Move U";
-    public static final String mouse_move_down = "Mouse Move D";
-    public static final String mouse_move_left = "Mouse Move L";
-    public static final String mouse_move_right = "Mouse Move R";
-    public static final String[] mouse_move = {mouse_move_up, mouse_move_down, mouse_move_left, mouse_move_right};
-    */
     
     public static final String mouse_move = "Mouse Move";
     
@@ -62,49 +55,51 @@ public class KeyKeys implements ActionListener
     public static final String num_8 = "Number 8";
     public static final String num_9 = "Number 9";
     
-    public static void hookInputs(InputManager inputManager)
+    public static void setupInputManager()
     {
-        inputManager.addMapping(KeyKeys.move_left, new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping(KeyKeys.move_right, new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping(KeyKeys.move_forward, new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping(KeyKeys.move_backward, new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addMapping(KeyKeys.rotate_camera_left, new KeyTrigger(KeyInput.KEY_Q));
-        inputManager.addMapping(KeyKeys.rotate_camera_right, new KeyTrigger(KeyInput.KEY_E));
-        inputManager.addMapping(KeyKeys.debug, new KeyTrigger(KeyInput.KEY_M));
-        inputManager.addMapping(KeyKeys.mouse_left, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        SAM.INPUT.addMapping(KeyKeys.console, new KeyTrigger(KeyInput.KEY_GRAVE));
         
-        inputManager.addMapping(KeyKeys.mouse_scroll_up, new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
-        inputManager.addMapping(KeyKeys.mouse_scroll_down, new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true));
+        SAM.INPUT.addMapping(KeyKeys.move_left, new KeyTrigger(KeyInput.KEY_A));
+        SAM.INPUT.addMapping(KeyKeys.move_right, new KeyTrigger(KeyInput.KEY_D));
+        SAM.INPUT.addMapping(KeyKeys.move_forward, new KeyTrigger(KeyInput.KEY_W));
+        SAM.INPUT.addMapping(KeyKeys.move_backward, new KeyTrigger(KeyInput.KEY_S));
+        SAM.INPUT.addMapping(KeyKeys.rotate_camera_left, new KeyTrigger(KeyInput.KEY_Q));
+        SAM.INPUT.addMapping(KeyKeys.rotate_camera_right, new KeyTrigger(KeyInput.KEY_E));
+        SAM.INPUT.addMapping(KeyKeys.mouse_left, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         
-        inputManager.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_Y, true));
-        inputManager.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_Y, false));
-        inputManager.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_X, false));
-        inputManager.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_X, true));
+        SAM.INPUT.addMapping(KeyKeys.mouse_scroll_up, new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
+        SAM.INPUT.addMapping(KeyKeys.mouse_scroll_down, new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true));
         
-        inputManager.addMapping(KeyKeys.num_0, new KeyTrigger(KeyInput.KEY_0));
-        inputManager.addMapping(KeyKeys.num_1, new KeyTrigger(KeyInput.KEY_1));
-        inputManager.addMapping(KeyKeys.num_2, new KeyTrigger(KeyInput.KEY_2));
-        inputManager.addMapping(KeyKeys.num_3, new KeyTrigger(KeyInput.KEY_3));
-        inputManager.addMapping(KeyKeys.num_4, new KeyTrigger(KeyInput.KEY_4));
-        inputManager.addMapping(KeyKeys.num_5, new KeyTrigger(KeyInput.KEY_5));
-        inputManager.addMapping(KeyKeys.num_6, new KeyTrigger(KeyInput.KEY_6));
-        inputManager.addMapping(KeyKeys.num_7, new KeyTrigger(KeyInput.KEY_7));
-        inputManager.addMapping(KeyKeys.num_8, new KeyTrigger(KeyInput.KEY_8));
-        inputManager.addMapping(KeyKeys.num_9, new KeyTrigger(KeyInput.KEY_9));
+        SAM.INPUT.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_Y, true));
+        SAM.INPUT.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_Y, false));
+        SAM.INPUT.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_X, false));
+        SAM.INPUT.addMapping(KeyKeys.mouse_move, new MouseAxisTrigger(MouseInput.AXIS_X, true));
         
-        inputManager.addMapping(KeyKeys.interact, new KeyTrigger(KeyInput.KEY_R));
+        SAM.INPUT.addMapping(KeyKeys.num_0, new KeyTrigger(KeyInput.KEY_0));
+        SAM.INPUT.addMapping(KeyKeys.num_1, new KeyTrigger(KeyInput.KEY_1));
+        SAM.INPUT.addMapping(KeyKeys.num_2, new KeyTrigger(KeyInput.KEY_2));
+        SAM.INPUT.addMapping(KeyKeys.num_3, new KeyTrigger(KeyInput.KEY_3));
+        SAM.INPUT.addMapping(KeyKeys.num_4, new KeyTrigger(KeyInput.KEY_4));
+        SAM.INPUT.addMapping(KeyKeys.num_5, new KeyTrigger(KeyInput.KEY_5));
+        SAM.INPUT.addMapping(KeyKeys.num_6, new KeyTrigger(KeyInput.KEY_6));
+        SAM.INPUT.addMapping(KeyKeys.num_7, new KeyTrigger(KeyInput.KEY_7));
+        SAM.INPUT.addMapping(KeyKeys.num_8, new KeyTrigger(KeyInput.KEY_8));
+        SAM.INPUT.addMapping(KeyKeys.num_9, new KeyTrigger(KeyInput.KEY_9));
         
-        inputManager.addMapping(KeyKeys.openInv, new KeyTrigger(KeyInput.KEY_X));
+        SAM.INPUT.addMapping(KeyKeys.interact, new KeyTrigger(KeyInput.KEY_R));
         
-        inputManager.addMapping(KeyKeys.fastforward, new KeyTrigger(KeyInput.KEY_F));
+        SAM.INPUT.addMapping(KeyKeys.openInv, new KeyTrigger(KeyInput.KEY_X));
         
+        SAM.INPUT.addMapping(KeyKeys.fastforward, new KeyTrigger(KeyInput.KEY_F));
         
-        inputManager.addMapping(KeyKeys.load, new KeyTrigger(KeyInput.KEY_O));
-        inputManager.addMapping(KeyKeys.save, new KeyTrigger(KeyInput.KEY_P));
+        SAM.INPUT.addMapping(KeyKeys.load, new KeyTrigger(KeyInput.KEY_O));
+        SAM.INPUT.addMapping(KeyKeys.save, new KeyTrigger(KeyInput.KEY_P));
         
-        inputManager.addListener(global, KeyKeys.fastforward);
-        inputManager.addListener(global, KeyKeys.save);
-        inputManager.addListener(global, KeyKeys.load);
+        SAM.INPUT.addListener(global, KeyKeys.console);
+        
+        SAM.INPUT.addListener(global, KeyKeys.fastforward);
+        SAM.INPUT.addListener(global, KeyKeys.save);
+        SAM.INPUT.addListener(global, KeyKeys.load);
     }
 
     public static KeyKeys global = new KeyKeys();
@@ -112,8 +107,14 @@ public class KeyKeys implements ActionListener
     public static boolean p_save;
     public static boolean p_load;
     
+    public static boolean p_console;
+    
     public void onAction(String name, boolean isPressed, float tpf)
     {
+        if(name.equals(console))
+        {
+            p_console = isPressed;
+        }
         if(name.equals(fastforward))
         {
             p_fastforward = isPressed;
