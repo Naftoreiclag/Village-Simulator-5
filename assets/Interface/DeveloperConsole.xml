@@ -19,6 +19,7 @@
                     <!--This is where stuff is populated-->
                 </panel>
                 
+                
                 <panel childLayout="horizontal" valign="bottom" paddingLeft="5px" paddingTop="5px" paddingBottom="5px" paddingRight="5px">
                     <control id="input" name="textfield" valight="bottom"/>
                 </panel>

@@ -85,14 +85,15 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     
     private void sendInput() {
         if(input.equals("") || input == null) { return; }
-    
-        LabelBuilder labelMaker = new LabelBuilder();
-        labelMaker.set("text", input);
-        labelMaker.build(nifty, screen, outputPanel);
+
         
-        //new PanelBuilder() {{
+        new PanelBuilder() {{
+            childLayoutHorizontal();
+            control(new LabelBuilder() {{
+                label(input);
+            }});
+        }}.build(nifty, screen, outputPanel);
         
-        //}}.build(nifty, screen, outputPanel);
         
         textField.setText("");
         input = "";
