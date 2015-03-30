@@ -25,6 +25,8 @@ import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import java.util.ArrayList;
+import java.util.List;
 import naftoreiclag.villagefive.util.KeyKeys;
 
 public class DevConsoleAppState extends AbstractAppState implements ScreenController, KeyInputHandler {
@@ -86,14 +88,15 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     
     private void sendInput() {
         if(input.equals("") || input == null) { return; }
-
         
-        new ConsoleOutputEntry(input);
+        ConsoleOutputEntry e = new ConsoleOutputEntry(input);
+        entries.add(e);
         
         textField.setText("");
         input = "";
     }
     
+    List<ConsoleOutputEntry> entries = new ArrayList<ConsoleOutputEntry>();
     private class ConsoleOutputEntry
     {
         final Element associatedPanel;
@@ -108,7 +111,13 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
                     label(message);
                 }});
             }}.build(nifty, screen, outputBox);
+        }
+        
+        void register() {
             
+        }
+        
+        void delete() {
             
         }
     }
