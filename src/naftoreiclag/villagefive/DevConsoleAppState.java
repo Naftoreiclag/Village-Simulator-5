@@ -11,6 +11,12 @@ import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.Label;
+import de.lessvoid.nifty.controls.TextField;
+import de.lessvoid.nifty.controls.TextFieldChangedEvent;
+import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
+import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyInputMapping;
 import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
@@ -25,6 +31,14 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     NiftyJmeDisplay niftyDisplay;
     Nifty nifty;
     
+    TextField textField;
+    Element outputPanel;
+    
+    LabelBuilder labelMaker;
+    
+    String input;
+    Screen screen;
+    
     NiftyInputMapping mapping = new NiftyInputMapping() {
         @Override
         public NiftyInputEvent convert(KeyboardInputEvent inputEvent) {
@@ -36,8 +50,6 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
                 if(key == KeyKeys.consoleKey) {
                     return NiftyInputEvent.ConsoleToggle;
                 } else if(key == KeyboardInputEvent.KEY_RETURN) {
-                    return NiftyInputEvent.Activate;
-                } else if(key == KeyboardInputEvent.KEY_SPACE) {
                     return NiftyInputEvent.Activate;
                 } else if(key == KeyboardInputEvent.KEY_TAB) {
                     if(inputEvent.isShiftDown()) {
@@ -63,13 +75,31 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         nifty.fromXml("Interface/DeveloperConsole.xml", "hide", this);
         app.getGuiViewPort().addProcessor(niftyDisplay);
     }
+
+    @Override
+    public void bind(Nifty nifty, Screen screen) {
+        screen.addPreKeyboardInputHandler(mapping, this);
+        this.screen = screen;
+        textField = screen.findNiftyControl("input", TextField.class);
+        //outputPanel = screen.findElementByName("output");
+    }
+    
+    private void sendInput() {
+        if(input.equals("") || input == null) { return; }
+        
+        
+        //outputPanel.add(outputPanel);
+        //labelMaker.set("text", input);
+        //labelMaker.build(nifty, screen, outputPanel);
+        
+        textField.setText("");
+    }
     
     @Override
     public void setEnabled(boolean enable) {
         super.setEnabled(enable);
         
-        if(this.initialized)
-        {
+        if(this.initialized){
             if(enable) {
                 nifty.gotoScreen("show");
             } else {
@@ -79,35 +109,31 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     }
     
     @Override
-    public void update(float tpf) {
-        
-    }
+    public void update(float tpf) {}
     
     @Override
-    public void cleanup() {
-        
-    }
+    public void cleanup() {}
 
     @Override
     public boolean keyEvent(NiftyInputEvent inputEvent) {
         if(inputEvent == NiftyInputEvent.ConsoleToggle) {
             this.setEnabled(false);
             return true;
+        } else if(inputEvent == NiftyInputEvent.Activate) {
+            sendInput();
         }
         return false;
     }
 
-    @Override
-    public void bind(Nifty nifty, Screen screen) {
-        screen.addPreKeyboardInputHandler(mapping, this);
+    @NiftyEventSubscriber(id = "input")
+    public void onTextfieldChange(final String id, final TextFieldChangedEvent event) {
+        input = event.getText();
     }
 
     @Override
-    public void onStartScreen() {
-    }
+    public void onStartScreen() {}
 
     @Override
-    public void onEndScreen() {
-    }
+    public void onEndScreen() {}
 
 }

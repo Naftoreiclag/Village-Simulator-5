@@ -18,8 +18,9 @@
                     <control name="textbox" height="100%"/>
                 </panel>
                 <panel childLayout="horizontal" paddingLeft="5px" paddingTop="5px" paddingBottom="5px" paddingRight="5px">
-                    <control name="textfield" valight="bottom"/>
+                    <control id="input" name="textfield" valight="bottom"/>
                 </panel>
+                
             </panel>
         </layer>
     </screen>

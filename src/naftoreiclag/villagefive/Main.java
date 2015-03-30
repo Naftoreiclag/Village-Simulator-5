@@ -25,14 +25,13 @@ public class Main extends SimpleApplication implements ActionListener
         displ.setSettingsDialogImage("interface/splash.png");
         //displ.setResolution(1280, 720);
         displ.setResolution(1920, 1080);
+        //displ.setFullscreen(true);
         displ.setSamples(4);
-        
-        
-        //displ.setFrameRate(60);
+        displ.setFrameRate(60);
         
         Main main = new Main();
         main.setSettings(displ);
-        //main.showSettings = false;
+        main.showSettings = false;
         
         main.setDisplayFps(true);
         main.setDisplayStatView(false);
