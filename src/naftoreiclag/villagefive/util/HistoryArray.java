@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // APUS_
-public class HistoryArray<T> {
+public final class HistoryArray<T> {
     
     final public int size;
     private int nextInput = 0;
@@ -18,10 +18,7 @@ public class HistoryArray<T> {
 
     public HistoryArray(int size) {
         this.size = size;
-        
-        for(int i = 0; i < size; ++ i) {
-            array.add(null);
-        }
+        clear();
     }
 
     public int wrap(int x) {
@@ -36,6 +33,9 @@ public class HistoryArray<T> {
 
     public void clear() {
         array.clear();
+        for(int i = 0; i < size; ++ i) {
+            array.add(null);
+        }
     }
 
     public T get(int pos) {

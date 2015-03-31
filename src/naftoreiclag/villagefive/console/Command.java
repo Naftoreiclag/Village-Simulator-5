@@ -6,11 +6,9 @@
 
 package naftoreiclag.villagefive.console;
 
-import java.util.List;
-
 public abstract class Command
 {
     public abstract boolean process(Console console, String input);
 
-    public abstract String getHelpLine();
+    public abstract String[] getHelpLines();
 }

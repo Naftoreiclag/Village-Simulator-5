@@ -98,10 +98,6 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         nifty = niftyDisplay.getNifty();
         nifty.fromXml("Interface/DeveloperConsole.xml", "hide", this);
         app.getGuiViewPort().addProcessor(niftyDisplay);
-        
-        //
-        console = new Console(this);
-        console.knownCommands.add(new CommandHelloWorld());
     }
 
     // Called by Nifty when the gui has started up.
@@ -112,7 +108,10 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         textField = screen.findNiftyControl("input", TextField.class);
         outputBox = screen.findElementByName("output");
         prepareConsole();
-        printLine("This is a console. You have no idea how long this took to make.\nType \"help\" for help.");
+        
+        //
+        console = new Console(this);
+        console.knownCommands.add(new CommandHelloWorld());
     }
     
     // When the user presses "Enter"
@@ -144,6 +143,12 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     
     // Each line has more information than just being a string.
     HistoryArray<ConsoleLine> outputHistory = new HistoryArray<ConsoleLine>(historyLength);
+    void clearOutput() {
+        outputHistory.clear();
+        for(int i = 0; i < outputContainers.length; ++ i) {
+            outputContainers[i].setText("");
+        }
+    }
     private class ConsoleLine {
         final String message;
         int repeats = 0;

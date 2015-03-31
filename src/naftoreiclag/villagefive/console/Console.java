@@ -11,7 +11,7 @@ package naftoreiclag.villagefive.console;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Console {
+public final class Console {
     private final DevConsoleAppState realConsole;
     
     public final List<Command> knownCommands = new ArrayList<Command>();
@@ -19,59 +19,82 @@ public class Console {
     protected Console(DevConsoleAppState console)
     {
         this.realConsole = console;
+        knownCommands.add(new Command(){
+            @Override
+            public boolean process(Console console, String input) {
+                String[] inputs = input.split(" ");
+                
+                if(inputs[0].equals("help"))
+                {
+                    String search;
+                    if(inputs.length <= 1) {
+                        search = "";
+                    } else {
+                        search = inputs[1];
+                    }
+                    
+                    console.println("Available commands:");
+
+                    boolean foundCommandFromSearch = false;
+                    for(Command command : knownCommands) {
+                        String[] helpLines = command.getHelpLines();
+
+                        for(String helpLine : helpLines)
+                        {
+                            if(helpLine != null) {
+                                if(helpLine.startsWith(search)) {
+                                    console.println("    " + helpLine);
+                                    foundCommandFromSearch = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if(!foundCommandFromSearch) {
+                        console.println("No commands found.");
+                    }
+                    
+                    return true;
+                } else if(inputs[0].equalsIgnoreCase("clear")) {
+                    console.clear();
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public String[] getHelpLines() { return new String[]{
+                "help: Displays this help menu.", 
+                "help <search>: Shows only commands that start with <search>.",
+                "clear: Clears console."};}
+        });
+        
+        this.println("This is a console. You have no idea how long this took to make.\n"
+                + "Type \"help\" for help.");
     }
     
     protected void processRawInput(String input)
-    {
-        if(input.startsWith("help"))
-        {
-            String beginning;
-        
-            if(input.length() > 5) {
-                beginning = input.substring(5);
-            } else {
-                beginning = "";
+    { 
+        boolean didAnyWork = false;
+        for(Command command : knownCommands) {
+            if(command.process(this, input)) {
+                didAnyWork = true;
+                break;
             }
-            
-            this.println("Available Commands:");
-            
-            if("".equals(beginning)) {
-                this.println(" help: Displays this help menu.\n"
-                    + " help <search>: Shows only commands that start with <search>");
-            }
-            
-            boolean foundCommandFromSearch = false;
-            for(Command command : knownCommands) {
-                String helpLine = command.getHelpLine();
+        }
 
-                if(helpLine != null) {
-                    if(helpLine.startsWith(beginning)) {
-                        this.println(" " + helpLine);
-                        foundCommandFromSearch = true;
-                    }
-                }
-            }
-            
-            if(!foundCommandFromSearch) {
-                this.println("No commands found for [" + beginning + "]");
-            }
-        } else {
-            boolean didAnyWork = false;
-            for(Command command : knownCommands) {
-                if(command.process(this, input)) {
-                    didAnyWork = true;
-                    break;
-                }
-            }
-            
-            if(!didAnyWork) {
-                this.println("Unknown command. Type \"help\" for help.");
-            }
+        if(!didAnyWork) {
+            this.println("Unknown command. Type \"help\" for help.");
         }
     }
     
     public void println(String printMe)
     {
         realConsole.printLine(printMe);
+    }
+    
+    public void clear()
+    {
+        realConsole.clearOutput();
     }
 }

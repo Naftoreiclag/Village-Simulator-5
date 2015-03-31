@@ -20,8 +20,8 @@ public class CommandHelloWorld extends Command {
     }
 
     @Override
-    public String getHelpLine() {
-        return "helloworld: Prints a message. I bet you can't guess what it is.";
+    public String[] getHelpLines() {
+        return new String[]{"helloworld: Prints a message. I bet you can't guess what it is."};
     }
 
 }
