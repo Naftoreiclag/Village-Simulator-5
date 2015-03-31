@@ -25,7 +25,13 @@ public class Console {
     {
         if(input.startsWith("help"))
         {
-            String beginning = input.substring(5);
+            String beginning;
+        
+            if(input.length() > 5) {
+                beginning = input.substring(5);
+            } else {
+                beginning = "";
+            }
             
             this.println("Available Commands:");
             
@@ -40,7 +46,7 @@ public class Console {
 
                 if(helpLine != null) {
                     if(helpLine.startsWith(beginning)) {
-                        this.println(helpLine);
+                        this.println(" " + helpLine);
                         foundCommandFromSearch = true;
                     }
                 }
