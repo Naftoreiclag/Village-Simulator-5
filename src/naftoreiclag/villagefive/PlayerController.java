@@ -25,8 +25,6 @@ import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.SmoothAngle;
 import naftoreiclag.villagefive.util.math.SmoothScalar;
 import naftoreiclag.villagefive.util.math.Vec2;
-import naftoreiclag.villagefive.world.PhysWorld;
-import naftoreiclag.villagefive.world.Resident;
 import naftoreiclag.villagefive.world.body.EntityBody;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
@@ -439,11 +437,6 @@ public class PlayerController extends EntityController implements ActionListener
         }
     }
 
-    Resident resid;
-    void setResidence(Resident resid)
-    {
-        this.resid = resid;
-    }
 
 
 }

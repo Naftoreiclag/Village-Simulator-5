@@ -47,7 +47,6 @@ import naftoreiclag.villagefive.util.scenegraph.AxesMaker;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import naftoreiclag.villagefive.util.serializable.Blueprint;
 import naftoreiclag.villagefive.util.serializable.BlueprintUtil;
-import naftoreiclag.villagefive.world.Resident;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.entity.ForSaleEntity;
 import naftoreiclag.villagefive.world.entity.StoolEntity;
@@ -266,7 +265,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     {
         world = new World(stateRootNode, SAM.ASSETS);
         
-        player = (PlayerEntity) world.materializeEntityByName("Player");
+        player = (PlayerEntity) world.spawnEntity("Player");
         player.setLocation(new Vec2(256, 256));
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
@@ -276,11 +275,11 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         playCont.setGround(ground);
         playCont.setManager(SAM.INPUT);
         
-        world.materializeEntityByName("naftogeometry:cone").setLocation(new Vec2(280, 280));
-        world.materializeEntityByName("naftogeometry:torus").setLocation(new Vec2(275, 280));
-        world.materializeEntityByName("naftogeometry:shiny").setLocation(new Vec2(270, 280));
-        world.materializeEntityByName("naftogeometry:futbol").setLocation(new Vec2(265, 280));
-        world.materializeEntityByName("naftogeometry:basketball").setLocation(new Vec2(260, 280));
+        world.spawnEntity("naftogeometry:cone").setLocation(new Vec2(280, 280));
+        world.spawnEntity("naftogeometry:torus").setLocation(new Vec2(275, 280));
+        world.spawnEntity("naftogeometry:shiny").setLocation(new Vec2(270, 280));
+        world.spawnEntity("naftogeometry:futbol").setLocation(new Vec2(265, 280));
+        world.spawnEntity("naftogeometry:basketball").setLocation(new Vec2(260, 280));
 
         /*
         Random rand = new Random(1337);
@@ -317,7 +316,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
             Logger.getLogger(OverworldAppState.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        player = (PlayerEntity) world.getEntityByName("Player");
+        player = (PlayerEntity) world.getEntity("Player");
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
         playCont = new PlayerController();

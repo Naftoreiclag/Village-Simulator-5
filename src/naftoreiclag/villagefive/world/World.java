@@ -33,20 +33,12 @@ import org.json.simple.JSONObject;
 // Thingy that handles pretty much anything that can be considered a part of the world
 public class World implements JSONAware
 {
-    private static long globalId = 0;
-
-    public static long nextSid()
-    {
-        return globalId ++;
-    }
-    
     // Size in chunks
     public int width = 20;
     public int height = 20;
     
     public Chunk[][] chunks = new Chunk[width][height];
     
-    public Node trueRootNode;
     public Node rootNode;
     
     private Node entityRoot;
@@ -59,15 +51,12 @@ public class World implements JSONAware
     
     public List<Entity> entities = new ArrayList<Entity>();
     public List<Plot> plots = new ArrayList<Plot>();
-    public List<Resident> residents = new ArrayList<Resident>();
     
     public World(Node theRootNode, AssetManager assetManager)
     {
-        this.trueRootNode = theRootNode;
-        
         // Establish some holding nodes.
         this.rootNode = new Node();
-        this.trueRootNode.attachChild(this.rootNode);
+        theRootNode.attachChild(this.rootNode);
         this.entityRoot = new Node();
         this.rootNode.attachChild(this.entityRoot);
         this.chunkRoot = new Node();
@@ -112,7 +101,6 @@ public class World implements JSONAware
     
     public World(JSONObject data)
     {
-        globalId = (Long) data.get("nextId");
     }
 
     @Override
@@ -120,9 +108,7 @@ public class World implements JSONAware
     {
         JSONObject json = new JSONObject();
         
-        json.put("nextId", globalId);
         json.put("name", "swagland");
-        json.put("residents", residents);
         json.put("entities", entities);
         json.put("plots", plots);
         
@@ -157,8 +143,7 @@ public class World implements JSONAware
         
     }
     
-    @Deprecated
-    public Plot materializePlot(Plot plot)
+    private Plot addPlot(Plot plot)
     {
         plot.assertWorld(this);
         
@@ -182,8 +167,7 @@ public class World implements JSONAware
         return plot;
     }
     
-    @Deprecated
-    public void materializeEntity(Entity entity)
+    private void addEntity(Entity entity)
     {
         entity.assertWorld(this);
         
@@ -198,9 +182,9 @@ public class World implements JSONAware
         entities.add(entity);
     }
     
-    public Entity materializeEntityByName(String name)
+    public Entity spawnEntity(String entityId)
     {
-        Entity entity = EntityRegistry.newInstance(name);
+        Entity entity = EntityRegistry.newInstance(entityId);
         
         entity.assertWorld(this);
         
@@ -216,9 +200,9 @@ public class World implements JSONAware
         
         return entity;
     }
-    public Entity getEntityByName(String name) {
+    public Entity getEntity(String entityId) {
         for(Entity entity : entities) {
-            if(entity.getEntityId().equals(name)) {
+            if(entity.getEntityId().equals(entityId)) {
                 return entity;
             }
         }
@@ -340,7 +324,7 @@ public class World implements JSONAware
         return false;
     }
     
-    public void destroyEntity(Entity ent)
+    public void removeEntity(Entity ent)
     {
         this.entities.remove(ent);
         
@@ -364,21 +348,19 @@ public class World implements JSONAware
         {
             JSONObject plotData = (JSONObject) obj;
             Plot plot = new Plot(plotData);
-            
-            this.materializePlot(plot);
+            this.addPlot(plot);
         }
         
         for(Object obj : entityList)
         {
             JSONObject entityData = (JSONObject) obj;
             
-            Entity ddd = EntityRegistry.newInstance((String) entityData.get("instanceof"));
-            
-            this.materializeEntity(ddd);
-            
+            String entityId = (String) entityData.get("instanceof");
             Vec2 loc = new Vec2((JSONObject) entityData.get("location"));
-            System.out.println(loc);
-            ddd.setLocation(loc);
+            
+            Entity entity = EntityRegistry.newInstance(entityId);
+            this.addEntity(entity);
+            entity.setLocation(loc);
             
         }
     }

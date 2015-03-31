@@ -35,7 +35,7 @@ public class CommandSpawnEntity extends Command {
             
             if(EntityRegistry.exists(entity))
             {
-                Entity e = game.getWorld().materializeEntityByName(entity);
+                Entity e = game.getWorld().spawnEntity(entity);
                 e.setLocation(game.getPlayer().getLocation());
             }
             else {

@@ -22,19 +22,16 @@ import org.json.simple.JSONObject;
 // Position and rotation are stored in the node
 public abstract class Entity extends Mundane implements JSONAware
 {
-    public long SID;
-    
     protected Body body = null;
     protected Node node = null;
     
     public Entity()
     {
-        this.SID = World.nextSid();
     }
     
     public void destroySelf()
     {
-        this.world.destroyEntity(this);
+        this.world.removeEntity(this);
     }
     
     @Override
