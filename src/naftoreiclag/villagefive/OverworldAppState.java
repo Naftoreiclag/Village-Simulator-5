@@ -318,9 +318,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
             Logger.getLogger(OverworldAppState.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        player = new PlayerEntity();
-        world.materializeEntity(player);
-        player.setLocation(new Vec2(256, 256));
+        player = (PlayerEntity) world.getEntityByName("Player");
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
         playCont = new PlayerController();

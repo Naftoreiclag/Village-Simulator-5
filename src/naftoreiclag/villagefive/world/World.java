@@ -216,6 +216,14 @@ public class World implements JSONAware
         
         return entity;
     }
+    public Entity getEntityByName(String name) {
+        for(Entity entity : entities) {
+            if(entity.getEntityId().equals(name)) {
+                return entity;
+            }
+        }
+        return null;
+    }
 
     
     public void updateChunkLODs(Vec2 loc2)
