@@ -112,6 +112,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         screen.addPreKeyboardInputHandler(mapping, this);
         this.screen = screen;
         textField = screen.findNiftyControl("input", TextField.class);
+        textField.setFocus();
         outputBox = screen.findElementByName("output");
         prepareConsole();
         
@@ -303,6 +304,9 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     // Disables the console and flushes input
     @Override
     public boolean keyEvent(NiftyInputEvent inputEvent) {
+        if(textField != null) {
+            textField.setFocus();
+        }
         if(inputEvent == NiftyInputEvent.ConsoleToggle) {
             this.setEnabled(false);
             return true;

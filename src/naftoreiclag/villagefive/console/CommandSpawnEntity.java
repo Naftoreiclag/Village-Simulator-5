@@ -29,6 +29,7 @@ public class CommandSpawnEntity extends Command {
             
             if(entity.equals("")) {
                 console.println("Enter an entity id.");
+                return true;
             }
             
             if(EntityRegistry.exists(entity))
