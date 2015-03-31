@@ -49,6 +49,9 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     TextField textField;
     Element outputBox;
     
+    // Fassad
+    Console console;
+    
     // Getting input from the textfield.
     String textFieldContents;
     @NiftyEventSubscriber(id = "input")
@@ -95,6 +98,10 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         nifty = niftyDisplay.getNifty();
         nifty.fromXml("Interface/DeveloperConsole.xml", "hide", this);
         app.getGuiViewPort().addProcessor(niftyDisplay);
+        
+        //
+        console = new Console(this);
+        console.knownCommands.add(new CommandHelloWorld());
     }
 
     // Called by Nifty when the gui has started up.
@@ -127,6 +134,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         // Ignore empty inputs
         if(!textFieldContents.equals("")) {
             printLine(textFieldContents);
+            console.processRawInput(textFieldContents);
         }
         
         // Regardless, clear
@@ -157,7 +165,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     }
     
     // Print a line to the console. Can accept strings with \n.
-    private void printLine(String message) {
+    protected void printLine(String message) {
         // Repeat this method for each line
         String[] lines = message.split("\n");
         for(String line : lines) {
@@ -181,7 +189,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
                     if(e.repeats == 0) {
                         outputContainers[i].setText(e.message);
                     } else {
-                        outputContainers[i].setText(e.message + "[x" + e.repeats + "]");
+                        outputContainers[i].setText(e.message + " (Repeated " + e.repeats + " times)");
                     }
                 } else {
                     outputContainers[i].setText("");

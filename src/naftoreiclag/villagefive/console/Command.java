@@ -10,5 +10,7 @@ import java.util.List;
 
 public abstract class Command
 {
-    public abstract void populateHelp(List<String> helpInfo);
+    public abstract boolean process(Console console, String input);
+
+    public abstract String getHelpLine();
 }
