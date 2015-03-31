@@ -20,6 +20,7 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.TextFieldChangedEvent;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyInputMapping;
 import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
@@ -28,6 +29,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import java.util.ArrayList;
 import java.util.List;
+import naftoreiclag.villagefive.util.HistoryArray;
 import naftoreiclag.villagefive.util.KeyKeys;
 
 public class DevConsoleAppState extends AbstractAppState implements ScreenController, KeyInputHandler {
@@ -99,9 +101,29 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         System.out.println(outputBox.getHeight());
         */
         
+        write(input);
+        
         
         textField.setText("");
         input = "";
+    }
+    
+    private void write(String input)
+    {
+        entries.add(new ConsoleOutputEntry(input));
+        
+        for(int i = 0; i < lines.length; ++ i)
+        {
+            ConsoleOutputEntry e = entries.get(i);
+            
+            if(e != null) {
+                lines[i].setText(e.message);
+            } else {
+                lines[i].setText("");
+            }
+            
+            
+        }
     }
     
     private int lineHeight = 15;
@@ -119,53 +141,44 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         }
     }
     
+    // I need this because...
     private class ConsoleElement {
-        
         Element panel;
         Element label;
         ConsoleElement(Nifty nifty, Screen screen, Element outputBox)
         {
+            // Portable javadoc v
+            //new LabelBuilder()
+            //new PanelBuilder()
+            
             panel = new PanelBuilder() {{
                 childLayoutHorizontal();
                 height(lineHeight + "px");
             }}.build(nifty, screen, outputBox);
             
-            
             label = new LabelBuilder() {{
-                label("aaaaaa");
+                alignLeft();
+                label("");
             }}.build(nifty, screen, panel);
-            
-            System.out.println(label.getClass().getName());
         }
         
-        void setText(String text) {
-
+        // Max efficiency by removing a label and then immidately readding one.
+        void setText(final String text) {
+            label.markForRemoval();
+            label = new LabelBuilder() {{
+                alignLeft();
+                label(text);
+            }}.build(nifty, screen, panel);
         }
     }
     
-    List<ConsoleOutputEntry> entries = new ArrayList<ConsoleOutputEntry>();
+    HistoryArray<ConsoleOutputEntry> entries = new HistoryArray<ConsoleOutputEntry>(30);
     private class ConsoleOutputEntry
     {
-        final Element associatedPanel;
         final String message;
         
         ConsoleOutputEntry(String text) {
             this.message = text;
-            
-            associatedPanel = new PanelBuilder() {{
-                childLayoutHorizontal();
-                control(new LabelBuilder() {{
-                    label(message);
-                }});
-            }}.build(nifty, screen, outputBox);
-        }
-        
-        void register() {
-            
-        }
-        
-        void delete() {
-            
         }
     }
     
