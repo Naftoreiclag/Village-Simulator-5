@@ -107,4 +107,8 @@ public class EntityRegistry
             System.out.println(addon.getEntityId());
         }
     }
+
+    public static boolean exists(String entity) {
+        return entities.containsKey(entity) || addonEntities.containsKey(entity);
+    }
 }

@@ -122,6 +122,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         SAM.INPUT.addListener(this, KeyKeys.console);
         
         genworld();
+        devConsole.setWorld(world);
         // loadworld();
         
         setupInvScreen();

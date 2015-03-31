@@ -26,6 +26,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.util.HistoryArray;
 import naftoreiclag.villagefive.util.KeyKeys;
+import naftoreiclag.villagefive.world.World;
 
 public class DevConsoleAppState extends AbstractAppState implements ScreenController, KeyInputHandler {
     
@@ -36,11 +37,10 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     // How many lines are remembered
     public static final int historyLength = 100;
     
-    // Height of each line. Used to calculate the size of the console.
-    public static final int lineHeight = 16;
-    
     // Font
     public static final String fontName = "Interface/Fonts/Default.fnt";
+    // Height of each line. Used to calculate the size of the console.
+    public static final int lineHeight = 18;
     
     // Why do I need this?
     Main app;
@@ -54,6 +54,9 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     
     // Fassad
     Console console;
+    
+    //
+    private World world = null;
     
     // Getting input from the textfield.
     String textFieldContents;
@@ -114,8 +117,13 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         
         //
         console = new Console(this);
-        console.addCommand(new CommandHelloWorld());
-        console.addCommand(new CommandListAddons());
+        console.world = world;
+    }
+    
+    // Tainted!
+    public void setWorld(World world) {
+        if(console != null) { console.world = world; }
+        this.world = world;
     }
     
     // When the user presses "Enter"

@@ -25,7 +25,7 @@
                 </panel>
                 
                 <panel childLayout="horizontal" valign="bottom" paddingLeft="5px" paddingTop="10px" paddingBottom="5px" paddingRight="5px">
-                    <control id="input" name="textfield" valight="bottom"/>
+                    <control id="input" name="textfield" font="Interface/Fonts/Default.fnt" valight="bottom"/>
                 </panel>
                 
             </panel>
