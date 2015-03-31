@@ -39,6 +39,9 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     // Height of each line. Used to calculate the size of the console.
     public static final int lineHeight = 16;
     
+    // Font
+    public static final String fontName = "Interface/Fonts/Default.fnt";
+    
     // Why do I need this?
     Main app;
     NiftyJmeDisplay niftyDisplay;
@@ -111,7 +114,8 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         
         //
         console = new Console(this);
-        console.knownCommands.add(new CommandHelloWorld());
+        console.addCommand(new CommandHelloWorld());
+        console.addCommand(new CommandListAddons());
     }
     
     // When the user presses "Enter"
@@ -220,6 +224,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
             
             label = new LabelBuilder() {{
                 alignLeft();
+                font(fontName);
                 label("");
             }}.build(nifty, screen, panel);
         }
@@ -234,6 +239,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
                 final String dumbJava = message;
                 label = new LabelBuilder() {{
                     alignLeft();
+                    font(fontName);
                     label(dumbJava);
                 }}.build(nifty, screen, panel);
                 lastText = dumbJava;

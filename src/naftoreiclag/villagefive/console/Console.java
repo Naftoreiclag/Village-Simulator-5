@@ -14,7 +14,7 @@ import java.util.List;
 public final class Console {
     private final DevConsoleAppState realConsole;
     
-    public final List<Command> knownCommands = new ArrayList<Command>();
+    private final List<Command> knownCommands = new ArrayList<Command>();
     
     protected Console(DevConsoleAppState console)
     {
@@ -24,7 +24,7 @@ public final class Console {
             public boolean process(Console console, String input) {
                 String[] inputs = input.split(" ");
                 
-                if(inputs[0].equals("help"))
+                if(inputs[0].equalsIgnoreCase("help"))
                 {
                     String search;
                     if(inputs.length <= 1) {
@@ -39,10 +39,11 @@ public final class Console {
                     for(Command command : knownCommands) {
                         String[] helpLines = command.getHelpLines();
 
+                        if(helpLines == null) { continue; }
                         for(String helpLine : helpLines)
                         {
                             if(helpLine != null) {
-                                if(helpLine.startsWith(search)) {
+                                if(helpLine.toLowerCase().startsWith(search.toLowerCase())) {
                                     console.println("    " + helpLine);
                                     foundCommandFromSearch = true;
                                 }
@@ -96,5 +97,9 @@ public final class Console {
     public void clear()
     {
         realConsole.clearOutput();
+    }
+
+    void addCommand(Command command) {
+        this.knownCommands.add(command);
     }
 }

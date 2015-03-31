@@ -12,7 +12,7 @@ public class CommandHelloWorld extends Command {
 
     @Override
     public boolean process(Console console, String input) {
-        if(input.equals("helloworld")) {
+        if(input.equalsIgnoreCase("helloworld")) {
             console.println("Sayin' hello world!");
             return true;
         }

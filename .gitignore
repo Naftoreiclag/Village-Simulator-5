@@ -4,6 +4,7 @@ dist/
 donotinclude/
 assets/Models/_originalBlends/
 dni_*
+assets/Interface/Fonts*
 FourHills.java
 Main_*
 Oto.*
