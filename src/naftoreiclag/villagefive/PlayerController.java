@@ -36,8 +36,8 @@ import org.dyn4j.geometry.Mass;
 
 public class PlayerController extends EntityController implements ActionListener, AnalogListener
 {
-    public PlayerEntity puppet;
     public World world;
+    public PlayerEntity puppet;
     
     public List<Plot> property;
 
@@ -58,8 +58,8 @@ public class PlayerController extends EntityController implements ActionListener
 
     public PlayerController()
     {
-        //playerLook.maxSpd *= 4f;
-
+        setupInput();
+        
         camDispl.smoothFactor /= 2f;
         camDispl.maxSpd /= 2f;
         
@@ -68,17 +68,6 @@ public class PlayerController extends EntityController implements ActionListener
         zoomLevel.tx = 35;
         zoomLevel.maxSpd *= 2;
         zoomLevel.enableClamp(25, 50);
-    }
-    
-    public void interact()
-    {
-        Entity owner = interactRay();
-        if(owner == null ) {
-            return;
-        }
-        
-        owner.onInteract(this);
-        
     }
     
     public Entity interactRay() {
@@ -99,46 +88,29 @@ public class PlayerController extends EntityController implements ActionListener
         return null;
     }
     
-    public void grab()
+    public void interact()
     {
-        InteractRay ray = new InteractRay(puppet, puppet.getRotation().toNormalVec());
-
-        List<RaycastResult> results = new ArrayList<RaycastResult>();
-
-        world.physics.raycast(ray, 5.0f, false, false, results);
-        
-        if(results.isEmpty())
-        {
+        Entity owner = interactRay();
+        if(owner == null ) {
             return;
         }
         
-        RaycastResult hit = results.get(0);
-        Body bod = hit.getBody();
-        
-        if(!(bod instanceof EntityBody))
-        {
-            return;
-        }
-
-        EntityBody oth = (EntityBody) bod;
-
-        System.out.println("hit " + oth.owner.getEntityId());
-        
-        this.grabbedEnt = oth.owner;
-        
-        grab = new WeldJoint(this.puppet.getBody(), this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
-        this.grabbedEnt.getBody().setMass(Mass.Type.NORMAL);
-        this.puppet.getBody().getWorld().addJoint(grab);
-        
-        if(testPrev == null)
-        {
-            testPrev = oth;
-            
-        }
-        
+        owner.onInteract(this);
     }
     
-    public EntityBody testPrev = null;
+    public void grab()
+    {
+        this.grabbedEnt = interactRay();
+        
+        if(this.grabbedEnt == null) {
+            return;
+        }
+        
+        grabJoint = new WeldJoint(this.puppet.getBody(), this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
+        this.grabbedEnt.getBody().setMass(Mass.Type.NORMAL);
+        this.puppet.getBody().getWorld().addJoint(grabJoint);
+        
+    }
     
     ReiCamera cam;
     Spatial ground;
@@ -149,12 +121,9 @@ public class PlayerController extends EntityController implements ActionListener
     boolean leftClick = false;
     boolean rotCamLeft = false;
     boolean rotCamRight = false;
-    InputManager inputManager;
-
-    public void setManager(InputManager inputManager)
+    private void setupInput()
     {
-        this.inputManager = inputManager;
-        this.inputManager.addListener(this, KeyKeys.move_backward,
+        SAM.INPUT.addListener(this, KeyKeys.move_backward,
                                       KeyKeys.move_forward,
                                       KeyKeys.move_left,
                                       KeyKeys.move_right,
@@ -170,8 +139,8 @@ public class PlayerController extends EntityController implements ActionListener
     // correct
     public Vector3f whereClickingOnGround()
     {
-        Vector3f origin = cam.c.getWorldCoordinates(inputManager.getCursorPosition(), 0.0f);
-        Vector3f direction = cam.c.getWorldCoordinates(inputManager.getCursorPosition(), 0.3f);
+        Vector3f origin = cam.c.getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.0f);
+        Vector3f direction = cam.c.getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.3f);
         direction.subtractLocal(origin).normalizeLocal();
 
         Ray ray = new Ray(origin, direction);
@@ -219,69 +188,44 @@ public class PlayerController extends EntityController implements ActionListener
     boolean invOpen = false;
     boolean isInvOpenKeyPressed = false;
     
-    boolean grabbing = false;
-    
     Entity grabbedEnt;
-    WeldJoint grab;
+    WeldJoint grabJoint;
 
     // When a key is pressed
-    public void onAction(String key, boolean isPressed, float tpf)
+    public void onAction(String key, boolean keyState, float tpf)
     {
-        if(key.equals(KeyKeys.move_forward))
-        {
-            movingFwd = isPressed;
+        if(key.equals(KeyKeys.move_forward)) {
+            movingFwd = keyState;
         }
-        if(key.equals(KeyKeys.move_backward))
-        {
-            movingBwd = isPressed;
+        if(key.equals(KeyKeys.move_backward)) {
+            movingBwd = keyState;
         }
-        if(key.equals(KeyKeys.move_left))
-        {
-            turningLeft = isPressed;
+        if(key.equals(KeyKeys.move_left)) {
+            turningLeft = keyState;
         }
-        if(key.equals(KeyKeys.move_right))
-        {
-            turningRight = isPressed;
+        if(key.equals(KeyKeys.move_right)) {
+            turningRight = keyState;
         }
-        if(key.equals(KeyKeys.rotate_camera_left))
-        {
-            rotCamLeft = isPressed;
+        if(key.equals(KeyKeys.rotate_camera_left)) {
+            rotCamLeft = keyState;
         }
-        if(key.equals(KeyKeys.rotate_camera_right))
-        {
-            rotCamRight = isPressed;
+        if(key.equals(KeyKeys.rotate_camera_right)) {
+            rotCamRight = keyState;
         }
-        if(key.equals(KeyKeys.mouse_left))
-        {
-            leftClick = isPressed;
+        if(key.equals(KeyKeys.mouse_left)) {
+            leftClick = keyState;
         }
         if(key.equals(KeyKeys.interact))
         {
-            if(isPressed)
-            {
-                grabbing = !grabbing;
-            
-                if(grabbing)
-                {
+            if(keyState) {
+                if(grabbedEnt == null) {
                     this.grab();
                     System.out.println("grab");
-                }
-                else
-                {
-                    this.puppet.getBody().getWorld().removeJoint(grab);
+                } else {
+                    this.puppet.getBody().getWorld().removeJoint(grabJoint);
+                    grabbedEnt = null;
+                    grabJoint = null;
                     System.out.println("ungrab");
-                    
-                    if(testPrev != null)
-                    {
-                        if(this.grabbedEnt.getBody() != testPrev)
-                        {
-                            
-                        WeldJoint jo = new WeldJoint(testPrev, this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
-                        
-                        testPrev.getWorld().addJoint(jo);
-                        }
-                        
-                    }
                 }
             }
         }
@@ -291,7 +235,7 @@ public class PlayerController extends EntityController implements ActionListener
             {
                 invOpen = !invOpen;
             }
-            isInvOpenKeyPressed = isPressed;
+            isInvOpenKeyPressed = keyState;
         }
     }
     

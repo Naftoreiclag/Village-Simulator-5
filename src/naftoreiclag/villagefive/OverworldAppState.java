@@ -13,12 +13,9 @@ import naftoreiclag.villagefive.world.World;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioRenderer;
 import com.jme3.input.ChaseCamera;
-import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.InputListener;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
@@ -29,7 +26,6 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -37,20 +33,12 @@ import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import de.lessvoid.nifty.Nifty;
 import java.io.IOException;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import naftoreiclag.villagefive.util.KeyKeys;
-import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.AxesMaker;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
-import naftoreiclag.villagefive.util.serializable.Blueprint;
-import naftoreiclag.villagefive.util.serializable.BlueprintUtil;
-import naftoreiclag.villagefive.world.entity.Entity;
-import naftoreiclag.villagefive.world.entity.ForSaleEntity;
-import naftoreiclag.villagefive.world.entity.StoolEntity;
-import naftoreiclag.villagefive.world.plot.Plot;
 import org.json.simple.parser.ParseException;
 
 public class OverworldAppState extends AbstractAppState implements ActionListener
@@ -273,7 +261,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
-        playCont.setManager(SAM.INPUT);
         
         world.spawnEntity("naftogeometry:cone").setLocation(new Vec2(280, 280));
         world.spawnEntity("naftogeometry:torus").setLocation(new Vec2(275, 280));
@@ -323,7 +310,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
-        playCont.setManager(SAM.INPUT);
         playCont.inv = this.inv;
     }
     
