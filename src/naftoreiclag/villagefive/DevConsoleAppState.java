@@ -15,6 +15,7 @@ import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.NiftyControl;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.TextFieldChangedEvent;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
@@ -84,16 +85,62 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         this.screen = screen;
         textField = screen.findNiftyControl("input", TextField.class);
         outputBox = screen.findElementByName("output");
+        prepareConsole();
     }
     
     private void sendInput() {
         if(input.equals("") || input == null) { return; }
         
+        
+        /*
         ConsoleOutputEntry e = new ConsoleOutputEntry(input);
         entries.add(e);
         
+        System.out.println(outputBox.getHeight());
+        */
+        
+        
         textField.setText("");
         input = "";
+    }
+    
+    private int lineHeight = 15;
+    
+    ConsoleElement[] lines;
+    private void prepareConsole() {
+        int height = outputBox.getHeight();
+        
+        int numLines = height / lineHeight;
+        
+        lines = new ConsoleElement[numLines];
+        
+        for(int i = numLines - 1; i >= 0; -- i) {
+            lines[i] = new ConsoleElement(nifty, screen, outputBox);
+        }
+    }
+    
+    private class ConsoleElement {
+        
+        Element panel;
+        Element label;
+        ConsoleElement(Nifty nifty, Screen screen, Element outputBox)
+        {
+            panel = new PanelBuilder() {{
+                childLayoutHorizontal();
+                height(lineHeight + "px");
+            }}.build(nifty, screen, outputBox);
+            
+            
+            label = new LabelBuilder() {{
+                label("aaaaaa");
+            }}.build(nifty, screen, panel);
+            
+            System.out.println(label.getClass().getName());
+        }
+        
+        void setText(String text) {
+
+        }
     }
     
     List<ConsoleOutputEntry> entries = new ArrayList<ConsoleOutputEntry>();

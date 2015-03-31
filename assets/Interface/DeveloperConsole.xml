@@ -12,13 +12,13 @@
                 </effect>
                 
                 <panel childLayout="horizontal" paddingLeft="5px" paddingTop="5px" paddingRight="5px">
-                    <text name="textbox" font="aurulent-sans-16.fnt" text="Developer Console" />
+                    <text font="Interface/Fonts/Default.fnt" text="Developer Console" />
                 </panel>
                 
                 <panel childLayout="horizontal" paddingLeft="5px" paddingTop="5px" paddingRight="5px">
                     <panel id="spacer1" width="10px" backgroundColor="#0008"/>
                     <panel id="output" childLayout="vertical" align="left" backgroundColor="#0008" height="100%">
-                        <!--populate me-->
+                        <!--populate-->
                     </panel>
                     <panel id="spacer2" backgroundColor="#0008"/>
                     <control name="verticalScrollbar" align="right"/>
