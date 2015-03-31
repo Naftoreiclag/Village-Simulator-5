@@ -82,8 +82,10 @@ public final class Console {
         
         this.addCommand(new CommandHelloWorld());
         this.addCommand(new CommandListStuff());
-        this.addCommand(new CommandSpawnEntity());
+        this.addCommand(new CommandSpawnStuff());
         this.addCommand(new CommandSaveAndLoad());
+        this.addCommand(new CommandDeleteStuff());
+        this.addCommand(new CommandWaila());
         
         this.println("This is a console. You have no idea how long this took to make.\n"
                 + "Type \"help\" for help.");

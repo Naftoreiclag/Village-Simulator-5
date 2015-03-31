@@ -29,7 +29,7 @@ public abstract class Entity extends Mundane implements JSONAware
     {
     }
     
-    public void destroySelf()
+    public void removeSelf()
     {
         this.world.removeEntity(this);
     }

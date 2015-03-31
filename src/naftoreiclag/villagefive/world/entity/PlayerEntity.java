@@ -25,6 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
+import naftoreiclag.villagefive.PlayerController;
 import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.data.CatModel;
 import naftoreiclag.villagefive.data.PlayerModel;
@@ -45,6 +46,8 @@ import org.dyn4j.geometry.Transform;
 
 public class PlayerEntity extends Entity
 {
+    public PlayerController controller;
+    
     private ControllerBody rotControl;
     private MouseJoint locControl;
     

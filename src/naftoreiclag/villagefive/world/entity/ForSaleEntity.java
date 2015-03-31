@@ -77,7 +77,7 @@ public class ForSaleEntity extends Entity
         
         other.property.add(thingy);
         
-        this.destroySelf();
+        this.removeSelf();
         
     }
 

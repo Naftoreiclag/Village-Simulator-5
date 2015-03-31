@@ -44,6 +44,7 @@ public class PlayerController extends EntityController implements ActionListener
     public void setEntity(PlayerEntity entity)
     {
         this.puppet = entity;
+        puppet.controller = this;
         this.world = puppet.getWorld();
     }
     
@@ -71,32 +72,31 @@ public class PlayerController extends EntityController implements ActionListener
     
     public void interact()
     {
+        Entity owner = interactRay();
+        if(owner == null ) {
+            return;
+        }
+        
+        owner.onInteract(this);
+        
+    }
+    
+    public Entity interactRay() {
         InteractRay ray = new InteractRay(puppet, puppet.getRotation().toNormalVec());
-
         List<RaycastResult> results = new ArrayList<RaycastResult>();
-
         world.physics.raycast(ray, 5.0f, false, false, results);
-        
-        if(results.isEmpty())
-        {
-            return;
+        if(results.isEmpty()) {
+            return null;
         }
         
-        RaycastResult hit = results.get(0);
-        Body bod = hit.getBody();
-        
-        if(!(bod instanceof EntityBody))
-        {
-            return;
-            
+        for(RaycastResult hit : results) {
+            Body bod = hit.getBody();
+            if(bod instanceof EntityBody) {
+                return ((EntityBody) bod).owner;
+            }
         }
-
-        EntityBody oth = (EntityBody) bod;
-
-        System.out.println("hit " + oth.owner.getEntityId());
         
-        oth.owner.onInteract(this);
-        
+        return null;
     }
     
     public void grab()
