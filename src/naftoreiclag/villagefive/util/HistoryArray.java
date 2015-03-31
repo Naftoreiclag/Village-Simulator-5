@@ -42,13 +42,13 @@ public class HistoryArray<T> {
         if(pos >= size || pos < 0) {
             return null;
         } else {
-            return array.get(wrap(nextInput - 1 + pos));
+            return array.get(wrap(nextInput - 1 - pos));
         }
     }
 
     public void set(int pos, T thing) {
         if(pos < size && pos >= 0) {
-            array.set(wrap(nextInput - 1 + pos), thing);
+            array.set(wrap(nextInput - 1 - pos), thing);
         }
     }
 
