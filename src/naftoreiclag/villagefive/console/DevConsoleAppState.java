@@ -4,7 +4,7 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive;
+package naftoreiclag.villagefive.console;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -23,12 +23,15 @@ import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.util.HistoryArray;
 import naftoreiclag.villagefive.util.KeyKeys;
 
 public class DevConsoleAppState extends AbstractAppState implements ScreenController, KeyInputHandler {
     
     // Recall prepareConsole(); after resizing the screen.
+    
+    // TODO: fix scrollwheel
     
     // How many lines are remembered
     public static final int historyLength = 100;
@@ -135,9 +138,21 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     HistoryArray<ConsoleLine> outputHistory = new HistoryArray<ConsoleLine>(historyLength);
     private class ConsoleLine {
         final String message;
+        int repeats = 0;
         
         ConsoleLine(String text) {
             this.message = text;
+        }
+        
+        @Override
+        public boolean equals(Object other) {
+            if(other instanceof ConsoleLine) {
+                ConsoleLine o = (ConsoleLine) other;
+                
+                return o.message.equals(this.message);
+            } else {
+                return false;
+            }
         }
     }
     
@@ -146,23 +161,34 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         // Repeat this method for each line
         String[] lines = message.split("\n");
         for(String line : lines) {
-            // Append this line
-            outputHistory.add(new ConsoleLine(line));
+            
+            ConsoleLine addMe = new ConsoleLine(line);
+            ConsoleLine mostRecent = outputHistory.get(0);
+            
+            // Check if this line is a repeat
+            if(addMe.equals(mostRecent)) {
+                ++ mostRecent.repeats;
+            } else {
+                // Append this line
+                outputHistory.add(addMe);
+            }
 
             // Update all the output panels to show the lines
             for(int i = 0; i < outputContainers.length; ++ i) {
                 ConsoleLine e = outputHistory.get(i);
 
                 if(e != null) {
-                    outputContainers[i].setText(e.message);
+                    if(e.repeats == 0) {
+                        outputContainers[i].setText(e.message);
+                    } else {
+                        outputContainers[i].setText(e.message + "[x" + e.repeats + "]");
+                    }
                 } else {
                     outputContainers[i].setText("");
                 }
             }
         }
     }
-    
-    
     
     // Lines are shown using Nifty by making this array of panels each containing a label. I've made this class to make management simpler.
     private class ConsoleElement {

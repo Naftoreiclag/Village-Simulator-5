@@ -3,7 +3,7 @@
     <useStyles filename="nifty-default-styles.xml" />
     <useControls filename="nifty-default-controls.xml" />
 
-    <screen id="show" controller="naftoreiclag.villagefive.DevConsoleAppState">
+    <screen id="show" controller="naftoreiclag.villagefive.console.DevConsoleAppState">
         <layer childLayout="center" paddingLeft="10px" paddingTop="10px" paddingBottom="10px" paddingRight="10px" >
             <panel childLayout="vertical" width="80%" height="40%" backgroundColor="#f006" align="left" valign="top">
                 <effect>
