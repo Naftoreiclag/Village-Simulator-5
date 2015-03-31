@@ -121,8 +121,6 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
             } else {
                 lines[i].setText("");
             }
-            
-            
         }
     }
     

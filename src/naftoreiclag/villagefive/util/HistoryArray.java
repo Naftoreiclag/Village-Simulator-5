@@ -19,8 +19,7 @@ public class HistoryArray<T> {
     public HistoryArray(int size) {
         this.size = size;
         
-        for(int i = 0; i < size; ++ i)
-        {
+        for(int i = 0; i < size; ++ i) {
             array.add(null);
         }
     }
@@ -30,7 +29,7 @@ public class HistoryArray<T> {
     }
 
     public void add(T thing) {
-        array.add(thing);
+        array.set(nextInput, thing);
 
         nextInput = wrap(nextInput + 1);
     }
