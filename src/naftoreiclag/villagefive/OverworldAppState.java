@@ -266,8 +266,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     {
         world = new World(stateRootNode, SAM.ASSETS);
         
-        player = new PlayerEntity();
-        world.materializeEntity(player);
+        player = (PlayerEntity) world.materializeEntityByName("Player");
         player.setLocation(new Vec2(256, 256));
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
