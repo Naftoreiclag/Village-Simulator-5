@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.addon.AddonManager;
 import naftoreiclag.villagefive.addon.LuaAddon;
 import naftoreiclag.villagefive.addon.LuaEntity;
@@ -21,7 +22,7 @@ import naftoreiclag.villagefive.world.entity.EntityRegistry;
 public class CommandListStuff extends Command {
 
     @Override
-    public boolean process(Console console, String input, World world) {
+    public boolean process(Console console, String input, OverworldAppState game) {
         
         if(input.toLowerCase().startsWith("list addons")) {
             int addonCount = 0;
@@ -76,8 +77,8 @@ public class CommandListStuff extends Command {
 
     @Override
     public String[] getHelpLines() {
-        return new String[]{"LIST ADDONS: List loaded addons.",
-        "LIST ENTITIES: List loaded entities."};
+        return new String[]{"LIST ADDONS\tList loaded addons.",
+        "LIST ENTITIES\tList loaded entities."};
     }
 
 }

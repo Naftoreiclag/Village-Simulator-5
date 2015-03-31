@@ -6,11 +6,12 @@
 
 package naftoreiclag.villagefive.console;
 
+import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.world.World;
 
 public abstract class Command
 {
-    public abstract boolean process(Console console, String input, World world);
+    public abstract boolean process(Console console, String input, OverworldAppState game);
 
     public abstract String[] getHelpLines();
 }

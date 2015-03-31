@@ -24,6 +24,7 @@ import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import naftoreiclag.villagefive.Main;
+import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.util.HistoryArray;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.world.World;
@@ -33,6 +34,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     // Recall prepareConsole(); after resizing the screen.
     
     // TODO: fix scrollwheel
+    // TODO: fix \t
     
     // How many lines are remembered
     public static final int historyLength = 100;
@@ -56,7 +58,11 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     Console console;
     
     //
-    private World world = null;
+    private OverworldAppState game = null;
+    public void setGame(OverworldAppState overworldAppState) {
+        if(console != null) { console.game = overworldAppState; }
+        this.game = overworldAppState;
+    }
     
     // Getting input from the textfield.
     String textFieldContents;
@@ -118,13 +124,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         
         //
         console = new Console(this);
-        console.world = world;
-    }
-    
-    // Tainted!
-    public void setWorld(World world) {
-        if(console != null) { console.world = world; }
-        this.world = world;
+        console.game = game;
     }
     
     // When the user presses "Enter"
@@ -180,6 +180,20 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
                 return false;
             }
         }
+        
+        @Override
+        public String toString() {
+            
+            String ret = message;
+            
+            ret = ret.replaceAll("\t", "     ");
+            
+            if(repeats > 0) {
+                ret += " (Repeated " + repeats + " times)";
+            }
+            
+            return ret;
+        }
     }
     
     // Print a line to the console. Can accept strings with \n.
@@ -204,11 +218,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
                 ConsoleLine e = outputHistory.get(i);
 
                 if(e != null) {
-                    if(e.repeats == 0) {
-                        outputContainers[i].setText(e.message);
-                    } else {
-                        outputContainers[i].setText(e.message + " (Repeated " + e.repeats + " times)");
-                    }
+                    outputContainers[i].setText(e.toString());
                 } else {
                     outputContainers[i].setText("");
                 }

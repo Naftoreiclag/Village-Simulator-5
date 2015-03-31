@@ -6,24 +6,37 @@
 
 package naftoreiclag.villagefive.console;
 
-import java.util.List;
 import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.world.World;
 
-public class CommandHelloWorld extends Command {
+public class CommandSaveAndLoad extends Command{
 
     @Override
     public boolean process(Console console, String input, OverworldAppState game) {
-        if(input.equalsIgnoreCase("helloworld")) {
-            console.println("Sayin' hello world!");
+        
+        if(input.equalsIgnoreCase("save")) {
+            
+            game.saveworld();
+            console.println("saved successfully");
+            
+            return true;
+        } else if(input.equalsIgnoreCase("load")) {
+            
+            game.loadworld();
+            console.println("loaded successfully");
+            
             return true;
         }
+        
         return false;
     }
 
     @Override
     public String[] getHelpLines() {
-        return new String[]{"HELLO WORLD\tPrints a message. I bet you can't guess what it is."};
+        return new String[]{
+            "SAVE\tSaves the game.",
+            "LOAD\tLoads the game."
+        };
     }
 
 }

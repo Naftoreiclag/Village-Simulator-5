@@ -364,11 +364,13 @@ public class World implements JSONAware
         {
             JSONObject entityData = (JSONObject) obj;
             
-            Entity ddd = EntityRegistry.newInstance((String) entityData.get("isntanceof"));
-            
-            ddd.setLocation(new Vec2((JSONObject) entityData.get("location")));
+            Entity ddd = EntityRegistry.newInstance((String) entityData.get("instanceof"));
             
             this.materializeEntity(ddd);
+            
+            Vec2 loc = new Vec2((JSONObject) entityData.get("location"));
+            System.out.println(loc);
+            ddd.setLocation(loc);
             
         }
     }

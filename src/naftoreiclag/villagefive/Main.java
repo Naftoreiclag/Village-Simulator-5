@@ -94,17 +94,6 @@ public class Main extends SimpleApplication implements ActionListener
 
     public void onAction(String name, boolean isPressed, float tpf)
     {
-        if(name.equals(KeyKeys.num_9))
-        {
-            stateManager.detach(editorAppState);
-            overworldAppState.gimmiePlot(editorAppState.plotData);
-            stateManager.attach(overworldAppState);
-        }
-        if(name.equals(KeyKeys.num_8))
-        {
-            stateManager.detach(overworldAppState);
-            stateManager.attach(editorAppState);
-        }
     }
 
 }

@@ -12,11 +12,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.world.World;
 
 public final class Console {
     private final DevConsoleAppState realConsole;
-    public World world;
+    public OverworldAppState game;
     
     private final List<Command> knownCommands = new ArrayList<Command>();
     private final List<String> helpInfo = new ArrayList<String>();
@@ -26,7 +27,15 @@ public final class Console {
         this.realConsole = console;
         this.addCommand(new Command(){
             @Override
-            public boolean process(Console console, String input, naftoreiclag.villagefive.world.World world) {
+            public boolean process(Console console, String input, OverworldAppState game) {
+                
+                if(input.equalsIgnoreCase("r")) {
+                    
+                    console.processRawInput(console.previousInput);
+                    
+                    return true;
+                }
+                
                 String[] inputs = input.split(" ");
                 
                 if(inputs[0].equalsIgnoreCase("help"))
@@ -45,7 +54,7 @@ public final class Console {
                     {
                         if(helpLine != null) {
                             if(helpLine.toLowerCase().startsWith(search.toLowerCase())) {
-                                console.println("    " + helpLine);
+                                console.println('\t' + helpLine);
                                 foundCommandFromSearch = true;
                             }
                         }
@@ -65,24 +74,32 @@ public final class Console {
 
             @Override
             public String[] getHelpLines() { return new String[]{
-                "HELP: Displays this help menu.", 
-                "HELP <SEARCH>: Shows only commands that start with <SEARCH>.",
-                "CLEAR: Clears console."};}
+                "HELP\tDisplays this help menu.", 
+                "HELP <SEARCH>\tShows only commands that start with <SEARCH>.",
+                "CLEAR\tClears console.",
+                "R\tRepeats previous command."};}
         });
         
         this.addCommand(new CommandHelloWorld());
         this.addCommand(new CommandListStuff());
         this.addCommand(new CommandSpawnEntity());
+        this.addCommand(new CommandSaveAndLoad());
         
         this.println("This is a console. You have no idea how long this took to make.\n"
                 + "Type \"help\" for help.");
     }
     
+    private String previousInput;
+    public String getPreviousInput() { return previousInput; }
     protected void processRawInput(String input)
-    { 
+    {
+        if(!input.equalsIgnoreCase("r")) {
+            previousInput = input;
+        }
+        
         boolean didAnyWork = false;
         for(Command command : knownCommands) {
-            if(command.process(this, input, world)) {
+            if(command.process(this, input, game)) {
                 didAnyWork = true;
                 break;
             }

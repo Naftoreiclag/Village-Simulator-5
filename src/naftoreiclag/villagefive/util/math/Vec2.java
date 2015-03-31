@@ -30,7 +30,7 @@ public class Vec2 implements JSONAware
     public int getYI() { return (int) this.getY(); }
     public void setY(double y) { this.y = y; }
 	
-    // Adaptions
+    // Adapters
     public Vec2(org.dyn4j.geometry.Vector2 strange)
     {
         this(strange.x, strange.y);

@@ -71,9 +71,11 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     DevConsoleAppState devConsole;
     
     World world;
+    public World getWorld() { return world; }
     Node chasePnt;
     
     PlayerEntity player;
+    public PlayerEntity getPlayer() { return player; }
     private Node stateRootNode;
     
     PlayerController playCont;
@@ -81,13 +83,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     
     ReiCamera rcam;
     
-    Blueprint house;
     Inventory inv;
-    
-    public void gimmiePlot(Blueprint house)
-    {
-        this.house = house;
-    }
 
     @Override
     public void initialize(AppStateManager stateManager, Application app)
@@ -116,13 +112,16 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         debugArrows.move(256f, 0.1f, 256f);
         this.stateRootNode.attachChild(debugArrows);
         
+        // By default, nothing has influence on shadow rendering.
+        stateRootNode.setShadowMode(RenderQueue.ShadowMode.Off);
+        
         devConsole = new DevConsoleAppState();
         devConsole.setEnabled(false);
         stateManager.attach(devConsole);
         SAM.INPUT.addListener(this, KeyKeys.console);
         
         genworld();
-        devConsole.setWorld(world);
+        devConsole.setGame(this);
         // loadworld();
         
         setupInvScreen();
@@ -267,33 +266,16 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     {
         world = new World(stateRootNode, SAM.ASSETS);
         
-        // By default, nothing has influence on shadow rendering.
-        world.rootNode.setShadowMode(RenderQueue.ShadowMode.Off);
-        
-        Resident resid = new Resident();
-        world.residents.add(resid);
-        
         player = new PlayerEntity();
         world.materializeEntity(player);
         player.setLocation(new Vec2(256, 256));
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
-        
-        resid.SID = player.SID;
-        
         playCont = new PlayerController();
-        playCont.setResidence(resid);
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
         playCont.setManager(SAM.INPUT);
-        
-        /*
-        Plot plot = new Plot();
-        plot.setBlueprint(house);
-        plot.setLocation(new Vec2(260, 260));
-        world.materializePlot(plot);
-        */
         
         world.materializeEntityByName("naftogeometry:cone").setLocation(new Vec2(280, 280));
         world.materializeEntityByName("naftogeometry:torus").setLocation(new Vec2(275, 280));
@@ -301,6 +283,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         world.materializeEntityByName("naftogeometry:futbol").setLocation(new Vec2(265, 280));
         world.materializeEntityByName("naftogeometry:basketball").setLocation(new Vec2(260, 280));
 
+        /*
         Random rand = new Random(1337);
         
         for(int i = 0; i < 10; ++ i)
@@ -317,10 +300,11 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
             world.materializeEntity(sale);
             sale.setLocation(newPlot.getLocation());
         }
+        */
     }
 
-    private void loadworld()
-    {
+    public void loadworld() {
+        world.rootNode.removeFromParent();
         try
         {
             world = SaveLoad.load(stateRootNode, SAM.ASSETS);
@@ -333,7 +317,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         {
             Logger.getLogger(OverworldAppState.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //world.rootNode.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         
         player = new PlayerEntity();
         world.materializeEntity(player);
@@ -345,5 +328,15 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         playCont.setCamera(rcam);
         playCont.setGround(ground);
         playCont.setManager(SAM.INPUT);
+        playCont.inv = this.inv;
+    }
+    
+    public void saveworld() {
+        try {
+            SaveLoad.save(world);
+        } catch  (IOException ex)
+        {
+            Logger.getLogger(OverworldAppState.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

@@ -7,6 +7,7 @@
 package naftoreiclag.villagefive.console;
 
 import java.util.Map;
+import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.addon.AddonManager;
 import naftoreiclag.villagefive.addon.LuaAddon;
 import naftoreiclag.villagefive.addon.LuaEntity;
@@ -19,7 +20,7 @@ import naftoreiclag.villagefive.world.entity.EntityRegistry;
 public class CommandSpawnEntity extends Command {
 
     @Override
-    public boolean process(Console console, String input, World world) {
+    public boolean process(Console console, String input, OverworldAppState game) {
         
         CommandyString inputs = new CommandyString(input.split(" "));
         
@@ -34,8 +35,8 @@ public class CommandSpawnEntity extends Command {
             
             if(EntityRegistry.exists(entity))
             {
-                Entity e = world.materializeEntityByName(entity);
-                e.setLocation(new Vec2(256, 256));
+                Entity e = game.getWorld().materializeEntityByName(entity);
+                e.setLocation(game.getPlayer().getLocation());
             }
             else {
                 console.println("No entity named " + entity);
@@ -48,7 +49,7 @@ public class CommandSpawnEntity extends Command {
 
     @Override
     public String[] getHelpLines() {
-        return new String[]{"SPAWN <ENTITY>: Perform some magic."};
+        return new String[]{"SPAWN <ENTITY>\tPerform some magic."};
     }
 
 }
