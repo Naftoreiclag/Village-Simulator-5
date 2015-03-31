@@ -13,37 +13,47 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.PanelBuilder;
-import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.ListBox;
-import de.lessvoid.nifty.controls.NiftyControl;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.TextFieldChangedEvent;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyInputMapping;
 import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import java.util.ArrayList;
-import java.util.List;
 import naftoreiclag.villagefive.util.HistoryArray;
 import naftoreiclag.villagefive.util.KeyKeys;
 
 public class DevConsoleAppState extends AbstractAppState implements ScreenController, KeyInputHandler {
     
-    private Main app;
+    // Recall prepareConsole(); after resizing the screen.
+    
+    // How many lines are remembered
+    public static final int historyLength = 100;
+    
+    // Height of each line. Used to calculate the size of the console.
+    public static final int lineHeight = 16;
+    
+    // Why do I need this?
+    Main app;
     NiftyJmeDisplay niftyDisplay;
     Nifty nifty;
+    Screen screen;
     
+    // Important elements declared in the xml file
     TextField textField;
     Element outputBox;
     
-    String input;
-    Screen screen;
+    // Getting input from the textfield.
+    String textFieldContents;
+    @NiftyEventSubscriber(id = "input")
+    public void onTextfieldChange(final String id, final TextFieldChangedEvent event) {
+        textFieldContents = event.getText();
+    }
     
+    // Mappings for this screen. After all, I am a ScreenController. It's my job to do this.
     NiftyInputMapping mapping = new NiftyInputMapping() {
         @Override
         public NiftyInputEvent convert(KeyboardInputEvent inputEvent) {
@@ -69,18 +79,22 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         }
     };
     
+    // Called by JME3 when the AppState is intialized. However, the gui may not yet be, so all that stuff is in bind();
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
         super.initialize(stateManager, application);
         
+        // Remember the application
         app = (Main) application;
         
+        // Begin Nifty stuff.
         niftyDisplay = new NiftyJmeDisplay(app.getAssetManager(), app.getInputManager(), app.getAudioRenderer(), app.getGuiViewPort());
         nifty = niftyDisplay.getNifty();
         nifty.fromXml("Interface/DeveloperConsole.xml", "hide", this);
         app.getGuiViewPort().addProcessor(niftyDisplay);
     }
 
+    // Called by Nifty when the gui has started up.
     @Override
     public void bind(Nifty nifty, Screen screen) {
         screen.addPreKeyboardInputHandler(mapping, this);
@@ -88,63 +102,74 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         textField = screen.findNiftyControl("input", TextField.class);
         outputBox = screen.findElementByName("output");
         prepareConsole();
+        printLine("This is a console. You have no idea how long this took to make.\nType \"help\" for help.");
     }
     
+    // When the user presses "Enter"
     private void sendInput() {
-        if(input.equals("") || input == null) { return; }
+        if(textFieldContents == null) { return; }
         
+        // Remove any preceeding spaces.
+        for(int i = 0; i < textFieldContents.length(); ++ i) {
+            if(textFieldContents.charAt(i) != ' ') {
+                if(i > 0) {
+                    textFieldContents = textFieldContents.substring(i);
+                }
+                break;
+            } else if(i == textFieldContents.length() - 1) {
+                textFieldContents = "";
+            }
+        }
         
-        /*
-        ConsoleOutputEntry e = new ConsoleOutputEntry(input);
-        entries.add(e);
+        // Ignore empty inputs
+        if(!textFieldContents.equals("")) {
+            printLine(textFieldContents);
+        }
         
-        System.out.println(outputBox.getHeight());
-        */
-        
-        write(input);
-        
-        
+        // Regardless, clear
         textField.setText("");
-        input = "";
+        textFieldContents = "";
     }
     
-    private void write(String input)
-    {
-        entries.add(new ConsoleOutputEntry(input));
+    // Each line has more information than just being a string.
+    HistoryArray<ConsoleLine> outputHistory = new HistoryArray<ConsoleLine>(historyLength);
+    private class ConsoleLine {
+        final String message;
         
-        for(int i = 0; i < lines.length; ++ i)
-        {
-            ConsoleOutputEntry e = entries.get(i);
-            
-            if(e != null) {
-                lines[i].setText(e.message);
-            } else {
-                lines[i].setText("");
+        ConsoleLine(String text) {
+            this.message = text;
+        }
+    }
+    
+    // Print a line to the console. Can accept strings with \n.
+    private void printLine(String message) {
+        // Repeat this method for each line
+        String[] lines = message.split("\n");
+        for(String line : lines) {
+            // Append this line
+            outputHistory.add(new ConsoleLine(line));
+
+            // Update all the output panels to show the lines
+            for(int i = 0; i < outputContainers.length; ++ i) {
+                ConsoleLine e = outputHistory.get(i);
+
+                if(e != null) {
+                    outputContainers[i].setText(e.message);
+                } else {
+                    outputContainers[i].setText("");
+                }
             }
         }
     }
     
-    private int lineHeight = 15;
     
-    ConsoleElement[] lines;
-    private void prepareConsole() {
-        int height = outputBox.getHeight();
-        
-        int numLines = height / lineHeight;
-        
-        lines = new ConsoleElement[numLines];
-        
-        for(int i = numLines - 1; i >= 0; -- i) {
-            lines[i] = new ConsoleElement(nifty, screen, outputBox);
-        }
-    }
     
-    // I need this because...
+    // Lines are shown using Nifty by making this array of panels each containing a label. I've made this class to make management simpler.
     private class ConsoleElement {
         Element panel;
         Element label;
-        ConsoleElement(Nifty nifty, Screen screen, Element outputBox)
-        {
+        String lastText = "";
+        ConsoleElement(Nifty nifty, Screen screen, Element outputBox) {
             // Portable javadoc v
             //new LabelBuilder()
             //new PanelBuilder()
@@ -160,26 +185,55 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
             }}.build(nifty, screen, panel);
         }
         
-        // Max efficiency by removing a label and then immidately readding one.
-        void setText(final String text) {
-            label.markForRemoval();
-            label = new LabelBuilder() {{
-                alignLeft();
-                label(text);
-            }}.build(nifty, screen, panel);
+        // Example of Java efficiency at its finest.
+        void setText(String message) {
+            if(message == null) {
+                message = "";
+            }
+            if(!lastText.equals(message)) {
+                label.markForRemoval();
+                final String dumbJava = message;
+                label = new LabelBuilder() {{
+                    alignLeft();
+                    label(dumbJava);
+                }}.build(nifty, screen, panel);
+                lastText = dumbJava;
+            }
         }
-    }
-    
-    HistoryArray<ConsoleOutputEntry> entries = new HistoryArray<ConsoleOutputEntry>(30);
-    private class ConsoleOutputEntry
-    {
-        final String message;
         
-        ConsoleOutputEntry(String text) {
-            this.message = text;
+        String getText() {
+            return lastText;
+        }
+
+        void removeSelf() {
+            panel.markForRemoval();
         }
     }
     
+    // All the line-holding containers, with zero being the lowest element.
+    ConsoleElement[] outputContainers;
+    
+    // Populate the "id=output" panel with the containers.
+    private void prepareConsole() {
+        // Calculate how many lines we can fit in there.
+        int height = outputBox.getHeight();
+        int numLines = height / lineHeight;
+        
+        // If there are already containers in the panel, clear remove those.
+        if(outputContainers != null) {
+            for(int i = 0; i < numLines; ++ i) {
+                outputContainers[i].removeSelf();
+            }
+        }
+        
+        // Make a new array and populate it.
+        outputContainers = new ConsoleElement[numLines];
+        for(int i = numLines - 1; i >= 0; -- i) {
+            outputContainers[i] = new ConsoleElement(nifty, screen, outputBox);
+        }
+    }
+    
+    // Called by JME3. When switching between enabled and disabled states, simply switch between Nifty Screens.
     @Override
     public void setEnabled(boolean enable) {
         super.setEnabled(enable);
@@ -192,13 +246,8 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
             }
         }
     }
-    
-    @Override
-    public void update(float tpf) {}
-    
-    @Override
-    public void cleanup() {}
 
+    // Disables the console and flushes input
     @Override
     public boolean keyEvent(NiftyInputEvent inputEvent) {
         if(inputEvent == NiftyInputEvent.ConsoleToggle) {
@@ -210,14 +259,14 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         return false;
     }
 
-    @NiftyEventSubscriber(id = "input")
-    public void onTextfieldChange(final String id, final TextFieldChangedEvent event) {
-        input = event.getText();
-    }
-
+    // Unused stuff below
+    
+    @Override
+    public void update(float tpf) {}
+    @Override
+    public void cleanup() {}
     @Override
     public void onStartScreen() {}
-
     @Override
     public void onEndScreen() {}
 
