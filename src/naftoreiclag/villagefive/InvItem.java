@@ -8,9 +8,6 @@ package naftoreiclag.villagefive;
 
 import org.json.simple.JSONAware;
 
-public class Inventory implements JSONAware {
-
-    public String toJSONString() {
-        return null;
-    }
+public abstract class InvItem implements JSONAware {
+    
 }

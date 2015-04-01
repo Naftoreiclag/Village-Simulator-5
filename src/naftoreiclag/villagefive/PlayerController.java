@@ -10,7 +10,6 @@ import naftoreiclag.villagefive.world.entity.PlayerEntity;
 import naftoreiclag.villagefive.world.World;
 import naftoreiclag.villagefive.util.KeyKeys;
 import com.jme3.collision.CollisionResults;
-import com.jme3.input.InputManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.FastMath;
@@ -34,84 +33,22 @@ import org.dyn4j.dynamics.RaycastResult;
 import org.dyn4j.dynamics.joint.WeldJoint;
 import org.dyn4j.geometry.Mass;
 
-public class PlayerController extends EntityController implements ActionListener, AnalogListener
-{
+public class PlayerController extends EntityController implements ActionListener, AnalogListener {
     public World world;
     public PlayerEntity puppet;
-    
     public List<Plot> property;
 
-    public void setEntity(PlayerEntity entity)
-    {
+    public void setEntity(PlayerEntity entity) {
         this.puppet = entity;
         puppet.controller = this;
         this.world = puppet.getWorld();
     }
-    
     float turnSpd = 3f;
     float speed = 4.5f;
     private float scrollSpd = 500.0f;
-    
     SmoothScalar zoomLevel = new SmoothScalar();
     Angle playerLook = new SmoothAngle();
     SmoothAngle camDispl = new SmoothAngle();
-
-    public PlayerController()
-    {
-        setupInput();
-        
-        camDispl.smoothFactor /= 2f;
-        camDispl.maxSpd /= 2f;
-        
-        camDispl.disableSmoothing();
-        zoomLevel.x = 35;
-        zoomLevel.tx = 35;
-        zoomLevel.maxSpd *= 2;
-        zoomLevel.enableClamp(25, 50);
-    }
-    
-    public Entity interactRay() {
-        InteractRay ray = new InteractRay(puppet, puppet.getRotation().toNormalVec());
-        List<RaycastResult> results = new ArrayList<RaycastResult>();
-        world.physics.raycast(ray, 5.0f, false, false, results);
-        if(results.isEmpty()) {
-            return null;
-        }
-        
-        for(RaycastResult hit : results) {
-            Body bod = hit.getBody();
-            if(bod instanceof EntityBody) {
-                return ((EntityBody) bod).owner;
-            }
-        }
-        
-        return null;
-    }
-    
-    public void interact()
-    {
-        Entity owner = interactRay();
-        if(owner == null ) {
-            return;
-        }
-        
-        owner.onInteract(this);
-    }
-    
-    public void grab()
-    {
-        this.grabbedEnt = interactRay();
-        
-        if(this.grabbedEnt == null) {
-            return;
-        }
-        
-        grabJoint = new WeldJoint(this.puppet.getBody(), this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
-        this.grabbedEnt.getBody().setMass(Mass.Type.NORMAL);
-        this.puppet.getBody().getWorld().addJoint(grabJoint);
-        
-    }
-    
     ReiCamera cam;
     Spatial ground;
     boolean turningLeft = false;
@@ -121,24 +58,76 @@ public class PlayerController extends EntityController implements ActionListener
     boolean leftClick = false;
     boolean rotCamLeft = false;
     boolean rotCamRight = false;
-    private void setupInput()
-    {
-        SAM.INPUT.addListener(this, KeyKeys.move_backward,
-                                      KeyKeys.move_forward,
-                                      KeyKeys.move_left,
-                                      KeyKeys.move_right,
-                                      KeyKeys.rotate_camera_left,
-                                      KeyKeys.rotate_camera_right,
-                                      KeyKeys.mouse_left,
-                                      KeyKeys.mouse_scroll_up,
-                                      KeyKeys.mouse_scroll_down,
-                                      KeyKeys.openInv,
-                                      KeyKeys.interact);
+
+    public PlayerController() {
+        SAM.INPUT.addListener(this, 
+            KeyKeys.move_backward,
+            KeyKeys.move_forward,
+            KeyKeys.move_left,
+            KeyKeys.move_right,
+            KeyKeys.rotate_camera_left,
+            KeyKeys.rotate_camera_right,
+            KeyKeys.mouse_left,
+            KeyKeys.mouse_scroll_up,
+            KeyKeys.mouse_scroll_down,
+            KeyKeys.openInv,
+            KeyKeys.interact);
+
+        camDispl.smoothFactor /= 2f;
+        camDispl.maxSpd /= 2f;
+
+        camDispl.disableSmoothing();
+        zoomLevel.x = 35;
+        zoomLevel.tx = 35;
+        zoomLevel.maxSpd *= 2;
+        zoomLevel.enableClamp(25, 50);
     }
 
+    // Fire an "interaction" ray and return any entities it collided with.
+    public Entity interactRay() {
+        InteractRay ray = new InteractRay(puppet, puppet.getRotation().toNormalVec());
+        List<RaycastResult> results = new ArrayList<RaycastResult>();
+        world.physics.raycast(ray, 5.0f, false, false, results);
+        if(results.isEmpty()) {
+            return null;
+        }
+
+        for(RaycastResult hit : results) {
+            Body bod = hit.getBody();
+            if(bod instanceof EntityBody) {
+                return ((EntityBody) bod).owner;
+            }
+        }
+
+        return null;
+    }
+
+   
+    public void interact() {
+        Entity owner = interactRay();
+        if(owner == null) {
+            return;
+        }
+
+        owner.onInteract(this);
+    }
+
+    public void grab() {
+        this.grabbedEnt = interactRay();
+
+        if(this.grabbedEnt == null) {
+            return;
+        }
+
+        grabJoint = new WeldJoint(this.puppet.getBody(), this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
+        this.grabbedEnt.getBody().setMass(Mass.Type.NORMAL);
+        this.puppet.getBody().getWorld().addJoint(grabJoint);
+
+    }
+    
+
     // correct
-    public Vector3f whereClickingOnGround()
-    {
+    public Vector3f whereClickingOnGround() {
         Vector3f origin = cam.c.getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.0f);
         Vector3f direction = cam.c.getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.3f);
         direction.subtractLocal(origin).normalizeLocal();
@@ -147,53 +136,42 @@ public class PlayerController extends EntityController implements ActionListener
         CollisionResults results = new CollisionResults();
 
         ground.collideWith(ray, results);
-        if(results.size() > 0)
-        {
+        if(results.size() > 0) {
             return results.getClosestCollision().getContactPoint();
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
-    public void tick(float tpf)
-    {
+    public void tick(float tpf) {
         updateFrustum(tpf);
         tickDumbAngles(tpf);
         tickMovementInput(tpf);
-        
+
         world.updateChunkLODs(this.puppet.getLocation());
 
         // Move camera on its track
         cam.setLocation(OreDict.JmeAngleToVec3((float) camDispl.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));
-        
+
         // lookie
-        if(invOpen)
-        {
+        if(invOpen) {
             cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(4)));
             inv.enable();
-        }
-        else
-        {
+        } else {
             cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
             inv.disable();
         }
-        
-        
+
+
     }
-    
-    Inventory inv;
-    
+    InventoryGUI inv;
     boolean invOpen = false;
     boolean isInvOpenKeyPressed = false;
-    
     Entity grabbedEnt;
     WeldJoint grabJoint;
 
     // When a key is pressed
-    public void onAction(String key, boolean keyState, float tpf)
-    {
+    public void onAction(String key, boolean keyState, float tpf) {
         if(key.equals(KeyKeys.move_forward)) {
             movingFwd = keyState;
         }
@@ -215,8 +193,7 @@ public class PlayerController extends EntityController implements ActionListener
         if(key.equals(KeyKeys.mouse_left)) {
             leftClick = keyState;
         }
-        if(key.equals(KeyKeys.interact))
-        {
+        if(key.equals(KeyKeys.interact)) {
             if(keyState) {
                 if(grabbedEnt == null) {
                     this.grab();
@@ -229,158 +206,127 @@ public class PlayerController extends EntityController implements ActionListener
                 }
             }
         }
-        if(key.equals(KeyKeys.openInv))
-        {
-            if(!isInvOpenKeyPressed)
-            {
+        if(key.equals(KeyKeys.openInv)) {
+            if(!isInvOpenKeyPressed) {
                 invOpen = !invOpen;
             }
             isInvOpenKeyPressed = keyState;
         }
     }
-    
-    
-    public void onAnalog(String key, float value, float tpf)
-    {
-        if(key.equals(KeyKeys.mouse_scroll_up))
-        {
+
+    public void onAnalog(String key, float value, float tpf) {
+        if(key.equals(KeyKeys.mouse_scroll_up)) {
             zoomLevel.tx -= value * tpf * scrollSpd;
         }
-        if(key.equals(KeyKeys.mouse_scroll_down))
-        {
+        if(key.equals(KeyKeys.mouse_scroll_down)) {
             zoomLevel.tx += value * tpf * scrollSpd;
         }
     }
-    
-    private void updateFrustum(float tpf)
-    {
+
+    private void updateFrustum(float tpf) {
         zoomLevel.tick(tpf);
         float aspect = (float) cam.c.getWidth() / cam.c.getHeight();
         cam.c.setFrustumPerspective(zoomLevel.getXf(), aspect, cam.c.getFrustumNear(), cam.c.getFrustumFar());
     }
 
-    void setCamera(ReiCamera cam)
-    {
+    void setCamera(ReiCamera cam) {
         this.cam = cam;
     }
 
-    private Angle whereDoesThePlayerWantToGo()
-    {
+    private Angle whereDoesThePlayerWantToGo() {
         /*
-        //Vec2 fwd = new Vec2(cam.c.getDirection().x, cam.c.getDirection().z);
-        Vec2 fwd = this.camDispl.toNormalVec();
-        fwd.inverseLocal();
-        fwd.normalizeLocal();
-        Vec2 dir = new Vec2();
-        if(movingFwd)
-        {
-            dir.addLocal(fwd);
-        }
-        if(movingBwd)
-        {
-            dir.subtractLocal(fwd);
-        }
-        if(turningLeft)
-        {
-            dir.addLocal(fwd.getY(), -fwd.getX());
-        }
-        if(turningRight)
-        {
-            dir.addLocal(-fwd.getY(), fwd.getX());
-        }
+         //Vec2 fwd = new Vec2(cam.c.getDirection().x, cam.c.getDirection().z);
+         Vec2 fwd = this.camDispl.toNormalVec();
+         fwd.inverseLocal();
+         fwd.normalizeLocal();
+         Vec2 dir = new Vec2();
+         if(movingFwd)
+         {
+         dir.addLocal(fwd);
+         }
+         if(movingBwd)
+         {
+         dir.subtractLocal(fwd);
+         }
+         if(turningLeft)
+         {
+         dir.addLocal(fwd.getY(), -fwd.getX());
+         }
+         if(turningRight)
+         {
+         dir.addLocal(-fwd.getY(), fwd.getX());
+         }
         
         
-        return dir.getAngle().getXF();
-        */
-        
+         return dir.getAngle().getXF();
+         */
+
         Vec2 fwd = new Vec2(0, -1);
         Vec2 dir = new Vec2();
-        
-        if(movingFwd)
-        {
+
+        if(movingFwd) {
             dir.addLocal(fwd);
         }
-        if(movingBwd)
-        {
+        if(movingBwd) {
             dir.subtractLocal(fwd);
         }
-        if(turningLeft)
-        {
+        if(turningLeft) {
             dir.addLocal(fwd.getY(), -fwd.getX());
         }
-        if(turningRight)
-        {
+        if(turningRight) {
             dir.addLocal(-fwd.getY(), fwd.getX());
         }
         return dir.getAngle();
     }
 
-    void setGround(Spatial ground)
-    {
+    void setGround(Spatial ground) {
         this.ground = ground;
     }
 
     // correct
-    private void tickDumbAngles(float tpf)
-    {
+    private void tickDumbAngles(float tpf) {
         //playerLook.tick(tpf);
 
-        if(rotCamLeft)
-        {
+        if(rotCamLeft) {
             camDispl.tx += 2f * tpf;
         }
-        if(rotCamRight)
-        {
+        if(rotCamRight) {
             camDispl.tx -= 2f * tpf;
         }
         camDispl.tick(tpf);
 
         puppet.turnTo(playerLook, tpf);
-        
+
         //System.out.println(this.camDispl);
     }
-
     public boolean walking = true;
-    
-    private void tickMovementInput(float tpf)
-    {
+
+    private void tickMovementInput(float tpf) {
         Vector3f groundGoto = null;
-        if(leftClick)
-        {
+        if(leftClick) {
             groundGoto = whereClickingOnGround();
         }
 
-        if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null)
-        {
-            if(walking)
-            {
+        if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null) {
+            if(walking) {
                 puppet.model.playAnimation(PlayerModel.anim_standstill);
                 walking = false;
             }
 
-        }
-        else
-        {
-            if(groundGoto != null)
-            {
+        } else {
+            if(groundGoto != null) {
                 groundGoto.subtractLocal(puppet.getNode().getLocalTranslation());
                 playerLook.setX(FastMath.atan2(groundGoto.z, groundGoto.x));
-            }
-            else
-            {
+            } else {
                 playerLook.setX(whereDoesThePlayerWantToGo());
             }
 
             puppet.setVelocity(playerLook.toNormalVec().multLocal(speed), tpf);
 
-            if(!walking)
-            {
+            if(!walking) {
                 puppet.model.playAnimation(PlayerModel.anim_walk);
                 walking = true;
             }
         }
     }
-
-
-
 }

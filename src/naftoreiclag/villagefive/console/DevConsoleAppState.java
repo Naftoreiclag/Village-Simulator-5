@@ -13,6 +13,8 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.PanelBuilder;
+import de.lessvoid.nifty.controls.Scrollbar;
+import de.lessvoid.nifty.controls.ScrollbarChangedEvent;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.TextFieldChangedEvent;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
@@ -43,6 +45,8 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     public static final String fontName = "Interface/Fonts/Default.fnt";
     // Height of each line. Used to calculate the size of the console.
     public static final int lineHeight = 18;
+    // Number of lines shown on screen
+    int numLines;
     
     // Why do I need this?
     Main app;
@@ -53,6 +57,18 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     // Important elements declared in the xml file
     TextField textField;
     Element outputBox;
+    Scrollbar scrollBar;
+    
+    // Scrollbar
+    int scrollBarLoc;
+    @NiftyEventSubscriber(id = "scrollBar")
+    public void onScrollBarChange(final String id, final ScrollbarChangedEvent event) {
+        int newScrollPos = (int) Math.floor(event.getValue());
+        if(newScrollPos != scrollBarLoc) {
+            scrollBarLoc = newScrollPos;
+            outputContainersNeedUpdating = true;
+        }
+    }
     
     // Fassad
     Console console;
@@ -120,6 +136,8 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         textField = screen.findNiftyControl("input", TextField.class);
         textField.setFocus();
         outputBox = screen.findElementByName("output");
+        scrollBar = screen.findNiftyControl("scrollBar", Scrollbar.class);
+        scrollBar.setWorldMax(historyLength);
         prepareConsole();
         
         //
@@ -180,6 +198,14 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
                 return false;
             }
         }
+
+        // Why do I need this? Only dUKE knows.
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 97 * hash + (this.message != null ? this.message.hashCode() : 0);
+            return hash;
+        }
         
         @Override
         public String toString() {
@@ -213,9 +239,27 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
                 outputHistory.add(addMe);
             }
 
-            // Update all the output panels to show the lines
+            // Mark the panels for an update. This is to avoid unnecessary updates to the panels.
+            outputContainersNeedUpdating = true;
+        }
+        
+        // Update scrollbar accordingly.
+        int oldSize = Math.round(scrollBar.getWorldMax());
+        int newSize = outputHistory.getLength() > numLines ? outputHistory.getLength() : numLines;
+        if(newSize != oldSize) {
+            scrollBar.setWorldMax(newSize);
+            scrollBar.setValue(scrollBar.getValue() + (newSize - oldSize));
+        }
+    }
+    
+    // Update all the output panels to show a changed scrollBarLoc, output, etc...
+    private boolean outputContainersNeedUpdating = false;
+    private void updateOutputContainers() {
+        if(outputContainersNeedUpdating) {
+            int scrollDisp = calculateScrollFromBottom();
+
             for(int i = 0; i < outputContainers.length; ++ i) {
-                ConsoleLine e = outputHistory.get(i);
+                ConsoleLine e = outputHistory.get(i + scrollDisp);
 
                 if(e != null) {
                     outputContainers[i].setText(e.toString());
@@ -223,7 +267,16 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
                     outputContainers[i].setText("");
                 }
             }
+            outputContainersNeedUpdating = false;
         }
+    }
+    // Calculate how far up the scroll bar is. 0 means the most recent line should be viewable.
+    private int calculateScrollFromBottom() {
+        return (Math.round(scrollBar.getWorldMax()) - this.numLines) - scrollBarLoc;
+    }
+    @Override
+    public void update(float tpf) {
+        updateOutputContainers();
     }
     
     // Lines are shown using Nifty by making this array of panels each containing a label. I've made this class to make management simpler.
@@ -256,11 +309,11 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
             if(!lastText.equals(message)) {
                 label.markForRemoval();
                 final String dumbJava = message;
-                label = new LabelBuilder() {{
-                    alignLeft();
-                    font(fontName);
-                    label(dumbJava);
-                }}.build(nifty, screen, panel);
+                LabelBuilder lb = new LabelBuilder();
+                lb.alignLeft();
+                lb.font(fontName);
+                lb.label(dumbJava);
+                label = lb.build(nifty, screen, panel);
                 lastText = dumbJava;
             }
         }
@@ -281,7 +334,11 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     private void prepareConsole() {
         // Calculate how many lines we can fit in there.
         int height = outputBox.getHeight();
-        int numLines = height / lineHeight;
+        numLines = height / lineHeight;
+        
+        // Update scrollbar accordingly.
+        scrollBar.setWorldPageSize(numLines);
+        scrollBar.setWorldMax(numLines);
         
         // If there are already containers in the panel, clear remove those.
         if(outputContainers != null) {
@@ -328,8 +385,6 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
 
     // Unused stuff below
     
-    @Override
-    public void update(float tpf) {}
     @Override
     public void cleanup() {}
     @Override

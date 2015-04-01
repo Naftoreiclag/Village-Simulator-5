@@ -70,7 +70,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     
     ReiCamera rcam;
     
-    Inventory inv;
+    InventoryGUI inv;
 
     @Override
     public void initialize(AppStateManager stateManager, Application app)
@@ -131,7 +131,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         invPort = renderManager.createPostView("baaackground", invCam);
         invPort.setClearFlags(false, true, true);
         
-        inv = new Inventory(new SpritePlane(invPort));
+        inv = new InventoryGUI(new SpritePlane(invPort));
         playCont.inv = this.inv;
     }
     
@@ -265,7 +265,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         world.spawnEntity("naftogeometry:cone").setLocation(new Vec2(280, 280));
         world.spawnEntity("naftogeometry:torus").setLocation(new Vec2(275, 280));
         world.spawnEntity("naftogeometry:shiny").setLocation(new Vec2(270, 280));
-        world.spawnEntity("naftogeometry:futbol").setLocation(new Vec2(265, 280));
+        world.spawnEntity("naftogeometry:pele").setLocation(new Vec2(265, 280));
         world.spawnEntity("naftogeometry:basketball").setLocation(new Vec2(260, 280));
 
         /*
