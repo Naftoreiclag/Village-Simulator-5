@@ -13,6 +13,7 @@ import com.jme3.material.Material;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 import naftoreiclag.villagefive.addon.AddonManager;
+import naftoreiclag.villagefive.util.CryptUtil;
 import naftoreiclag.villagefive.util.HashUtil;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 

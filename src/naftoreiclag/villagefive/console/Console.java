@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import naftoreiclag.villagefive.OverworldAppState;
+import naftoreiclag.villagefive.util.CryptUtil;
 import naftoreiclag.villagefive.util.HashUtil;
 import naftoreiclag.villagefive.world.World;
 
@@ -48,11 +49,12 @@ public final class Console {
                 
                 // Secret secret command
                 else if(input.startsWith("secret ")) {
-                    // BTW unless you are reading these messages in the console you cheated.
-                    if(HashUtil.equals(HashUtil.sha256(input.substring(6)), HashUtil.pin_number)) {
-                        char e = 0x45;
-                        console.println("S" + e + "CR" + e + "T #2");
-                        console.println("public final truth noseGrow = true;;");
+                    
+                    String cmd = input.substring(6);
+                    
+                    if(HashUtil.equals(HashUtil.hash32(cmd), HashUtil.pin_number)) {
+                        console.println(new String(CryptUtil.decrypt(cmd, CryptUtil.congrats)));
+                        console.println(new String(CryptUtil.decrypt(cmd, CryptUtil.jalol)));
                         return true;
                     }
                 }
