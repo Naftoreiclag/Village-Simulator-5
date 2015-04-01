@@ -48,11 +48,11 @@ public final class Console {
                 
                 // Secret secret command
                 else if(input.startsWith("secret ")) {
+                    // BTW unless you are reading these messages in the console you cheated.
                     if(HashUtil.equals(HashUtil.sha256(input.substring(6)), HashUtil.pin_number)) {
                         char e = 0x45;
                         console.println("S" + e + "CR" + e + "T #2");
                         console.println("public final truth noseGrow = true;;");
-                        console.println("BTW unless you are reading this in the console you cheated.");
                         return true;
                     }
                 }
