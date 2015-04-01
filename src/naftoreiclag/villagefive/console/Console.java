@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import naftoreiclag.villagefive.OverworldAppState;
+import naftoreiclag.villagefive.util.HashUtil;
 import naftoreiclag.villagefive.world.World;
 
 public final class Console {
@@ -29,6 +30,7 @@ public final class Console {
             @Override
             public boolean process(Console console, String input, OverworldAppState game) {
                 
+                // Reset command
                 if(input.equalsIgnoreCase("r")) {
                     
                     console.processRawInput(console.previousInput);
@@ -36,8 +38,29 @@ public final class Console {
                     return true;
                 }
                 
+                // Secret console update command
+                else if(input.equalsIgnoreCase("toggle instant console updates")) {
+                    realConsole.instantConsoleUpdates = !realConsole.instantConsoleUpdates;
+                    
+                    console.println("instantConsoleUpdates = " + realConsole.instantConsoleUpdates);
+                    return true;
+                }
+                
+                // Secret secret command
+                else if(input.startsWith("secret ")) {
+                    if(HashUtil.equals(HashUtil.sha256(input.substring(6)), HashUtil.pin_number)) {
+                        char e = 0x45;
+                        console.println("S" + e + "CR" + e + "T #2");
+                        console.println("public final truth noseGrow = true;;");
+                        console.println("BTW unless you are reading this in the console you cheated.");
+                        return true;
+                    }
+                }
+                
+                // Subsequent commands require argument splitting
                 String[] inputs = input.split(" ");
                 
+                // Help command
                 if(inputs[0].equalsIgnoreCase("help"))
                 {
                     String search;
@@ -65,10 +88,15 @@ public final class Console {
                     }
                     
                     return true;
-                } else if(inputs[0].equalsIgnoreCase("clear")) {
+                }
+                
+                // Clear command
+                else if(inputs[0].equalsIgnoreCase("clear")) {
                     console.clear();
                     return true;
                 }
+                
+                // Not processed
                 return false;
             }
 

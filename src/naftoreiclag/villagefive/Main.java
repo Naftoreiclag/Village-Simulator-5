@@ -13,6 +13,7 @@ import com.jme3.material.Material;
 import com.jme3.renderer.RenderManager;
 import com.jme3.system.AppSettings;
 import naftoreiclag.villagefive.addon.AddonManager;
+import naftoreiclag.villagefive.util.HashUtil;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 
 public class Main extends SimpleApplication implements ActionListener
@@ -97,3 +98,8 @@ public class Main extends SimpleApplication implements ActionListener
     }
 
 }
+
+// SECRET #1
+// There are lots of secrets I weaved into the code for this game.
+// This is the only one that's a simple comment. Good luck finding the rest.
+// Note: they are all clearly marked with "SECRET #n" once decoded.

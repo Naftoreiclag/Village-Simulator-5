@@ -35,8 +35,12 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     
     // Recall prepareConsole(); after resizing the screen.
     
-    // TODO: fix scrollwheel
-    // TODO: fix \t
+    // TODO: make writing to console more efficient. Currently its being updated way too often.
+    
+    // true: Re-draws the console with every println(); call. Potentially slower, but will avoid glitchy text.
+    // false: Only re-draw console at most once per tick. Definitely faster, but will cause glitchy text.
+    // Togglable with the secret command "toggle instant console updates"
+    protected boolean instantConsoleUpdates = true;
     
     // How many lines are remembered
     public static final int historyLength = 100;
@@ -66,7 +70,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         int newScrollPos = (int) Math.floor(event.getValue());
         if(newScrollPos != scrollBarLoc) {
             scrollBarLoc = newScrollPos;
-            outputContainersNeedUpdating = true;
+            markOutputContainersForUpdate();
         }
     }
     
@@ -240,7 +244,7 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
             }
 
             // Mark the panels for an update. This is to avoid unnecessary updates to the panels.
-            outputContainersNeedUpdating = true;
+            markOutputContainersForUpdate();
         }
         
         // Update scrollbar accordingly.
@@ -249,6 +253,16 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
         if(newSize != oldSize) {
             scrollBar.setWorldMax(newSize);
             scrollBar.setValue(scrollBar.getValue() + (newSize - oldSize));
+        }
+    }
+    
+    // Call this whenever the output containers need updating. See also "instantConsoleUpdates".
+    private void markOutputContainersForUpdate() {
+        if(instantConsoleUpdates) {
+            outputContainersNeedUpdating = true;
+            updateOutputContainers();
+        } else {
+            outputContainersNeedUpdating = true;
         }
     }
     
@@ -276,7 +290,9 @@ public class DevConsoleAppState extends AbstractAppState implements ScreenContro
     }
     @Override
     public void update(float tpf) {
-        updateOutputContainers();
+        if(!instantConsoleUpdates) {
+            updateOutputContainers();
+        }
     }
     
     // Lines are shown using Nifty by making this array of panels each containing a label. I've made this class to make management simpler.
