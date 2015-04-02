@@ -21,4 +21,8 @@ public class CommandyString {
             return "";
         }
     }
+
+    public int size() {
+        return aa.length;
+    }
 }

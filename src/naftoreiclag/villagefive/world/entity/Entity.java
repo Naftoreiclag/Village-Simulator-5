@@ -83,10 +83,7 @@ public abstract class Entity extends Mundane implements JSONAware
     
     public abstract String getEntityId();
     
-    public void addAdditionalData(JSONObject data)
-    {
-        
-    }
+    public void addAdditionalData(JSONObject data) {}
     
     public void onInteract(PlayerController interactor)
     {

@@ -13,6 +13,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import naftoreiclag.villagefive.PlayerController;
+import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.GrassMaker;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
@@ -35,7 +36,7 @@ public class ForSaleEntity extends Entity
     public void createNode()
     {
         node = ModelManipulator.loadNode("Models/Knight.mesh.j3o");
-        Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
+        Material mat = SAM.ASSETS.loadMaterial("Materials/TestMaterial.j3m");
         node.setMaterial(mat);
         
         /*

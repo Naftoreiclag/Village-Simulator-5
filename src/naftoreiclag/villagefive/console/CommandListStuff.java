@@ -24,7 +24,7 @@ public class CommandListStuff extends Command {
     @Override
     public boolean process(Console console, String input, OverworldAppState game) {
         
-        if(input.toLowerCase().startsWith("list addons")) {
+        if(input.toLowerCase().startsWith("index addon")) {
             int addonCount = 0;
             
             for(Map.Entry<String, LuaAddon> pair : AddonManager.addonCollection.entrySet()) {
@@ -42,7 +42,7 @@ public class CommandListStuff extends Command {
             console.println("\nTotal addons: " + addonCount);
             
             return true;
-        } else if(input.toLowerCase().startsWith("list entities")) {
+        } else if(input.toLowerCase().startsWith("index entities") || input.toLowerCase().startsWith("index entity")) {
             int entityCount = 0;
             
             List<String> entities = new ArrayList<String>();
@@ -71,14 +71,17 @@ public class CommandListStuff extends Command {
             console.println("Total entities: " + entityCount);
             
             return true;
+        } else if(input.toLowerCase().startsWith("index item")) {
+            console.println("In addition to all those listed items, all entities count as items.");
         }
         return false;
     }
 
     @Override
     public String[] getHelpLines() {
-        return new String[]{"LIST ADDONS\tList loaded addons.",
-        "LIST ENTITIES\tList loaded entities."};
+        return new String[]{"INDEX ADDONS\tList loaded addons.",
+        "INDEX ENTITIES\tList loaded entities.",
+        "INDEX ITEMS\tList loaded items."};
     }
 
 }

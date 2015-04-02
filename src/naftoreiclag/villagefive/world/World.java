@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import naftoreiclag.villagefive.PlayerOfflineData;
 import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.entity.Entity;
@@ -33,24 +34,28 @@ import org.json.simple.JSONObject;
 // Thingy that handles pretty much anything that can be considered a part of the world
 public class World implements JSONAware
 {
+    // Player-given name for the world. For use-friendliness only.
+    String name = "swagland";
+    
     // Size in chunks
     public int width = 20;
     public int height = 20;
     
+    // Chunk data
     public Chunk[][] chunks = new Chunk[width][height];
     
+    // Rendering nonscense
     public Node rootNode;
-    
     private Node entityRoot;
     private Node chunkRoot;
     
-    public AssetManager assetManager;
-    
+    // Physics calculations
     public PhysWorld physics = new PhysWorld();
     public Bounds physBounds = new AxisAlignedBounds(width * Chunk.width * 2, height * Chunk.height * 2);
     
     public List<Entity> entities = new ArrayList<Entity>();
     public List<Plot> plots = new ArrayList<Plot>();
+    public List<PlayerOfflineData> players = new ArrayList<PlayerOfflineData>();
     
     public World(Node theRootNode, AssetManager assetManager)
     {
@@ -68,16 +73,13 @@ public class World implements JSONAware
         // Chunks should receive but not cast shadows.
         this.chunkRoot.setShadowMode(RenderQueue.ShadowMode.Receive);
         
-        this.assetManager = assetManager;
-        
         physics.setBounds(physBounds);
         physics.setGravity(Vec2.ZERO_DYN4J);
         
         physics.addListener(new InteractRay.RaycastInteractFilter());
         physics.addListener(new ControllerFilter());
         
-        if(showPhysDebug)
-        {
+        if(showPhysDebug) {
             physics.addListener(new DebugRayRenderer());
             DebugRayRenderer.rootNode = this.rootNode;
         }
@@ -98,17 +100,13 @@ public class World implements JSONAware
             }
         }
     }
-    
-    public World(JSONObject data)
-    {
-    }
 
     @Override
     public String toJSONString()
     {
         JSONObject json = new JSONObject();
         
-        json.put("name", "swagland");
+        json.put("name", name);
         json.put("entities", entities);
         json.put("plots", plots);
         
@@ -121,7 +119,6 @@ public class World implements JSONAware
     public void tick(float tpf)
     {
         physics.update(tpf);
-        
         
         if(showPhysDebug)
         {

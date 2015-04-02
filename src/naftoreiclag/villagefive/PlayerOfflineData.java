@@ -6,12 +6,16 @@
 
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.world.entity.PlayerEntity;
 import org.json.simple.JSONAware;
 
-public abstract class InvItem implements JSONAware {
+public class PlayerOfflineData implements JSONAware {
 
-    public abstract String getType();
-
-    public abstract String getId();
+    Inventory inventory;
+    PlayerEntity storedData;
+    
+    public String toJSONString() {
+        return null;
+    }
     
 }

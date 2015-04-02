@@ -33,6 +33,8 @@ import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.shadow.EdgeFilteringMode;
 import de.lessvoid.nifty.Nifty;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import naftoreiclag.villagefive.util.KeyKeys;
@@ -41,34 +43,30 @@ import naftoreiclag.villagefive.util.scenegraph.AxesMaker;
 import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import org.json.simple.parser.ParseException;
 
+// Basically the game.
 public class OverworldAppState extends AbstractAppState implements ActionListener
 {
     private Main app;
     private Node trueRootNode;
-    private AppStateManager stateManager;
-    private AudioRenderer audioRenderer;
-    private ViewPort guiViewPort;
     private ViewPort invPort;
     private Camera cam;
 	private RenderManager renderManager;
     private ViewPort viewPort;
-    private Nifty nifty;
     Camera invCam;
     
     DevConsoleAppState devConsole;
     
     World world;
     public World getWorld() { return world; }
-    Node chasePnt;
     
     PlayerEntity player;
     public PlayerEntity getPlayer() { return player; }
     private Node stateRootNode;
     
     PlayerController playCont;
-    ChaseCamera chaseCam;
     
     ReiCamera rcam;
+    Node chasePnt;
     
     InventoryGUI inv;
 
@@ -79,9 +77,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         
         this.app = (Main) app;
         this.trueRootNode = this.app.getRootNode();
-        this.stateManager = this.app.getStateManager();
-        this.audioRenderer = this.app.getAudioRenderer();
-        this.guiViewPort = this.app.getGuiViewPort();
         this.renderManager = this.app.getRenderManager();
         this.cam = this.app.getCamera();
         this.viewPort = this.app.getViewPort();
@@ -107,9 +102,9 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         stateManager.attach(devConsole);
         SAM.INPUT.addListener(this, KeyKeys.console);
         
-        genworld();
         devConsole.setGame(this);
-        // loadworld();
+        genworld();
+        //loadworld();
         
         setupInvScreen();
 
@@ -258,6 +253,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
         playCont = new PlayerController();
+        playCont.hookToInputs();
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
@@ -289,7 +285,9 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     }
 
     public void loadworld() {
-        world.rootNode.removeFromParent();
+        if(world != null) {
+            world.rootNode.removeFromParent();
+        }
         try
         {
             world = SaveLoad.load(stateRootNode, SAM.ASSETS);
@@ -307,6 +305,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
         playCont = new PlayerController();
+        playCont.hookToInputs();
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);

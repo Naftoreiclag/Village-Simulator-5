@@ -7,6 +7,7 @@
 package naftoreiclag.villagefive.world.entity;
 
 import com.jme3.material.Material;
+import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 import naftoreiclag.villagefive.world.PhysWorld;
@@ -21,7 +22,7 @@ public class PinguinEntity extends Entity
     public void createNode()
     {
         node = ModelManipulator.loadNode("Models/Knight.mesh.j3o");
-        Material mat = world.assetManager.loadMaterial("Materials/TestMaterial.j3m");
+        Material mat = SAM.ASSETS.loadMaterial("Materials/TestMaterial.j3m");
         node.setMaterial(mat);
     }
 

@@ -33,16 +33,31 @@ import org.dyn4j.dynamics.RaycastResult;
 import org.dyn4j.dynamics.joint.WeldJoint;
 import org.dyn4j.geometry.Mass;
 
-public class PlayerController extends EntityController implements ActionListener, AnalogListener {
-    public World world;
-    public PlayerEntity puppet;
-    public List<Plot> property;
 
+// Does it really make sense to keep this separate from the entity? We'll just have to wait and see.
+// Maybe I could just make some kind of "player access" class to reduce entity.controller.entity.method(); calls.
+// Also, this would eventually allow me to make some kind of generic "HumanEntity" later on, which could be controlled by some AIController or something.
+
+// Entity controllers are different from entity behaviors!
+
+public final class PlayerController extends EntityController implements ActionListener, AnalogListener {
+    public World world;
+    private PlayerEntity entity;
+    private PlayerOfflineData data;
+    public List<Plot> property;
+    
     public void setEntity(PlayerEntity entity) {
-        this.puppet = entity;
-        puppet.controller = this;
-        this.world = puppet.getWorld();
+        this.entity = entity;
+        this.entity.controller = this;
+        this.world = this.entity.getWorld();
     }
+    public PlayerEntity getEntity() {
+        return entity;
+    }
+    public void setData(PlayerOfflineData data) {
+        
+    }
+    
     float turnSpd = 3f;
     float speed = 4.5f;
     private float scrollSpd = 500.0f;
@@ -60,6 +75,20 @@ public class PlayerController extends EntityController implements ActionListener
     boolean rotCamRight = false;
 
     public PlayerController() {
+        
+        
+        
+        camDispl.smoothFactor /= 2f;
+        camDispl.maxSpd /= 2f;
+
+        camDispl.disableSmoothing();
+        zoomLevel.x = 35;
+        zoomLevel.tx = 35;
+        zoomLevel.maxSpd *= 2;
+        zoomLevel.enableClamp(25, 50);
+    }
+    
+    public void hookToInputs() {
         SAM.INPUT.addListener(this, 
             KeyKeys.move_backward,
             KeyKeys.move_forward,
@@ -72,20 +101,11 @@ public class PlayerController extends EntityController implements ActionListener
             KeyKeys.mouse_scroll_down,
             KeyKeys.openInv,
             KeyKeys.interact);
-
-        camDispl.smoothFactor /= 2f;
-        camDispl.maxSpd /= 2f;
-
-        camDispl.disableSmoothing();
-        zoomLevel.x = 35;
-        zoomLevel.tx = 35;
-        zoomLevel.maxSpd *= 2;
-        zoomLevel.enableClamp(25, 50);
     }
 
-    // Fire an "interaction" ray and return any entities it collided with.
+    // Fire an "interaction ray" and return any entities it collided with.
     public Entity interactRay() {
-        InteractRay ray = new InteractRay(puppet, puppet.getRotation().toNormalVec());
+        InteractRay ray = new InteractRay(entity, entity.getRotation().toNormalVec());
         List<RaycastResult> results = new ArrayList<RaycastResult>();
         world.physics.raycast(ray, 5.0f, false, false, results);
         if(results.isEmpty()) {
@@ -119,9 +139,9 @@ public class PlayerController extends EntityController implements ActionListener
             return;
         }
 
-        grabJoint = new WeldJoint(this.puppet.getBody(), this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
+        grabJoint = new WeldJoint(this.entity.getBody(), this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
         this.grabbedEnt.getBody().setMass(Mass.Type.NORMAL);
-        this.puppet.getBody().getWorld().addJoint(grabJoint);
+        this.entity.getBody().getWorld().addJoint(grabJoint);
 
     }
     
@@ -148,17 +168,17 @@ public class PlayerController extends EntityController implements ActionListener
         tickDumbAngles(tpf);
         tickMovementInput(tpf);
 
-        world.updateChunkLODs(this.puppet.getLocation());
+        world.updateChunkLODs(this.entity.getLocation());
 
         // Move camera on its track
-        cam.setLocation(OreDict.JmeAngleToVec3((float) camDispl.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(puppet.getLocation())));
+        cam.setLocation(OreDict.JmeAngleToVec3((float) camDispl.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(entity.getLocation())));
 
         // lookie
         if(invOpen) {
-            cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(4)));
+            cam.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(4)));
             inv.enable();
         } else {
-            cam.lookAt(puppet.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
+            cam.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
             inv.disable();
         }
 
@@ -199,7 +219,7 @@ public class PlayerController extends EntityController implements ActionListener
                     this.grab();
                     System.out.println("grab");
                 } else {
-                    this.puppet.getBody().getWorld().removeJoint(grabJoint);
+                    this.entity.getBody().getWorld().removeJoint(grabJoint);
                     grabbedEnt = null;
                     grabJoint = null;
                     System.out.println("ungrab");
@@ -295,7 +315,7 @@ public class PlayerController extends EntityController implements ActionListener
         }
         camDispl.tick(tpf);
 
-        puppet.turnTo(playerLook, tpf);
+        entity.turnTo(playerLook, tpf);
 
         //System.out.println(this.camDispl);
     }
@@ -309,22 +329,22 @@ public class PlayerController extends EntityController implements ActionListener
 
         if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null) {
             if(walking) {
-                puppet.model.playAnimation(PlayerModel.anim_standstill);
+                entity.model.playAnimation(PlayerModel.anim_standstill);
                 walking = false;
             }
 
         } else {
             if(groundGoto != null) {
-                groundGoto.subtractLocal(puppet.getNode().getLocalTranslation());
+                groundGoto.subtractLocal(entity.getNode().getLocalTranslation());
                 playerLook.setX(FastMath.atan2(groundGoto.z, groundGoto.x));
             } else {
                 playerLook.setX(whereDoesThePlayerWantToGo());
             }
 
-            puppet.setVelocity(playerLook.toNormalVec().multLocal(speed), tpf);
+            entity.setVelocity(playerLook.toNormalVec().multLocal(speed), tpf);
 
             if(!walking) {
-                puppet.model.playAnimation(PlayerModel.anim_walk);
+                entity.model.playAnimation(PlayerModel.anim_walk);
                 walking = true;
             }
         }
