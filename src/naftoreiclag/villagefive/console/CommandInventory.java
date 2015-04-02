@@ -21,23 +21,41 @@ public class CommandInventory extends Command {
         if(input.toLowerCase().startsWith("inv")) {
             CommandyString inputs = new CommandyString(input.split(" "));
             
-            PlayerEntity e = game.getPlayer();
+            PlayerEntity player = game.getPlayer();
             
-            console.println("items: ");
             
             int numItems = 0;
             if(inputs.get(1).equals("")) {
-                for(Map.Entry<Integer, InvItem> entry : e.inventory.items.entrySet()) {
+                console.println("items: ");
+                for(Map.Entry<Integer, InvItem> entry : player.inventory.items.entrySet()) {
                     InvItem i = entry.getValue();
                     
                     ++ numItems;
                     console.println("\t" + entry.getKey() + "\t" + i.getClassId() + "\t" + i.getItemId());
                 }
-                
+
+
+                console.println("");
+                console.println("total item count: " + numItems);
             }
             
-            console.println("");
-            console.println("total item count: " + numItems);
+            else if(inputs.get(1).equalsIgnoreCase("use")) {
+                
+                console.println("using");
+                
+                String slot = inputs.get(2);
+                int slotI;
+                try {
+                    slotI = Integer.valueOf(slot);
+                } catch (NumberFormatException e) {
+                    slotI = 0;
+                }
+                
+                InvItem which = player.inventory.getItem(slotI);
+                
+                player.use(which);
+                
+            }
             
             
             return true;
@@ -67,6 +85,7 @@ public class CommandInventory extends Command {
     public String[] getHelpLines() {
         return new String[] {
             "INV\tLists your inventory contents.",
+            "INV USE <SLOT>\tUse an item in your inventory.",
             "GIVE <item>\tCheats in an item for you."
         };
     }

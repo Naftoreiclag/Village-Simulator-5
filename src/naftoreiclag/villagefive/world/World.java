@@ -362,4 +362,18 @@ public class World implements JSONAware
         }
     }
 
+    public void materializeEntity(Entity entity) {
+        entity.assertWorld(this);
+        
+        // Load the node
+        entity.createNode();
+        entityRoot.attachChild(entity.getNode());
+        
+        // Body
+        entity.createBody(this.physics);
+        
+        // Keep track of it
+        entities.add(entity);
+    }
+
 }

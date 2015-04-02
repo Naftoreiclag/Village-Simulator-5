@@ -9,6 +9,7 @@ package naftoreiclag.villagefive;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.entity.EntityRegistry;
+import naftoreiclag.villagefive.world.entity.PlayerEntity;
 import org.json.simple.JSONObject;
 
 public final class InvItemEntity extends InvItem {
@@ -47,5 +48,15 @@ public final class InvItemEntity extends InvItem {
     public String getItemId() {
         return entity.getEntityId();
     }
+
+    @Override
+    public void performTask(PlayerEntity aThis) {
+        Vec2 loc = aThis.getLocation();
+        
+        aThis.getWorld().materializeEntity(entity);
+        entity.setLocation(loc);
+        
+    }
+
     
 }

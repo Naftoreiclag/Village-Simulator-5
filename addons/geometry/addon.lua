@@ -9,7 +9,7 @@ Addon = {
 
 	-- What the game and all other addons will know this project as.
 	-- This should not vary between releases.
-	id = "naftogeometry",
+	id = "clifgeo",
 	author = "Clifford the Shape Demon",
 
 	-- Use whatever convention you want for this.

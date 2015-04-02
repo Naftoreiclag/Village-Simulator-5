@@ -6,6 +6,8 @@
 
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.world.entity.Entity;
+import naftoreiclag.villagefive.world.entity.PlayerEntity;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
@@ -24,5 +26,7 @@ public abstract class InvItem implements JSONAware {
     public abstract String getClassId();
 
     public abstract String getItemId();
+
+    public abstract void performTask(PlayerEntity aThis);
     
 }

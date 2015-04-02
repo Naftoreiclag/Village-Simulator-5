@@ -54,4 +54,12 @@ public class Inventory implements JSONAware {
         
         items.put(firstSlot, i);
     }
+
+    public InvItem getItem(int slotI) {
+        if(items.containsKey(slotI)) {
+            return items.get(slotI);
+        } else {
+            return null;
+        }
+    }
 }

@@ -257,12 +257,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         playCont.setEntity(player);
         playCont.setCamera(rcam);
         playCont.setGround(ground);
-        
-        world.spawnEntity("naftogeometry:cone").setLocation(new Vec2(280, 280));
-        world.spawnEntity("naftogeometry:torus").setLocation(new Vec2(275, 280));
-        world.spawnEntity("naftogeometry:shiny").setLocation(new Vec2(270, 280));
-        world.spawnEntity("naftogeometry:pele").setLocation(new Vec2(265, 280));
-        world.spawnEntity("naftogeometry:basketball").setLocation(new Vec2(260, 280));
 
         /*
         Random rand = new Random(1337);
