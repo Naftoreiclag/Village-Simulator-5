@@ -73,6 +73,7 @@ public class CommandListStuff extends Command {
             return true;
         } else if(input.toLowerCase().startsWith("index item")) {
             console.println("In addition to all those listed items, all entities count as items.");
+            return true;
         }
         return false;
     }

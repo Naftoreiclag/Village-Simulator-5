@@ -31,7 +31,7 @@ public final class InvItemEntity extends InvItem {
     public String toJSONString() {
         JSONObject object = new JSONObject();
         
-        object.put("id", "itemEntity");
+        object.put("classId", "itemEntity");
         object.put("entityData", entity);
         
         
@@ -39,13 +39,13 @@ public final class InvItemEntity extends InvItem {
     }
 
     @Override
-    public String getType() {
+    public String getClassId() {
         return "itemEntity";
     }
 
     @Override
-    public String getId() {
-        return "test";
+    public String getItemId() {
+        return entity.getEntityId();
     }
     
 }

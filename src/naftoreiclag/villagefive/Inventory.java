@@ -27,7 +27,7 @@ public class Inventory implements JSONAware {
     }
     
     public int findDeepestItem() {
-        int max = 0;
+        int max = -1;
         for(Map.Entry<Integer, InvItem> entry : items.entrySet()) {
             if(entry.getKey() > max) {
                 max = entry.getKey();

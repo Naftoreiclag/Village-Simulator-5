@@ -7,11 +7,22 @@
 package naftoreiclag.villagefive;
 
 import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 public abstract class InvItem implements JSONAware {
 
-    public abstract String getType();
+    public static InvItem makeFrom(JSONObject data) {
+        String id = (String) data.get("id");
+        
+        if(id.equals("itemEntity")) {
+            return new InvItemEntity(data);
+        }
+        
+        return null;
+    }
+    
+    public abstract String getClassId();
 
-    public abstract String getId();
+    public abstract String getItemId();
     
 }
