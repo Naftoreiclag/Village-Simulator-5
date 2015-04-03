@@ -983,7 +983,7 @@ public class PlotEditorAppState extends AbstractAppState implements ActionListen
                     
                     // Magic math
                     double ab_distsq = ab.lenSqF();
-                    double ac_dot_ab = ac.dotd(ab);
+                    double ac_dot_ab = ac.dot(ab);
                     
                     // Distance of D from A as a fraction of the distance of B from A
                     double fractionOfAB = ac_dot_ab / ab_distsq;

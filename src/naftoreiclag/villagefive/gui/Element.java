@@ -32,11 +32,11 @@ public abstract class Element {
     
     // Local transform. This is used to calculate the absolute transform from the parent's absolute transform.
     private Vec2 localLoc = new Vec2(0, 0);
-    private double localScale = 1;
+    private Vec2 localScale = new Vec2(1, 1);
     
     // Absolute transform. This is used to calculate each attached element's absolute transform.
     protected Vec2 absLoc = new Vec2(0, 0);
-    protected double absScale = 1;
+    protected Vec2 absScale = new Vec2(1, 1);
 
     // Z-value on a 2d plane.
     protected double depth;

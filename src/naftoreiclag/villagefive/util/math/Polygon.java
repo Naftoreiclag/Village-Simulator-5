@@ -144,7 +144,7 @@ public class Polygon
                 Vec2 ac = c.subtract(a);
                 Vec2 ab = b.subtract(a);
                 
-                double offset = ac.dot(ab);
+                double offset = ac.dotF(ab);
                 offset /= ab.lenF();
                 
                 ArrayList<Hole> origHoles = holesPerEdge.get(i);
