@@ -50,10 +50,9 @@ public final class InvItemEntity extends InvItem {
     }
 
     @Override
-    public void performTask(PlayerEntity aThis) {
-        Vec2 loc = aThis.getLocation();
-        
-        aThis.getWorld().materializeEntity(entity);
+    public void performTask(PlayerEntity caller) {
+        Vec2 loc = caller.getLocation();
+        caller.getWorld().materializeEntity(entity);
         entity.setLocation(loc);
         
     }

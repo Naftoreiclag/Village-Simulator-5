@@ -11,40 +11,29 @@ import com.jme3.texture.Texture;
 import naftoreiclag.villagefive.SAM;
 import org.luaj.vm2.LuaValue;
 
-public class LuaTexture
+public final class LuaTexture
 {
-    private final boolean nil;
-    
-    public String textureFile;
-
+    public final String textureFile;
     public final String dir;
     
-    LuaTexture (String dir, LuaValue data)
-    {
+    private LuaTexture(String dir, String textureFile) {
         this.dir = dir;
-        if(data.isnil())
-        {
-            this.nil = true;
-        }
-        else
-        {
-            LuaValue file = data.get("textureFile");
-
-            if(file.isnil())
-            {
-                this.nil = true;
-            }
-            else
-            {
-                textureFile = file.checkjstring();
-                this.nil = false;
-            }
-        }
+        this.textureFile = textureFile;
     }
     
-    public boolean isNil()
+    public static LuaTexture create(String dir, LuaValue data)
     {
-        return nil;
+        if(data.isnil()) {
+            return null;
+        }
+        
+        LuaValue file = data.get("textureFile");
+        if(file.isnil()) {
+            return null;
+        }
+        
+        String textureFile = file.checkjstring();
+        return new LuaTexture(dir, textureFile);
     }
 
     public String getAbsolutePath() {

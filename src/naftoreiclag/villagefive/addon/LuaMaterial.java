@@ -43,14 +43,14 @@ public class LuaMaterial {
         LuaValue diffuseData = data.get("diffuse");
         if(diffuseData.isnil()) {
             // From "texture", if "diffuse" is nil
-            diffuse = new LuaTexture(dir, data.get("texture"));
+            diffuse = LuaTexture.create(dir, data.get("texture"));
         } else {
-            diffuse = new LuaTexture(dir, diffuseData);
+            diffuse = LuaTexture.create(dir, diffuseData);
         }
 
-        glow = new LuaTexture(dir, data.get("glow"));
-        bump = new LuaTexture(dir, data.get("bump"));
-        specular = new LuaTexture(dir, data.get("specular"));
+        glow = LuaTexture.create(dir, data.get("glow"));
+        bump = LuaTexture.create(dir, data.get("bump"));
+        specular = LuaTexture.create(dir, data.get("specular"));
         
         try {
             isMatcap = data.get("matcap").checkboolean();
@@ -58,9 +58,9 @@ public class LuaMaterial {
             isMatcap = false;
         }
         
-        rimColor = new LuaColor(data.get("rimColor"));
-        diffuseColor = new LuaColor(data.get("diffuseColor"));
-        ambientColor = new LuaColor(data.get("ambientColor"));
+        rimColor = LuaColor.create(data.get("rimColor"));
+        diffuseColor = LuaColor.create(data.get("diffuseColor"));
+        ambientColor = LuaColor.create(data.get("ambientColor"));
         
         try {
             shadingEnable = data.get("shading").checkboolean();
@@ -205,7 +205,7 @@ public class LuaMaterial {
         // If we currently have a LIGHTING material, and BLOW features are needed, then upgrade.
         if(currentShadingLevel == LIGHTING) {
             // If blow features are needed, then upgrade
-            if(!rimColor.isNil() || 
+            if(rimColor != null || 
                isMatcap) {
                 // Make a new material to replace the current one with
                 Material newMaterial = new Material(SAM.ASSETS, "ShaderBlow/MatDefs/LightBlow/LightBlow.j3md");
@@ -250,27 +250,25 @@ public class LuaMaterial {
          *****/
         
         if(currentShadingLevel == UNSHADED) {
-            if(!diffuse.isNil()) { material.setTexture("ColorMap", diffuse.getTexture()); }
-            if(!diffuseColor.isNil()) { material.setColor("Color", diffuseColor.toColor()); }
+            if(diffuse != null) { material.setTexture("ColorMap", diffuse.getTexture()); }
+            if(diffuseColor != null) { material.setColor("Color", diffuseColor.toColor()); }
         }
         if(currentShadingLevel == LIGHTING || currentShadingLevel == BLOW) {
-            if(!diffuse.isNil()) { material.setTexture("DiffuseMap", diffuse.getTexture()); }
-            if(!diffuseColor.isNil()) { material.setColor("Diffuse", diffuseColor.toColor()); }
-            if(!ambientColor.isNil()) { material.setColor("Ambient", ambientColor.toColor()); }
+            if(diffuse != null) { material.setTexture("DiffuseMap", diffuse.getTexture()); }
+            if(diffuseColor != null) { material.setColor("Diffuse", diffuseColor.toColor()); }
+            if(ambientColor != null) { material.setColor("Ambient", ambientColor.toColor()); }
             
             // Of course, if any color is defined then it should be used
-            if(!diffuseColor.isNil() || !ambientColor.isNil()) {
+            if(diffuseColor != null || ambientColor != null) {
                 material.setBoolean("UseMaterialColors", true);
             }
         }
         if(currentShadingLevel == UNSHADED || currentShadingLevel == LIGHTING || currentShadingLevel == BLOW) {
-            if(!glow.isNil()) { material.setTexture("GlowMap", glow.getTexture()); }
+            if(glow != null) { material.setTexture("GlowMap", glow.getTexture()); }
         }
         if(currentShadingLevel == MATCAP) {
-            if(!diffuse.isNil()) { material.setTexture("DiffuseMap", diffuse.getTexture()); }
+            if(diffuse != null) { material.setTexture("DiffuseMap", diffuse.getTexture()); }
         }
-        
-        System.out.println("fewafdsgerfsdh:" + currentShadingLevel);
         
         return material;
     }

@@ -10,42 +10,42 @@ import com.jme3.math.ColorRGBA;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 
-public class LuaColor
-{
-    private final boolean nil;
-    
-    public double r = 0d;
-    public double g = 0d;
-    public double b = 0d;
+public final class LuaColor {
+    private LuaColor(double r, double g, double b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+    public final double r;
+    public final double g;
+    public final double b;
 
-    public LuaColor(LuaValue data) {
-        if(data.isnil())
-        {
-            this.nil = true;
+    static LuaColor create(LuaValue data) {
+        if(data.isnil()) {
+            return null;
         }
-        else
-        {
-            try {
-                r = data.get(1).checkdouble();
-            } catch (LuaError error) {}
-            try {
-                g = data.get(2).checkdouble();
-            } catch (LuaError error) {}
-            try {
-                b = data.get(3).checkdouble();
-            } catch (LuaError error) {}
-            
-            this.nil = false;
+
+        double r = 0;
+        double g = 0;
+        double b = 0;
+
+        try {
+            r = data.get(1).checkdouble();
+        } catch(LuaError _) {
         }
+        try {
+            g = data.get(2).checkdouble();
+        } catch(LuaError _) {
+        }
+        try {
+            b = data.get(3).checkdouble();
+        } catch(LuaError _) {
+        }
+
+        return new LuaColor(r, g, b);
     }
 
-    public boolean isNil()
-    {
-        return nil;
-    }
-    
-    public ColorRGBA toColor()
-    {
+    public ColorRGBA toColor() {
         return new ColorRGBA((float) r, (float) g, (float) b, 1.0f);
     }
 }

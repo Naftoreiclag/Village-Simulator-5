@@ -27,6 +27,6 @@ public abstract class InvItem implements JSONAware {
 
     public abstract String getItemId();
 
-    public abstract void performTask(PlayerEntity aThis);
+    public abstract void performTask(PlayerEntity caller);
     
 }

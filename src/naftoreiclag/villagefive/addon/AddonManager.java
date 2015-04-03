@@ -7,6 +7,7 @@
 package naftoreiclag.villagefive.addon;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.world.entity.EntityRegistry;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.luaj.vm2.Globals;
@@ -32,11 +34,7 @@ public class AddonManager
     {
         addonCollection.clear();
         
-        // List all of the folders located in pluginRoots
-        List<File> pluginRoots = (List<File>) FileUtils.listFilesAndDirs(new File(SAM.ADDON_DIR), FalseFileFilter.FALSE, TrueFileFilter.TRUE);
-        
-        // Remove the plugins folder, not sure why its even included.
-        pluginRoots.remove(0);
+        File[] pluginRoots = (new File(SAM.ADDON_DIR)).listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
         
         // 
         for(File pluginRoot : pluginRoots)

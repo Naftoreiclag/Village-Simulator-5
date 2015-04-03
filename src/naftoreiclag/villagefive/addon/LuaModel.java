@@ -8,18 +8,29 @@ package naftoreiclag.villagefive.addon;
 
 import org.luaj.vm2.LuaValue;
 
-public class LuaModel {
+public final class LuaModel {
 
     public String meshFile;
     public LuaMaterial materialOverride;
     
     public final String dir;
     
-    public LuaModel(String dir, LuaValue data)
+    private LuaModel(String dir, LuaValue data)
     {
         this.dir = dir;
         meshFile = data.get("meshFile").checkjstring();
         materialOverride = new LuaMaterial(dir, data.get("material"));
     }
-
+    
+    public static LuaModel create(String dir, LuaValue data) {
+        LuaModel ret;
+        
+        try {
+            ret = new LuaModel(dir, data);
+        } catch(Exception e) {
+            ret = null;
+        }
+        
+        return ret;
+    }
 }

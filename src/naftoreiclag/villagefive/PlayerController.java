@@ -43,7 +43,6 @@ import org.dyn4j.geometry.Mass;
 public final class PlayerController extends EntityController implements ActionListener, AnalogListener {
     public World world;
     private PlayerEntity entity;
-    private PlayerOfflineData data;
     public List<Plot> property;
     
     public void setEntity(PlayerEntity entity) {

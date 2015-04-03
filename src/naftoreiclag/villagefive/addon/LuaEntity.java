@@ -19,6 +19,7 @@ public class LuaEntity {
     public String desc;
     
     public LuaModel model;
+    public LuaTexture icon;
     
     public double radius;
     
@@ -32,8 +33,12 @@ public class LuaEntity {
         name = data.get("name").optjstring(id);
         desc = data.get("description").optjstring(null);
         
-        model = new LuaModel(dir, data.get("model"));
+        model = LuaModel.create(dir, data.get("model"));
         radius = data.get("radius").checkdouble();
+        
+        icon = LuaTexture.create(dir, data.get("icon"));
     }
+    
+    
 
 }

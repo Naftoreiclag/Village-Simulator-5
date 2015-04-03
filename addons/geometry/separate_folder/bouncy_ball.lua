@@ -8,13 +8,13 @@ entityBouncyBall = {
 	movable = true,
 	obtainable = true,
 	
-	model = fromFile("Icosphere.mesh.j3o")
+	model = fromFile("Icosphere.mesh.j3o") -- Absolute path
 }
 
 local mat = entityBouncyBall.model.material
 
 mat.shading = true
-mat.texture = fromFile("bouncy_ball_red.png")
+mat.texture = fromFile("separate_folder/bouncy_ball_red.png")
 mat.matcap = true
 
 return entityBouncyBall;

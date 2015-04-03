@@ -4,13 +4,13 @@
 
 Addon = {
 	-- User-friendly readable information. Can change between releases.
-	name = "Geometry Addon",
-	description = "A really cool addon that adds some basic shapes.",
+	name = "Example Addon",
+	description = "An example addon that adds some very basic things.",
 
 	-- What the game and all other addons will know this project as.
 	-- This should not vary between releases.
-	id = "clifgeo",
-	author = "Clifford the Shape Demon",
+	id = "myexample",
+	author = "Alexander Hamilton",
 
 	-- Use whatever convention you want for this.
 	version = 5,
@@ -23,19 +23,12 @@ Addon = {
 		"2",
 		"beta"
 	},
-	
-	-- You can also store some custom data here.
-	isAnExample = true
 }
 
 -- List all of your entities here.
 Addon.entities = {
-	fromFile("cone.lua"),
-	fromFile("torus.lua"),
-	fromFile("reallyShinyTorus.lua"),
-	fromFile("basketball.lua"),
-	fromFile("soccerball.lua"),
-	fromFile("separate_folder/bouncy_ball.lua")
+	fromFile("entities/box.lua"),
+	fromFile("entities/money.lua")
 }
 
 return Addon
