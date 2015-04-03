@@ -36,7 +36,7 @@ public class InventoryGUI implements ActionListener, AnalogListener
         
         Collision box2 = new Collision(mainInventory.width, mainInventory.height);
         plane.attachElement(box2);
-        mainInventory.addFollower(box2);
+        mainInventory.attachElement(box2);
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
     }

@@ -17,12 +17,33 @@ import naftoreiclag.villagefive.util.math.Vec2;
  * 
  */
 public abstract class Element {
-    private List<Element> followers = new ArrayList<Element>();
-    private Element leader = null;
+    
+    // Where is this stored?
+    public SpritePlane plane;
+    
+    // Whenever this element's location is updated, all of these elements will update too, as if they were attached.
+    private List<Element> attachedElements = new ArrayList<Element>();
+    
+    // This only makes handling image transforms a bit easier. It is not affected by the parent element.
+    protected Vec2 origin = new Vec2(0, 0);
+    
+    // Pointer to the element to which this is attached.
+    private Element parentElement = null;
+    
+    // Local transform. This is used to calculate the absolute transform from the parent's absolute transform.
     private Vec2 localLoc = new Vec2(0, 0);
+    private double localScale = 1;
+    
+    // Absolute transform. This is used to calculate each attached element's absolute transform.
+    protected Vec2 absLoc = new Vec2(0, 0);
+    protected double absScale = 1;
 
-    public void setDepth(double x) {
-        this.depth = x;
+    // Z-value on a 2d plane.
+    protected double depth;
+    
+    // Change the layer/depth
+    public void setLayer(int layer) {
+        this.depth = layer * SpritePlane.epsilonDiff;
 
         // Re-sort
         if(this.plane.elements.contains(this)) {
@@ -32,8 +53,8 @@ public abstract class Element {
 
         updateSpatial();
     }
-
-    public abstract boolean collides(Vec2 absPoint);
+    
+    // Used to optimize "raycasting"
     public static Comparator<Element> depthCompare = new Comparator<Element>() {
         @Override
         public int compare(Element right, Element left) {
@@ -46,42 +67,37 @@ public abstract class Element {
             }
         }
     };
-    protected double depth;
-    protected Vec2 absLoc = new Vec2(0, 0);
-    protected Vec2 origin = new Vec2(0, 0);
-    public SpritePlane plane;
+
+    // Return true if this absolute point collides with you.
+    public abstract boolean collides(Vec2 absPoint);
+    
+    // Used by non-point things
     public double width;
     public double height;
 
-    public void addFollower(Element glue) {
-        this.followers.add(glue);
+    public void attachElement(Element element) {
+        this.attachedElements.add(element);
 
-        glue.leader = this;
-        glue.updateLoc();
+        element.parentElement = this;
+        element.updateTransform();
     }
 
-    // Optional form of "addFollower"
-    public void follow(Element leader) {
-        leader.addFollower(this);
-    }
-
-    // "Iterate" though all the followers and sub-followers to match my new position
-    private void followLeader() {
-        if(leader != null) {
-            this.absLoc = this.localLoc.add(leader.absLoc);
+    // Calculate position based on the transform of the parent element
+    private void calculateAbsTransform() {
+        if(parentElement != null) {
+            this.absLoc = this.localLoc.mult(parentElement.absScale).add(parentElement.absLoc);
+            this.absScale = parentElement.absScale;
         } else {
             this.absLoc = this.localLoc;
-        }
-        for(Element e : followers) {
-            e.followLeader();
         }
         updateSpatial();
     }
 
-    // Called whenver any location vector (i.e. loc, origin,)
-    private void updateLoc() {
-        // Begin recursive func
-        followLeader();
+    private void updateTransform() {
+        calculateAbsTransform();
+        for(Element e : attachedElements) {
+            e.updateTransform();
+        }
     }
 
     // Called whenever the spatial (if it has one) should be updated
@@ -89,38 +105,38 @@ public abstract class Element {
 
     public void setOrigin(double x, double y) {
         this.origin.set(x, y);
-        updateLoc();
+        updateTransform();
     }
 
     public void setOrigin(float x, float y) {
         this.origin.set(x, y);
-        updateLoc();
+        updateTransform();
     }
 
     public void setOrigin(Vec2 newLoc) {
         this.origin.set(newLoc);
-        updateLoc();
+        updateTransform();
     }
     
     // Set the origin to be in the middle of the bounding box (Called upon creation)
     public final void setOriginMid() {
         this.origin.set(width / 2d, height / 2d);
-        updateLoc();
+        updateTransform();
     }
 
     public void setLoc(double x, double y) {
         this.localLoc.set(x, y);
-        updateLoc();
+        updateTransform();
     }
 
     public void setLoc(float x, float y) {
         this.localLoc.set(x, y);
-        updateLoc();
+        updateTransform();
     }
 
     public void setLoc(Vec2 newLoc) {
         this.localLoc.set(newLoc);
-        updateLoc();
+        updateTransform();
     }
     
     // Get the given point's coordinates as expressed as an offset from my origin

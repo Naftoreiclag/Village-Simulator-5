@@ -24,7 +24,7 @@ public class SpritePlane {
     
     // This is the difference in z value when calculating layering.
     public static double epsilonDiff = 0.00001d;
-    double epsilon = 0d;
+    int lastLayer = 0;
     public int width;
     public int height;
     ViewPort viewPort;
@@ -43,8 +43,8 @@ public class SpritePlane {
 
     public void attachElement(Element element) {
         element.setPlane(this);
-        element.setDepth(element.depth + epsilon);
-        epsilon += epsilonDiff;
+        element.setLayer(lastLayer);
+        lastLayer ++;
         elements.add(element);
 
         if(element instanceof Sprite) {

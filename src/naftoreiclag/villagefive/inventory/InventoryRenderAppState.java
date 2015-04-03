@@ -13,6 +13,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import naftoreiclag.villagefive.Main;
+import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.gui.Sprite;
 import naftoreiclag.villagefive.gui.SpritePlane;
 
@@ -48,6 +49,12 @@ public class InventoryRenderAppState extends AbstractAppState {
     @Override
     public void update(float tpf) {
         
+    }
+
+    OverworldAppState game;
+    
+    public void setGame(OverworldAppState aThis) {
+        this.game = aThis;
     }
 
 }
