@@ -17,12 +17,14 @@ import naftoreiclag.villagefive.util.math.Vec2;
 public final class Sprite extends Element
 {
     protected Picture picture;
+    protected Texture texture;
     
     public Sprite(String file)
     {
+        
         picture = new Picture(file);
         Material background = new Material(SAM.ASSETS, "Common/MatDefs/Misc/Unshaded.j3md");
-        Texture texture = SAM.ASSETS.loadTexture(file);
+        texture = SAM.ASSETS.loadTexture(file);
         texture.setWrap(Texture.WrapMode.Repeat);
         background.setTexture("ColorMap", texture);
         background.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);

@@ -14,6 +14,8 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.OverworldAppState;
+import naftoreiclag.villagefive.gui.Element;
+import naftoreiclag.villagefive.gui.Empty;
 import naftoreiclag.villagefive.gui.Sprite;
 import naftoreiclag.villagefive.gui.SpritePlane;
 
@@ -23,9 +25,13 @@ public class InventoryRenderAppState extends AbstractAppState {
     Camera cam;
     ViewPort viewPort;
     
-    Sprite mainInventory;
-    Sprite test;
     SpritePlane plane;
+    
+    Element hotbar;
+    Element[] slot;
+    
+    Sprite melon;
+    
     
     double testScale = 1;
     
@@ -45,19 +51,33 @@ public class InventoryRenderAppState extends AbstractAppState {
         viewPort.setClearFlags(false, true, true);
         
         plane = new SpritePlane(viewPort);
-        mainInventory = new Sprite("Interface/inv.png");
-        test = new Sprite("Interface/melon.png");
-        plane.attachElement(mainInventory);
-        plane.attachElement(test);
-        test.setLoc(300, 300);
-        mainInventory.attachElement(test);
+        
+        hotbar = new Sprite("Interface/hotbar.png");
+        
+        hotbar.setOrigin(hotbar.width, hotbar.height);
+        hotbar.setLoc(cam.getWidth(), cam.getHeight());
+        plane.addElement(hotbar);
+        
+        slot = new Element[10];
+        for(int i = 0; i < 10; ++ i) {
+            slot[i] = new Empty();
+            slot[i].setLoc(-75, -75 - (i * 150));
+            plane.addElement(slot[i]);
+            hotbar.attachElement(slot[i]);
+        }
+        
+        melon = new Sprite("Interface/melon.png");
+        plane.addElement(melon);
+        slot[1].attachElement(melon);
+        
     }
     
     @Override
     public void update(float tpf) {
         testScale += tpf * 0.2;
         
-        mainInventory.setScale(testScale);
+        hotbar.setScale(testScale);
+        
     }
 
     OverworldAppState game;

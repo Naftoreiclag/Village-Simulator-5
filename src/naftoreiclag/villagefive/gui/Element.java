@@ -19,7 +19,7 @@ import naftoreiclag.villagefive.util.math.Vec2;
 public abstract class Element {
     
     // Where is this stored?
-    public SpritePlane plane;
+    protected SpritePlane plane;
     
     // Whenever this element's location is updated, all of these elements will update too, as if they were attached.
     private List<Element> attachedElements = new ArrayList<Element>();
@@ -94,6 +94,7 @@ public abstract class Element {
         updateSpatial();
     }
 
+    // Whenever localLoc or localScale is changed, call this to update the child elements.
     private void updateTransform() {
         calculateAbsTransform();
         for(Element e : attachedElements) {
@@ -101,7 +102,7 @@ public abstract class Element {
         }
     }
 
-    // Called whenever the spatial (if it has one) should be updated
+    // Called whenever the spatial (if it has one) should be updated. i.e. whenever calculateAbsTransform() is called.
     public abstract void updateSpatial();
 
     public void setOrigin(double x, double y) {
@@ -139,9 +140,5 @@ public abstract class Element {
     // Get the given point's coordinates as expressed as an offset from my origin
     public Vec2 transLocal(Vec2 abs) {
         return abs.subtract(absLoc.subtract(origin));
-    }
-
-    void setPlane(SpritePlane plane) {
-        this.plane = plane;
     }
 }

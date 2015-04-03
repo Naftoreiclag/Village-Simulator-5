@@ -41,8 +41,8 @@ public class SpritePlane {
         this.height = viewPort.getCamera().getHeight();
     }
 
-    public void attachElement(Element element) {
-        element.setPlane(this);
+    public void addElement(Element element) {
+        element.plane = this;
         element.setLayer(lastLayer);
         lastLayer ++;
         elements.add(element);
