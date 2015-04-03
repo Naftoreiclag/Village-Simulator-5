@@ -28,10 +28,10 @@ public class LuaMaterial {
     public LuaColor ambientColor;
     public LuaColor rimColor;
     
-    // If "changeShading" is false, then "shadingEnable" will have no effect.
-    // This way, the default action for a LuaMaterial is to just inherit whatever shading is set.
-    public boolean changeShading;
-    public boolean shadingEnable;
+    // True: shading will be forced on.
+    // False: shading will be forced off.
+    // Null: no effect.
+    public Boolean enableShading;
     
     public boolean isMatcap;
     
@@ -42,7 +42,6 @@ public class LuaMaterial {
     }
 
     public static LuaMaterial create(String dir, LuaValue data) {
-        
         if(data.isnil()) {
             return null;
         }
@@ -73,14 +72,12 @@ public class LuaMaterial {
         ret.ambientColor = LuaColor.create(data.get("ambientColor"));
         
         try {
-            ret.shadingEnable = data.get("shading").checkboolean();
-            ret.changeShading = true;
+            ret.enableShading = data.get("shading").checkboolean();
         } catch(LuaError error) {
-            ret.changeShading = false;
+            ret.enableShading = null;
         }
         
         return ret;
-        
     }
 
     // Modify this spatial and all its children to use this material. Performs a pre-order search.
@@ -141,7 +138,7 @@ public class LuaMaterial {
          ****/
         
         // If the user explicitly wants shading to be off, then do so
-        if(changeShading && !shadingEnable) {
+        if(enableShading == false) {
             // If the current level is anything but unshaded, then convert it to an unshaded material
             if(currentShadingLevel != UNSHADED) {
                 // Make a new material to replace the current one with
@@ -169,7 +166,7 @@ public class LuaMaterial {
         }
         
         // If the user explicitly wants shading to be on
-        else if(changeShading && shadingEnable) {
+        else if(enableShading == true) {
             // If isMatcap is true, then use matcap instead
             if(isMatcap) {
                 material = new Material(SAM.ASSETS, "ShaderBlow/MatDefs/MatCap/MatCap.j3md");
