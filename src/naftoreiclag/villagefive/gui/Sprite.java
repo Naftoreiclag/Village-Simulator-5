@@ -41,10 +41,10 @@ public final class Sprite extends Element
     public void updateSpatial()
     {
         picture.setLocalTranslation(
-                (float) (absLoc.getX() - (origin.getX() * this.absScale)), 
-                (float) (absLoc.getY() - (origin.getY() * this.absScale)), 
+                (float) (absLoc.getX() - (origin.getX() * this.absScale.getX())), 
+                (float) (absLoc.getY() - (origin.getY() * this.absScale.getY())), 
                 (float) depth);
-        picture.setLocalScale((float) (this.width * this.absScale), (float) (this.height * this.absScale), 1);
+        picture.setLocalScale((float) (this.width * this.absScale.getX()), (float) (this.height * this.absScale.getY()), 1);
         
         
         if(plane != null)

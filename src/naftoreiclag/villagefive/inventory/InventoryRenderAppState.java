@@ -76,7 +76,7 @@ public class InventoryRenderAppState extends AbstractAppState {
     public void update(float tpf) {
         testScale += tpf * 0.2;
         
-        hotbar.setScale(testScale);
+        hotbar.setScale(testScale, 1);
         
     }
 
