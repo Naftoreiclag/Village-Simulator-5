@@ -44,5 +44,10 @@ public class InventoryRenderAppState extends AbstractAppState {
         mainInventory = new Sprite("Interface/inv.png");
         plane.attachElement(mainInventory);
     }
+    
+    @Override
+    public void update(float tpf) {
+        
+    }
 
 }
