@@ -6,6 +6,7 @@ Addon = {
 	-- User-friendly readable information. Can change between releases.
 	name = "Example Addon",
 	description = "An example addon that adds some very basic things.",
+	icon = fromFile("addon.jpg"),
 
 	-- What the game and all other addons will know this project as.
 	-- This should not vary between releases.
@@ -27,8 +28,7 @@ Addon = {
 
 -- List all of your entities here.
 Addon.entities = {
-	fromFile("entities/box.lua"),
-	fromFile("entities/money.lua")
+	fromFile("box/box.lua")
 }
 
 return Addon

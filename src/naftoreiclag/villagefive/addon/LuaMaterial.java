@@ -28,10 +28,12 @@ public class LuaMaterial {
     public LuaColor ambientColor;
     public LuaColor rimColor;
     
-    // True: shading will be forced on.
-    // False: shading will be forced off.
-    // Null: no effect.
-    public Boolean enableShading;
+    public static enum ShadingOptions {
+        TRUE,
+        FALSE,
+        NULL
+    }
+    public ShadingOptions shadingOption;
     
     public boolean isMatcap;
     
@@ -63,7 +65,7 @@ public class LuaMaterial {
         
         try {
             ret.isMatcap = data.get("matcap").checkboolean();
-        } catch(LuaError error) {
+        } catch(LuaError _) {
             ret.isMatcap = false;
         }
         
@@ -72,9 +74,9 @@ public class LuaMaterial {
         ret.ambientColor = LuaColor.create(data.get("ambientColor"));
         
         try {
-            ret.enableShading = data.get("shading").checkboolean();
-        } catch(LuaError error) {
-            ret.enableShading = null;
+            ret.shadingOption = data.get("shading").checkboolean() ? ShadingOptions.TRUE : ShadingOptions.FALSE;
+        } catch(LuaError _) {
+            ret.shadingOption = ShadingOptions.NULL;
         }
         
         return ret;
@@ -138,7 +140,7 @@ public class LuaMaterial {
          ****/
         
         // If the user explicitly wants shading to be off, then do so
-        if(enableShading == false) {
+        if(shadingOption == ShadingOptions.FALSE) {
             // If the current level is anything but unshaded, then convert it to an unshaded material
             if(currentShadingLevel != UNSHADED) {
                 // Make a new material to replace the current one with
@@ -166,7 +168,7 @@ public class LuaMaterial {
         }
         
         // If the user explicitly wants shading to be on
-        else if(enableShading == true) {
+        else if(shadingOption == ShadingOptions.TRUE) {
             // If isMatcap is true, then use matcap instead
             if(isMatcap) {
                 material = new Material(SAM.ASSETS, "ShaderBlow/MatDefs/MatCap/MatCap.j3md");

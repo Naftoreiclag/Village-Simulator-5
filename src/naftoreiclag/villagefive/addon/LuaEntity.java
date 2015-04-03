@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive.addon;
 
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 
 public class LuaEntity {
@@ -23,6 +24,10 @@ public class LuaEntity {
     
     public double radius;
     
+    public boolean movable;
+    
+    public final boolean canBePlaced;
+    
     LuaEntity(LuaAddon parent, LuaTable data)
     {
         this.parent = parent;
@@ -35,8 +40,17 @@ public class LuaEntity {
         
         model = LuaModel.create(dir, data.get("model"));
         radius = data.get("radius").checkdouble();
-        
         icon = LuaTexture.create(dir, data.get("icon"));
+        
+        
+        
+        boolean setBePlaced;
+        try {
+            setBePlaced = data.get("canBePlaced").checkboolean();
+        } catch(LuaError _) {
+            setBePlaced = false;
+        }
+        canBePlaced = setBePlaced;
     }
     
     

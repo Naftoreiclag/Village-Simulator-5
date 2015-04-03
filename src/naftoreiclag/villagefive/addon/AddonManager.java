@@ -39,6 +39,7 @@ public class AddonManager
         // 
         for(File pluginRoot : pluginRoots)
         {
+            System.out.println(pluginRoot);
             String addon_root = pluginRoot.getPath().replace('\\', '/') + "/";
             
             Globals globals = JsePlatform.standardGlobals();
