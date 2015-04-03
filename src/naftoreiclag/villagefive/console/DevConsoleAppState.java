@@ -31,11 +31,10 @@ import naftoreiclag.villagefive.util.HistoryArray;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.world.World;
 
+// Attaching this AppState allows a developer console to be shown. The actual console logic is handled in Console.
 public class DevConsoleAppState extends AbstractAppState implements ScreenController, KeyInputHandler {
     
     // Recall prepareConsole(); after resizing the screen.
-    
-    // TODO: make writing to console more efficient. Currently its being updated way too often.
     
     // true: Re-draws the console with every println(); call. Potentially slower, but will avoid glitchy text.
     // false: Only re-draw console at most once per tick. Definitely faster, but will cause glitchy text.

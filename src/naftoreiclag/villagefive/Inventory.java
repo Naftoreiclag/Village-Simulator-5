@@ -51,7 +51,7 @@ public class Inventory implements JSONAware {
 
     public void addItem(InvItem i) {
         int firstSlot = findFirstOpenSlot();
-        
+        i.inv = this;
         items.put(firstSlot, i);
     }
 
@@ -61,5 +61,19 @@ public class Inventory implements JSONAware {
         } else {
             return null;
         }
+    }
+    
+    public void deleteItem(InvItem i) {
+        
+        // Avoid concurrent modification!
+        
+        Integer removeMe = -1;
+        for(Map.Entry<Integer, InvItem> entry : items.entrySet()) {
+            if(entry.getValue() == i) {
+                removeMe = entry.getKey();
+            }
+        }
+        
+        items.remove(removeMe);
     }
 }

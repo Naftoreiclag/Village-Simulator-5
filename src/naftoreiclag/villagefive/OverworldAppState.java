@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import naftoreiclag.villagefive.inventory.InventoryRenderAppState;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.util.scenegraph.AxesMaker;
@@ -55,6 +56,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     Camera invCam;
     
     DevConsoleAppState devConsole;
+    InventoryRenderAppState invAppState;
     
     World world;
     public World getWorld() { return world; }
@@ -101,6 +103,9 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         devConsole.setEnabled(false);
         stateManager.attach(devConsole);
         SAM.INPUT.addListener(this, KeyKeys.console);
+        
+        invAppState = new InventoryRenderAppState();
+        stateManager.attach(invAppState);
         
         devConsole.setGame(this);
         genworld();

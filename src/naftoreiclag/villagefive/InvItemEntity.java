@@ -55,6 +55,7 @@ public final class InvItemEntity extends InvItem {
         caller.getWorld().materializeEntity(entity);
         entity.setLocation(loc);
         
+        this.inv.deleteItem(this);
     }
 
     

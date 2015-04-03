@@ -13,6 +13,8 @@ import org.json.simple.JSONObject;
 
 public abstract class InvItem implements JSONAware {
 
+    protected Inventory inv;
+    
     public static InvItem makeFrom(JSONObject data) {
         String id = (String) data.get("id");
         
