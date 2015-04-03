@@ -18,6 +18,7 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 
 public class LuaMaterial {
+
     public LuaTexture diffuse;
     public LuaTexture glow;
     public LuaTexture bump;
@@ -35,39 +36,50 @@ public class LuaMaterial {
     public boolean isMatcap;
     
     public final String dir;
-
-    public LuaMaterial(String dir, LuaValue data) {
+    
+    private LuaMaterial(String dir) {
         this.dir = dir;
+    }
+
+    public static LuaMaterial create(String dir, LuaValue data) {
+        
+        if(data.isnil()) {
+            return null;
+        }
+        
+        LuaMaterial ret = new LuaMaterial(dir);
         
         // You can either specify "texture" or "diffuse" for the diffuse data, but if there are both, then "diffuse" overrides.
         LuaValue diffuseData = data.get("diffuse");
         if(diffuseData.isnil()) {
             // From "texture", if "diffuse" is nil
-            diffuse = LuaTexture.create(dir, data.get("texture"));
+            ret.diffuse = LuaTexture.create(dir, data.get("texture"));
         } else {
-            diffuse = LuaTexture.create(dir, diffuseData);
+            ret.diffuse = LuaTexture.create(dir, diffuseData);
         }
 
-        glow = LuaTexture.create(dir, data.get("glow"));
-        bump = LuaTexture.create(dir, data.get("bump"));
-        specular = LuaTexture.create(dir, data.get("specular"));
+        ret.glow = LuaTexture.create(dir, data.get("glow"));
+        ret.bump = LuaTexture.create(dir, data.get("bump"));
+        ret.specular = LuaTexture.create(dir, data.get("specular"));
         
         try {
-            isMatcap = data.get("matcap").checkboolean();
+            ret.isMatcap = data.get("matcap").checkboolean();
         } catch(LuaError error) {
-            isMatcap = false;
+            ret.isMatcap = false;
         }
         
-        rimColor = LuaColor.create(data.get("rimColor"));
-        diffuseColor = LuaColor.create(data.get("diffuseColor"));
-        ambientColor = LuaColor.create(data.get("ambientColor"));
+        ret.rimColor = LuaColor.create(data.get("rimColor"));
+        ret.diffuseColor = LuaColor.create(data.get("diffuseColor"));
+        ret.ambientColor = LuaColor.create(data.get("ambientColor"));
         
         try {
-            shadingEnable = data.get("shading").checkboolean();
-            changeShading = true;
+            ret.shadingEnable = data.get("shading").checkboolean();
+            ret.changeShading = true;
         } catch(LuaError error) {
-            changeShading = false;
+            ret.changeShading = false;
         }
+        
+        return ret;
         
     }
 

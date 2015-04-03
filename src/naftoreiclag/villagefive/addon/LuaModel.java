@@ -19,7 +19,7 @@ public final class LuaModel {
     {
         this.dir = dir;
         meshFile = data.get("meshFile").checkjstring();
-        materialOverride = new LuaMaterial(dir, data.get("material"));
+        materialOverride = LuaMaterial.create(dir, data.get("material"));
     }
     
     public static LuaModel create(String dir, LuaValue data) {
