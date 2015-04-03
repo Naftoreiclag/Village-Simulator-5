@@ -12,8 +12,7 @@ public class Collision extends Element
 {
     public Collision(double width, double height)
     {
-        this.width = width;
-        this.height = height;
+        super(width, height);
         this.setOriginMid();
     }
 

@@ -18,6 +18,11 @@ import naftoreiclag.villagefive.util.math.Vec2;
  */
 public abstract class Element {
     
+    public Element(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+    
     // Where is this stored?
     protected SpritePlane plane;
     
@@ -72,8 +77,8 @@ public abstract class Element {
     public abstract boolean collides(Vec2 absPoint);
     
     // Used by non-point things
-    public double width;
-    public double height;
+    public final double width;
+    public final double height;
 
     public void attachElement(Element element) {
         this.attachedElements.add(element);
@@ -143,6 +148,18 @@ public abstract class Element {
     public void setScale(Vec2 scale) {
         this.localScale.set(scale);
         updateTransform();
+    }
+    public void setWidth(double width) {
+        this.localScale.setX(width / this.width);
+    }
+    public void setHeight(double height) {
+        this.localScale.setY(height / this.height);
+    }
+    public void setWidthKeepRatio(double width) {
+        this.localScale.set(width / this.width);
+    }
+    public void setHeightKeepRatio(double height) {
+        this.localScale.set(height / this.height);
     }
     
     // Get the given point's coordinates as expressed as an offset from my origin

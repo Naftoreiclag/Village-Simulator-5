@@ -11,8 +11,7 @@ import naftoreiclag.villagefive.util.math.Vec2;
 public class Empty extends Element {
     
     public Empty() {
-        this.width = 0;
-        this.height = 0;
+        super(1, 1);
     }
 
     @Override

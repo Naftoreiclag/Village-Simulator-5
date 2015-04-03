@@ -19,20 +19,18 @@ public final class Sprite extends Element
     protected Picture picture;
     protected Texture texture;
     
-    public Sprite(String file)
+    public Sprite(Texture texture)
     {
-        
-        picture = new Picture(file);
+        super(texture.getImage().getWidth(), texture.getImage().getHeight());
+        this.texture = texture;
+        picture = new Picture("Sprite");
         Material background = new Material(SAM.ASSETS, "Common/MatDefs/Misc/Unshaded.j3md");
-        texture = SAM.ASSETS.loadTexture(file);
-        texture.setWrap(Texture.WrapMode.Repeat);
         background.setTexture("ColorMap", texture);
         background.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         picture.setMaterial(background);
         picture.setLocalScale((float) texture.getImage().getWidth(), (float) texture.getImage().getHeight(), 1);
         
-        this.width = texture.getImage().getWidth();
-        this.height = texture.getImage().getHeight();
+        
         this.setOriginMid();
     }
     

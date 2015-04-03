@@ -388,17 +388,22 @@ public class Vec2 implements JSONAware
         this.x = x;
         this.y = y;
     }
-
+    public void set(float xy) {
+        this.x = xy;
+        this.y = xy;
+    }
     public void set(double x, double y) {
         this.x = x;
         this.y = y;
     }
-
+    public void set(double xy) {
+        this.x = xy;
+        this.y = xy;
+    }
     public void set(Vec2 mirror) {
         this.x = mirror.x;
         this.y = mirror.y;
     }
-
     public void set(com.jme3.math.Vector2f mirror) {
         this.x = mirror.x;
         this.y = mirror.y;

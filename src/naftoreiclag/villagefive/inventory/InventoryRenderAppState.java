@@ -14,6 +14,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.OverworldAppState;
+import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.gui.Element;
 import naftoreiclag.villagefive.gui.Empty;
 import naftoreiclag.villagefive.gui.Sprite;
@@ -52,7 +53,7 @@ public class InventoryRenderAppState extends AbstractAppState {
         
         plane = new SpritePlane(viewPort);
         
-        hotbar = new Sprite("Interface/hotbar.png");
+        hotbar = new Sprite(SAM.ASSETS.loadTexture("Interface/hotbar.png"));
         
         hotbar.setOrigin(hotbar.width, hotbar.height);
         hotbar.setLoc(cam.getWidth(), cam.getHeight());
@@ -66,7 +67,7 @@ public class InventoryRenderAppState extends AbstractAppState {
             hotbar.attachElement(slot[i]);
         }
         
-        melon = new Sprite("Interface/melon.png");
+        melon = new Sprite(SAM.ASSETS.loadTexture("Interface/melon.png"));
         plane.addElement(melon);
         slot[1].attachElement(melon);
         
@@ -74,10 +75,9 @@ public class InventoryRenderAppState extends AbstractAppState {
     
     @Override
     public void update(float tpf) {
-        testScale += tpf * 0.2;
+        testScale += tpf * 5;
         
-        hotbar.setScale(testScale, 1);
-        
+        hotbar.setWidthKeepRatio(testScale);
     }
 
     OverworldAppState game;
