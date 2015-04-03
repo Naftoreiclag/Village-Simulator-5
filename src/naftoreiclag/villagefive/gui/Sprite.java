@@ -27,8 +27,7 @@ public final class Sprite extends Element
         background.setTexture("ColorMap", texture);
         background.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         picture.setMaterial(background);
-        picture.setWidth(texture.getImage().getWidth());
-        picture.setHeight(texture.getImage().getHeight());
+        picture.setLocalScale((float) texture.getImage().getWidth(), (float) texture.getImage().getHeight(), 1);
         
         this.width = texture.getImage().getWidth();
         this.height = texture.getImage().getHeight();
@@ -39,7 +38,12 @@ public final class Sprite extends Element
     @Override
     public void updateSpatial()
     {
-        picture.setLocalTranslation(absLoc.getXF() - origin.getXF(), absLoc.getYF() - origin.getYF(), (float) depth);
+        picture.setLocalTranslation(
+                (float) (absLoc.getX() - (origin.getX() * this.absScale)), 
+                (float) (absLoc.getY() - (origin.getY() * this.absScale)), 
+                (float) depth);
+        picture.setLocalScale((float) (this.width * this.absScale), (float) (this.height * this.absScale), 1);
+        
         
         if(plane != null)
         {
@@ -52,4 +56,5 @@ public final class Sprite extends Element
     {
         return false;
     }
+
 }

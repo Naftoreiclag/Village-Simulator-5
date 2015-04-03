@@ -86,9 +86,10 @@ public abstract class Element {
     private void calculateAbsTransform() {
         if(parentElement != null) {
             this.absLoc = this.localLoc.mult(parentElement.absScale).add(parentElement.absLoc);
-            this.absScale = parentElement.absScale;
+            this.absScale = this.localScale * parentElement.absScale;
         } else {
             this.absLoc = this.localLoc;
+            this.absScale = this.localScale;
         }
         updateSpatial();
     }
@@ -104,11 +105,6 @@ public abstract class Element {
     public abstract void updateSpatial();
 
     public void setOrigin(double x, double y) {
-        this.origin.set(x, y);
-        updateTransform();
-    }
-
-    public void setOrigin(float x, float y) {
         this.origin.set(x, y);
         updateTransform();
     }
@@ -129,13 +125,14 @@ public abstract class Element {
         updateTransform();
     }
 
-    public void setLoc(float x, float y) {
-        this.localLoc.set(x, y);
-        updateTransform();
-    }
-
     public void setLoc(Vec2 newLoc) {
         this.localLoc.set(newLoc);
+        updateTransform();
+    }
+    
+    
+    public void setScale(double testScale) {
+        this.localScale = testScale;
         updateTransform();
     }
     

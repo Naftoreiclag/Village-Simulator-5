@@ -24,7 +24,10 @@ public class InventoryRenderAppState extends AbstractAppState {
     ViewPort viewPort;
     
     Sprite mainInventory;
+    Sprite test;
     SpritePlane plane;
+    
+    double testScale = 1;
     
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
@@ -43,12 +46,18 @@ public class InventoryRenderAppState extends AbstractAppState {
         
         plane = new SpritePlane(viewPort);
         mainInventory = new Sprite("Interface/inv.png");
+        test = new Sprite("Interface/melon.png");
         plane.attachElement(mainInventory);
+        plane.attachElement(test);
+        test.setLoc(300, 300);
+        mainInventory.attachElement(test);
     }
     
     @Override
     public void update(float tpf) {
+        testScale += tpf * 0.2;
         
+        mainInventory.setScale(testScale);
     }
 
     OverworldAppState game;
