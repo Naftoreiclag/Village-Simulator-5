@@ -9,20 +9,26 @@ package naftoreiclag.villagefive.inventory;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import naftoreiclag.villagefive.InvItem;
+import naftoreiclag.villagefive.InvItemEntity;
 import naftoreiclag.villagefive.Inventory;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.SAM;
+import naftoreiclag.villagefive.gui.Collision;
 import naftoreiclag.villagefive.gui.Element;
 import naftoreiclag.villagefive.gui.Empty;
 import naftoreiclag.villagefive.gui.Sprite;
 import naftoreiclag.villagefive.gui.SpritePlane;
+import naftoreiclag.villagefive.util.KeyKeys;
+import naftoreiclag.villagefive.util.math.Vec2;
 
-public class InventoryRenderAppState extends AbstractAppState implements IInventoryUpdateListener{
+public class InventoryRenderAppState extends AbstractAppState implements IInventoryUpdateListener, AnalogListener, ActionListener{
     Main app;
     
     Camera cam;
@@ -35,7 +41,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     
     Sprite melon;
     
-    
+    Vec2 mouseLoc = new Vec2();
 
     OverworldAppState game;
     
@@ -70,11 +76,13 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         
         slot = new Element[10];
         for(int i = 0; i < 10; ++ i) {
-            slot[i] = new Empty();
+            slot[i] = new Collision(128, 128);
             slot[i].setLoc(-75, -75 - (i * 150));
             plane.addElement(slot[i]);
             hotbar.attachElement(slot[i]);
         }
+        
+        SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
         
     }
     
@@ -82,11 +90,35 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     public void update(float tpf) {
     }
 
+    
+    
     public void onUpdate(Inventory inv, int slotIndex) {
         
-        melon = new Sprite(SAM.ASSETS.loadTexture("Interface/melon.png"));
+        InvItemEntity egg = ((InvItemEntity) inv.items.get(slotIndex));
+        
+        if(egg != null) {
+            melon = new Sprite(egg.entity.getIcon());
+            melon.setWidthKeepRatio(128);
+        }
         plane.addElement(melon);
         slot[slotIndex].attachElement(melon);
+    }
+    
+    @Override
+    public void onAction(String name, boolean isPressed, float tpf) {
+        if(name.equals(KeyKeys.mouse_left)) {
+            Element e = plane.rayCast(mouseLoc);
+
+            System.out.println(slot[0].transLocal(mouseLoc));
+            System.out.println("thihfewa:" + e);
+        }
+    }
+
+    @Override
+    public void onAnalog(String name, float value, float tpf) {
+        if(name.equals(KeyKeys.mouse_move)) {
+            mouseLoc.set(SAM.INPUT.getCursorPosition());
+        }
     }
 
 }

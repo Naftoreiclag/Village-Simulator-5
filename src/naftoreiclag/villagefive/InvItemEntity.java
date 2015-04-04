@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 public final class InvItemEntity extends InvItem {
 
     // TODO: lazy loaded entities.
-    Entity entity;
+    public Entity entity;
     
     public InvItemEntity(Entity entity) {
         this.entity = entity;

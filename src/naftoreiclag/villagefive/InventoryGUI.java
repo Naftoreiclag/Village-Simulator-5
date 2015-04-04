@@ -69,7 +69,6 @@ public class InventoryGUI implements ActionListener, AnalogListener
         {
             Element e = plane.rayCast(mouseLoc);
             
-            System.out.println(e);
         }
     }
 

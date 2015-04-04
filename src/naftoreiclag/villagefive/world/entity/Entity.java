@@ -8,7 +8,9 @@ package naftoreiclag.villagefive.world.entity;
 
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.texture.Texture;
 import naftoreiclag.villagefive.PlayerController;
+import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.Mundane;
@@ -22,6 +24,8 @@ import org.json.simple.JSONObject;
 // Position and rotation are stored in the node
 public abstract class Entity extends Mundane implements JSONAware
 {
+    public static Texture defaultIcon = SAM.ASSETS.loadTexture("Textures/default_icon.png");
+    
     protected Body body = null;
     protected Node node = null;
     
@@ -85,9 +89,12 @@ public abstract class Entity extends Mundane implements JSONAware
     
     public void addAdditionalData(JSONObject data) {}
     
-    public void onInteract(PlayerController interactor)
-    {
+    public void onInteract(PlayerController interactor) {
         
+    }
+    
+    public Texture getIcon() {
+        return defaultIcon;
     }
     
     

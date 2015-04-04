@@ -167,7 +167,7 @@ public abstract class Element {
     }
     
     // Get the given point's coordinates as expressed as an offset from my origin
-    public Vec2 transLocal(Vec2 abs) {
-        return abs.subtract(absLoc.subtract(origin));
+    public Vec2 transLocal(Vec2 location) {
+        return location.subtract(this.absLoc).add(this.origin).divide(this.absScale);
     }
 }

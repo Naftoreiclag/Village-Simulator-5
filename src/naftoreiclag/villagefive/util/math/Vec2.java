@@ -228,6 +228,16 @@ public class Vec2 implements JSONAware
     public Vec2 divide(float xy) {
         return this.clone().divideLocal(xy);
     }
+    
+    public Vec2 divideLocal(Vec2 xy) {
+        this.setX(this.getX() / xy.getX());
+        this.setY(this.getY() / xy.getY());
+
+        return this;
+    }
+    public Vec2 divide(Vec2 xy) {
+        return this.clone().divideLocal(xy);
+    }
 
     // Chunk stuff
     public Vec2 gridLocal(double width, double height) {
