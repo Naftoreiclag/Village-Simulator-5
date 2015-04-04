@@ -151,15 +151,19 @@ public abstract class Element {
     }
     public void setWidth(double width) {
         this.localScale.setX(width / this.width);
+        updateTransform();
     }
     public void setHeight(double height) {
         this.localScale.setY(height / this.height);
+        updateTransform();
     }
     public void setWidthKeepRatio(double width) {
         this.localScale.set(width / this.width);
+        updateTransform();
     }
     public void setHeightKeepRatio(double height) {
         this.localScale.set(height / this.height);
+        updateTransform();
     }
     
     // Get the given point's coordinates as expressed as an offset from my origin

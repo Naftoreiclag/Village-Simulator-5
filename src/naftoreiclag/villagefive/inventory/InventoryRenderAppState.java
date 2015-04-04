@@ -12,6 +12,8 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import naftoreiclag.villagefive.InvItem;
+import naftoreiclag.villagefive.Inventory;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.SAM;
@@ -20,7 +22,7 @@ import naftoreiclag.villagefive.gui.Empty;
 import naftoreiclag.villagefive.gui.Sprite;
 import naftoreiclag.villagefive.gui.SpritePlane;
 
-public class InventoryRenderAppState extends AbstractAppState {
+public class InventoryRenderAppState extends AbstractAppState implements IInventoryUpdateListener{
     Main app;
     
     Camera cam;
@@ -34,7 +36,14 @@ public class InventoryRenderAppState extends AbstractAppState {
     Sprite melon;
     
     
-    double testScale = 1;
+
+    OverworldAppState game;
+    
+    public void setGame(OverworldAppState aThis) {
+        this.game = aThis;
+        this.game.getPlayer().inventory.hook(this);
+    }
+    
     
     @Override
     public void initialize(AppStateManager stateManager, Application application) {
@@ -56,7 +65,7 @@ public class InventoryRenderAppState extends AbstractAppState {
         hotbar = new Sprite(SAM.ASSETS.loadTexture("Interface/hotbar.png"));
         
         hotbar.setOrigin(hotbar.width, hotbar.height);
-        hotbar.setLoc(cam.getWidth(), cam.getHeight());
+        hotbar.setLoc(cam.getWidth() - 5, cam.getHeight() - 5);
         plane.addElement(hotbar);
         
         slot = new Element[10];
@@ -67,23 +76,17 @@ public class InventoryRenderAppState extends AbstractAppState {
             hotbar.attachElement(slot[i]);
         }
         
-        melon = new Sprite(SAM.ASSETS.loadTexture("Interface/melon.png"));
-        plane.addElement(melon);
-        slot[1].attachElement(melon);
-        
     }
     
     @Override
     public void update(float tpf) {
-        testScale += tpf * 5;
-        
-        hotbar.setWidthKeepRatio(testScale);
     }
 
-    OverworldAppState game;
-    
-    public void setGame(OverworldAppState aThis) {
-        this.game = aThis;
+    public void onUpdate(Inventory inv, int slotIndex) {
+        
+        melon = new Sprite(SAM.ASSETS.loadTexture("Interface/melon.png"));
+        plane.addElement(melon);
+        slot[slotIndex].attachElement(melon);
     }
 
 }

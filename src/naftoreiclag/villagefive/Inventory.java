@@ -10,12 +10,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import naftoreiclag.villagefive.inventory.IInventoryUpdateListener;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 public class Inventory implements JSONAware {
 
+    private List<IInventoryUpdateListener> listeners = new ArrayList<IInventoryUpdateListener>();
     public Map<Integer, InvItem> items = new HashMap<Integer, InvItem>();
+    
+    public void hook(IInventoryUpdateListener listener) {
+        listeners.add(listener);
+    }
+    
+    private void callListeners(int slot) {
+        
+        for(IInventoryUpdateListener e : listeners) {
+            e.onUpdate(this, slot);
+        }
+    }
     
     public String toJSONString() {
         JSONObject object = new JSONObject();
@@ -53,6 +66,7 @@ public class Inventory implements JSONAware {
         int firstSlot = findFirstOpenSlot();
         i.inv = this;
         items.put(firstSlot, i);
+        callListeners(firstSlot);
     }
 
     public InvItem getItem(int slotI) {
@@ -67,13 +81,17 @@ public class Inventory implements JSONAware {
         
         // Avoid concurrent modification!
         
-        Integer removeMe = -1;
+        int removeMe = -1;
         for(Map.Entry<Integer, InvItem> entry : items.entrySet()) {
             if(entry.getValue() == i) {
                 removeMe = entry.getKey();
             }
         }
         
-        items.remove(removeMe);
+        if(removeMe != -1) {
+            items.remove(removeMe);
+            callListeners(removeMe);
+            
+        }
     }
 }
