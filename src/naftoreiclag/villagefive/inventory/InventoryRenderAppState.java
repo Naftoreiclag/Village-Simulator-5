@@ -102,7 +102,6 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
             Sprite melon = new Sprite(egg.entity.getIcon());
             melon.setWidthKeepRatio(128);
 
-            plane.attachElement(melon);
             slots[slotIndex].attachElement(melon);
         }
     }
