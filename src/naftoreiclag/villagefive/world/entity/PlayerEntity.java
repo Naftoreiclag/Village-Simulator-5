@@ -28,6 +28,7 @@ import org.json.simple.JSONObject;
 // Physical stuff
 public class PlayerEntity extends Entity {
     public Inventory inventory = new Inventory();
+    public int selectedItem = -1;
     
     public PlayerController controller;
     

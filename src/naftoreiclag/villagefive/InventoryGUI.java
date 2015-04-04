@@ -32,10 +32,10 @@ public class InventoryGUI implements ActionListener, AnalogListener
         onoff.setTime(0.5d);
         
         mainInventory = new Sprite(SAM.ASSETS.loadTexture("Interface/inv.png"));
-        plane.addElement(mainInventory);
+        plane.attachElement(mainInventory);
         
         Collision box2 = new Collision(mainInventory.width, mainInventory.height);
-        plane.addElement(box2);
+        plane.attachElement(box2);
         mainInventory.attachElement(box2);
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
@@ -67,7 +67,7 @@ public class InventoryGUI implements ActionListener, AnalogListener
     {
         if(name.equals(KeyKeys.mouse_left))
         {
-            Element e = plane.rayCast(mouseLoc);
+            Element e = plane.pick(mouseLoc);
             
         }
     }
@@ -80,7 +80,7 @@ public class InventoryGUI implements ActionListener, AnalogListener
             
             //mouseLoc.debug();
             
-            Element e = plane.rayCast(mouseLoc);
+            Element e = plane.pick(mouseLoc);
             
             if(e != null)
             {

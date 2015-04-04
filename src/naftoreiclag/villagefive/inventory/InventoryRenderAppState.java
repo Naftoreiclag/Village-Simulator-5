@@ -14,7 +14,6 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
-import naftoreiclag.villagefive.InvItem;
 import naftoreiclag.villagefive.InvItemEntity;
 import naftoreiclag.villagefive.Inventory;
 import naftoreiclag.villagefive.Main;
@@ -22,11 +21,11 @@ import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.gui.Collision;
 import naftoreiclag.villagefive.gui.Element;
-import naftoreiclag.villagefive.gui.Empty;
 import naftoreiclag.villagefive.gui.Sprite;
 import naftoreiclag.villagefive.gui.SpritePlane;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
+import naftoreiclag.villagefive.world.entity.PlayerEntity;
 
 public class InventoryRenderAppState extends AbstractAppState implements IInventoryUpdateListener, AnalogListener, ActionListener{
     Main app;
@@ -37,17 +36,19 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     SpritePlane plane;
     
     Element hotbar;
-    Element[] slot;
+    Element[] slots;
     
-    Sprite melon;
+    Element selectArrow;
     
     Vec2 mouseLoc = new Vec2();
 
     OverworldAppState game;
+    PlayerEntity player;
     
     public void setGame(OverworldAppState aThis) {
         this.game = aThis;
-        this.game.getPlayer().inventory.hook(this);
+        player = this.game.getPlayer();
+        player.inventory.hook(this);
     }
     
     
@@ -69,17 +70,19 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         plane = new SpritePlane(viewPort);
         
         hotbar = new Sprite(SAM.ASSETS.loadTexture("Interface/hotbar.png"));
+        selectArrow = new Sprite(SAM.ASSETS.loadTexture("Textures/select_arrow.png"));
+        selectArrow.setOrigin(128, 32);
         
         hotbar.setOrigin(hotbar.width, hotbar.height);
         hotbar.setLoc(cam.getWidth() - 5, cam.getHeight() - 5);
-        plane.addElement(hotbar);
+        plane.attachElement(hotbar);
         
-        slot = new Element[10];
+        slots = new Element[10];
         for(int i = 0; i < 10; ++ i) {
-            slot[i] = new Collision(128, 128);
-            slot[i].setLoc(-75, -75 - (i * 150));
-            plane.addElement(slot[i]);
-            hotbar.attachElement(slot[i]);
+            slots[i] = new Collision(128, 128);
+            slots[i].setLoc(-75, -75 - (i * 150));
+            plane.attachElement(slots[i]);
+            hotbar.attachElement(slots[i]);
         }
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
@@ -97,20 +100,24 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         InvItemEntity egg = ((InvItemEntity) inv.items.get(slotIndex));
         
         if(egg != null) {
-            melon = new Sprite(egg.entity.getIcon());
+            Sprite melon = new Sprite(egg.entity.getIcon());
             melon.setWidthKeepRatio(128);
+
+            plane.attachElement(melon);
+            slots[slotIndex].attachElement(melon);
         }
-        plane.addElement(melon);
-        slot[slotIndex].attachElement(melon);
     }
     
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         if(name.equals(KeyKeys.mouse_left)) {
-            Element e = plane.rayCast(mouseLoc);
-
-            System.out.println(slot[0].transLocal(mouseLoc));
-            System.out.println("thihfewa:" + e);
+            Element clicked = plane.pick(mouseLoc);
+            
+            for(int i = 0; i < slots.length; ++ i) {
+                if(clicked == slots[i]) {
+                    player.selectedItem = i;
+                }
+            }
         }
     }
 

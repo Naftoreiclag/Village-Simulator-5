@@ -41,7 +41,7 @@ public class SpritePlane {
         this.height = viewPort.getCamera().getHeight();
     }
 
-    public void addElement(Element element) {
+    public void attachElement(Element element) {
         element.plane = this;
         element.setLayer(lastLayer);
         lastLayer ++;
@@ -68,7 +68,7 @@ public class SpritePlane {
         }
     }
 
-    public Element rayCast(Vec2 absLoc) {
+    public Element pick(Vec2 absLoc) {
         Iterator<Element> iter = elements.iterator();
         while(iter.hasNext()) {
             Element element = iter.next();
