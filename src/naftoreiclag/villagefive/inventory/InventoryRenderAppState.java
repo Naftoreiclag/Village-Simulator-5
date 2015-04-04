@@ -81,7 +81,6 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         for(int i = 0; i < 10; ++ i) {
             slots[i] = new Collision(128, 128);
             slots[i].setLoc(-75, -75 - (i * 150));
-            plane.attachElement(slots[i]);
             hotbar.attachElement(slots[i]);
         }
         

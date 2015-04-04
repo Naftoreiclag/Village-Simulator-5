@@ -83,6 +83,7 @@ public abstract class Element {
     public void attachElement(Element element) {
         this.attachedElements.add(element);
 
+        this.plane.attachElement(element);
         element.parentElement = this;
         element.updateTransform();
     }

@@ -42,6 +42,15 @@ public class SpritePlane {
     }
 
     public void attachElement(Element element) {
+        
+        if(element.plane == this) {
+            return;
+        }
+        
+        if(element.plane != null) {
+            element.plane.removeElement(element);
+        }
+        
         element.plane = this;
         element.setLayer(lastLayer);
         lastLayer ++;
@@ -53,6 +62,24 @@ public class SpritePlane {
             rootNode.attachChild(sprite.picture);
             needUpdate();
         }
+        
+    }
+
+    private void removeElement(Element element) {
+        
+
+        if(element instanceof Sprite) {
+            Sprite sprite = (Sprite) element;
+
+            rootNode.detachChild(sprite.picture);
+            needUpdate();
+        }
+        
+        if(elements.contains(element)) {
+            elements.remove(element);
+        }
+        
+        element.plane = null;
     }
 
     public void needUpdate() {
