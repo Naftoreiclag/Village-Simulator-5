@@ -15,6 +15,8 @@ import naftoreiclag.villagefive.util.math.Vec2;
 // This class is to make it easier to draw in 2D.
 // Essentially, this is a replacement for Nifty that sacrifices xml loading and common gui elements for tighter control.
 
+// Hi, future me! Are you trying to understand this code? THEN GOOD LUK NOOB!!!
+
 public class SpritePlane {
     // All elements in order of depth
     protected SortedSet<Element> elements;
@@ -65,8 +67,16 @@ public class SpritePlane {
         
     }
 
-    private void removeElement(Element element) {
+    public void removeElement(Element element) {
         
+        if(element == null) {
+            return;
+        }
+        
+        // Remove all sub-elements
+        for(Element e : element.attachedElements) {
+            this.removeElement(e);
+        }
 
         if(element instanceof Sprite) {
             Sprite sprite = (Sprite) element;

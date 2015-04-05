@@ -39,6 +39,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     Element[] slots;
     
     Element selectArrow;
+    Element thinkAbout;
     
     Vec2 mouseLoc = new Vec2();
 
@@ -72,6 +73,10 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         hotbar = new Sprite(SAM.ASSETS.loadTexture("Interface/hotbar.png"));
         selectArrow = new Sprite(SAM.ASSETS.loadTexture("Textures/select_arrow.png"));
         selectArrow.setOrigin(128, 32);
+        thinkAbout = new Sprite(SAM.ASSETS.loadTexture("Textures/think_about.png"));
+        thinkAbout.setOrigin(158, 258);
+        thinkAbout.setLoc(cam.getWidth() / 2, cam.getHeight() - 200);
+        plane.attachElement(thinkAbout);
         
         hotbar.setOrigin(hotbar.width, hotbar.height);
         hotbar.setLoc(cam.getWidth() - 5, cam.getHeight() - 5);
@@ -96,8 +101,17 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     
     public void onUpdate(Inventory inv, int slotIndex) {
         
+        if(slotIndex >= 10) {
+            return;
+        }
+        
+        // eww
         InvItemEntity egg = ((InvItemEntity) inv.items.get(slotIndex));
         
+        // Remove the old one
+        slots[slotIndex].removeAllElements();
+        
+        // If it's something, then show it
         if(egg != null) {
             Sprite melon = new Sprite(egg.entity.getIcon());
             melon.setWidthKeepRatio(128);
@@ -114,6 +128,16 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
             for(int i = 0; i < slots.length; ++ i) {
                 if(clicked == slots[i]) {
                     player.selectedItem = i;
+                    
+                    thinkAbout.removeAllElements();
+                    InvItemEntity selected = (InvItemEntity) player.inventory.getItem(i);
+                    if(selected != null) {
+                        Sprite a = new Sprite(selected.entity.getIcon());
+                        thinkAbout.attachElement(a);
+                        a.setWidthKeepRatio(190);
+                    }
+                    
+                    slots[i].attachElement(selectArrow);
                 }
             }
         }

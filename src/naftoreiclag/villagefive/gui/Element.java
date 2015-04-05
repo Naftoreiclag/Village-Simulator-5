@@ -27,7 +27,7 @@ public abstract class Element {
     protected SpritePlane plane;
     
     // Whenever this element's location is updated, all of these elements will update too, as if they were attached.
-    private List<Element> attachedElements = new ArrayList<Element>();
+    protected List<Element> attachedElements = new ArrayList<Element>();
     
     // This only makes handling image transforms a bit easier. It is not affected by the parent element.
     protected Vec2 origin = new Vec2(0, 0);
@@ -171,5 +171,13 @@ public abstract class Element {
     // Get the given point's coordinates as expressed as an offset from my origin
     public Vec2 transLocal(Vec2 location) {
         return location.subtract(this.absLoc).add(this.origin).divide(this.absScale);
+    }
+
+    public void removeAllElements() {
+        for(Element e : this.attachedElements) {
+            this.plane.removeElement(e);
+        }
+        this.attachedElements.clear();
+        
     }
 }
