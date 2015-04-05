@@ -9,6 +9,7 @@ package naftoreiclag.villagefive.gui;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.texture.Texture;
+import de.lessvoid.nifty.tools.Color;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -40,27 +41,50 @@ public class BitmapFont {
         cellW = image.getWidth() / 16;
         cellH = image.getHeight() / 16;
         
+        //System.out.println("fewfewf:" + image.getColorModel());
+        
         widths = new int[256];
-        for(int i = 0; i < 256; ++ i) {
+        for(char i = 0; i < 256; ++ i) {
+                    //System.out.println(getXIndex(i) + ", " + getYIndex(i));
             
             int glyphW = cellW;
             for(int x = 0; x < cellW; ++ x) {
                 
                 boolean columnIsEmpty = true;
                 for(int y = 0; y < cellH; ++ y) {
-                    if((image.getRGB(getXIndex(i) + x, getYIndex(i) + y) & 0x000000FF) != 0) {
+                    
+                    int alpha = (image.getRGB(getXIndex(i) * cellW + x, image.getHeight() - (getYIndex(i) * cellH + y) >> 24)) & 0xff;
+                    
+                    
+                    if(alpha > 0) {
                         columnIsEmpty = false;
                         break;
                     }
                 }
                 
                 if(columnIsEmpty) {
-                    glyphW = 0;
+                    glyphW = x;
                     break;
                 }
             }
             
+            if(glyphW > 0) {
+                System.out.println(glyphW);
+                System.out.println(i);
+            }
+            
             widths[i] = glyphW + spacing;
+        }
+
+        for(int y = 0; y < cellH; ++ y) {
+
+            for(int x = 0; x < cellW; ++ x) {
+
+                    int alpha = (image.getRGB(getXIndex('R') * cellW + x, image.getHeight() - (getYIndex('R') * cellH + y)) >> 24) & 0xff;
+                    
+                    System.out.print(alpha > 0 ? '#' : ' ');
+            }
+            System.out.println();
         }
         
         // Space character
@@ -145,14 +169,6 @@ public class BitmapFont {
             float D = ((float) getXIndex(c) + 1) / 16f;
             float A = ((float) getYIndex(c)) / 16f;
             float B = ((float) getYIndex(c) + 1) / 16f;
-            
-            /*
-            float C = 0f / 16f;
-            float D = 1f / 16f;
-            float A = 0f / 16f;
-            float B = 1f / 16f;
-            
-            */
             
             t.put(C).put(1-B);
             t.put(C).put(1-A);
