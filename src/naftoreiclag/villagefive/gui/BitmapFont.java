@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import jme3tools.converters.ImageToAwt;
+import naftoreiclag.villagefive.util.DebugUtil;
 import static naftoreiclag.villagefive.util.scenegraph.GrassMaker.HEX_X;
 import static naftoreiclag.villagefive.util.scenegraph.GrassMaker.HEX_Z;
 import org.lwjgl.BufferUtils;
@@ -41,7 +42,32 @@ public class BitmapFont {
         cellW = image.getWidth() / 16;
         cellH = image.getHeight() / 16;
         
+        /*
+        DebugUtil.image(image);
+        
         //System.out.println("fewfewf:" + image.getColorModel());
+        
+        for(int y = 0; y < cellH; ++ y) {
+
+            for(int x = 0; x < cellW; ++ x) {
+
+                    int rgb = image.getRGB(getXIndex('R') * cellW + x, (image.getHeight() - 1) - (getYIndex('R') * cellH + y));
+                    int alpha = (rgb >> 24) & 0xff;
+                    
+                    System.out.print(alpha > 0 ? '#' : ' ');
+            }
+            System.out.println();
+        }
+        
+        for(char i = 0; i < 256; ++ i) { 
+            System.out.print(i);
+            if(i % 16 == 15) {
+                System.out.println();
+            }
+        }
+        */
+        
+        DebugUtil.image(image);
         
         widths = new int[256];
         for(char i = 0; i < 256; ++ i) {
@@ -53,7 +79,8 @@ public class BitmapFont {
                 boolean columnIsEmpty = true;
                 for(int y = 0; y < cellH; ++ y) {
                     
-                    int alpha = (image.getRGB(getXIndex(i) * cellW + x, image.getHeight() - (getYIndex(i) * cellH + y) >> 24)) & 0xff;
+                    int rgb = image.getRGB((getXIndex(i) * cellW) + x, (image.getHeight() - 1) - ((getYIndex(i) * cellH) + y));
+                    int alpha = (rgb >> 24) & 0xff;
                     
                     
                     if(alpha > 0) {
@@ -69,23 +96,13 @@ public class BitmapFont {
             }
             
             if(glyphW > 0) {
+                System.out.print(i + "\t");
                 System.out.println(glyphW);
-                System.out.println(i);
             }
             
             widths[i] = glyphW + spacing;
         }
 
-        for(int y = 0; y < cellH; ++ y) {
-
-            for(int x = 0; x < cellW; ++ x) {
-
-                    int alpha = (image.getRGB(getXIndex('R') * cellW + x, image.getHeight() - (getYIndex('R') * cellH + y)) >> 24) & 0xff;
-                    
-                    System.out.print(alpha > 0 ? '#' : ' ');
-            }
-            System.out.println();
-        }
         
         // Space character
         if(widths[spaceChar] - spacing == 0) {
@@ -127,7 +144,7 @@ public class BitmapFont {
     }
     
     public static int getYIndex(int index) {
-        return index / 16;
+        return (index - getXIndex(index)) / 16;
     }
 
     public static float[] glyphTexCoords = new float[]{
