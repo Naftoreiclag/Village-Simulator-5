@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive.gui;
 
+import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.math.Vec2;
 
 public class Empty extends Element {
@@ -23,4 +24,13 @@ public class Empty extends Element {
     public void updateSpatial() {
     }
 
+    @Override
+    public boolean hasSpatial() {
+        return false;
+    }
+
+    @Override
+    protected Spatial getSpatial() {
+        return null;
+    }
 }

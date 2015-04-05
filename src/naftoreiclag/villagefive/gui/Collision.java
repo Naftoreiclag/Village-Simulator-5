@@ -6,6 +6,7 @@
 
 package naftoreiclag.villagefive.gui;
 
+import com.jme3.scene.Spatial;
 import naftoreiclag.villagefive.util.math.Vec2;
 
 public class Collision extends Element
@@ -27,6 +28,16 @@ public class Collision extends Element
         Vec2 foo = this.transLocal(absPoint);
         
         return foo.getX() >= 0 && foo.getX() < width && foo.getY() >= 0 && foo.getY() < height;
+    }
+
+    @Override
+    public boolean hasSpatial() {
+        return false;
+    }
+
+    @Override
+    protected Spatial getSpatial() {
+        return null;
     }
 
 }

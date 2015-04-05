@@ -5,6 +5,7 @@
  */
 package naftoreiclag.villagefive.gui;
 
+import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -111,6 +112,8 @@ public abstract class Element {
 
     // Called whenever the spatial (if it has one) should be updated. i.e. whenever calculateAbsTransform() is called.
     public abstract void updateSpatial();
+    public abstract boolean hasSpatial();
+    protected abstract Spatial getSpatial();
 
     public void setOrigin(double x, double y) {
         this.origin.set(x, y);

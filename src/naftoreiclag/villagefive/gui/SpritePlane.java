@@ -58,10 +58,8 @@ public class SpritePlane {
         lastLayer ++;
         elements.add(element);
 
-        if(element instanceof Sprite) {
-            Sprite sprite = (Sprite) element;
-
-            rootNode.attachChild(sprite.picture);
+        if(element.hasSpatial()) {
+            rootNode.attachChild(element.getSpatial());
             needUpdate();
         }
         
@@ -78,10 +76,8 @@ public class SpritePlane {
             this.removeElement(e);
         }
 
-        if(element instanceof Sprite) {
-            Sprite sprite = (Sprite) element;
-
-            rootNode.detachChild(sprite.picture);
+        if(element.hasSpatial()) {
+            rootNode.detachChild(element.getSpatial());
             needUpdate();
         }
         
