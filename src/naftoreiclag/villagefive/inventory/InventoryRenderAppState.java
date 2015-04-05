@@ -19,10 +19,12 @@ import naftoreiclag.villagefive.Inventory;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.SAM;
+import naftoreiclag.villagefive.gui.BitmapFont;
 import naftoreiclag.villagefive.gui.Collision;
 import naftoreiclag.villagefive.gui.Element;
 import naftoreiclag.villagefive.gui.Sprite;
 import naftoreiclag.villagefive.gui.SpritePlane;
+import naftoreiclag.villagefive.gui.Text;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.entity.PlayerEntity;
@@ -40,6 +42,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     
     Element selectArrow;
     Element thinkAbout;
+    
     
     Vec2 mouseLoc = new Vec2();
 
@@ -90,6 +93,10 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         }
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
+        
+        Element testText = new Text(new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png")), "Hello, world!");
+        testText.setLoc(500, 500);
+        plane.attachElement(testText);
         
     }
     
