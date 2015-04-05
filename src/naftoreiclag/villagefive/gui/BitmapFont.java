@@ -28,10 +28,11 @@ public class BitmapFont {
     
     private static char defaultChar = 8;
     private static char spaceChar = ' ';
-    private static char getSpaceWidthFrom = 'W';
+    private static char getSpaceWidthFrom = 'w';
     private static int spacing = 2;
     
     private final int[] widths;
+    private final int charHeight;
     
     private int totalW;
     private int totalH;
@@ -41,23 +42,6 @@ public class BitmapFont {
     
     private static int numGlyphColumns = 16;
     private static int numGlyphRows = 16;
-    
-    private int getAlpha(BufferedImage image, int x, int y, int pX, int pY) {
-        
-        int xCoord = x * cellW;
-        int yCoord = y * cellH;
-        xCoord += pX;
-        yCoord += pY;
-        
-        // Flip
-        yCoord = (image.getHeight() - 1) - yCoord;
-        
-        return (image.getRGB(xCoord, yCoord) >> 24) & 0xff;
-    }
-    
-    private static int xyToGlyphIndex(int x, int y) {
-        return (y * numGlyphColumns) + x;
-    }
     
     public BitmapFont(Texture texture) {
         this.texture = texture;
@@ -69,23 +53,14 @@ public class BitmapFont {
         cellW = totalW / numGlyphColumns;
         cellH = totalH / numGlyphRows;
         
-        BufferedImage debugImage = new BufferedImage(totalW, totalH, IndexColorModel.TRANSLUCENT);
-        
-        DebugUtil.image(image);
-        
-        for(char i = 0; i < 256; ++ i) { 
-            System.out.print(i);
-            if(i % 16 == 15) {
-                System.out.println();
-            }
-        }
+        charHeight = cellH / 2 + 8;
         
         widths = new int[256];
         
         for(int y = 0; y < numGlyphRows; ++ y) {
             for(int x = 0; x < numGlyphColumns; ++ x) {
                 
-                int glyphW = cellW;
+                int glyphW = 0;
                 for(int pX = 0; pX < cellW; ++ pX) {
                     
                     // Remembers if every pixel in this column is empty
@@ -111,7 +86,7 @@ public class BitmapFont {
         }
         
         // Space character
-        if(widths[spaceChar] - spacing == 0) {
+        if(widths[spaceChar] == 0) {
             widths[spaceChar] = widths[getSpaceWidthFrom];
         }
     }
@@ -121,14 +96,18 @@ public class BitmapFont {
         int total = 0;
         char[] data = text.toCharArray();
         for(char c : data) {
+            if(c == '\n') {
+                continue;
+            }
             if(c >= 256) {
                 c = defaultChar;
             }
             
-            total += widths[c];
+            total += widths[c] + spacing;
+            
         }
         
-        return total + (data.length * spacing);
+        return total;
     }
     
     public int getHeight(String text) {
@@ -145,6 +124,23 @@ public class BitmapFont {
         }
         
         return total;
+    }
+    
+    private int getAlpha(BufferedImage image, int x, int y, int pX, int pY) {
+        
+        int xCoord = x * cellW;
+        int yCoord = y * cellH;
+        xCoord += pX;
+        yCoord += pY;
+        
+        // Flip
+        yCoord = (image.getHeight() - 1) - yCoord;
+        
+        return (image.getRGB(xCoord, yCoord) >> 24) & 0xff;
+    }
+    
+    private static int xyToGlyphIndex(int x, int y) {
+        return (y * numGlyphColumns) + x;
     }
     
     public static int getXIndex(int index) {
@@ -174,6 +170,11 @@ public class BitmapFont {
         
         int ind = 0;
         for(char c : data) {
+            if(c == '\n') {
+                xOff = 0;
+                yOff -= charHeight;
+                continue;
+            }
             if(c >= 256) {
                 c = defaultChar;
             }
@@ -187,6 +188,7 @@ public class BitmapFont {
             float D = ((float) getXIndex(c) + 1) / 16f;
             float A = ((float) getYIndex(c)) / 16f;
             float B = ((float) getYIndex(c) + 1) / 16f;
+            
             
             t.put(C).put(1-B);
             t.put(C).put(1-A);
