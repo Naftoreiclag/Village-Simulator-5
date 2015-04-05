@@ -99,7 +99,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png"));
         
         //new Sprite(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png"));
-        Element testText = new Text(font, "Hello, world!");;
+        Element testText = new Text(font, "The quick brown fox jumps over the lazy dog.");
         testText.setLoc(500, 500);
         plane.attachElement(testText);
         

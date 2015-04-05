@@ -10,7 +10,9 @@ import com.jme3.scene.Mesh;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.texture.Texture;
 import de.lessvoid.nifty.tools.Color;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import jme3tools.converters.ImageToAwt;
@@ -24,40 +26,52 @@ public class BitmapFont {
     BufferedImage image;
     Texture texture;
     
-    static char defaultChar = 8;
-    static char spaceChar = ' ';
-    static char getSpaceWidthFrom = 'W';
-    static int spacing = 2;
+    private static char defaultChar = 8;
+    private static char spaceChar = ' ';
+    private static char getSpaceWidthFrom = 'W';
+    private static int spacing = 2;
     
-    public final int[] widths;
+    private final int[] widths;
     
-    int cellW;
-    int cellH;
+    private int totalW;
+    private int totalH;
+    
+    private int cellW;
+    private int cellH;
+    
+    private static int numGlyphColumns = 16;
+    private static int numGlyphRows = 16;
+    
+    private int getAlpha(BufferedImage image, int x, int y, int pX, int pY) {
+        
+        int xCoord = x * cellW;
+        int yCoord = y * cellH;
+        xCoord += pX;
+        yCoord += pY;
+        
+        // Flip
+        yCoord = (image.getHeight() - 1) - yCoord;
+        
+        return (image.getRGB(xCoord, yCoord) >> 24) & 0xff;
+    }
+    
+    private static int xyToGlyphIndex(int x, int y) {
+        return (y * numGlyphColumns) + x;
+    }
     
     public BitmapFont(Texture texture) {
         this.texture = texture;
         
         this.image = ImageToAwt.convert(texture.getImage(), false, true, 0);
+        totalW = image.getWidth();
+        totalH = image.getHeight();
         
-        cellW = image.getWidth() / 16;
-        cellH = image.getHeight() / 16;
+        cellW = totalW / numGlyphColumns;
+        cellH = totalH / numGlyphRows;
         
-        /*
+        BufferedImage debugImage = new BufferedImage(totalW, totalH, IndexColorModel.TRANSLUCENT);
+        
         DebugUtil.image(image);
-        
-        //System.out.println("fewfewf:" + image.getColorModel());
-        
-        for(int y = 0; y < cellH; ++ y) {
-
-            for(int x = 0; x < cellW; ++ x) {
-
-                    int rgb = image.getRGB(getXIndex('R') * cellW + x, (image.getHeight() - 1) - (getYIndex('R') * cellH + y));
-                    int alpha = (rgb >> 24) & 0xff;
-                    
-                    System.out.print(alpha > 0 ? '#' : ' ');
-            }
-            System.out.println();
-        }
         
         for(char i = 0; i < 256; ++ i) { 
             System.out.print(i);
@@ -65,44 +79,36 @@ public class BitmapFont {
                 System.out.println();
             }
         }
-        */
-        
-        DebugUtil.image(image);
         
         widths = new int[256];
-        for(char i = 0; i < 256; ++ i) {
-                    //System.out.println(getXIndex(i) + ", " + getYIndex(i));
-            
-            int glyphW = cellW;
-            for(int x = 0; x < cellW; ++ x) {
+        
+        for(int y = 0; y < numGlyphRows; ++ y) {
+            for(int x = 0; x < numGlyphColumns; ++ x) {
                 
-                boolean columnIsEmpty = true;
-                for(int y = 0; y < cellH; ++ y) {
+                int glyphW = cellW;
+                for(int pX = 0; pX < cellW; ++ pX) {
                     
-                    int rgb = image.getRGB((getXIndex(i) * cellW) + x, (image.getHeight() - 1) - ((getYIndex(i) * cellH) + y));
-                    int alpha = (rgb >> 24) & 0xff;
+                    // Remembers if every pixel in this column is empty
+                    boolean columnIsEmpty = true;
+                    for(int pY = 0; pY < cellH; ++ pY) {
+                        int alpha = getAlpha(image, x, y, pX, pY);
+                        
+                        // If this pixel is opaque, then this column is not empty.
+                        if(alpha > 0) {
+                            columnIsEmpty = false;
+                            break;
+                        }
+                    }
                     
-                    
-                    if(alpha > 0) {
-                        columnIsEmpty = false;
-                        break;
+                    // If there is stuff in this column, then the width of the glyph must be at least pX + 1
+                    if(!columnIsEmpty) {
+                        glyphW = pX + 1;
+                        // Do not break here, since there could still be pixels farther to the right.
                     }
                 }
-                
-                if(columnIsEmpty) {
-                    glyphW = x;
-                    break;
-                }
+                widths[xyToGlyphIndex(x, y)] = glyphW;
             }
-            
-            if(glyphW > 0) {
-                System.out.print(i + "\t");
-                System.out.println(glyphW);
-            }
-            
-            widths[i] = glyphW + spacing;
         }
-
         
         // Space character
         if(widths[spaceChar] - spacing == 0) {
@@ -122,11 +128,13 @@ public class BitmapFont {
             total += widths[c];
         }
         
-        return total;
+        return total + (data.length * spacing);
     }
+    
     public int getHeight(String text) {
         return (countNewlineChars(text) + 1) * this.cellH;
     }
+    
     public static int countNewlineChars(String text) {
         int total = 1;
         char[] data = text.toCharArray();
@@ -146,13 +154,6 @@ public class BitmapFont {
     public static int getYIndex(int index) {
         return (index - getXIndex(index)) / 16;
     }
-
-    public static float[] glyphTexCoords = new float[]{
-        0, 1,
-        0, 0,
-        1, 0,
-        1, 1,
-    };
     
     public Mesh meshFor(String text) {
         char[] data = text.toCharArray();
@@ -179,8 +180,8 @@ public class BitmapFont {
             
             v.put(xOff).put(yOff).put(0);
             v.put(xOff).put(yOff + cellH).put(0);
-            v.put(xOff + widths[c]).put(yOff + cellH).put(0);
-            v.put(xOff + widths[c]).put(yOff).put(0);
+            v.put(xOff + cellW).put(yOff + cellH).put(0);
+            v.put(xOff + cellW).put(yOff).put(0);
             
             float C = ((float) getXIndex(c)) / 16f;
             float D = ((float) getXIndex(c) + 1) / 16f;
@@ -195,7 +196,7 @@ public class BitmapFont {
             indicies.put(ind    ).put(ind + 2).put(ind + 1);
             indicies.put(ind    ).put(ind + 3).put(ind + 2);
             
-            xOff += widths[c];
+            xOff += widths[c] + spacing;
             ind += 4;
         }
                 
