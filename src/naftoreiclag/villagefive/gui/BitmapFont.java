@@ -105,6 +105,13 @@ public class BitmapFont {
     public static int getYIndex(int index) {
         return index / 8;
     }
+    private static float getXIndexf(int index) {
+        return ((float) getXIndex(index)) / 256f;
+    }
+    
+    private static float getYIndexf(int index) {
+        return ((float) getYIndex(index)) / 256f;
+    }
 
     public static float[] glyphTexCoords = new float[]{
         0, 1,
@@ -116,30 +123,6 @@ public class BitmapFont {
     public Mesh meshFor(String text) {
         char[] data = text.toCharArray();
         int numGlyphs = data.length;// - countNewlineChars(text);
-        /*
-        FloatBuffer v = BufferUtils.createFloatBuffer(1 * 4 * 3);
-        FloatBuffer n = BufferUtils.createFloatBuffer(1 * 4 * 3);
-        FloatBuffer t = BufferUtils.createFloatBuffer(1 * 4 * 2);
-        IntBuffer indicies = BufferUtils.createIntBuffer(1 * 2 * 3);
-        
-        v.put(0).put(0).put(0);
-        v.put(0).put(1).put(0);
-        v.put(1).put(1).put(0);
-        v.put(1).put(0).put(0);
-        n.put(0).put(0).put(0);
-        n.put(0).put(1).put(0);
-        n.put(1).put(1).put(0);
-        n.put(1).put(0).put(0);
-        
-        t.put(0).put(1);
-        t.put(0).put(0);
-        t.put(1).put(0);
-        t.put(1).put(1);
-        
-        
-        indicies.put(0).put(2).put(1);
-        indicies.put(0).put(3).put(2);
-        */
         
         // 3 vertexes, 3 floats each
         FloatBuffer v = BufferUtils.createFloatBuffer(numGlyphs * 4 * 3);
@@ -164,10 +147,10 @@ public class BitmapFont {
             v.put(xOff + widths[c]).put(yOff + cellH).put(0);
             v.put(xOff + widths[c]).put(yOff).put(0);
             
-            t.put(0).put(getYIndex(c));
+            t.put(0).put(getYIndexf(c));
             t.put(0).put(0);
-            t.put(getXIndex(c)).put(0);
-            t.put(getXIndex(c)).put(getYIndex(c));
+            t.put(getXIndexf(c)).put(0);
+            t.put(getXIndexf(c)).put(getYIndexf(c));
             
             indicies.put(ind    ).put(ind + 2).put(ind + 1);
             indicies.put(ind    ).put(ind + 3).put(ind + 2);
