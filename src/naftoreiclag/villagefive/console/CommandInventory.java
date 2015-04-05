@@ -31,7 +31,7 @@ public class CommandInventory extends Command {
                     InvItem i = entry.getValue();
                     
                     ++ numItems;
-                    console.println("\t" + entry.getKey() + "\t" + i.getClassId() + "\t" + i.getItemId());
+                    console.println("\t" + entry.getKey() + "\t" + i.getItemId());
                 }
 
 

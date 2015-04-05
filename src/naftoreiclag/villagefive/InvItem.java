@@ -6,29 +6,52 @@
 
 package naftoreiclag.villagefive;
 
+import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.entity.Entity;
+import naftoreiclag.villagefive.world.entity.EntityRegistry;
 import naftoreiclag.villagefive.world.entity.PlayerEntity;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
-public abstract class InvItem implements JSONAware {
+public final class InvItem implements JSONAware {
 
+    // TODO: lazy loaded entities.
+    public Entity entity;
     protected Inventory inv;
     
-    public static InvItem makeFrom(JSONObject data) {
-        String id = (String) data.get("id");
+    public InvItem(Entity entity) {
+        this.entity = entity;
+    }
+    
+    public InvItem(JSONObject entityData) {
+        String entityId = (String) entityData.get("instanceof");
+
+        entity = EntityRegistry.newInstance(entityId);
+    }
+
+    
+    @Override
+    public String toJSONString() {
+        JSONObject object = new JSONObject();
         
-        if(id.equals("itemEntity")) {
-            return new InvItemEntity(data);
-        }
+        object.put("classId", "itemEntity");
+        object.put("entityData", entity);
+        
         
         return null;
     }
-    
-    public abstract String getClassId();
 
-    public abstract String getItemId();
+    public String getItemId() {
+        return entity.getEntityId();
+    }
 
-    public abstract void performTask(PlayerEntity caller);
+    public void performTask(PlayerEntity caller) {
+        Vec2 loc = caller.getLocation();
+        caller.getWorld().materializeEntity(entity);
+        entity.setLocation(loc);
+        
+        this.inv.deleteItem(this);
+    }
+
     
 }

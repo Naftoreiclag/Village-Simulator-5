@@ -16,7 +16,7 @@ public class ItemRegistry {
         // is it an entity?
         Entity e = EntityRegistry.newInstance(id);
         if(e != null) {
-            InvItemEntity i = new InvItemEntity(e);
+            InvItem i = new InvItem(e);
             return i;
         }
         

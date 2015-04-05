@@ -14,7 +14,7 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
-import naftoreiclag.villagefive.InvItemEntity;
+import naftoreiclag.villagefive.InvItem;
 import naftoreiclag.villagefive.Inventory;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.OverworldAppState;
@@ -105,8 +105,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
             return;
         }
         
-        // eww
-        InvItemEntity egg = ((InvItemEntity) inv.items.get(slotIndex));
+        InvItem egg = inv.items.get(slotIndex);
         
         // Remove the old one
         slots[slotIndex].removeAllElements();
@@ -130,7 +129,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
                     player.selectedItem = i;
                     
                     thinkAbout.removeAllElements();
-                    InvItemEntity selected = (InvItemEntity) player.inventory.getItem(i);
+                    InvItem selected = player.inventory.getItem(i);
                     if(selected != null) {
                         Sprite a = new Sprite(selected.entity.getIcon());
                         thinkAbout.attachElement(a);
