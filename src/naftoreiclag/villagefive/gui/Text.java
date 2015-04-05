@@ -8,8 +8,11 @@ package naftoreiclag.villagefive.gui;
 
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
+import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.jme3.ui.Picture;
 import java.awt.Font;
@@ -25,7 +28,9 @@ public final class Text extends Element
     {
         super(font.getWidth(text), font.getHeight(text));
         this.text = text;
-        textBox = new Geometry("Text", font.meshFor(text));
+        textBox = new Geometry("Text", new Quad(1, 1, false));
+        textBox.setQueueBucket(RenderQueue.Bucket.Gui);
+        textBox.setCullHint(CullHint.Never);
         Material background = new Material(SAM.ASSETS, "Common/MatDefs/Misc/Unshaded.j3md");
         background.setTexture("ColorMap", font.texture);
         background.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);

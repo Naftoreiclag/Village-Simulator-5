@@ -116,7 +116,29 @@ public class BitmapFont {
     public Mesh meshFor(String text) {
         char[] data = text.toCharArray();
         int numGlyphs = data.length;// - countNewlineChars(text);
+        FloatBuffer v = BufferUtils.createFloatBuffer(1 * 4 * 3);
+        FloatBuffer n = BufferUtils.createFloatBuffer(1 * 4 * 3);
+        FloatBuffer t = BufferUtils.createFloatBuffer(1 * 4 * 2);
+        IntBuffer indicies = BufferUtils.createIntBuffer(1 * 2 * 3);
         
+        v.put(0).put(0).put(0);
+        v.put(0).put(1).put(0);
+        v.put(1).put(1).put(0);
+        v.put(1).put(0).put(0);
+        n.put(0).put(0).put(0);
+        n.put(0).put(1).put(0);
+        n.put(1).put(1).put(0);
+        n.put(1).put(0).put(0);
+        
+        t.put(0).put(1);
+        t.put(0).put(0);
+        t.put(1).put(0);
+        t.put(1).put(1);
+        
+        
+        indicies.put(0).put(2).put(1);
+        indicies.put(0).put(3).put(2);
+        /*
         // 3 vertexes, 3 floats each
         FloatBuffer v = BufferUtils.createFloatBuffer(numGlyphs * 4 * 3);
         FloatBuffer t = BufferUtils.createFloatBuffer(numGlyphs * 4 * 2);
@@ -125,11 +147,9 @@ public class BitmapFont {
         int xOff = 0;
         int yOff = 0;
         
-        /*
-         * 1   2
-         * 
-         * 0   3
-         */
+        // 1   2
+        // 
+        // 0   3
         
         int ind = 0;
         for(char c : data) {
@@ -153,19 +173,22 @@ public class BitmapFont {
             xOff += widths[c];
             ind += 4;
         }
+        */
                 
         Mesh mesh = new Mesh();
 
         mesh.setBuffer(VertexBuffer.Type.Position, 3, v);
+        mesh.setBuffer(VertexBuffer.Type.Normal,   3, n);
         mesh.setBuffer(VertexBuffer.Type.TexCoord, 2, t);
         mesh.setBuffer(VertexBuffer.Type.Index,    3, indicies);
-
         mesh.updateBound();
-                
+          
+        /*
         System.out.println("grefewarhgr " + text);
         System.out.println("grefewarhgr " + numGlyphs);
         System.out.println("grefewarhgr " + xOff);
         System.out.println("grefewarhgr " + ind);
+        */
         return mesh;
     }
 }

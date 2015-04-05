@@ -60,6 +60,8 @@ public class SpritePlane {
 
         if(element.hasSpatial()) {
             rootNode.attachChild(element.getSpatial());
+            System.out.println(element);
+            System.out.println(element.getSpatial());
             needUpdate();
         }
         
