@@ -93,10 +93,15 @@ public class BitmapFont {
     
     public int getWidth(String text) {
         
+        int widestLine = -1;
         int total = 0;
         char[] data = text.toCharArray();
         for(char c : data) {
             if(c == '\n') {
+                if(total > widestLine) {
+                    widestLine = total;
+                }
+                total = 0;
                 continue;
             }
             if(c >= 256) {
@@ -107,11 +112,11 @@ public class BitmapFont {
             
         }
         
-        return total;
+        return widestLine == -1 ? total : widestLine;
     }
     
     public int getHeight(String text) {
-        return (countNewlineChars(text) + 1) * this.cellH;
+        return (countNewlineChars(text) + 1) * this.charHeight;
     }
     
     public static int countNewlineChars(String text) {
@@ -161,7 +166,7 @@ public class BitmapFont {
         IntBuffer indicies = BufferUtils.createIntBuffer(numGlyphs * 2 * 3);
         
         int xOff = 0;
-        int yOff = 0;
+        int yOff = getHeight(text);
         
         //   C   D
         // A 1   2
@@ -179,10 +184,10 @@ public class BitmapFont {
                 c = defaultChar;
             }
             
+            v.put(xOff).put(yOff - cellH).put(0);
             v.put(xOff).put(yOff).put(0);
-            v.put(xOff).put(yOff + cellH).put(0);
-            v.put(xOff + cellW).put(yOff + cellH).put(0);
             v.put(xOff + cellW).put(yOff).put(0);
+            v.put(xOff + cellW).put(yOff - cellH).put(0);
             
             float C = ((float) getXIndex(c)) / 16f;
             float D = ((float) getXIndex(c) + 1) / 16f;

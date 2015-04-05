@@ -109,7 +109,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     @Override
     public void update(float tpf) {
         testSc += tpf;
-        testText.setScale((Math.sin(testSc) + 1) * 0.25 + 1);
+        testText.setScale((Math.sin(testSc) + 1));
         
     }
 
