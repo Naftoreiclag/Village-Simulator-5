@@ -28,7 +28,7 @@ public final class Text extends Element
     {
         super(font.getWidth(text), font.getHeight(text));
         this.text = text;
-        textBox = new Geometry("Text", new Quad(1, 1, false));
+        textBox = new Geometry("Text", font.meshFor(text));
         textBox.setQueueBucket(RenderQueue.Bucket.Gui);
         textBox.setCullHint(CullHint.Never);
         Material background = new Material(SAM.ASSETS, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -47,7 +47,7 @@ public final class Text extends Element
                 (float) (absLoc.getX() - (origin.getX() * this.absScale.getX())), 
                 (float) (absLoc.getY() - (origin.getY() * this.absScale.getY())), 
                 (float) depth);
-        textBox.setLocalScale((float) (this.width * this.absScale.getX()), (float) (this.height * this.absScale.getY()), 1);
+        textBox.setLocalScale((float) (this.absScale.getX()), (float) (this.absScale.getY()), 1);
         
         if(plane != null) {
             plane.needUpdate();
