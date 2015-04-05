@@ -43,6 +43,8 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     Element selectArrow;
     Element thinkAbout;
     
+    BitmapFont font;
+    
     
     Vec2 mouseLoc = new Vec2();
 
@@ -94,7 +96,10 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
         
-        Element testText = new Text(new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png")), "Hello, world!");
+        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png"));
+        
+        //new Sprite(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png"));
+        Element testText = new Text(font, "Hello, world!");;
         testText.setLoc(500, 500);
         plane.attachElement(testText);
         

@@ -29,7 +29,8 @@ public final class Text extends Element
         Material background = new Material(SAM.ASSETS, "Common/MatDefs/Misc/Unshaded.j3md");
         background.setTexture("ColorMap", font.texture);
         background.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-        textBox.setMaterial(background);
+        //textBox.setMaterial(background);
+        textBox.setMaterial(SAM.ASSETS.loadMaterial("Materials/debug.j3m"));
         
         this.setOriginMid();
     }

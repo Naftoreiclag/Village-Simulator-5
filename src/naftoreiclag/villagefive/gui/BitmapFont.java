@@ -137,14 +137,17 @@ public class BitmapFont {
                 c = defaultChar;
             }
             
-            v.put(xOff).put(0).put(yOff);
-            v.put(xOff).put(0).put(yOff + cellH);
-            v.put(xOff + widths[c]).put(0).put(yOff + cellH);
-            v.put(xOff + widths[c]).put(0).put(yOff);
+            v.put(xOff).put(yOff).put(0);
+            v.put(xOff).put(yOff + cellH).put(0);
+            v.put(xOff + widths[c]).put(yOff + cellH).put(0);
+            v.put(xOff + widths[c]).put(yOff).put(0);
             
-            t.put(glyphTexCoords);
+            t.put(0).put(getYIndex(c));
+            t.put(0).put(0);
+            t.put(getXIndex(c)).put(0);
+            t.put(getXIndex(c)).put(getYIndex(c));
             
-            indicies.put(ind    ).put(ind + 1).put(ind + 2);
+            indicies.put(ind    ).put(ind + 2).put(ind + 1);
             indicies.put(ind    ).put(ind + 3).put(ind + 2);
             
             xOff += widths[c];
@@ -159,6 +162,10 @@ public class BitmapFont {
 
         mesh.updateBound();
                 
+        System.out.println("grefewarhgr " + text);
+        System.out.println("grefewarhgr " + numGlyphs);
+        System.out.println("grefewarhgr " + xOff);
+        System.out.println("grefewarhgr " + ind);
         return mesh;
     }
 }

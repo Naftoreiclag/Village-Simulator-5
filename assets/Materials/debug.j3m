@@ -3,6 +3,7 @@ Material My Material : Common/MatDefs/Misc/Unshaded.j3md {
         ColorMap : Repeat Textures/debug.png
      }
     AdditionalRenderState {
-        FaceCull Off
+      FaceCull Off
+      Wireframe Off
     }
 }
