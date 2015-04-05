@@ -37,8 +37,8 @@ public class BitmapFont {
         
         this.image = ImageToAwt.convert(texture.getImage(), false, true, 0);
         
-        cellW = image.getWidth() / 8;
-        cellH = image.getHeight() / 8;
+        cellW = image.getWidth() / 16;
+        cellH = image.getHeight() / 16;
         
         widths = new int[256];
         for(int i = 0; i < 256; ++ i) {
@@ -99,18 +99,11 @@ public class BitmapFont {
     }
     
     public static int getXIndex(int index) {
-        return index % 8;
+        return index % 16;
     }
     
     public static int getYIndex(int index) {
-        return index / 8;
-    }
-    private static float getXIndexf(int index) {
-        return ((float) getXIndex(index)) / 256f;
-    }
-    
-    private static float getYIndexf(int index) {
-        return ((float) getYIndex(index)) / 256f;
+        return index / 16;
     }
 
     public static float[] glyphTexCoords = new float[]{
@@ -132,9 +125,10 @@ public class BitmapFont {
         int xOff = 0;
         int yOff = 0;
         
-        // 1   2
-        // 
-        // 0   3
+        //   C   D
+        // A 1   2
+        //  
+        // B 0   3
         
         int ind = 0;
         for(char c : data) {
@@ -147,10 +141,23 @@ public class BitmapFont {
             v.put(xOff + widths[c]).put(yOff + cellH).put(0);
             v.put(xOff + widths[c]).put(yOff).put(0);
             
-            t.put(0).put(getYIndexf(c));
-            t.put(0).put(0);
-            t.put(getXIndexf(c)).put(0);
-            t.put(getXIndexf(c)).put(getYIndexf(c));
+            float C = ((float) getXIndex(c)) / 16f;
+            float D = ((float) getXIndex(c) + 1) / 16f;
+            float A = ((float) getYIndex(c)) / 16f;
+            float B = ((float) getYIndex(c) + 1) / 16f;
+            
+            /*
+            float C = 0f / 16f;
+            float D = 1f / 16f;
+            float A = 0f / 16f;
+            float B = 1f / 16f;
+            
+            */
+            
+            t.put(C).put(1-B);
+            t.put(C).put(1-A);
+            t.put(D).put(1-A);
+            t.put(D).put(1-B);
             
             indicies.put(ind    ).put(ind + 2).put(ind + 1);
             indicies.put(ind    ).put(ind + 3).put(ind + 2);
