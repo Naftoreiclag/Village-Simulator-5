@@ -32,6 +32,8 @@ public abstract class Element {
     
     // This only makes handling image transforms a bit easier. It is not affected by the parent element.
     protected Vec2 origin = new Vec2(0, 0);
+    public double getOriginX() { return origin.getX(); }
+    public double getOriginY() { return origin.getY(); }
     
     // Pointer to the element to which this is attached.
     private Element parentElement = null;
@@ -39,6 +41,11 @@ public abstract class Element {
     // Local transform. This is used to calculate the absolute transform from the parent's absolute transform.
     private Vec2 localLoc = new Vec2(0, 0);
     private Vec2 localScale = new Vec2(1, 1);
+    
+    public double getLocalX() { return localLoc.getX(); }
+    public double getLocalY() { return localLoc.getY(); }
+    public double getLocalScaleX() { return localScale.getX(); }
+    public double getLocalScaleY() { return localScale.getY(); }
     
     // Absolute transform. This is used to calculate each attached element's absolute transform.
     protected Vec2 absLoc = new Vec2(0, 0);

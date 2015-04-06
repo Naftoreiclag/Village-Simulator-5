@@ -22,6 +22,8 @@ import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.gui.BitmapFont;
 import naftoreiclag.villagefive.gui.Collision;
 import naftoreiclag.villagefive.gui.Element;
+import naftoreiclag.villagefive.gui.HorizontalAutoplacer;
+import naftoreiclag.villagefive.gui.HorizontalAutoplacer.Placement;
 import naftoreiclag.villagefive.gui.Sprite;
 import naftoreiclag.villagefive.gui.SpritePlane;
 import naftoreiclag.villagefive.gui.Text;
@@ -96,19 +98,24 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
         
-        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Goudy-Bookletter-37.png"));
+        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png"));
         
-        testText = new Text(font, "The quick brown fox jumps over the lazy dog.\nHi, I'm a new line!");
-        testText.setLoc(500, 500);
-        plane.attachElement(testText);
         
+        placer = new HorizontalAutoplacer(20, Placement.center);
+        placer.setLoc(500, 500);
+        plane.attachElement(placer);
+        for(int i = 0; i < 10; ++ i) {
+            Element sprite = new Sprite(SAM.ASSETS.loadTexture("Textures/select_arrow.png"));
+            placer.attachElement(sprite);
+        }
     }
+    HorizontalAutoplacer placer;
     Element testText;
     double testSc = 1;
     @Override
     public void update(float tpf) {
         testSc += tpf;
-        //testText.setScale((Math.sin(testSc) + 1));
+        placer.setScale((Math.sin(testSc) + 1));
         
     }
 
