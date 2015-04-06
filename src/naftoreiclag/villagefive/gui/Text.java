@@ -49,7 +49,7 @@ public final class Text extends Element
         textBox.setLocalScale((float) (this.absScale.getX()), (float) (this.absScale.getY()), 1);
         
         if(plane != null) {
-            plane.needUpdate();
+            plane.updateSceneGraph();
         }
     }
 

@@ -41,7 +41,7 @@ public final class Sprite extends Element {
 
 
         if(plane != null) {
-            plane.needUpdate();
+            plane.updateSceneGraph();
         }
     }
 

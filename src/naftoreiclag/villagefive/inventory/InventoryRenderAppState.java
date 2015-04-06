@@ -19,6 +19,7 @@ import naftoreiclag.villagefive.Inventory;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.OverworldAppState;
 import naftoreiclag.villagefive.SAM;
+import naftoreiclag.villagefive.gui.Anchor;
 import naftoreiclag.villagefive.gui.BitmapFont;
 import naftoreiclag.villagefive.gui.Collision;
 import naftoreiclag.villagefive.gui.Element;
@@ -44,6 +45,13 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     
     Element selectArrow;
     Element thinkAbout;
+    
+    Element topRight;
+    Element topMid;
+    Element topLeft;
+    Element bottomRight;
+    Element bottomMid;
+    Element bottomLeft;
     
     BitmapFont font;
     
@@ -77,6 +85,30 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         
         plane = new SpritePlane(viewPort);
         
+        topRight = new Anchor(1, 1);
+        topRight.setLoc(-5, -5);
+        plane.attachElement(topRight);
+        
+        topMid = new Anchor(0.5, 1);
+        topMid.setLoc(0, -5);
+        plane.attachElement(topMid);
+        
+        topLeft = new Anchor(0, 1);
+        topLeft.setLoc(5, -5);
+        plane.attachElement(topLeft);
+        
+        bottomRight = new Anchor(1, 0);
+        bottomRight.setLoc(-5, 5);
+        plane.attachElement(bottomRight);
+        
+        bottomMid = new Anchor(0.5, 0);
+        bottomMid.setLoc(0, 5);
+        plane.attachElement(bottomMid);
+        
+        bottomLeft = new Anchor(0, 0);
+        bottomLeft.setLoc(5, 5);
+        plane.attachElement(bottomLeft);
+        
         hotbar = new Sprite(SAM.ASSETS.loadTexture("Interface/hotbar.png"));
         selectArrow = new Sprite(SAM.ASSETS.loadTexture("Textures/select_arrow.png"));
         selectArrow.setOrigin(128, 32);
@@ -86,8 +118,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         plane.attachElement(thinkAbout);
         
         hotbar.setOrigin(hotbar.width, hotbar.height);
-        hotbar.setLoc(cam.getWidth() - 5, cam.getHeight() - 5);
-        plane.attachElement(hotbar);
+        topRight.attachElement(hotbar);
         
         slots = new Element[10];
         for(int i = 0; i < 10; ++ i) {
@@ -108,15 +139,16 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
             Element sprite = new Sprite(SAM.ASSETS.loadTexture("Textures/select_arrow.png"));
             placer.attachElement(sprite);
         }
+        sprite2 = new Sprite(SAM.ASSETS.loadTexture("Textures/select_arrow.png"));
+        placer.attachElement(sprite2);
     }
+    Element sprite2;
     HorizontalAutoplacer placer;
     Element testText;
     double testSc = 1;
     @Override
     public void update(float tpf) {
         testSc += tpf;
-        placer.setScale((Math.sin(testSc) + 1));
-        
     }
 
     

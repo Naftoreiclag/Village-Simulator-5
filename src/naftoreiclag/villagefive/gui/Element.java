@@ -36,11 +36,11 @@ public abstract class Element {
     public double getOriginY() { return origin.getY(); }
     
     // Pointer to the element to which this is attached.
-    private Element parentElement = null;
+    protected Element parentElement = null;
     
     // Local transform. This is used to calculate the absolute transform from the parent's absolute transform.
-    private Vec2 localLoc = new Vec2(0, 0);
-    private Vec2 localScale = new Vec2(1, 1);
+    protected Vec2 localLoc = new Vec2(0, 0);
+    protected Vec2 localScale = new Vec2(1, 1);
     
     public double getLocalX() { return localLoc.getX(); }
     public double getLocalY() { return localLoc.getY(); }
@@ -98,7 +98,7 @@ public abstract class Element {
     }
 
     // Calculate position based on the transform of the parent element
-    private void calculateAbsTransform() {
+    protected void calculateAbsTransform() {
         if(parentElement != null) {
             this.absLoc = this.localLoc.mult(parentElement.absScale).add(parentElement.absLoc);
             this.absScale = this.localScale.mult(parentElement.absScale);
@@ -110,7 +110,7 @@ public abstract class Element {
     }
 
     // Whenever localLoc or localScale is changed, call this to update the child elements.
-    private void updateTransform() {
+    protected void updateTransform() {
         calculateAbsTransform();
         for(Element e : attachedElements) {
             e.updateTransform();

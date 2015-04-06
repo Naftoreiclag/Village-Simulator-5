@@ -30,10 +30,10 @@ public class HorizontalAutoplacer extends Empty {
     public void attachElement(Element element) {
         super.attachElement(element);
         
-        rearrangeElements();
+        updateArrangement();
     }
     
-    private void rearrangeElements() {
+    public void updateArrangement() {
         if(attachedElements.isEmpty()) {
             return;
         } else {

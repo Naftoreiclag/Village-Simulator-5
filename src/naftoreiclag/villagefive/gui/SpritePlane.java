@@ -21,9 +21,6 @@ public class SpritePlane {
     // All elements in order of depth
     protected SortedSet<Element> elements;
     
-    // If this is true, then the geometric state needs an update.
-    private boolean geoStateNeedsUpdating = true;
-    
     // This is the difference in z value when calculating layering.
     public static double epsilonDiff = 0.00001d;
     int lastLayer = 0;
@@ -44,7 +41,6 @@ public class SpritePlane {
     }
 
     public void attachElement(Element element) {
-        
         if(element.plane == this) {
             return;
         }
@@ -55,6 +51,7 @@ public class SpritePlane {
         
         element.plane = this;
         element.setLayer(lastLayer);
+        element.updateTransform();
         lastLayer ++;
         elements.add(element);
 
@@ -62,9 +59,8 @@ public class SpritePlane {
             rootNode.attachChild(element.getSpatial());
             System.out.println(element);
             System.out.println(element.getSpatial());
-            needUpdate();
+            updateSceneGraph();
         }
-        
     }
 
     public void removeElement(Element element) {
@@ -80,7 +76,7 @@ public class SpritePlane {
 
         if(element.hasSpatial()) {
             rootNode.detachChild(element.getSpatial());
-            needUpdate();
+            updateSceneGraph();
         }
         
         if(elements.contains(element)) {
@@ -90,17 +86,11 @@ public class SpritePlane {
         element.plane = null;
     }
 
-    public void needUpdate() {
-        geoStateNeedsUpdating = true;
-
+    public void updateSceneGraph() {
         rootNode.updateGeometricState();
     }
 
     public void tick(float tpf) {
-        if(geoStateNeedsUpdating) {
-            //rootNode.updateGeometricState();
-            geoStateNeedsUpdating = false;
-        }
     }
 
     public Element pick(Vec2 absLoc) {

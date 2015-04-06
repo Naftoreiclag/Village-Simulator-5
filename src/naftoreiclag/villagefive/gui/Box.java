@@ -41,7 +41,7 @@ public final class Box extends Element {
 
 
         if(plane != null) {
-            plane.needUpdate();
+            plane.updateSceneGraph();
         }
     }
 
