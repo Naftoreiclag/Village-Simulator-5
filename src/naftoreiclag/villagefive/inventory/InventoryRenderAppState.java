@@ -96,7 +96,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
         
-        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png"));
+        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Goudy-Bookletter-37.png"));
         
         testText = new Text(font, "The quick brown fox jumps over the lazy dog.\nHi, I'm a new line!");
         testText.setLoc(500, 500);
@@ -108,7 +108,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     @Override
     public void update(float tpf) {
         testSc += tpf;
-        testText.setScale((Math.sin(testSc) + 1));
+        //testText.setScale((Math.sin(testSc) + 1));
         
     }
 
