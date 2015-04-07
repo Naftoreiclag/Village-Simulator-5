@@ -32,9 +32,9 @@ public class BitmapFont {
     private static int spacing = 2;
     
     private final int[] widths;
-    private final int charTopMargin;
-    private final int charHeight;
-    private final int charSpacing;
+    public final int charTopMargin;
+    public final int charHeight;
+    public final int charSpacing;
     
     private int totalW;
     private int totalH;

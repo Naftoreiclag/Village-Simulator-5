@@ -15,6 +15,7 @@ import org.json.simple.JSONObject;
 public class Vec2 implements JSONAware
 {
     public static final Vec2 ZERO = new Vec2(0, 0);
+    public static final Vec2 ONE = new Vec2(1, 1);
     public static final org.dyn4j.geometry.Vector2 ZERO_DYN4J = new org.dyn4j.geometry.Vector2(0, 0);
     
 	private double x;

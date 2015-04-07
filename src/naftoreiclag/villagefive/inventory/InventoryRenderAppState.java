@@ -57,7 +57,9 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     
     Anchor actionAnchor;
     
-    BitmapFont font;
+    BitmapFont goudyBookletterFont;
+    BitmapFont rainstormFont;
+    BitmapFont tuffyFont;
     
     Vec2 mouseLoc = new Vec2();
 
@@ -132,7 +134,9 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
         
-        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Goudy-Bookletter-37.png"), 12, 37, 5);
+        goudyBookletterFont = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Goudy-Bookletter-37.png"), 12, 37, 5);
+        rainstormFont = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Rainstorm-40.png"), 11, 40, 5);
+        tuffyFont = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png"), 5, 19, 5);
         
         
         placer = new HorizontalAutoplacer(20, Placement.center);
@@ -150,18 +154,22 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         
         actionAnchor.attachElement(placer);
         
-        fancy = new FancySkin(SAM.ASSETS.loadTexture("Textures/action_button.png"), 200, 200);
-        fancy.setLoc(200, 200);
-        plane.attachElement(fancy);
         
-        button = new Button(font, "Hello world!");
-        button.setLoc(200, 200);
-        plane.attachElement(button);
+        button1 = new Button(goudyBookletterFont, 30, "Hello world!");
+        button1.setLoc(200, 200);
+        plane.attachElement(button1);
+        button2 = new Button(rainstormFont, 30, "Hello world!");
+        button2.setLoc(200, 300);
+        plane.attachElement(button2);
+        button3 = new Button(tuffyFont, 30, "Hello world!");
+        button3.setLoc(200, 400);
+        plane.attachElement(button3);
         
     }
     
-    Element button;
-    Element fancy;
+    Button button1;
+    Button button2;
+    Button button3;
     Element sprite2;
     HorizontalAutoplacer placer;
     Element testText;

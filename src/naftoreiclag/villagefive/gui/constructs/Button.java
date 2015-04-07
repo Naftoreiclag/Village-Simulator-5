@@ -17,10 +17,10 @@ public class Button extends Collision {
     private Text text;
     private FancySkin skin;
     
-    public Button(BitmapFont font, String message) {
-        super(font.getWidth(message) + 20, font.getHeight(message) + 20);
+    public Button(BitmapFont font, double fontSize, String message) {
+        super(font.getWidth(message) * (fontSize / font.charHeight) + 20, font.getHeight(message) * (fontSize / font.charHeight) + 20);
         
-        text = new Text(font, message);
+        text = new Text(font, fontSize, message);
         skin = new FancySkin(SAM.ASSETS.loadTexture("Textures/action_button.png"), width + 20, height + 20);
         
         this.attachElement(skin);

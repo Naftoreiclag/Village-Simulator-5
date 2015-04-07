@@ -24,9 +24,12 @@ public final class Text extends Element
     protected Geometry textBox;
     protected String text;
     
-    public Text(BitmapFont font, String text)
+    public double fontScale;
+    
+    public Text(BitmapFont font, double fontSize, String text)
     {
-        super(font.getWidth(text), font.getHeight(text));
+        super(font.getWidth(text) * (fontSize / font.charHeight), font.getHeight(text) * (fontSize / font.charHeight));
+        fontScale = (fontSize / font.charHeight);
         this.text = text;
         textBox = new Geometry("Text", font.meshFor(text));
         textBox.setQueueBucket(RenderQueue.Bucket.Gui);
@@ -46,7 +49,7 @@ public final class Text extends Element
                 (float) (absLoc.getX() - (origin.getX() * this.absScale.getX())), 
                 (float) (absLoc.getY() - (origin.getY() * this.absScale.getY())), 
                 (float) depth);
-        textBox.setLocalScale((float) (this.absScale.getX()), (float) (this.absScale.getY()), 1);
+        textBox.setLocalScale((float) (this.absScale.getX() * fontScale), (float) (this.absScale.getY() * fontScale), 1);
         
         if(plane != null) {
             plane.updateSceneGraph();
