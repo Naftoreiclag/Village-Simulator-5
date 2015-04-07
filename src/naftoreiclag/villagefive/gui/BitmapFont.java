@@ -120,7 +120,7 @@ public class BitmapFont {
     }
     
     public static int countNewlineChars(String text) {
-        int total = 1;
+        int total = 0;
         char[] data = text.toCharArray();
         for(char c : data) {
             if(c == '\n') {
@@ -158,7 +158,7 @@ public class BitmapFont {
     
     public Mesh meshFor(String text) {
         char[] data = text.toCharArray();
-        int numGlyphs = data.length;// - countNewlineChars(text);
+        int numGlyphs = data.length - countNewlineChars(text);
         
         // 3 vertexes, 3 floats each
         FloatBuffer v = BufferUtils.createFloatBuffer(numGlyphs * 4 * 3);

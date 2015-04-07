@@ -41,25 +41,27 @@ public class SpritePlane {
     }
 
     public void attachElement(Element element) {
-        if(element.plane == this) {
-            return;
-        }
-        
-        if(element.plane != null) {
-            element.plane.removeElement(element);
-        }
-        
-        element.plane = this;
-        element.setLayer(lastLayer);
-        element.updateTransform();
-        lastLayer ++;
-        elements.add(element);
+        if(element.plane != this) {
+            if(element.plane != null) {
+                element.plane.removeElement(element);
+            }
 
-        if(element.hasSpatial()) {
-            rootNode.attachChild(element.getSpatial());
-            System.out.println(element);
-            System.out.println(element.getSpatial());
-            updateSceneGraph();
+            element.plane = this;
+            element.setLayer(lastLayer);
+            element.updateTransform();
+            lastLayer ++;
+            elements.add(element);
+
+            if(element.hasSpatial()) {
+                rootNode.attachChild(element.getSpatial());
+                System.out.println(element);
+                System.out.println(element.getSpatial());
+                updateSceneGraph();
+            }
+        }
+        
+        for(Element e : element.attachedElements) {
+            this.attachElement(e);
         }
     }
 

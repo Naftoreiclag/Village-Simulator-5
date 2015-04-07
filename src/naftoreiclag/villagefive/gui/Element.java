@@ -89,7 +89,9 @@ public abstract class Element {
     public final double height;
 
     public void attachElement(Element element) {
-        this.plane.attachElement(element);
+        if(plane != null) {
+            this.plane.attachElement(element);
+        }
         
         this.attachedElements.add(element);
 

@@ -23,11 +23,13 @@ import naftoreiclag.villagefive.gui.Anchor;
 import naftoreiclag.villagefive.gui.BitmapFont;
 import naftoreiclag.villagefive.gui.Collision;
 import naftoreiclag.villagefive.gui.Element;
+import naftoreiclag.villagefive.gui.FancySkin;
 import naftoreiclag.villagefive.gui.HorizontalAutoplacer;
 import naftoreiclag.villagefive.gui.HorizontalAutoplacer.Placement;
 import naftoreiclag.villagefive.gui.Sprite;
 import naftoreiclag.villagefive.gui.SpritePlane;
 import naftoreiclag.villagefive.gui.Text;
+import naftoreiclag.villagefive.gui.constructs.Button;
 import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.entity.PlayerEntity;
@@ -53,8 +55,9 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     Element bottomMid;
     Element bottomLeft;
     
-    BitmapFont font;
+    Anchor actionAnchor;
     
+    BitmapFont font;
     
     Vec2 mouseLoc = new Vec2();
 
@@ -115,7 +118,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         thinkAbout = new Sprite(SAM.ASSETS.loadTexture("Textures/think_about.png"));
         thinkAbout.setOrigin(158, 258);
         thinkAbout.setLoc(cam.getWidth() / 2, cam.getHeight() - 200);
-        plane.attachElement(thinkAbout);
+        //plane.attachElement(thinkAbout);
         
         hotbar.setOrigin(hotbar.width, hotbar.height);
         topRight.attachElement(hotbar);
@@ -129,11 +132,10 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
         
-        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png"));
+        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Rainstorm-40.png"));
         
         
         placer = new HorizontalAutoplacer(20, Placement.center);
-        placer.setLoc(500, 500);
         plane.attachElement(placer);
         for(int i = 0; i < 10; ++ i) {
             Element sprite = new Sprite(SAM.ASSETS.loadTexture("Textures/select_arrow.png"));
@@ -141,7 +143,25 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         }
         sprite2 = new Sprite(SAM.ASSETS.loadTexture("Textures/select_arrow.png"));
         placer.attachElement(sprite2);
+        
+        actionAnchor = new Anchor(0.5, 0);
+        actionAnchor.setLoc(0, 125);
+        plane.attachElement(actionAnchor);
+        
+        actionAnchor.attachElement(placer);
+        
+        fancy = new FancySkin(SAM.ASSETS.loadTexture("Textures/action_button.png"), 200, 200);
+        fancy.setLoc(200, 200);
+        plane.attachElement(fancy);
+        
+        button = new Button(font, "Hello world!");
+        button.setLoc(200, 200);
+        plane.attachElement(button);
+        
     }
+    
+    Element button;
+    Element fancy;
     Element sprite2;
     HorizontalAutoplacer placer;
     Element testText;
