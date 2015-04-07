@@ -32,7 +32,9 @@ public class BitmapFont {
     private static int spacing = 2;
     
     private final int[] widths;
+    private final int charTopMargin;
     private final int charHeight;
+    private final int charSpacing;
     
     private int totalW;
     private int totalH;
@@ -43,7 +45,7 @@ public class BitmapFont {
     private static int numGlyphColumns = 16;
     private static int numGlyphRows = 16;
     
-    public BitmapFont(Texture texture) {
+    public BitmapFont(Texture texture, int charTopMargin, int charHeight, int charSpacing) {
         this.texture = texture;
         
         this.image = ImageToAwt.convert(texture.getImage(), false, true, 0);
@@ -53,7 +55,9 @@ public class BitmapFont {
         cellW = totalW / numGlyphColumns;
         cellH = totalH / numGlyphRows;
         
-        charHeight = cellH / 2 + 8;
+        this.charHeight = charHeight;
+        this.charTopMargin = charTopMargin;
+        this.charSpacing = charSpacing;
         
         widths = new int[256];
         
@@ -116,7 +120,15 @@ public class BitmapFont {
     }
     
     public int getHeight(String text) {
-        return (countNewlineChars(text) + 1) * this.charHeight;
+        
+        int numLines = countNewlineChars(text) + 1;
+        int height = numLines * this.charHeight;
+        
+        if(numLines > 1) {
+            height += (numLines - 1) * this.charSpacing;
+        }
+        
+        return height;
     }
     
     public static int countNewlineChars(String text) {
@@ -166,7 +178,7 @@ public class BitmapFont {
         IntBuffer indicies = BufferUtils.createIntBuffer(numGlyphs * 2 * 3);
         
         int xOff = 0;
-        int yOff = getHeight(text);
+        int yOff = getHeight(text) + charTopMargin;
         
         //   C   D
         // A 1   2
@@ -178,6 +190,8 @@ public class BitmapFont {
             if(c == '\n') {
                 xOff = 0;
                 yOff -= charHeight;
+                yOff -= charSpacing;
+                yOff += charTopMargin;
                 continue;
             }
             if(c >= 256) {

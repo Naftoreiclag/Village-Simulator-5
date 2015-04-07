@@ -132,7 +132,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         
         SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
         
-        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Rainstorm-40.png"));
+        font = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Goudy-Bookletter-37.png"), 12, 37, 5);
         
         
         placer = new HorizontalAutoplacer(20, Placement.center);
