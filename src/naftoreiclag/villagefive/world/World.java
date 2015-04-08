@@ -288,7 +288,6 @@ public class World implements JSONAware
             hiddenRoomParen.attachChild(hiddenRoom);
         }
         
-        Vector3f loc3 = OreDict.Vec2ToVec3(loc2);
         
         /*
         for(Plot plot : plots)

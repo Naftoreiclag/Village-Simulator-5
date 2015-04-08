@@ -142,7 +142,7 @@ public class Angle
      */
     public Vec2 toNormalVec()
     {
-        return new Vec2(Math.cos(this.x), Math.sin(this.x));
+        return new Vec2(this);
     }
     
     // This will correctly give the quaternion to rotate a model toward a given angle.

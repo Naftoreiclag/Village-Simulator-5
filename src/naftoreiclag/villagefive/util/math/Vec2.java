@@ -41,8 +41,9 @@ public class Vec2 implements JSONAware
     public Vec2(com.jme3.math.Vector2f strange) {
         this(strange.x, strange.y);
     }
-    public static Vec2 fromAngle(double d) {
-        return new Vec2(Math.cos(d), Math.sin(d));
+    public Vec2(Angle angle) {
+        this.x = Math.cos(angle.getX());
+        this.y = Math.sin(angle.getX());
     }
     public org.dyn4j.geometry.Vector2 toDyn4j() {
         return new org.dyn4j.geometry.Vector2(this.getX(), this.getY());

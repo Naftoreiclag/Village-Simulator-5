@@ -12,22 +12,22 @@ import java.util.ArrayList;
 
 public class OreDict
 {
-    public static Vec2 JmeAngleToVec2(float angle)
+    private static Vec2 JmeAngleToVec2(float angle)
     {
         return new Vec2(FastMath.cos(FastMath.HALF_PI - angle), FastMath.sin(FastMath.HALF_PI - angle));
     }
     
-    public static Vector3f JmeAngleToVec3(float angle)
+    private static Vector3f JmeAngleToVec3(float angle)
     {
         return new Vector3f(FastMath.cos(FastMath.HALF_PI - angle), 0f, FastMath.sin(FastMath.HALF_PI - angle));
     }
     
-    public static Vector3f Vec2ToVec3(Vec2 vec)
+    private static Vector3f Vec2ToVec3(Vec2 vec)
     {
         return new Vector3f(vec.getXF(), 0f, vec.getYF());
     }
 
-    public static Vec2 vec3ToVec2(Vector3f vec)
+    private static Vec2 vec3ToVec2(Vector3f vec)
     {
         return new Vec2(vec.x, vec.z);
     }

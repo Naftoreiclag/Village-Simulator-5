@@ -67,8 +67,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     
     private ReiCamera reiCamera;
     private Node chasePnt;
-    
-    InventoryGUI inv;
 
     @Override
     public void initialize(AppStateManager stateManager, Application application)
@@ -107,7 +105,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         genworld();
         //loadworld();
         
-        setupInvScreen();
         invAppState.setGame(this);
 
     }
@@ -118,19 +115,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     }
     
     
-    private void setupInvScreen()
-    {
-        invCam = new Camera(cam.getWidth(), cam.getHeight());
-        invCam.setParallelProjection(true);
-        invCam.setLocation(Vector3f.UNIT_Z);
-        invCam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
-        invCam.setFrustum(-1000, 1000, (float) -cam.getWidth(), (float) 0, (float) cam.getHeight(), (float) 0);
-        invPort = app.getRenderManager().createPostView("baaackground", invCam);
-        invPort.setClearFlags(false, true, true);
-        
-        inv = new InventoryGUI(new SpritePlane(invPort));
-        playerInterface.inv = this.inv;
-    }
     
     
     @Override
@@ -192,8 +176,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         world.tick(tpf);
         
         reiCamera.tick(tpf);
-        
-        inv.tick(tpf);
     }
 
     @Override
@@ -305,7 +287,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         playerInterface.setEntity(player);
         playerInterface.setCamera(reiCamera);
         playerInterface.setGround(ground);
-        playerInterface.inv = this.inv;
     }
     
     public void saveworld() {

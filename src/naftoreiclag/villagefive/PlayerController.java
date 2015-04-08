@@ -63,7 +63,7 @@ public final class PlayerController extends EntityController implements ActionLi
     private float scrollSpd = 500.0f;
     SmoothScalar zoomLevel = new SmoothScalar();
     Angle playerLook = new Angle();
-    SmoothAngle camDispl = new SmoothAngle();
+    SmoothAngle cameraTrackLocation = new SmoothAngle();
     ReiCamera camera;
     Spatial ground;
     boolean turningLeft = false;
@@ -73,17 +73,16 @@ public final class PlayerController extends EntityController implements ActionLi
     boolean leftClick = false;
     boolean rotCamLeft = false;
     boolean rotCamRight = false;
-    InventoryGUI inv;
     boolean invOpen = false;
     boolean isInvOpenKeyPressed = false;
     Entity grabbedEnt;
     WeldJoint grabJoint;
 
     public PlayerController() {
-        camDispl.smoothFactor /= 2f;
-        camDispl.maxSpd /= 2f;
+        cameraTrackLocation.smoothFactor /= 2f;
+        cameraTrackLocation.maxSpd /= 2f;
 
-        camDispl.disableSmoothing();
+        cameraTrackLocation.disableSmoothing();
         zoomLevel.x = 35;
         zoomLevel.tx = 35;
         zoomLevel.maxSpd *= 2;
@@ -173,18 +172,16 @@ public final class PlayerController extends EntityController implements ActionLi
         world.updateChunkLODs(this.entity.getLocation());
 
         // Move camera on its track
-        camera.setLocation(OreDict.JmeAngleToVec3((float) camDispl.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(entity.getLocation())));
+        
+        Vec2 loccc = new Vec2(cameraTrackLocation).multLocal(15).addLocal(entity.getLocation());
+        camera.setLocation(loccc.getXF(), 7, loccc.getYF());
 
         // lookie
         if(invOpen) {
             camera.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(4)));
-            inv.enable();
         } else {
             camera.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
-            inv.disable();
         }
-
-
     }
 
     // When a key is pressed
@@ -278,12 +275,12 @@ public final class PlayerController extends EntityController implements ActionLi
         //playerLook.tick(tpf);
 
         if(rotCamLeft) {
-            camDispl.tx += 2f * tpf;
+            cameraTrackLocation.tx -= 2f * tpf;
         }
         if(rotCamRight) {
-            camDispl.tx -= 2f * tpf;
+            cameraTrackLocation.tx += 2f * tpf;
         }
-        camDispl.tick(tpf);
+        cameraTrackLocation.tick(tpf);
 
         entity.turnTo(playerLook, tpf);
 
