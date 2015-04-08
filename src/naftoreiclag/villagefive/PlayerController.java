@@ -72,11 +72,13 @@ public final class PlayerController extends EntityController implements ActionLi
     boolean leftClick = false;
     boolean rotCamLeft = false;
     boolean rotCamRight = false;
+    InventoryGUI inv;
+    boolean invOpen = false;
+    boolean isInvOpenKeyPressed = false;
+    Entity grabbedEnt;
+    WeldJoint grabJoint;
 
     public PlayerController() {
-        
-        
-        
         camDispl.smoothFactor /= 2f;
         camDispl.maxSpd /= 2f;
 
@@ -183,11 +185,6 @@ public final class PlayerController extends EntityController implements ActionLi
 
 
     }
-    InventoryGUI inv;
-    boolean invOpen = false;
-    boolean isInvOpenKeyPressed = false;
-    Entity grabbedEnt;
-    WeldJoint grabJoint;
 
     // When a key is pressed
     public void onAction(String key, boolean keyState, float tpf) {
@@ -253,34 +250,7 @@ public final class PlayerController extends EntityController implements ActionLi
     }
 
     private Angle whereDoesThePlayerWantToGo() {
-        /*
-         //Vec2 fwd = new Vec2(cam.c.getDirection().x, cam.c.getDirection().z);
-         Vec2 fwd = this.camDispl.toNormalVec();
-         fwd.inverseLocal();
-         fwd.normalizeLocal();
-         Vec2 dir = new Vec2();
-         if(movingFwd)
-         {
-         dir.addLocal(fwd);
-         }
-         if(movingBwd)
-         {
-         dir.subtractLocal(fwd);
-         }
-         if(turningLeft)
-         {
-         dir.addLocal(fwd.getY(), -fwd.getX());
-         }
-         if(turningRight)
-         {
-         dir.addLocal(-fwd.getY(), fwd.getX());
-         }
-        
-        
-         return dir.getAngle().getXF();
-         */
-
-        Vec2 fwd = new Vec2(0, -1);
+        Vec2 fwd = new Vec2(cam.c.getDirection().x, cam.c.getDirection().z);
         Vec2 dir = new Vec2();
 
         if(movingFwd) {
@@ -327,6 +297,7 @@ public final class PlayerController extends EntityController implements ActionLi
         }
 
         if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null) {
+            playerLook.setX(entity.getRotation());
             if(walking) {
                 entity.model.playAnimation(PlayerModel.anim_standstill);
                 walking = false;

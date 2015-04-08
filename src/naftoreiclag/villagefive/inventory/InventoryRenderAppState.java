@@ -138,7 +138,6 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         rainstormFont = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Rainstorm-40.png"), 11, 40, 5);
         tuffyFont = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Tuffy-Bold-30.png"), 5, 19, 5);
         
-        
         placer = new HorizontalAutoplacer(20, Placement.center);
         plane.attachElement(placer);
         for(int i = 0; i < 10; ++ i) {
@@ -153,7 +152,6 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         plane.attachElement(actionAnchor);
         
         actionAnchor.attachElement(placer);
-        
         
         button1 = new Button(goudyBookletterFont, 30, "Hello world!");
         button1.setLoc(200, 200);
