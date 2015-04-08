@@ -183,7 +183,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     {
     }
     
-    Spatial ground;
     
     DirectionalLightShadowRenderer dlsr;
     private void setupUselessAestetics()
@@ -220,11 +219,6 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         BloomFilter bf = new BloomFilter(BloomFilter.GlowMode.Objects);
         fpp.addFilter(bf);
         viewPort.addProcessor(fpp);
-
-        
-        HorizQuad quad = new HorizQuad(-300, -300, 300, 300);
-        ground = new Geometry("", quad);
-        
     }
 
     // its as dirty as possible
@@ -235,12 +229,10 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         player = (PlayerEntity) world.spawnEntity("Player");
         player.setLocation(new Vec2(256, 256));
         player.attachSpatial(chasePnt);
-        player.attachGround(ground);
         playerInterface = new PlayerController();
         playerInterface.hookToInputs();
         playerInterface.setEntity(player);
         playerInterface.setCamera(reiCamera);
-        playerInterface.setGround(ground);
 
         /*
         Random rand = new Random(1337);
@@ -281,12 +273,10 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         
         player = (PlayerEntity) world.getEntity("Player");
         player.attachSpatial(chasePnt);
-        player.attachGround(ground);
         playerInterface = new PlayerController();
         playerInterface.hookToInputs();
         playerInterface.setEntity(player);
         playerInterface.setCamera(reiCamera);
-        playerInterface.setGround(ground);
     }
     
     public void saveworld() {

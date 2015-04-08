@@ -15,6 +15,7 @@ import com.jme3.input.controls.AnalogListener;
 import com.jme3.math.FastMath;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.SmoothAngle;
 import naftoreiclag.villagefive.util.math.SmoothScalar;
 import naftoreiclag.villagefive.util.math.Vec2;
+import naftoreiclag.villagefive.util.scenegraph.HorizQuad;
 import naftoreiclag.villagefive.world.body.EntityBody;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
@@ -51,7 +53,12 @@ public final class PlayerController extends EntityController implements ActionLi
     public Spatial ground;
     
     public void setEntity(PlayerEntity entity) {
+        HorizQuad quad = new HorizQuad(-300, -300, 300, 300);
+        ground = new Geometry("", quad);
+        ground.setMaterial(SAM.ASSETS.loadMaterial("Materials/empty.j3m"));
+        
         this.player = entity;
+        this.player.attachSpatial(ground);
         this.player.controller = this;
         this.world = this.player.getWorld();
     }
@@ -61,6 +68,7 @@ public final class PlayerController extends EntityController implements ActionLi
     
     float turnSpeed = 3f;
     float walkSpeed = 4.5f;
+    
     
     private float scrollSpd = 500.0f;
     
@@ -249,10 +257,6 @@ public final class PlayerController extends EntityController implements ActionLi
             dir.addLocal(-fwd.getY(), fwd.getX());
         }
         return dir.getAngle();
-    }
-
-    void setGround(Spatial ground) {
-        this.ground = ground;
     }
 
     // correct

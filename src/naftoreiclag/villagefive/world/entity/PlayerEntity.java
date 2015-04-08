@@ -47,20 +47,10 @@ public class PlayerEntity extends Entity implements IGrabbyEntity {
         model.load();
         node = model.getNode();
     }
-    Spatial ground;
-
-    public void attachGround(Spatial ground) {
-        this.ground = ground;
-    }
-
     @Override
     public void onLocationChange(Vec2 loc) {
         if(world != null) {
             world.something(loc);
-        }
-
-        if(ground != null) {
-            ground.setLocalTranslation(loc.toJmeVec3());
         }
     }
 

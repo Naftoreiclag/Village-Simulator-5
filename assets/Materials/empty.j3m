@@ -1,0 +1,7 @@
+Material empty : Common/MatDefs/Misc/Unshaded.j3md {
+     MaterialParameters {
+     }
+    AdditionalRenderState {
+      FaceCull FrontAndBack
+    }
+}
