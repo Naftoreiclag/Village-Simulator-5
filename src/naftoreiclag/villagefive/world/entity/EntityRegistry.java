@@ -3,7 +3,6 @@
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
  */
-
 package naftoreiclag.villagefive.world.entity;
 
 import java.util.HashMap;
@@ -15,100 +14,65 @@ import naftoreiclag.villagefive.addon.LuaAddon;
 import static naftoreiclag.villagefive.addon.AddonManager.addonCollection;
 import naftoreiclag.villagefive.world.World;
 
-public class EntityRegistry 
-{
-    public static Map<String, Class<? extends Entity>> entities = new HashMap<String, Class<? extends Entity>>();
-    public static Map<String, AddonEntity> addonEntities = new HashMap<String, AddonEntity>();
-    
-    static
-    {
-        try
-        {
+public class EntityRegistry {
+    public static Map<String, Class<? extends Entity>> javaEntities = new HashMap<String, Class<? extends Entity>>();
+    public static Map<String, LuaEntity> luaEntities = new HashMap<String, LuaEntity>();
+
+    static {
+        try {
             register(DoorEntity.class);
             register(PinguinEntity.class);
             register(PlayerEntity.class);
             register(StoolEntity.class);
-            register(ForSaleEntity.class);
-        }
-        catch(Exception e)
-        {
-            System.out.println("dddd");
+        } catch(Exception e) {
             printErrors(e);
         }
-        //register(.class);
     }
 
-    static void printErrors(Throwable t)
-    {
-        for(StackTraceElement e : t.getStackTrace())
-        {
+    static void printErrors(Throwable t) {
+        for(StackTraceElement e : t.getStackTrace()) {
             System.out.println(e);
         }
     }
-    
-    public static <SomeEntity extends Entity> void register(Class<SomeEntity> gg)
-    {
+
+    public static <SomeEntity extends Entity> void register(Class<SomeEntity> gg) {
         SomeEntity entity;
-        try
-        {
+        try {
             entity = gg.getConstructor().newInstance();
 
-        }
-        catch(Exception ex)
-        {
+        } catch(Exception ex) {
             printErrors(ex);
 
             return;
         }
 
-        entities.put(entity.getEntityId(), gg);
+        javaEntities.put(entity.getEntityId(), gg);
     }
 
-    public static void register(LuaEntity entity)
-    {
-        AddonEntity e = new AddonEntity(entity);
-        
-        addonEntities.put(e.getEntityId(), e);
+    public static void register(LuaEntity entity) {
+
+        luaEntities.put(entity.parent.id + ":" + entity.id, entity);
     }
 
-    public static Entity newInstance(String string)
-    {
+    public static Entity newInstance(String string) {
         Entity returnVal = null;
-        
+
         // Try find that in the entity registry
-        if(entities.containsKey(string))
-        {
-            try
-            {
-                returnVal = entities.get(string).newInstance();
-            }
-            catch(InstantiationException ex)
-            {
+        if(javaEntities.containsKey(string)) {
+            try {
+                returnVal = javaEntities.get(string).newInstance();
+            } catch(InstantiationException ex) {
+                Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
+            } catch(IllegalAccessException ex) {
                 Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
             }
-            catch(IllegalAccessException ex)
-            {
-                Logger.getLogger(World.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        else if(addonEntities.containsKey(string))
-        {
-            returnVal = addonEntities.get(string).duplicate();
+        } else if(luaEntities.containsKey(string)) {
+            returnVal = new AddonEntity(luaEntities.get(string));
         }
         return returnVal;
     }
-    
-    public static void debug()
-    {
-        for(Map.Entry<String, AddonEntity> pair : addonEntities.entrySet())
-        {
-            AddonEntity addon = pair.getValue();
-            
-            System.out.println(addon.getEntityId());
-        }
-    }
 
     public static boolean exists(String entity) {
-        return entities.containsKey(entity) || addonEntities.containsKey(entity);
+        return javaEntities.containsKey(entity) || luaEntities.containsKey(entity);
     }
 }

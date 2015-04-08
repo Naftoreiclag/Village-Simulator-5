@@ -110,7 +110,7 @@ public class PhysWorld extends org.dyn4j.dynamics.World
         
         for(int i = 0; i < num; ++ i)
         {
-            Vec2 loc = Vec2.fromAngle((Math.PI * 2 * i) / num).multLocal(radius);
+            Vec2 loc = new Vec2(new Angle((Math.PI * 2 * i) / num)).multLocal(radius);
             loc.addLocal(center);
             
             v.put(loc.getXF()).put(0f).put(loc.getYF());

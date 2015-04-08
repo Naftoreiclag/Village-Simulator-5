@@ -64,7 +64,5 @@ public class AddonManager
                 EntityRegistry.register(entity);
             }
         }
-        
-        EntityRegistry.debug();
     }
 }

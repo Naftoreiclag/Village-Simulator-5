@@ -43,7 +43,6 @@ import org.dyn4j.geometry.Mass;
 public final class PlayerController extends EntityController implements ActionListener, AnalogListener {
     public World world;
     private PlayerEntity entity;
-    public List<Plot> property;
     
     public void setEntity(PlayerEntity entity) {
         this.entity = entity;
@@ -53,19 +52,16 @@ public final class PlayerController extends EntityController implements ActionLi
     public PlayerEntity getEntity() {
         return entity;
     }
-    public void setData(PlayerOfflineData data) {
-        
-    }
     
     float turnSpeed = 3f;
     float walkSpeed = 4.5f;
     
     private float scrollSpd = 500.0f;
-    SmoothScalar zoomLevel = new SmoothScalar();
-    Angle playerLook = new Angle();
-    SmoothAngle cameraTrackLocation = new SmoothAngle();
-    ReiCamera camera;
-    Spatial ground;
+    public SmoothScalar zoomLevel = new SmoothScalar();
+    public Angle playerLook = new Angle();
+    public SmoothAngle cameraTrackLocation = new SmoothAngle();
+    public ReiCamera camera;
+    public Spatial ground;
     boolean turningLeft = false;
     boolean turningRight = false;
     boolean movingFwd = false;
@@ -75,8 +71,8 @@ public final class PlayerController extends EntityController implements ActionLi
     boolean rotCamRight = false;
     boolean invOpen = false;
     boolean isInvOpenKeyPressed = false;
-    Entity grabbedEnt;
-    WeldJoint grabJoint;
+    public Entity grabbedEnt;
+    public WeldJoint grabJoint;
 
     public PlayerController() {
         cameraTrackLocation.smoothFactor /= 2f;
@@ -85,7 +81,7 @@ public final class PlayerController extends EntityController implements ActionLi
         cameraTrackLocation.disableSmoothing();
         zoomLevel.x = 35;
         zoomLevel.tx = 35;
-        zoomLevel.maxSpd *= 2;
+        zoomLevel.maxSpd *= 999;
         zoomLevel.enableClamp(25, 50);
     }
     

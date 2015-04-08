@@ -31,11 +31,6 @@ public class AddonEntity extends Entity
     {
         this.data = entity;
     }
-
-    Entity duplicate()
-    {
-        return new AddonEntity(data);
-    }
     
     @Override
     public String getEntityId()

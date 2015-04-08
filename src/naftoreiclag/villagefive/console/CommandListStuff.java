@@ -47,12 +47,12 @@ public class CommandListStuff extends Command {
             
             List<String> entities = new ArrayList<String>();
             
-            for(Map.Entry<String, AddonEntity> pair : EntityRegistry.addonEntities.entrySet()) {
+            for(Map.Entry<String, LuaEntity> pair : EntityRegistry.luaEntities.entrySet()) {
                 entities.add(pair.getKey());
                 
                 ++ entityCount;
             }
-            for(Map.Entry<String, Class<? extends Entity>> pair : EntityRegistry.entities.entrySet()) {
+            for(Map.Entry<String, Class<? extends Entity>> pair : EntityRegistry.javaEntities.entrySet()) {
                 entities.add(pair.getKey());
                 
                 ++ entityCount;

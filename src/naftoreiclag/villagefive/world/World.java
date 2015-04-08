@@ -7,16 +7,11 @@
 package naftoreiclag.villagefive.world;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import naftoreiclag.villagefive.PlayerOfflineData;
-import naftoreiclag.villagefive.util.math.OreDict;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.entity.Entity;
 import naftoreiclag.villagefive.world.plot.Plot;
@@ -55,7 +50,6 @@ public class World implements JSONAware
     
     public List<Entity> entities = new ArrayList<Entity>();
     public List<Plot> plots = new ArrayList<Plot>();
-    public List<PlayerOfflineData> players = new ArrayList<PlayerOfflineData>();
     
     public World(Node theRootNode, AssetManager assetManager)
     {
