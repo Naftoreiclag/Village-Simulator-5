@@ -57,13 +57,14 @@ public final class PlayerController extends EntityController implements ActionLi
         
     }
     
-    float turnSpd = 3f;
-    float speed = 4.5f;
+    float turnSpeed = 3f;
+    float walkSpeed = 4.5f;
+    
     private float scrollSpd = 500.0f;
     SmoothScalar zoomLevel = new SmoothScalar();
-    Angle playerLook = new SmoothAngle();
+    Angle playerLook = new Angle();
     SmoothAngle camDispl = new SmoothAngle();
-    ReiCamera cam;
+    ReiCamera camera;
     Spatial ground;
     boolean turningLeft = false;
     boolean turningRight = false;
@@ -149,8 +150,8 @@ public final class PlayerController extends EntityController implements ActionLi
 
     // correct
     public Vector3f whereClickingOnGround() {
-        Vector3f origin = cam.c.getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.0f);
-        Vector3f direction = cam.c.getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.3f);
+        Vector3f origin = camera.getCamera().getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.0f);
+        Vector3f direction = camera.getCamera().getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.3f);
         direction.subtractLocal(origin).normalizeLocal();
 
         Ray ray = new Ray(origin, direction);
@@ -172,14 +173,14 @@ public final class PlayerController extends EntityController implements ActionLi
         world.updateChunkLODs(this.entity.getLocation());
 
         // Move camera on its track
-        cam.setLocation(OreDict.JmeAngleToVec3((float) camDispl.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(entity.getLocation())));
+        camera.setLocation(OreDict.JmeAngleToVec3((float) camDispl.getX()).multLocal(15f).addLocal(0f, 7f, 0f).addLocal(OreDict.Vec2ToVec3(entity.getLocation())));
 
         // lookie
         if(invOpen) {
-            cam.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(4)));
+            camera.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(4)));
             inv.enable();
         } else {
-            cam.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
+            camera.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
             inv.disable();
         }
 
@@ -241,16 +242,16 @@ public final class PlayerController extends EntityController implements ActionLi
 
     private void updateFrustum(float tpf) {
         zoomLevel.tick(tpf);
-        float aspect = (float) cam.c.getWidth() / cam.c.getHeight();
-        cam.c.setFrustumPerspective(zoomLevel.getXf(), aspect, cam.c.getFrustumNear(), cam.c.getFrustumFar());
+        float aspect = (float) camera.getCamera().getWidth() / camera.getCamera().getHeight();
+        camera.getCamera().setFrustumPerspective(zoomLevel.getXf(), aspect, camera.getCamera().getFrustumNear(), camera.getCamera().getFrustumFar());
     }
 
     void setCamera(ReiCamera cam) {
-        this.cam = cam;
+        this.camera = cam;
     }
 
     private Angle whereDoesThePlayerWantToGo() {
-        Vec2 fwd = new Vec2(cam.c.getDirection().x, cam.c.getDirection().z);
+        Vec2 fwd = new Vec2(camera.getCamera().getDirection().x, camera.getCamera().getDirection().z);
         Vec2 dir = new Vec2();
 
         if(movingFwd) {
@@ -311,7 +312,7 @@ public final class PlayerController extends EntityController implements ActionLi
                 playerLook.setX(whereDoesThePlayerWantToGo());
             }
 
-            entity.setVelocity(playerLook.toNormalVec().multLocal(speed), tpf);
+            entity.setVelocity(playerLook.toNormalVec().multLocal(walkSpeed), tpf);
 
             if(!walking) {
                 entity.model.playAnimation(PlayerModel.anim_walk);

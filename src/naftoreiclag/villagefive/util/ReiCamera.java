@@ -3,103 +3,95 @@
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
  */
-
 package naftoreiclag.villagefive.util;
 
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 
 // Build a better mousetrap
-public class ReiCamera
-{
-    public final Camera c;
+public class ReiCamera {
+    private final Camera camera;
     
-    public final Vector3f targetLoc;
-    public final Vector3f dummyLoc;
-    public final Vector3f cubicLoc;
+    public final Vector3f targetLocation;
+    public final Vector3f linearInterpLocation;
+    public final Vector3f smoothInterpLocation;
     
     public final Vector3f targetView;
-    public final Vector3f dummyView;
-    public final Vector3f cubicView;
+    public final Vector3f linearInterpView;
+    public final Vector3f smoothInterpView;
     
     public float maxSpd = 5.0f;
-    public float exp = 5f;
-    
-    public ReiCamera(Camera cam)
-    {
-        this.c = cam;
-        
-        this.targetLoc = c.getLocation().clone();
-        this.dummyLoc = this.targetLoc.clone();
-        this.cubicLoc = this.targetLoc.clone();
-        this.targetView = targetLoc.add(c.getDirection());
-        this.dummyView = this.targetView.clone();
-        this.cubicView = this.targetView.clone();
+    public float smoothing = 5f;
+
+    public ReiCamera(Camera cam) {
+        this.camera = cam;
+
+        this.targetLocation = camera.getLocation().clone();
+        this.linearInterpLocation = this.targetLocation.clone();
+        this.smoothInterpLocation = this.targetLocation.clone();
+        this.targetView = targetLocation.add(camera.getDirection());
+        this.linearInterpView = this.targetView.clone();
+        this.smoothInterpView = this.targetView.clone();
     }
     
-    public SmoothMode mode = SmoothMode.cubic;
+    public void setMode(SmoothMode mode) {
+        this.mode = mode;
+    }
     
-    public void setLocation(Vector3f where)
-    {
-        targetLoc.set(where);
+    public SmoothMode mode = SmoothMode.linear;
+
+    public void setLocation(Vector3f where) {
+        targetLocation.set(where);
     }
-    public void setLocation(float x, float y, float z)
-    {
-        targetLoc.set(x, y, z);
+
+    public void setLocation(float x, float y, float z) {
+        targetLocation.set(x, y, z);
     }
-    public void lookAt(Vector3f where)
-    {
+
+    public void lookAt(Vector3f where) {
         targetView.set(where);
     }
-    void lookAt(float x, float y, float z)
-    {
+
+    void lookAt(float x, float y, float z) {
         targetView.set(x, y, z);
     }
-    
-    public void tick(float tpf)
-    {
-        if(mode == SmoothMode.none)
-        {
+
+    public void tick(float deltaT) {
+        if(mode == SmoothMode.none) {
             return;
         }
-        
-        // interpolate dummies linearly
-        float dummyLocDist = dummyLoc.distance(targetLoc);
-        if(dummyLocDist > maxSpd * tpf)
-        {
-            dummyLoc.addLocal(targetLoc.subtract(dummyLoc).normalizeLocal().multLocal(maxSpd * tpf));
-            dummyView.addLocal(targetView.subtract(dummyView).divideLocal(dummyLocDist / (maxSpd * tpf)));
+
+        // Interpolate linearly
+        float dummyLocDist = linearInterpLocation.distance(targetLocation);
+        if(dummyLocDist > maxSpd * deltaT) {
+            linearInterpLocation.addLocal(targetLocation.subtract(linearInterpLocation).normalizeLocal().multLocal(maxSpd * deltaT));
+            linearInterpView.addLocal(targetView.subtract(linearInterpView).divideLocal(dummyLocDist / (maxSpd * deltaT)));
+        } else {
+            linearInterpLocation.set(targetLocation);
+            linearInterpView.set(targetView);
+
         }
-        else
-        {
-            dummyLoc.set(targetLoc);
-            dummyView.set(targetView);
-            
-        }
-        
-        // aaaa
-        if(mode == SmoothMode.linear)
-        {
-            c.setLocation(dummyLoc);
-            c.lookAt(dummyView, Vector3f.UNIT_Y);
-        }
-        else if(mode == SmoothMode.cubic)
-        {
-            cubicLoc.addLocal(targetLoc.subtract(cubicLoc).multLocal(tpf * exp));
-            cubicView.addLocal(targetView.subtract(cubicView).multLocal(tpf * exp));
-            
-            c.setLocation(cubicLoc);
-            c.lookAt(cubicView, Vector3f.UNIT_Y);
+
+        // Depending on the smoothing mode, update the camera position accordingly
+        if(mode == SmoothMode.linear) {
+            getCamera().setLocation(linearInterpLocation);
+            getCamera().lookAt(linearInterpView, Vector3f.UNIT_Y);
+        } else if(mode == SmoothMode.smooth) {
+            smoothInterpLocation.addLocal(targetLocation.subtract(smoothInterpLocation).multLocal(deltaT * smoothing));
+            smoothInterpView.addLocal(targetView.subtract(smoothInterpView).multLocal(deltaT * smoothing));
+
+            getCamera().setLocation(smoothInterpLocation);
+            getCamera().lookAt(smoothInterpView, Vector3f.UNIT_Y);
         }
     }
 
-    
-    
-    public static enum SmoothMode
-    {
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public static enum SmoothMode {
         none,
         linear,
-        cubic, // is it really called this?
-        inverse
+        smooth
     }
 }

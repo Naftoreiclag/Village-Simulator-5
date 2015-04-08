@@ -48,10 +48,8 @@ import org.json.simple.parser.ParseException;
 public class OverworldAppState extends AbstractAppState implements ActionListener
 {
     private Main app;
-    private Node trueRootNode;
     private ViewPort invPort;
     private Camera cam;
-	private RenderManager renderManager;
     private ViewPort viewPort;
     Camera invCam;
     
@@ -65,32 +63,30 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
     public PlayerEntity getPlayer() { return player; }
     private Node stateRootNode;
     
-    PlayerController playCont;
+    PlayerController playerInterface;
     
-    ReiCamera rcam;
-    Node chasePnt;
+    private ReiCamera reiCamera;
+    private Node chasePnt;
     
     InventoryGUI inv;
 
     @Override
-    public void initialize(AppStateManager stateManager, Application app)
+    public void initialize(AppStateManager stateManager, Application application)
     {
-        super.initialize(stateManager, app);
+        super.initialize(stateManager, application);
         
-        this.app = (Main) app;
-        this.trueRootNode = this.app.getRootNode();
-        this.renderManager = this.app.getRenderManager();
+        this.app = (Main) application;
         this.cam = this.app.getCamera();
         this.viewPort = this.app.getViewPort();
         
         this.stateRootNode = new Node();
-        trueRootNode.attachChild(stateRootNode);
+        this.app.getRootNode().attachChild(stateRootNode);
         
         setupUselessAestetics();
         SAM.INPUT.setCursorVisible(true);
         
-        rcam = new ReiCamera(cam);
-        rcam.mode = ReiCamera.SmoothMode.cubic;
+        reiCamera = new ReiCamera(cam);
+        reiCamera.mode = ReiCamera.SmoothMode.smooth;
         
         Node debugArrows = AxesMaker.make();
         debugArrows.move(256f, 0.1f, 256f);
@@ -129,11 +125,11 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         invCam.setLocation(Vector3f.UNIT_Z);
         invCam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
         invCam.setFrustum(-1000, 1000, (float) -cam.getWidth(), (float) 0, (float) cam.getHeight(), (float) 0);
-        invPort = renderManager.createPostView("baaackground", invCam);
+        invPort = app.getRenderManager().createPostView("baaackground", invCam);
         invPort.setClearFlags(false, true, true);
         
         inv = new InventoryGUI(new SpritePlane(invPort));
-        playCont.inv = this.inv;
+        playerInterface.inv = this.inv;
     }
     
     
@@ -192,10 +188,10 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         }
         
         
-        playCont.tick(tpf);
+        playerInterface.tick(tpf);
         world.tick(tpf);
         
-        rcam.tick(tpf);
+        reiCamera.tick(tpf);
         
         inv.tick(tpf);
     }
@@ -258,11 +254,11 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         player.setLocation(new Vec2(256, 256));
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
-        playCont = new PlayerController();
-        playCont.hookToInputs();
-        playCont.setEntity(player);
-        playCont.setCamera(rcam);
-        playCont.setGround(ground);
+        playerInterface = new PlayerController();
+        playerInterface.hookToInputs();
+        playerInterface.setEntity(player);
+        playerInterface.setCamera(reiCamera);
+        playerInterface.setGround(ground);
 
         /*
         Random rand = new Random(1337);
@@ -304,12 +300,12 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         player = (PlayerEntity) world.getEntity("Player");
         player.attachSpatial(chasePnt);
         player.attachGround(ground);
-        playCont = new PlayerController();
-        playCont.hookToInputs();
-        playCont.setEntity(player);
-        playCont.setCamera(rcam);
-        playCont.setGround(ground);
-        playCont.inv = this.inv;
+        playerInterface = new PlayerController();
+        playerInterface.hookToInputs();
+        playerInterface.setEntity(player);
+        playerInterface.setCamera(reiCamera);
+        playerInterface.setGround(ground);
+        playerInterface.inv = this.inv;
     }
     
     public void saveworld() {
