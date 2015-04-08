@@ -15,7 +15,6 @@ import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 public class Inventory implements JSONAware {
-
     private List<IInventoryUpdateListener> listeners = new ArrayList<IInventoryUpdateListener>();
     public Map<Integer, InvItem> items = new HashMap<Integer, InvItem>();
     

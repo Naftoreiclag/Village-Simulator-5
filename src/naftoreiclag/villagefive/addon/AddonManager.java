@@ -3,7 +3,6 @@
  * Distributed under the Apache License Version 2.0 (http://www.apache.org/licenses/)
  * See accompanying file LICENSE
  */
-
 package naftoreiclag.villagefive.addon;
 
 import java.io.File;
@@ -25,23 +24,19 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 // Addons can be applied upon world creation.
 // Some worlds that you download may specify that certain addons need to be present in the collection.
-public class AddonManager
-{
+public class AddonManager {
     public static Map<String, LuaAddon> addonCollection = new HashMap<String, LuaAddon>();
-    
-    
-    public static void reloadAddons()
-    {
+
+    public static void reloadAddons() {
         addonCollection.clear();
-        
+
         File[] pluginRoots = (new File(SAM.ADDON_DIR)).listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
-        
+
         // 
-        for(File pluginRoot : pluginRoots)
-        {
+        for(File pluginRoot : pluginRoots) {
             System.out.println(pluginRoot);
             String addon_root = pluginRoot.getPath().replace('\\', '/') + "/";
-            
+
             Globals globals = JsePlatform.standardGlobals();
             globals.set("ADDON_ROOT", addon_root);
             globals.loadfile("lua/globals.lua").call();
@@ -49,17 +44,15 @@ public class AddonManager
             LuaTable data = globals.loadfile(addon_root + "addon.lua").call().checktable();
 
             LuaAddon addon = new LuaAddon(pluginRoot.getName() + "\\", data);
-            
+
             addonCollection.put(addon.id, addon);
         }
-        
-        for(Map.Entry<String, LuaAddon> pair : addonCollection.entrySet())
-        {
+
+        for(Map.Entry<String, LuaAddon> pair : addonCollection.entrySet()) {
             LuaAddon addon = pair.getValue();
-            
+
             System.out.println(addon.id);
-            for(LuaEntity entity : addon.entities)
-            {
+            for(LuaEntity entity : addon.entities) {
                 System.out.println(entity.parent.id + ":" + entity.id);
                 EntityRegistry.register(entity);
             }
