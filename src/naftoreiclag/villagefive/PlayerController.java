@@ -42,26 +42,28 @@ import org.dyn4j.geometry.Mass;
 
 public final class PlayerController extends EntityController implements ActionListener, AnalogListener {
     public World world;
-    private PlayerEntity entity;
+    private PlayerEntity player;
+    
+    public SmoothScalar zoomLevel = new SmoothScalar();
+    public Angle playerLook = new Angle();
+    public SmoothAngle cameraTrackLocation = new SmoothAngle();
+    public ReiCamera camera;
+    public Spatial ground;
     
     public void setEntity(PlayerEntity entity) {
-        this.entity = entity;
-        this.entity.controller = this;
-        this.world = this.entity.getWorld();
+        this.player = entity;
+        this.player.controller = this;
+        this.world = this.player.getWorld();
     }
     public PlayerEntity getEntity() {
-        return entity;
+        return player;
     }
     
     float turnSpeed = 3f;
     float walkSpeed = 4.5f;
     
     private float scrollSpd = 500.0f;
-    public SmoothScalar zoomLevel = new SmoothScalar();
-    public Angle playerLook = new Angle();
-    public SmoothAngle cameraTrackLocation = new SmoothAngle();
-    public ReiCamera camera;
-    public Spatial ground;
+    
     boolean turningLeft = false;
     boolean turningRight = false;
     boolean movingFwd = false;
@@ -69,8 +71,7 @@ public final class PlayerController extends EntityController implements ActionLi
     boolean leftClick = false;
     boolean rotCamLeft = false;
     boolean rotCamRight = false;
-    boolean invOpen = false;
-    boolean isInvOpenKeyPressed = false;
+    
     public Entity grabbedEnt;
     public WeldJoint grabJoint;
 
@@ -102,7 +103,7 @@ public final class PlayerController extends EntityController implements ActionLi
 
     // Fire an "interaction ray" and return any entities it collided with.
     public Entity interactRay() {
-        InteractRay ray = new InteractRay(entity, entity.getRotation().toNormalVec());
+        InteractRay ray = new InteractRay(player, player.getRotation().toNormalVec());
         List<RaycastResult> results = new ArrayList<RaycastResult>();
         world.physics.raycast(ray, 5.0f, false, false, results);
         if(results.isEmpty()) {
@@ -136,9 +137,9 @@ public final class PlayerController extends EntityController implements ActionLi
             return;
         }
 
-        grabJoint = new WeldJoint(this.entity.getBody(), this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
+        grabJoint = new WeldJoint(this.player.getBody(), this.grabbedEnt.getBody(), Vec2.ZERO_DYN4J);
         this.grabbedEnt.getBody().setMass(Mass.Type.NORMAL);
-        this.entity.getBody().getWorld().addJoint(grabJoint);
+        this.player.getBody().getWorld().addJoint(grabJoint);
 
     }
     
@@ -165,19 +166,13 @@ public final class PlayerController extends EntityController implements ActionLi
         tickDumbAngles(tpf);
         tickMovementInput(tpf);
 
-        world.updateChunkLODs(this.entity.getLocation());
+        world.updateChunkLODs(this.player.getLocation());
 
         // Move camera on its track
         
-        Vec2 loccc = new Vec2(cameraTrackLocation).multLocal(15).addLocal(entity.getLocation());
+        Vec2 loccc = new Vec2(cameraTrackLocation).multLocal(15).addLocal(player.getLocation());
         camera.setLocation(loccc.getXF(), 7, loccc.getYF());
-
-        // lookie
-        if(invOpen) {
-            camera.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(4)));
-        } else {
-            camera.lookAt(entity.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
-        }
+        camera.lookAt(player.getNode().getLocalTranslation().add(Vector3f.UNIT_Y.mult(3)));
     }
 
     // When a key is pressed
@@ -209,27 +204,21 @@ public final class PlayerController extends EntityController implements ActionLi
                     this.grab();
                     System.out.println("grab");
                 } else {
-                    this.entity.getBody().getWorld().removeJoint(grabJoint);
+                    this.player.getBody().getWorld().removeJoint(grabJoint);
                     grabbedEnt = null;
                     grabJoint = null;
                     System.out.println("ungrab");
                 }
             }
         }
-        if(key.equals(KeyKeys.openInv)) {
-            if(!isInvOpenKeyPressed) {
-                invOpen = !invOpen;
-            }
-            isInvOpenKeyPressed = keyState;
-        }
     }
 
     public void onAnalog(String key, float value, float tpf) {
         if(key.equals(KeyKeys.mouse_scroll_up)) {
-            zoomLevel.tx -= value * tpf * scrollSpd;
+            player.selectedItem --;
         }
         if(key.equals(KeyKeys.mouse_scroll_down)) {
-            zoomLevel.tx += value * tpf * scrollSpd;
+            player.selectedItem ++;
         }
     }
 
@@ -278,7 +267,7 @@ public final class PlayerController extends EntityController implements ActionLi
         }
         cameraTrackLocation.tick(tpf);
 
-        entity.turnTo(playerLook, tpf);
+        player.turnTo(playerLook, tpf);
 
         //System.out.println(this.camDispl);
     }
@@ -291,24 +280,24 @@ public final class PlayerController extends EntityController implements ActionLi
         }
 
         if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null) {
-            playerLook.setX(entity.getRotation());
+            playerLook.setX(player.getRotation());
             if(walking) {
-                entity.model.playAnimation(PlayerModel.anim_standstill);
+                player.model.playAnimation(PlayerModel.anim_standstill);
                 walking = false;
             }
 
         } else {
             if(groundGoto != null) {
-                groundGoto.subtractLocal(entity.getNode().getLocalTranslation());
+                groundGoto.subtractLocal(player.getNode().getLocalTranslation());
                 playerLook.setX(FastMath.atan2(groundGoto.z, groundGoto.x));
             } else {
                 playerLook.setX(whereDoesThePlayerWantToGo());
             }
 
-            entity.setVelocity(playerLook.toNormalVec().multLocal(walkSpeed), tpf);
+            player.setVelocity(playerLook.toNormalVec().multLocal(walkSpeed), tpf);
 
             if(!walking) {
-                entity.model.playAnimation(PlayerModel.anim_walk);
+                player.model.playAnimation(PlayerModel.anim_walk);
                 walking = true;
             }
         }

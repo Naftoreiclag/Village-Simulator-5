@@ -4,10 +4,8 @@
  * See accompanying file LICENSE
  */
 
-package naftoreiclag.villagefive.inventory;
+package naftoreiclag.villagefive.world.entity;
 
-import naftoreiclag.villagefive.Inventory;
-
-public interface IInventoryUpdateListener {
-    public abstract void onUpdate(Inventory inv, int slotIndex);
+public interface IGrabbyEntity {
+    
 }

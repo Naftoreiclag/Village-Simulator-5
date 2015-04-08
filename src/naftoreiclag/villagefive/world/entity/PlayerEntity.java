@@ -25,10 +25,10 @@ import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Transform;
 import org.json.simple.JSONObject;
 
-// Physical stuff
-public class PlayerEntity extends Entity {
+// Physical stuff.
+// Not tied to anything! I am liberated!
+public class PlayerEntity extends Entity implements IGrabbyEntity {
     public Inventory inventory = new Inventory();
-    public int selectedItem = -1;
     
     public PlayerController controller;
     
@@ -38,6 +38,8 @@ public class PlayerEntity extends Entity {
     public double physGiveupRate = 1d;
     private float currBlinkTime;
     public PlayerModel model;
+    
+    public int selectedItem = -1;
 
     @Override
     public void createNode() {
