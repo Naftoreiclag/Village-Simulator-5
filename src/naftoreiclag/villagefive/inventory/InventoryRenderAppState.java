@@ -137,7 +137,6 @@ public class InventoryRenderAppState extends AbstractAppState implements RawInpu
             hotbar.attachElement(slots[i]);
         }
         
-        //SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
         SAM.INPUT.addRawInputListener(this);
         
         goudyBookletterFont = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Goudy-Bookletter-37.png"), 12, 37, 5);
