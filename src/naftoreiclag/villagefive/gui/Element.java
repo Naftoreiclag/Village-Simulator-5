@@ -186,8 +186,10 @@ public abstract class Element {
     }
 
     public void removeAllElements() {
-        for(Element e : this.attachedElements) {
-            this.plane.removeElement(e);
+        if(this.plane != null) {
+            for(Element e : this.attachedElements) {
+                this.plane.removeElement(e);
+            }
         }
         this.attachedElements.clear();
         

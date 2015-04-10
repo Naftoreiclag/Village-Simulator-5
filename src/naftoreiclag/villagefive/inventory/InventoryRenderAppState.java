@@ -63,12 +63,10 @@ public class InventoryRenderAppState extends AbstractAppState implements AnalogL
     
     Vec2 mouseLoc = new Vec2();
 
-    OverworldAppState game;
     PlayerEntity player;
     
-    public void setGame(OverworldAppState aThis) {
-        this.game = aThis;
-        player = this.game.getPlayer();
+    public void setGame(OverworldAppState game) {
+        player = game.getPlayer();
     }
     
     
@@ -178,25 +176,6 @@ public class InventoryRenderAppState extends AbstractAppState implements AnalogL
 
     
     
-    public void onUpdate(Inventory inv, int slotIndex) {
-        
-        if(slotIndex >= 10) {
-            return;
-        }
-        
-        InvItem egg = inv.items.get(slotIndex);
-        
-        // Remove the old one
-        slots[slotIndex].removeAllElements();
-        
-        // If it's something, then show it
-        if(egg != null) {
-            Sprite melon = new Sprite(egg.entity.getIcon());
-            melon.setWidthKeepRatio(128);
-
-            slots[slotIndex].attachElement(melon);
-        }
-    }
     
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
@@ -207,15 +186,7 @@ public class InventoryRenderAppState extends AbstractAppState implements AnalogL
                 if(clicked == slots[i]) {
                     player.setSelectedItemIndex(i);
                     
-                    thinkAbout.removeAllElements();
-                    InvItem selected = player.inventory.getItem(i);
-                    if(selected != null) {
-                        Sprite a = new Sprite(selected.entity.getIcon());
-                        thinkAbout.attachElement(a);
-                        a.setWidthKeepRatio(190);
-                    }
                     
-                    slots[i].attachElement(selectArrow);
                 }
             }
         }
@@ -228,7 +199,40 @@ public class InventoryRenderAppState extends AbstractAppState implements AnalogL
         }
     }
 
-    public void onPlayerSelects(int selectedItem) {
+    public void onPlayerSelects(int slotIndex) {
+        
+        if(slotIndex >= 10) {
+            return;
+        }
+        
+        thinkAbout.removeAllElements();
+        InvItem selected = player.inventory.getItem(slotIndex);
+        if(selected != null) {
+            Sprite a = new Sprite(selected.entity.getIcon());
+            thinkAbout.attachElement(a);
+            a.setWidthKeepRatio(190);
+        }
+
+        slots[slotIndex].attachElement(selectArrow);
+    }
+    
+    public void onInvUpdate(int slotIndex) {
+        if(slotIndex >= 10) {
+            return;
+        }
+        
+        InvItem egg = player.inventory.items.get(slotIndex);
+        
+        // Remove the old one
+        slots[slotIndex].removeAllElements();
+        
+        // If it's something, then show it
+        if(egg != null) {
+            Sprite melon = new Sprite(egg.entity.getIcon());
+            melon.setWidthKeepRatio(128);
+
+            slots[slotIndex].attachElement(melon);
+        }
     }
 
 }

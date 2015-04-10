@@ -18,7 +18,7 @@ public class Inventory implements JSONAware {
     
     private void callListeners(int slot) {
         if(state != null) {
-            state.onUpdate(this, slot);
+            state.onInvUpdate(slot);
         }
     }
     
