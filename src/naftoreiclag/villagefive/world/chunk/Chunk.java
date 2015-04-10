@@ -161,7 +161,7 @@ public class Chunk extends Mundane
         try
         {
             BufferedImage bi = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
-            BufferedImage bi2 = AssetsLoaderUtil.loadImage("assets/Textures/SpringGrass.jpeg");
+            BufferedImage bi2 = AssetsLoaderUtil.loadImage("Textures/SpringGrass.jpeg");
             for(int x = 0; x < 512 / size; ++ x)
             {
                 for(int y = 0; y < 512 / size; ++ y)

@@ -105,8 +105,8 @@ public class CatModel implements PlayerModel
             BufferedImage bi = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
             Graphics2D gg = bi.createGraphics();
 
-            BufferedImage eye = AssetsLoaderUtil.loadImage("assets/Textures/eye2.png");
-            BufferedImage mouth = AssetsLoaderUtil.loadImage("assets/Textures/debugChin.png");
+            BufferedImage eye = AssetsLoaderUtil.loadImage("Textures/eye2.png");
+            BufferedImage mouth = AssetsLoaderUtil.loadImage("Textures/debugChin.png");
 
             gg.drawImage(eye, 145, 94, null);
             gg.drawImage(mouth, 29, 164, null);
@@ -132,8 +132,8 @@ public class CatModel implements PlayerModel
             BufferedImage bi = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
             Graphics2D gg = bi.createGraphics();
 
-            BufferedImage eye = AssetsLoaderUtil.loadImage("assets/Textures/eye2.png");
-            BufferedImage mouth = AssetsLoaderUtil.loadImage("assets/Textures/debugChin.png");
+            BufferedImage eye = AssetsLoaderUtil.loadImage("Textures/eye2.png");
+            BufferedImage mouth = AssetsLoaderUtil.loadImage("Textures/debugChin.png");
 
             gg.drawImage(eye, 145, 94, null);
             gg.drawImage(mouth, 29, 164, null);

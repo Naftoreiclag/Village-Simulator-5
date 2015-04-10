@@ -13,6 +13,13 @@ import naftoreiclag.villagefive.SAM;
 public class AssetsLoaderUtil {
     @Deprecated
     public static BufferedImage loadImage(String path) {
-        return ImageToAwt.convert(SAM.ASSETS.loadTexture(path).getImage(), false, true, 0);
+        
+        BufferedImage raw = ImageToAwt.convert(SAM.ASSETS.loadTexture(path).getImage(), false, true, 0);
+        
+        BufferedImage ret = new BufferedImage(raw.getWidth(), raw.getHeight(), raw.getType());
+        
+        ret.getGraphics().drawImage(raw, 0, ret.getHeight(), ret.getWidth(), -ret.getHeight(), null);
+        
+        return ret;
     }
 }
