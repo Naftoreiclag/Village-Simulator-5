@@ -153,7 +153,7 @@ public final class PlayerController extends EntityController implements ActionLi
     
 
     // correct
-    public Vector3f whereClickingOnGround() {
+    public Vec2 whereClickingOnGround() {
         Vector3f origin = camera.getCamera().getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.0f);
         Vector3f direction = camera.getCamera().getWorldCoordinates(SAM.INPUT.getCursorPosition(), 0.3f);
         direction.subtractLocal(origin).normalizeLocal();
@@ -163,7 +163,7 @@ public final class PlayerController extends EntityController implements ActionLi
 
         ground.collideWith(ray, results);
         if(results.size() > 0) {
-            return results.getClosestCollision().getContactPoint();
+            return new Vec2(results.getClosestCollision().getContactPoint());
         } else {
             return null;
         }
@@ -240,8 +240,8 @@ public final class PlayerController extends EntityController implements ActionLi
         this.camera = cam;
     }
 
-    private Angle whereDoesThePlayerWantToGo() {
-        Vec2 fwd = new Vec2(camera.getCamera().getDirection().x, camera.getCamera().getDirection().z);
+    private Angle whereDoesThePlayerWantToGo(Vec2 fwd) {
+        //new Vec2(camera.getCamera().getDirection().x, camera.getCamera().getDirection().z);
         Vec2 dir = new Vec2();
 
         if(movingFwd) {
@@ -278,12 +278,13 @@ public final class PlayerController extends EntityController implements ActionLi
     public boolean walking = true;
 
     private void tickMovementInput(float tpf) {
-        Vector3f groundGoto = null;
-        if(leftClick) {
-            groundGoto = whereClickingOnGround();
-        }
 
-        if(!movingFwd && !movingBwd && !turningLeft && !turningRight && groundGoto == null) {
+        Vec2 gGoto = null;
+        if(movingFwd || movingBwd || turningLeft || turningRight) {
+            gGoto = whereClickingOnGround();
+        }
+        
+        if(gGoto == null) {
             playerLook.setX(player.getRotation());
             if(walking) {
                 player.model.playAnimation(PlayerModel.anim_standstill);
@@ -291,12 +292,7 @@ public final class PlayerController extends EntityController implements ActionLi
             }
 
         } else {
-            if(groundGoto != null) {
-                groundGoto.subtractLocal(player.getNode().getLocalTranslation());
-                playerLook.setX(FastMath.atan2(groundGoto.z, groundGoto.x));
-            } else {
-                playerLook.setX(whereDoesThePlayerWantToGo());
-            }
+            playerLook.setX(whereDoesThePlayerWantToGo(whereClickingOnGround().subtractLocal(player.getLocation())));
 
             player.setVelocity(playerLook.toNormalVec().multLocal(walkSpeed), tpf);
 
