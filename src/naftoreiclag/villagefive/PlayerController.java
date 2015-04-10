@@ -72,8 +72,8 @@ public final class PlayerController extends EntityController implements ActionLi
     
     private float scrollSpd = 500.0f;
     
-    boolean turningLeft = false;
-    boolean turningRight = false;
+    boolean strafeLeft = false;
+    boolean strafeRight = false;
     boolean movingFwd = false;
     boolean movingBwd = false;
     boolean leftClick = false;
@@ -109,28 +109,10 @@ public final class PlayerController extends EntityController implements ActionLi
             KeyKeys.interact);
     }
 
-    // Fire an "interaction ray" and return any entities it collided with.
-    public Entity interactRay() {
-        InteractRay ray = new InteractRay(player, player.getRotation().toNormalVec());
-        List<RaycastResult> results = new ArrayList<RaycastResult>();
-        world.physics.raycast(ray, 5.0f, false, false, results);
-        if(results.isEmpty()) {
-            return null;
-        }
-
-        for(RaycastResult hit : results) {
-            Body bod = hit.getBody();
-            if(bod instanceof EntityBody) {
-                return ((EntityBody) bod).owner;
-            }
-        }
-
-        return null;
-    }
 
    
     public void interact() {
-        Entity owner = interactRay();
+        Entity owner = player.interactRay();
         if(owner == null) {
             return;
         }
@@ -139,7 +121,7 @@ public final class PlayerController extends EntityController implements ActionLi
     }
 
     public void grab() {
-        this.grabbedEnt = interactRay();
+        this.grabbedEnt = player.interactRay();
 
         if(this.grabbedEnt == null) {
             return;
@@ -192,10 +174,10 @@ public final class PlayerController extends EntityController implements ActionLi
             movingBwd = keyState;
         }
         if(key.equals(KeyKeys.move_left)) {
-            turningLeft = keyState;
+            strafeLeft = keyState;
         }
         if(key.equals(KeyKeys.move_right)) {
-            turningRight = keyState;
+            strafeRight = keyState;
         }
         if(key.equals(KeyKeys.rotate_camera_left)) {
             rotCamLeft = keyState;
@@ -223,10 +205,10 @@ public final class PlayerController extends EntityController implements ActionLi
 
     public void onAnalog(String key, float value, float tpf) {
         if(key.equals(KeyKeys.mouse_scroll_up)) {
-            player.selectedItem --;
+            player.setSelectedItemIndex(player.getSelectedItemIndex() - 1);
         }
         if(key.equals(KeyKeys.mouse_scroll_down)) {
-            player.selectedItem ++;
+            player.setSelectedItemIndex(player.getSelectedItemIndex() + 1);
         }
     }
 
@@ -240,8 +222,8 @@ public final class PlayerController extends EntityController implements ActionLi
         this.camera = cam;
     }
 
-    private Angle whereDoesThePlayerWantToGo(Vec2 fwd) {
-        //new Vec2(camera.getCamera().getDirection().x, camera.getCamera().getDirection().z);
+    private Angle whereDoesThePlayerWantToGo() {
+        Vec2 fwd = new Vec2(camera.getCamera().getDirection().x, camera.getCamera().getDirection().z);
         Vec2 dir = new Vec2();
 
         if(movingFwd) {
@@ -250,10 +232,10 @@ public final class PlayerController extends EntityController implements ActionLi
         if(movingBwd) {
             dir.subtractLocal(fwd);
         }
-        if(turningLeft) {
+        if(strafeLeft) {
             dir.addLocal(fwd.getY(), -fwd.getX());
         }
-        if(turningRight) {
+        if(strafeRight) {
             dir.addLocal(-fwd.getY(), fwd.getX());
         }
         return dir.getAngle();
@@ -280,11 +262,11 @@ public final class PlayerController extends EntityController implements ActionLi
     private void tickMovementInput(float tpf) {
 
         Vec2 gGoto = null;
-        if(movingFwd || movingBwd || turningLeft || turningRight) {
+        if(leftClick) {
             gGoto = whereClickingOnGround();
         }
         
-        if(gGoto == null) {
+        if(!movingFwd && !movingBwd && !strafeLeft && !strafeRight && gGoto == null) {
             playerLook.setX(player.getRotation());
             if(walking) {
                 player.model.playAnimation(PlayerModel.anim_standstill);
@@ -292,7 +274,11 @@ public final class PlayerController extends EntityController implements ActionLi
             }
 
         } else {
-            playerLook.setX(whereDoesThePlayerWantToGo(whereClickingOnGround().subtractLocal(player.getLocation())));
+            if(gGoto != null) {
+                playerLook.setX(new Angle(gGoto.subtractLocal(player.getLocation())));
+            } else {
+                playerLook.setX(whereDoesThePlayerWantToGo());
+            }
 
             player.setVelocity(playerLook.toNormalVec().multLocal(walkSpeed), tpf);
 

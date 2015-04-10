@@ -9,13 +9,18 @@ package naftoreiclag.villagefive.world.entity;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
+import java.util.ArrayList;
+import java.util.List;
 import naftoreiclag.villagefive.PlayerController;
 import naftoreiclag.villagefive.SAM;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.Mundane;
 import naftoreiclag.villagefive.world.World;
+import naftoreiclag.villagefive.world.body.EntityBody;
+import naftoreiclag.villagefive.world.rays.InteractRay;
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.RaycastResult;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
@@ -97,5 +102,22 @@ public abstract class Entity extends Mundane implements JSONAware
         return defaultIcon;
     }
     
-    
+    // Fire an "interaction ray" and return any entities it collided with.
+    public Entity interactRay() {
+        InteractRay ray = new InteractRay(this, this.getRotation().toNormalVec());
+        List<RaycastResult> results = new ArrayList<RaycastResult>();
+        world.physics.raycast(ray, 5.0f, false, false, results);
+        if(results.isEmpty()) {
+            return null;
+        }
+
+        for(RaycastResult hit : results) {
+            Body bod = hit.getBody();
+            if(bod instanceof EntityBody) {
+                return ((EntityBody) bod).owner;
+            }
+        }
+
+        return null;
+    }
 }

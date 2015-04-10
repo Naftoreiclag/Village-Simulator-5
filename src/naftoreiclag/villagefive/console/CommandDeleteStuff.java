@@ -20,7 +20,7 @@ public class CommandDeleteStuff extends Command {
             
             PlayerEntity player = game.getPlayer();
             
-            Entity lookAt = player.controller.interactRay();
+            Entity lookAt = player.interactRay();
             if(lookAt == null) {
                 console.println("Error: no entity in sight!");
                 return true;

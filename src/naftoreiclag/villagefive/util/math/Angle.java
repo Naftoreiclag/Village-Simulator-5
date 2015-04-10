@@ -34,6 +34,10 @@ public class Angle
 		this.x = wrap(x);
 	}
     
+    public Angle(Vec2 vec) {
+        this.x = Math.atan2(vec.getY(), vec.getX());
+    }
+    
     public Angle(Transform x)
     {
 		this.x = wrap(x.getRotation());

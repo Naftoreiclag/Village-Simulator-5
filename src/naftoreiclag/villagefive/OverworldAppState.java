@@ -106,6 +106,7 @@ public class OverworldAppState extends AbstractAppState implements ActionListene
         //loadworld();
         
         invAppState.setGame(this);
+        player.setInvScreen(invAppState);
 
     }
     

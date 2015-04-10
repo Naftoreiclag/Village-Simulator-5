@@ -17,7 +17,7 @@ public class CommandWaila extends Command {
     public boolean process(Console console, String input, OverworldAppState game) {
         if(input.equalsIgnoreCase("waila")) {
             
-            Entity lookAt = game.getPlayer().controller.interactRay();
+            Entity lookAt = game.getPlayer().interactRay();
             
             if(lookAt != null) {
                 console.println("ENTITY:");

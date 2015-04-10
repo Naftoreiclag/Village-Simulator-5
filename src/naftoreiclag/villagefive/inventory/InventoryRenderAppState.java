@@ -34,7 +34,7 @@ import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.entity.PlayerEntity;
 
-public class InventoryRenderAppState extends AbstractAppState implements IInventoryUpdateListener, AnalogListener, ActionListener{
+public class InventoryRenderAppState extends AbstractAppState implements AnalogListener, ActionListener{
     Main app;
     
     Camera cam;
@@ -69,7 +69,6 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
     public void setGame(OverworldAppState aThis) {
         this.game = aThis;
         player = this.game.getPlayer();
-        player.inventory.hook(this);
     }
     
     
@@ -206,7 +205,7 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
             
             for(int i = 0; i < slots.length; ++ i) {
                 if(clicked == slots[i]) {
-                    player.selectedItem = i;
+                    player.setSelectedItemIndex(i);
                     
                     thinkAbout.removeAllElements();
                     InvItem selected = player.inventory.getItem(i);
@@ -227,6 +226,9 @@ public class InventoryRenderAppState extends AbstractAppState implements IInvent
         if(name.equals(KeyKeys.mouse_move)) {
             mouseLoc.set(SAM.INPUT.getCursorPosition());
         }
+    }
+
+    public void onPlayerSelects(int selectedItem) {
     }
 
 }

@@ -11,6 +11,7 @@ import naftoreiclag.villagefive.Inventory;
 import naftoreiclag.villagefive.PlayerController;
 import naftoreiclag.villagefive.data.CatModel;
 import naftoreiclag.villagefive.data.PlayerModel;
+import naftoreiclag.villagefive.inventory.InventoryRenderAppState;
 import naftoreiclag.villagefive.util.math.Angle;
 import naftoreiclag.villagefive.util.math.GR;
 import naftoreiclag.villagefive.util.math.Vec2;
@@ -27,8 +28,11 @@ import org.json.simple.JSONObject;
 
 // Physical stuff.
 // Not tied to anything! I am liberated!
-public class PlayerEntity extends Entity implements IGrabbyEntity {
+// Edit: nevermind
+public class PlayerEntity extends Entity {
     public Inventory inventory = new Inventory();
+    
+    private InventoryRenderAppState invScreen;
     
     public PlayerController controller;
     
@@ -39,7 +43,7 @@ public class PlayerEntity extends Entity implements IGrabbyEntity {
     private float currBlinkTime;
     public PlayerModel model;
     
-    public int selectedItem = -1;
+    private int selectedItemIndex = -1;
 
     @Override
     public void createNode() {
@@ -53,7 +57,6 @@ public class PlayerEntity extends Entity implements IGrabbyEntity {
             world.something(loc);
         }
     }
-
     @Override
     public void setLocation(Vec2 loc) {
         super.setLocation(loc);
@@ -146,7 +149,34 @@ public class PlayerEntity extends Entity implements IGrabbyEntity {
     }
 
     public void use(InvItem item) {
-        
         item.performTask(this);
+    }
+
+    public int getSelectedItemIndex() {
+        return selectedItemIndex;
+    }
+
+    public void setSelectedItemIndex(int selectedItem) {
+        
+        InvItem item = inventory.getItem(selectedItem);
+        
+        if(item == null) {
+            return;
+        }
+        
+        this.selectedItemIndex = selectedItem;
+        if(getInvScreen() != null) {
+            getInvScreen().onPlayerSelects(selectedItem);
+        }
+        
+    }
+
+    public InventoryRenderAppState getInvScreen() {
+        return invScreen;
+    }
+
+    public void setInvScreen(InventoryRenderAppState invScreen) {
+        this.invScreen = invScreen;
+        this.inventory.state = invScreen;
     }
 }
