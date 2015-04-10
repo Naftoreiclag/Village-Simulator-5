@@ -9,8 +9,16 @@ package naftoreiclag.villagefive.inventory;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.input.MouseInput;
+import com.jme3.input.RawInputListener;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.event.JoyAxisEvent;
+import com.jme3.input.event.JoyButtonEvent;
+import com.jme3.input.event.KeyInputEvent;
+import com.jme3.input.event.MouseButtonEvent;
+import com.jme3.input.event.MouseMotionEvent;
+import com.jme3.input.event.TouchEvent;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -34,7 +42,7 @@ import naftoreiclag.villagefive.util.KeyKeys;
 import naftoreiclag.villagefive.util.math.Vec2;
 import naftoreiclag.villagefive.world.entity.PlayerEntity;
 
-public class InventoryRenderAppState extends AbstractAppState implements AnalogListener, ActionListener{
+public class InventoryRenderAppState extends AbstractAppState implements RawInputListener {
     Main app;
     
     Camera cam;
@@ -129,7 +137,8 @@ public class InventoryRenderAppState extends AbstractAppState implements AnalogL
             hotbar.attachElement(slots[i]);
         }
         
-        SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
+        //SAM.INPUT.addListener(this, KeyKeys.mouse_move, KeyKeys.mouse_left);
+        SAM.INPUT.addRawInputListener(this);
         
         goudyBookletterFont = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Goudy-Bookletter-37.png"), 12, 37, 5);
         rainstormFont = new BitmapFont(SAM.ASSETS.loadTexture("Interface/Fonts/Rainstorm-40.png"), 11, 40, 5);
@@ -174,31 +183,6 @@ public class InventoryRenderAppState extends AbstractAppState implements AnalogL
         testSc += tpf;
     }
 
-    
-    
-    
-    @Override
-    public void onAction(String name, boolean isPressed, float tpf) {
-        if(name.equals(KeyKeys.mouse_left)) {
-            Element clicked = plane.pick(mouseLoc);
-            
-            for(int i = 0; i < slots.length; ++ i) {
-                if(clicked == slots[i]) {
-                    player.setSelectedItemIndex(i);
-                    
-                    
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onAnalog(String name, float value, float tpf) {
-        if(name.equals(KeyKeys.mouse_move)) {
-            mouseLoc.set(SAM.INPUT.getCursorPosition());
-        }
-    }
-
     public void onPlayerSelects(int slotIndex) {
         
         if(slotIndex >= 10) {
@@ -233,6 +217,45 @@ public class InventoryRenderAppState extends AbstractAppState implements AnalogL
 
             slots[slotIndex].attachElement(melon);
         }
+    }
+
+    public void beginInput() {
+    }
+
+    public void endInput() {
+    }
+
+    public void onJoyAxisEvent(JoyAxisEvent evt) {
+    }
+
+    public void onJoyButtonEvent(JoyButtonEvent evt) {
+    }
+
+    public void onMouseMotionEvent(MouseMotionEvent evt) {
+        mouseLoc.set(SAM.INPUT.getCursorPosition());
+    }
+
+    public void onMouseButtonEvent(MouseButtonEvent evt) {
+        
+        if(evt.getButtonIndex() == MouseInput.BUTTON_LEFT) {
+            Element clicked = plane.pick(mouseLoc);
+            
+            for(int i = 0; i < slots.length; ++ i) {
+                if(clicked == slots[i]) {
+                    player.setSelectedItemIndex(i);
+                    
+                    evt.setConsumed();
+                }
+            }
+        }
+    }
+
+    public void onKeyEvent(KeyInputEvent evt) {
+        
+        
+    }
+
+    public void onTouchEvent(TouchEvent evt) {
     }
 
 }
