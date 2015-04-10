@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import naftoreiclag.villagefive.Main;
 import naftoreiclag.villagefive.SAM;
+import naftoreiclag.villagefive.util.AssetsLoaderUtil;
 import naftoreiclag.villagefive.util.scenegraph.ModelBuilder;
 import naftoreiclag.villagefive.world.Mundane;
 import naftoreiclag.villagefive.world.PhysWorld;
@@ -160,8 +161,7 @@ public class Chunk extends Mundane
         try
         {
             BufferedImage bi = new BufferedImage(512, 512, BufferedImage.TYPE_INT_ARGB);
-            BufferedImage bi2 = ImageIO.read(new File("assets/Textures/SpringGrass.jpeg"));
-        
+            BufferedImage bi2 = AssetsLoaderUtil.loadImage("assets/Textures/SpringGrass.jpeg");
             for(int x = 0; x < 512 / size; ++ x)
             {
                 for(int y = 0; y < 512 / size; ++ y)
@@ -190,7 +190,7 @@ public class Chunk extends Mundane
         
             return tex;
         }
-        catch(IOException ex)
+        catch(Exception ex)
         {
             return null;
         }

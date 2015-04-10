@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 import naftoreiclag.villagefive.SAM;
+import naftoreiclag.villagefive.util.AssetsLoaderUtil;
 import naftoreiclag.villagefive.util.scenegraph.ModelManipulator;
 
 public class CatModel implements PlayerModel
@@ -104,8 +105,8 @@ public class CatModel implements PlayerModel
             BufferedImage bi = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
             Graphics2D gg = bi.createGraphics();
 
-            BufferedImage eye = ImageIO.read(new File("assets/Textures/eye2.png"));
-            BufferedImage mouth = ImageIO.read(new File("assets/Textures/debugChin.png"));
+            BufferedImage eye = AssetsLoaderUtil.loadImage("assets/Textures/eye2.png");
+            BufferedImage mouth = AssetsLoaderUtil.loadImage("assets/Textures/debugChin.png");
 
             gg.drawImage(eye, 145, 94, null);
             gg.drawImage(mouth, 29, 164, null);
@@ -131,8 +132,8 @@ public class CatModel implements PlayerModel
             BufferedImage bi = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
             Graphics2D gg = bi.createGraphics();
 
-            BufferedImage eye = ImageIO.read(new File("assets/Textures/eye3.png"));
-            BufferedImage mouth = ImageIO.read(new File("assets/Textures/debugChin.png"));
+            BufferedImage eye = AssetsLoaderUtil.loadImage("assets/Textures/eye2.png");
+            BufferedImage mouth = AssetsLoaderUtil.loadImage("assets/Textures/debugChin.png");
 
             gg.drawImage(eye, 145, 94, null);
             gg.drawImage(mouth, 29, 164, null);
