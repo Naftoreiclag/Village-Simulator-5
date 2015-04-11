@@ -38,7 +38,8 @@ function fromFile (filename)
 	filetype4 == ".jpeg" or 
 	filetype3 == ".gif" then
 		return {
-			textureFile = filename
+			textureFile = filename,
+			flipY = false
 		}
 	end
 

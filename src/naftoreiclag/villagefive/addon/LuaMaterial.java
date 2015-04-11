@@ -136,7 +136,7 @@ public class LuaMaterial {
         
         /****
          * IF THE SHADING WAS EXPLICITLY SET AT A CERTAIN VALUE, THEN UPGRADE OR DOWNGRADE IF NECESSARY.
-         * THIS PROCESS WILL AVOID HAVING TO CONVERT BETWEEN TYPES. (i.e. If we need LIGHTING but already have BLOW, then do nothing.)
+         * THIS PROCESS WILL AVOID HAVING TO CONVERT BETWEEN TYPES EXCESSIVELY. (i.e. If we need LIGHTING but already have BLOW, then do nothing.)
          ****/
         
         // If the user explicitly wants shading to be off, then do so
